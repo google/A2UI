@@ -262,14 +262,6 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
         <CopilotChat
           threadId={widget.id}
           className="h-full"
-          feather={{ className: "right-0" }}
-          inputProps={{
-            className: "border shadow-sm bg-white/50",
-            sendButton: {
-              className:
-                "enabled:bg-gradient-to-br enabled:from-violet-500 enabled:to-indigo-600 enabled:hover:from-violet-600 enabled:hover:to-indigo-700 enabled:border-0",
-            },
-          }}
           disclaimer={() => (
             <div className="text-center text-xs text-muted-foreground py-2">
               Powered by 🪁 CopilotKit

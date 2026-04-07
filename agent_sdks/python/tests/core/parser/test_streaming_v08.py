@@ -30,7 +30,7 @@ from a2ui.core.parser.constants import (
     MSG_TYPE_DATA_MODEL_UPDATE,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser, PLACEHOLDER_COMPONENT
+from a2ui.core.parser.streaming import A2uiStreamParser
 from a2ui.core.parser.response_part import ResponsePart
 
 
@@ -223,10 +223,6 @@ def _normalize_messages(messages):
       payload = msg[MSG_TYPE_SURFACE_UPDATE]
       if CATALOG_COMPONENTS_KEY in payload:
         payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
-    elif "updateComponents" in msg:
-      payload = msg["updateComponents"]
-      if CATALOG_COMPONENTS_KEY in payload:
-        payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
   return res
 
 
@@ -335,7 +331,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_children_root-column",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -356,7 +352,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -379,11 +375,11 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -422,7 +418,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -802,7 +798,7 @@ def test_partial_single_child_string(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -870,7 +866,7 @@ def test_partial_template_componentId(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -938,15 +934,15 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -979,11 +975,11 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -1088,19 +1084,6 @@ def test_data_model_after_components(mock_catalog):
               "contents": [{
                   "key": "name",
                   "valueString": "Alice",
-              }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [{
-                  "id": "root",
-                  "component": {
-                      "Text": {
-                          "text": {"path": "/name"},
-                      }
-                  },
               }],
           }
       },
@@ -1518,37 +1501,6 @@ def test_multiple_re_yielding_scenarios(mock_catalog):
               "contents": [{"key": "p1", "valueString": "v1"}],
           }
       },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [
-                  {
-                      "id": "c1",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p1"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "c2",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p2"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "root",
-                      "component": {
-                          "Container": {
-                              "children": ["c1", "c2"],
-                          }
-                      },
-                  },
-              ],
-          }
-      },
   ]
   assertResponseContainsMessages(response_parts, expected)
 
@@ -1562,37 +1514,6 @@ def test_multiple_re_yielding_scenarios(mock_catalog):
           "dataModelUpdate": {
               "surfaceId": "s1",
               "contents": [{"key": "p2", "valueString": "v2"}],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [
-                  {
-                      "id": "c1",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p1"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "c2",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p2"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "root",
-                      "component": {
-                          "Container": {
-                              "children": ["c1", "c2"],
-                          }
-                      },
-                  },
-              ],
           }
       },
   ]
@@ -1650,36 +1571,11 @@ def test_incremental_data_model_streaming(mock_catalog):
       ' "valueMap": ['
   )
   # The parser yields the data model early once it sniffs the start of it
-  # AND it triggers a re-yield of reachable components that depend on 'items'
   expected = [
       {
           "dataModelUpdate": {
               "contents": [{"key": "items", "valueMap": []}],
               "surfaceId": "default",
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -1695,30 +1591,6 @@ def test_incremental_data_model_streaming(mock_catalog):
                   "key": "items",
                   "valueMap": [{"key": "name", "valueString": "Item 1"}],
               }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -1737,30 +1609,6 @@ def test_incremental_data_model_streaming(mock_catalog):
                       {"key": "name", "valueString": "Item 2"},
                   ],
               }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -2029,8 +1877,8 @@ def test_sniff_partial_component_discards_empty_children_dict(mock_catalog):
                       "id": "root-column",
                   },
                   {
-                      "component": PLACEHOLDER_COMPONENT,
                       "id": "loading_item-list",
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -2117,3 +1965,100 @@ def test_sniff_partial_component_enforces_required_fields(mock_catalog):
       }
   }]
   assertResponseContainsMessages(response_parts, expected)
+
+
+def test_multiple_concurrent_surfaces(mock_catalog):
+  """Verifies that the parser can handle multiple surfaces simultaneously."""
+  parser = A2uiStreamParser(catalog=mock_catalog)
+
+  # Send A2UI block opening bracket
+  parser.process_chunk(f"{A2UI_OPEN_TAG}[")
+
+  # 1. Establish root for surface 1
+  parser.process_chunk(
+      '{"beginRendering": {"surfaceId": "surface1", "root": "root1"}},'
+  )
+
+  # 2. Establish root for surface 2
+  parser.process_chunk(
+      '{"beginRendering": {"surfaceId": "surface2", "root": "root2"}},'
+  )
+
+  # 3. Stream components for surface 1 in chunks
+  chunk_s1_a = (
+      '{"surfaceUpdate": {"surfaceId": "surface1", "components": ['
+      '{"id": "root1", "component": {"Card": {"child": "c1"}}}, '
+  )
+  response_parts = parser.process_chunk(chunk_s1_a)
+  expected_s1_a = [{
+      "surfaceUpdate": {
+          "surfaceId": "surface1",
+          "components": [
+              {
+                  "component": parser._placeholder_component["component"],
+                  "id": "loading_c1",
+              },
+              {
+                  "id": "root1",
+                  "component": {"Card": {"child": "loading_c1"}},
+              },
+          ],
+      }
+  }]
+  assertResponseContainsMessages(response_parts, expected_s1_a)
+
+  chunk_s1_b = '{"id": "c1", "component": {"Text": {"text": "hello s1"}}}]}}, '
+  response_parts = parser.process_chunk(chunk_s1_b)
+
+  expected_s1_b = [{
+      "surfaceUpdate": {
+          "surfaceId": "surface1",
+          "components": [
+              {
+                  "id": "c1",
+                  "component": {
+                      "Text": {
+                          "text": "hello s1",
+                      }
+                  },
+              },
+              {
+                  "id": "root1",
+                  "component": {"Card": {"child": "c1"}},
+              },
+          ],
+      }
+  }]
+  assertResponseContainsMessages(response_parts, expected_s1_b)
+
+  # 4. Stream components for surface 2
+  chunk_s2 = (
+      '{"surfaceUpdate": {"surfaceId": "surface2", "components": ['
+      '{"id": "root2", "component": {"Card": {"child": "c2"}}}, '
+      '{"id": "c2", "component": {"Text": {"text": "hello s2"}}}]}}'
+  )
+  response_parts = parser.process_chunk(chunk_s2)
+
+  expected_s2 = [{
+      "surfaceUpdate": {
+          "surfaceId": "surface2",
+          "components": [
+              {
+                  "id": "c2",
+                  "component": {
+                      "Text": {
+                          "text": "hello s2",
+                      }
+                  },
+              },
+              {
+                  "id": "root2",
+                  "component": {"Card": {"child": "c2"}},
+              },
+          ],
+      }
+  }]
+  assertResponseContainsMessages(response_parts, expected_s2)
+
+  # Send A2UI block closing bracket
+  parser.process_chunk(f"]{A2UI_CLOSE_TAG}")
