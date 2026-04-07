@@ -7,12 +7,12 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="A2UI, a streaming protocol for Agent-Driven User Interfaces" name="description"/>
 <meta content="Google" name="author"/>
-<link href="https://a2ui.org/guides/theming/" rel="canonical"/>
-<link href="../authoring-components/" rel="prev"/>
-<link href="../a2ui_over_mcp/" rel="next"/>
+<link href="https://a2ui.org/guides/guide_a2ui_dynamic_mcp/" rel="canonical"/>
+<link href="../mcp-apps-in-a2ui-surface/" rel="prev"/>
+<link href="../../reference/components/" rel="next"/>
 <link href="../../assets/A2UI_dark.svg" rel="icon"/>
 <meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
-<title>Theming &amp; Styling - A2UI</title>
+<title>A2UI in MCP Apps - A2UI</title>
 <link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
 <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M64%20480c-35.3%200-64-28.7-64-64V96c0-35.3%2028.7-64%2064-64h320c35.3%200%2064%2028.7%2064%2064v213.5c0%2017-6.7%2033.3-18.7%2045.3L322.7%20461.3c-12%2012-28.3%2018.7-45.3%2018.7zm325.5-176H296c-13.3%200-24%2010.7-24%2024v93.5z%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M384%20512H96c-53%200-96-43-96-96V96C0%2043%2043%200%2096%200h304c26.5%200%2048%2021.5%2048%2048v288c0%2020.9-13.4%2038.7-32%2045.3V448c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032zM96%20384c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032h256v-64zm32-232c0%2013.3%2010.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24H152c-13.3%200-24%2010.7-24%2024m24%2072c-13.3%200-24%2010.7-24%2024s10.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24z%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m-32-352a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200m-8%2064h48c13.3%200%2024%2010.7%2024%2024v88h8c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-80c-13.3%200-24-10.7-24-24s10.7-24%2024-24h24v-64h-24c-13.3%200-24-10.7-24-24s10.7-24%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M461.2%2018.9C472.7%2024%20480%2035.4%20480%2048v416c0%2012.6-7.3%2024-18.8%2029.1s-24.8%203.2-34.3-5.1l-46.6-40.7c-43.6-38.1-98.7-60.3-156.4-63V480c0%2017.7-14.3%2032-32%2032h-32c-17.7%200-32-14.3-32-32v-96C57.3%20384%200%20326.7%200%20256s57.3-128%20128-128h84.5c61.8-.2%20121.4-22.7%20167.9-63.3L427%2024c9.4-8.3%2022.9-10.2%2034.3-5.1zM224%20320v.2c70.3%202.7%20137.8%2028.5%20192%2073.4V118.3c-54.2%2044.9-121.7%2070.7-192%2073.4z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M434.8%2070.1c14.3%2010.4%2017.5%2030.4%207.1%2044.7l-256%20352c-5.5%207.6-14%2012.3-23.4%2013.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8%200-45.3s32.8-12.5%2045.3%200l101.5%20101.5%20234-321.7c10.4-14.3%2030.4-17.5%2044.7-7.1z%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m0-336c-17.7%200-32%2014.3-32%2032%200%2013.3-10.7%2024-24%2024s-24-10.7-24-24c0-44.2%2035.8-80%2080-80s80%2035.8%2080%2080c0%2047.2-36%2067.2-56%2074.5v3.8c0%2013.3-10.7%2024-24%2024s-24-10.7-24-24v-8.1c0-20.5%2014.8-35.2%2030.1-40.2%206.4-2.1%2013.2-5.5%2018.2-10.3%204.3-4.2%207.7-10%207.7-19.6%200-17.7-14.3-32-32-32zm-32%20192a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%200c14.7%200%2028.2%208.1%2035.2%2021l216%20400c6.7%2012.4%206.4%2027.4-.8%2039.5S486.1%20480%20472%20480H40c-14.1%200-27.2-7.4-34.4-19.5s-7.5-27.1-.8-39.5l216-400c7-12.9%2020.5-21%2035.2-21m0%20352a32%2032%200%201%200%200%2064%2032%2032%200%201%200%200-64m0-192c-18.2%200-32.7%2015.5-31.4%2033.7l7.4%20104c.9%2012.5%2011.4%2022.3%2023.9%2022.3%2012.6%200%2023-9.7%2023.9-22.3l7.4-104c1.3-18.2-13.1-33.7-31.4-33.7z%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20576%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M480-16c6.9%200%2013%204.4%2015.2%2010.9l13.5%2040.4%2040.4%2013.5C555.6%2051%20560%2057.1%20560%2064s-4.4%2013-10.9%2015.2l-40.4%2013.5-13.5%2040.4c-2.2%206.5-8.3%2010.9-15.2%2010.9s-13-4.4-15.2-10.9l-13.5-40.4-40.4-13.5C404.4%2077%20400%2070.9%20400%2064s4.4-13%2010.9-15.2l40.4-13.5%2013.5-40.4C467-11.6%20473.1-16%20480-16M321.4%2097.4c12.5-12.5%2032.8-12.5%2045.3%200l80%2080c12.5%2012.5%2012.5%2032.8%200%2045.3l-10.9%2010.9c7.9%2022%2012.2%2045.7%2012.2%2070.5%200%20114.9-93.1%20208-208%20208S32%20418.9%2032%20304%20125.1%2096%20240%2096c24.7%200%2048.5%204.3%2070.5%2012.3zM144%20304c0-53%2043-96%2096-96%2013.3%200%2024-10.7%2024-24s-10.7-24-24-24c-79.5%200-144%2064.5-144%20144%200%2013.3%2010.7%2024%2024%2024s24-10.7%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M416%20427.4c58.5-44%2096-111.6%2096-187.4C512%20107.5%20397.4%200%20256%200S0%20107.5%200%20240c0%2075.8%2037.5%20143.4%2096%20187.4V464c0%2026.5%2021.5%2048%2048%2048h32v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h64v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h32c26.5%200%2048-21.5%2048-48zM96%20256a64%2064%200%201%201%20128%200%2064%2064%200%201%201-128%200m256-64a64%2064%200%201%201%200%20128%2064%2064%200%201%201%200-128%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M352%200c0-17.7-14.3-32-32-32s-32%2014.3-32%2032v64h-96c-53%200-96%2043-96%2096v224c0%2053%2043%2096%2096%2096h256c53%200%2096-43%2096-96V160c0-53-43-96-96-96h-96zM160%20368c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24M224%20176a48%2048%200%201%201%200%2096%2048%2048%200%201%201%200-96m144%2048a48%2048%200%201%201%2096%200%2048%2048%200%201%201-96%200m-304%200c0-17.7-14.3-32-32-32S0%20206.3%200%20224v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32zm544-32c-17.7%200-32%2014.3-32%2032v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32v-96c0-17.7-14.3-32-32-32%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M288%200H128c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032v151.5L7.5%20426.3C2.6%20435%200%20444.7%200%20454.7%200%20486.4%2025.6%20512%2057.3%20512h333.4c31.6%200%2057.3-25.6%2057.3-57.3%200-10-2.6-19.8-7.5-28.4L320%20215.5V64c17.7%200%2032-14.3%2032-32S337.7%200%20320%200zm-96%20215.5V64h64v151.5c0%2011.1%202.9%2022.1%208.4%2031.8L306%20320H142l41.6-72.7c5.5-9.7%208.4-20.6%208.4-31.8%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M0%20216C0%20149.7%2053.7%2096%20120%2096h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064H64c-35.3%200-64-28.7-64-64zm256%200c0-66.3%2053.7-120%20120-120h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064h-64c-35.3%200-64-28.7-64-64z%22/%3E%3C/svg%3E');}</style>
@@ -29,7 +29,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#theming-styling">
+<a class="md-skip" href="#a2ui-dynamic-rendering-within-mcp-applications">
           Skip to content
         </a>
 </div>
@@ -53,7 +53,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Theming &amp; Styling
+              A2UI in MCP Apps
             
           </span>
 </div>
@@ -439,20 +439,8 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    
-  
-    Theming &amp; Styling
-  
-
-    
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../theming/">
 <span class="md-ellipsis">
     
   
@@ -462,160 +450,9 @@
     
   </span>
 </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-a2ui-styling-philosophy">
-<span class="md-ellipsis">
-      
-        The A2UI Styling Philosophy
-      
-    </span>
-</a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#styling-layers">
-<span class="md-ellipsis">
-      
-        Styling Layers
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#layer-1-semantic-hints">
-<span class="md-ellipsis">
-      
-        Layer 1: Semantic Hints
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#layer-2-theme-configuration">
-<span class="md-ellipsis">
-      
-        Layer 2: Theme Configuration
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#layer-3-component-overrides">
-<span class="md-ellipsis">
-      
-        Layer 3: Component Overrides
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#common-styling-features">
-<span class="md-ellipsis">
-      
-        Common Styling Features
-      
-    </span>
-</a>
-<nav aria-label="Common Styling Features" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#dark-mode">
-<span class="md-ellipsis">
-      
-        Dark Mode
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#responsive-design">
-<span class="md-ellipsis">
-      
-        Responsive Design
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#custom-fonts">
-<span class="md-ellipsis">
-      
-        Custom Fonts
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#best-practices">
-<span class="md-ellipsis">
-      
-        Best Practices
-      
-    </span>
-</a>
-<nav aria-label="Best Practices" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#1-use-semantic-hints-not-visual-properties">
-<span class="md-ellipsis">
-      
-        1. Use Semantic Hints, Not Visual Properties
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#2-maintain-accessibility">
-<span class="md-ellipsis">
-      
-        2. Maintain Accessibility
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#3-use-design-tokens">
-<span class="md-ellipsis">
-      
-        3. Use Design Tokens
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#4-test-across-platforms">
-<span class="md-ellipsis">
-      
-        4. Test Across Platforms
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#next-steps">
-<span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_6_7" type="checkbox"/>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_6_7" type="checkbox"/>
 <label class="md-nav__link" for="__nav_6_7" id="__nav_6_7_label" tabindex="0">
 <span class="md-ellipsis">
     
@@ -627,7 +464,7 @@
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_6_7_label" class="md-nav" data-md-level="2">
+<nav aria-expanded="true" aria-labelledby="__nav_6_7_label" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_6_7">
 <span class="md-nav__icon md-icon"></span>
             
@@ -661,8 +498,20 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../guide_a2ui_dynamic_mcp/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    A2UI in MCP Apps
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
     
   
@@ -672,6 +521,130 @@
     
   </span>
 </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#prerequisites">
+<span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quick-start-run-the-sample">
+<span class="md-ellipsis">
+      
+        Quick Start: Run the Sample
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture-overview">
+<span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deep-dive-the-communication-flow">
+<span class="md-ellipsis">
+      
+        Deep Dive: The Communication Flow
+      
+    </span>
+</a>
+<nav aria-label="Deep Dive: The Communication Flow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#loading-a2ui-components-in-mcp-apps">
+<span class="md-ellipsis">
+      
+        Loading A2UI Components in MCP Apps
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#handling-user-actions">
+<span class="md-ellipsis">
+      
+        Handling User Actions
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sequence-diagram">
+<span class="md-ellipsis">
+      
+        Sequence Diagram
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#how-to-implement">
+<span class="md-ellipsis">
+      
+        How to Implement
+      
+    </span>
+</a>
+<nav aria-label="How to Implement" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-inlining-the-renderer">
+<span class="md-ellipsis">
+      
+        Step 1: Inlining the Renderer
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-2-leveraging-a2ui-over-mcp">
+<span class="md-ellipsis">
+      
+        Step 2: Leveraging A2UI-over-MCP
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-3-handling-user-actions-on-a2ui-components">
+<span class="md-ellipsis">
+      
+        Step 3: Handling User Actions on A2UI Components
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-considerations">
+<span class="md-ellipsis">
+      
+        Security Considerations
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -968,83 +941,65 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#the-a2ui-styling-philosophy">
+<a class="md-nav__link" href="#prerequisites">
 <span class="md-ellipsis">
       
-        The A2UI Styling Philosophy
+        Prerequisites
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#styling-layers">
+<a class="md-nav__link" href="#quick-start-run-the-sample">
 <span class="md-ellipsis">
       
-        Styling Layers
+        Quick Start: Run the Sample
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#layer-1-semantic-hints">
+<a class="md-nav__link" href="#architecture-overview">
 <span class="md-ellipsis">
       
-        Layer 1: Semantic Hints
+        Architecture Overview
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#layer-2-theme-configuration">
+<a class="md-nav__link" href="#deep-dive-the-communication-flow">
 <span class="md-ellipsis">
       
-        Layer 2: Theme Configuration
+        Deep Dive: The Communication Flow
       
     </span>
 </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#layer-3-component-overrides">
-<span class="md-ellipsis">
-      
-        Layer 3: Component Overrides
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#common-styling-features">
-<span class="md-ellipsis">
-      
-        Common Styling Features
-      
-    </span>
-</a>
-<nav aria-label="Common Styling Features" class="md-nav">
+<nav aria-label="Deep Dive: The Communication Flow" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#dark-mode">
+<a class="md-nav__link" href="#loading-a2ui-components-in-mcp-apps">
 <span class="md-ellipsis">
       
-        Dark Mode
+        Loading A2UI Components in MCP Apps
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#responsive-design">
+<a class="md-nav__link" href="#handling-user-actions">
 <span class="md-ellipsis">
       
-        Responsive Design
+        Handling User Actions
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#custom-fonts">
+<a class="md-nav__link" href="#sequence-diagram">
 <span class="md-ellipsis">
       
-        Custom Fonts
+        Sequence Diagram
       
     </span>
 </a>
@@ -1053,47 +1008,38 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#best-practices">
+<a class="md-nav__link" href="#how-to-implement">
 <span class="md-ellipsis">
       
-        Best Practices
+        How to Implement
       
     </span>
 </a>
-<nav aria-label="Best Practices" class="md-nav">
+<nav aria-label="How to Implement" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#1-use-semantic-hints-not-visual-properties">
+<a class="md-nav__link" href="#step-1-inlining-the-renderer">
 <span class="md-ellipsis">
       
-        1. Use Semantic Hints, Not Visual Properties
+        Step 1: Inlining the Renderer
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#2-maintain-accessibility">
+<a class="md-nav__link" href="#step-2-leveraging-a2ui-over-mcp">
 <span class="md-ellipsis">
       
-        2. Maintain Accessibility
+        Step 2: Leveraging A2UI-over-MCP
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#3-use-design-tokens">
+<a class="md-nav__link" href="#step-3-handling-user-actions-on-a2ui-components">
 <span class="md-ellipsis">
       
-        3. Use Design Tokens
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#4-test-across-platforms">
-<span class="md-ellipsis">
-      
-        4. Test Across Platforms
+        Step 3: Handling User Actions on A2UI Components
       
     </span>
 </a>
@@ -1102,10 +1048,10 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#next-steps">
+<a class="md-nav__link" href="#security-considerations">
 <span class="md-ellipsis">
       
-        Next Steps
+        Security Considerations
       
     </span>
 </a>
@@ -1132,167 +1078,209 @@
   </span>
 </a>
 </li>
+<li class="md-path__item">
+<a class="md-path__link" href="../a2ui_over_mcp/">
+<span class="md-ellipsis">
+    A2UI + MCP
+  </span>
+</a>
+</li>
 </ol>
 </nav>
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/guides/theming.md" title="View source of this page">
+<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/guides/guide_a2ui_dynamic_mcp.md" title="View source of this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
 </a>
-<h1 id="theming-styling">Theming &amp; Styling<a class="headerlink" href="#theming-styling" title="Permanent link">¶</a></h1>
-<p>Customize the look and feel of A2UI components to match your brand.</p>
-<h2 id="the-a2ui-styling-philosophy">The A2UI Styling Philosophy<a class="headerlink" href="#the-a2ui-styling-philosophy" title="Permanent link">¶</a></h2>
-<p>A2UI follows a <strong>renderer-controlled styling</strong> approach:</p>
+<h1 id="a2ui-dynamic-rendering-within-mcp-applications">A2UI Dynamic Rendering within MCP Applications<a class="headerlink" href="#a2ui-dynamic-rendering-within-mcp-applications" title="Permanent link">¶</a></h1>
+<p>This guide shows you how to serve rich, interactive A2UI interfaces within <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a> using Tools and Embedded Resources. By the end, you'll have a working MCP server that returns an MCP App which can render A2UI components and handle A2UI interactions. By supporting native A2UI within MCP Apps, your MCP server can securely collaborate with remote agents while maintaining consistency over UI styling. </p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
 <ul>
-<li><strong>Agents describe <em>what</em> to show</strong> (components and structure)</li>
-<li><strong>Renderers decide <em>how</em> it looks</strong> (colors, fonts, spacing)</li>
+<li><strong><a href="https://www.python.org/">Python 3.10+</a></strong></li>
+<li><strong><a href="https://docs.astral.sh/uv/">uv</a></strong> — fast Python package manager</li>
+<li><strong><a href="https://nodejs.org/">Node.js 18+</a></strong> (for the MCP Inspector)</li>
 </ul>
-<p>This ensures:</p>
-<ul>
-<li>✅ <strong>Brand consistency</strong>: All UIs match your app's design system</li>
-<li>✅ <strong>Security</strong>: Agents can't inject arbitrary CSS or styling</li>
-<li>✅ <strong>Accessibility</strong>: You control contrast, focus states, and ARIA attributes</li>
-<li>✅ <strong>Platform-native feel</strong>: Web apps look like web, mobile looks like mobile</li>
+<h2 id="quick-start-run-the-sample">Quick Start: Run the Sample<a class="headerlink" href="#quick-start-run-the-sample" title="Permanent link">¶</a></h2>
+<p>For detailed instructions on how to run this sample, please refer to the <a href="https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/README.md">README.md</a>.</p>
+<h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">¶</a></h2>
+<p>The system consists of three main actors interacting through a chain of communication:</p>
+<ol>
+<li><strong>Client Host Application</strong>: The outer container (e.g., an Angular app) that connects to the MCP Server and hosts the secure sandbox for the MCP App.</li>
+<li><strong>MCP Application (Sandboxed)</strong>: The untrusted third-party web application (e.g., a Lit or Angular micro-app) running inside a double-iframe sandbox. This app contains the A2UI surface.</li>
+<li><strong>MCP Server</strong>: The backend server providing the application resources and handling tool calls.</li>
+</ol>
+<h2 id="deep-dive-the-communication-flow">Deep Dive: The Communication Flow<a class="headerlink" href="#deep-dive-the-communication-flow" title="Permanent link">¶</a></h2>
+<p>A key aspect of this pattern is that the <strong>MCP App</strong> renders the A2UI payloads directly, rather than relying on the Client Host Application to do so.</p>
+<h3 id="loading-a2ui-components-in-mcp-apps">Loading A2UI Components in MCP Apps<a class="headerlink" href="#loading-a2ui-components-in-mcp-apps" title="Permanent link">¶</a></h3>
+<p>Here is the sequence of events for dynamically loading A2UI components into MCP Apps:</p>
+<ol>
+<li><strong>Trigger</strong>: The MCP App decides it needs to fetch or update UI content (e.g., on initialization or via a user-initiated Action).</li>
+<li><strong>Request</strong>: The MCP App sends a JSON-RPC request to the Host via <code>window.parent.postMessage</code>.<ul>
+<li><em>Example Method</em>: <code>ui/fetch_counter_a2ui</code></li>
 </ul>
-<h2 id="styling-layers">Styling Layers<a class="headerlink" href="#styling-layers" title="Permanent link">¶</a></h2>
-<p>A2UI styling works in layers:</p>
-<pre class="mermaid"><code>flowchart TD
-    A["1. Semantic Hints&lt;br/&gt;Agent provides hints&lt;br/&gt;(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration&lt;br/&gt;You configure&lt;br/&gt;(colors, fonts, spacing)"]
-    C["3. Component Overrides&lt;br/&gt;You customize&lt;br/&gt;(CSS/styles for specific components)"]
-    D["4. Rendered Output&lt;br/&gt;Native platform widgets"]
+</li>
+<li><strong>Relay</strong>: The Sandbox Proxy relays this message to the Client Host.</li>
+<li><strong>MCP Call</strong>: The Client Host translates this custom message into a standard MCP <code>tools/call</code> request to the MCP Server.<ul>
+<li><em>Example Tool</em>: <code>fetch_counter_a2ui</code></li>
+</ul>
+</li>
+<li><strong>Response</strong>: The MCP Server executes the tool and returns a result containing an <code>application/json+a2ui</code> resource.</li>
+<li><strong>Response forwarding</strong>: The Host receives the tool result and forwards it back down through the Sandbox Proxy to the MCP App.</li>
+<li><strong>Rendering</strong>: The MCP App extracts the A2UI JSON payload from the resource and feeds it into its local A2UI <code>MessageProcessor</code>, which updates the A2UI surface dynamically.</li>
+</ol>
+<h3 id="handling-user-actions">Handling User Actions<a class="headerlink" href="#handling-user-actions" title="Permanent link">¶</a></h3>
+<p>Interactivity within the rendered A2UI surface is handled by reversing the flow:</p>
+<ol>
+<li>A user clicks a button within the A2UI surface inside the MCP App.</li>
+<li>The A2UI component triggers a <code>userAction</code>.</li>
+<li>The MCP App captures this event via the A2UI <code>MessageProcessor.events</code> subscription.</li>
+<li>The MCP App packages the action and sends it as a JSON-RPC message to the Host (e.g., <code>ui/increase_counter</code>).</li>
+<li>The Host calls the corresponding tool on the MCP Server.</li>
+<li>The Server returns a new A2UI payload (representing the updated state), which is piped back to the MCP App to update the rendering.</li>
+</ol>
+<h3 id="sequence-diagram">Sequence Diagram<a class="headerlink" href="#sequence-diagram" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Server as MCP Server
+    participant Host as Client Host Application
+    participant Proxy as Sandbox Proxy
+    participant App as MCP App (Sandbox)
+    participant A2UI as A2UI Surface
 
-    A --&gt; B --&gt; C --&gt; D</code></pre>
-<h2 id="layer-1-semantic-hints">Layer 1: Semantic Hints<a class="headerlink" href="#layer-1-semantic-hints" title="Permanent link">¶</a></h2>
-<p>Agents provide semantic hints (not visual styles) to guide rendering:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span>
-</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">      </span><span class="nt">"usageHint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"h1"</span>
-</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="p">}</span>
+    rect rgb(240, 248, 255)
+    Note right of Server: INITIALIZATION &amp; LOADING
+    Note over Host: 1. Loaded from Hosting server
+    Host-&gt;&gt;Server: 2. Fetch MCP App resource
+    Server--&gt;&gt;Host: Return MCP App resource
+    Host-&gt;&gt;Proxy: 3a. Load Sandbox Proxy
+    Proxy-&gt;&gt;App: 3b. Serve App in isolated iframe
+    Note over App: 4. User action triggers resource  request
+    App-&gt;&gt;Proxy: Request tool call
+    Proxy-&gt;&gt;Host: Relay Request
+    Host-&gt;&gt;Server: Forward Tool Call
+    Server--&gt;&gt;Host: 5. Respond with A2UI JSON payload
+    Host-&gt;&gt;Proxy: Relay payload
+    Proxy-&gt;&gt;App: 6. Hand down payload to MCP App
+    App-&gt;&gt;A2UI: 7. Renders A2UI Components
+    end
+
+    rect rgb(255, 245, 238)
+    Note right of Server: USER INTERACTION
+    Note over A2UI: Click on A2UI Button
+    A2UI-&gt;&gt;App: 8. A2UI Button triggers UserAction
+    Note over App: 9. Translate A2UI UserAction to JSON-RPC message
+    App-&gt;&gt;Proxy: Forward JSON-RPC message
+    Proxy-&gt;&gt;Host: Relay JSON-RPC message
+    Note over Host: 10. Map Action to Tool Call
+    Host-&gt;&gt;Server: Forward Tool Call
+    Server--&gt;&gt;Host: 11. Respond with A2UI payload (datamodelupdate)
+    Host-&gt;&gt;Proxy: Relay payload
+    Proxy-&gt;&gt;App: 12. Pipe payload to MCP App
+    App-&gt;&gt;A2UI: Update rendering
+    end</code></pre>
+<h2 id="how-to-implement">How to Implement<a class="headerlink" href="#how-to-implement" title="Permanent link">¶</a></h2>
+<p>To build your own MCP App with A2UI capabilities, follow these steps:</p>
+<h3 id="step-1-inlining-the-renderer">Step 1: Inlining the Renderer<a class="headerlink" href="#step-1-inlining-the-renderer" title="Permanent link">¶</a></h3>
+<p>MCP Apps are typically delivered as a single HTML resource from the MCP Server. To achieve this with a modern framework like Angular or React:</p>
+<ol>
+<li>Build your application normally to produce static assets (<code>index.html</code>, <code>.js</code>, <code>.css</code>).</li>
+<li>Use a post-build script (like the <a href="https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/inline.js"><code>inline.js</code></a> script in the sample) to read the <code>index.html</code> and replace external <code>&lt;script src="..."&gt;</code> and <code>&lt;link rel="stylesheet" href="..."&gt;</code> tags with inline <code>&lt;script&gt;</code> and <code>&lt;style&gt;</code> tags containing the actual file contents.</li>
+<li>This produces a self-contained HTML file that can be safely loaded via <code>srcdoc</code> in the restricted iframe.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Using Vite to inline </p>
+<p>If your project uses Vite (common for React, Vue, or Lit), you can achieve the same single-file output automatically using plugins like <code>vite-plugin-singlefile</code>. This eliminates the need for a custom post-build script by handling the inlining during the build process itself.</p>
+<p><strong>How to use it:</strong>
+1.  <strong>Install the plugin</strong>:
+    <code>bash
+    npm install -D vite-plugin-singlefile</code>
+2.  <strong>Configure Vite</strong>: Add the plugin to your <code>vite.config.ts</code> (or <code>.js</code>):
+    <div class="language-typescript highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">defineConfig</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'vite'</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">viteSingleFile</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'vite-plugin-singlefile'</span>
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">defineConfig</span><span class="p">({</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="nx">plugins</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">viteSingleFile</span><span class="p">()],</span>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="p">})</span>
 </span></code></pre></div>
-<p><strong>Common <code>usageHint</code> values:</strong></p>
-<ul>
-<li>Text: <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code>, <code>body</code>, <code>caption</code></li>
-<li>Other components have their own hints (see <a href="../../reference/components/">Component Reference</a>)</li>
-</ul>
-<p>The client renderer maps these semantic hints to actual visual styles based on your theme and design system.</p>
-<h2 id="layer-2-theme-configuration">Layer 2: Theme Configuration<a class="headerlink" href="#layer-2-theme-configuration" title="Permanent link">¶</a></h2>
-<p>Each renderer provides a way to configure your design system globally, including:</p>
-<ul>
-<li><strong>Colors</strong>: Primary, secondary, background, surface, error, success, etc.</li>
-<li><strong>Typography</strong>: Font families, sizes, weights, line heights</li>
-<li><strong>Spacing</strong>: Base units and scale (xs, sm, md, lg, xl)</li>
-<li><strong>Shapes</strong>: Border radius values</li>
-<li><strong>Elevation</strong>: Shadow styles for depth</li>
-</ul>
-<p>TODO: Add platform-specific theming guides:</p>
-<p><strong>Web (Lit):</strong></p>
-<ul>
-<li>How to configure theme via renderer initialization</li>
-<li>Available theme properties</li>
-</ul>
-<p><strong>Angular:</strong></p>
-<ul>
-<li>Integration with Angular Material theming</li>
-<li>Standalone A2UI theme configuration</li>
-</ul>
-<p><strong>Flutter:</strong></p>
-<ul>
-<li>How A2UI uses Flutter's <code>ThemeData</code></li>
-<li>Custom theme properties</li>
-</ul>
-<p><strong>See working examples:</strong></p>
-<ul>
-<li><a href="https://github.com/google/a2ui/tree/main/samples/client/lit">Lit samples</a></li>
-<li><a href="https://github.com/google/a2ui/tree/main/samples/client/angular">Angular samples</a></li>
-<li><a href="https://docs.flutter.dev/ai/genui">Flutter GenUI docs</a></li>
-</ul>
-<h2 id="layer-3-component-overrides">Layer 3: Component Overrides<a class="headerlink" href="#layer-3-component-overrides" title="Permanent link">¶</a></h2>
-<p>Beyond global theming, you can override styles for specific components:</p>
-<p><strong>Web renderers:</strong></p>
-<ul>
-<li>CSS custom properties (CSS variables) for fine-grained control</li>
-<li>Standard CSS selectors for component-specific overrides</li>
-</ul>
-<p><strong>Flutter:</strong></p>
-<ul>
-<li>Widget-specific theme overrides via <code>ThemeData</code></li>
-</ul>
-<p>TODO: Add detailed component override examples for each platform.</p>
-<h2 id="common-styling-features">Common Styling Features<a class="headerlink" href="#common-styling-features" title="Permanent link">¶</a></h2>
-<h3 id="dark-mode">Dark Mode<a class="headerlink" href="#dark-mode" title="Permanent link">¶</a></h3>
-<p>A2UI renderers typically support automatic dark mode based on system preferences:</p>
-<ul>
-<li>Auto-detect system theme (<code>prefers-color-scheme</code>)</li>
-<li>Manual light/dark theme selection</li>
-<li>Custom dark theme configuration</li>
-</ul>
-<p>TODO: Add dark mode configuration examples.</p>
-<h3 id="responsive-design">Responsive Design<a class="headerlink" href="#responsive-design" title="Permanent link">¶</a></h3>
-<p>A2UI components are responsive by default. You can further customize responsive behavior:</p>
-<ul>
-<li>Media queries for different screen sizes</li>
-<li>Container queries for component-level responsiveness</li>
-<li>Responsive spacing and typography scales</li>
-</ul>
-<p>TODO: Add responsive design examples.</p>
-<h3 id="custom-fonts">Custom Fonts<a class="headerlink" href="#custom-fonts" title="Permanent link">¶</a></h3>
-<p>Load and use custom fonts in your A2UI application:</p>
-<ul>
-<li>Web fonts (Google Fonts, etc.)</li>
-<li>Self-hosted fonts</li>
-<li>Platform-specific font loading</li>
-</ul>
-<p>TODO: Add custom font examples.</p>
-<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">¶</a></h2>
-<h3 id="1-use-semantic-hints-not-visual-properties">1. Use Semantic Hints, Not Visual Properties<a class="headerlink" href="#1-use-semantic-hints-not-visual-properties" title="Permanent link">¶</a></h3>
-<p>Agents should provide semantic hints (<code>usageHint</code>), never visual styles:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1">// ✅ Good: Semantic hint</span>
-</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="p">{</span>
-</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">      </span><span class="nt">"usageHint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"h1"</span>
-</span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-9"><a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="p">}</span>
-</span><span id="__span-1-10"><a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="c1">// ❌ Bad: Visual properties (not supported)</span>
-</span><span id="__span-1-12"><a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="p">{</span>
-</span><span id="__span-1-13"><a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-14"><a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-15"><a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-1-16"><a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">      </span><span class="nt">"fontSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span>
-</span><span id="__span-1-17"><a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">      </span><span class="nt">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#FF0000"</span>
-</span><span id="__span-1-18"><a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-19"><a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-20"><a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="p">}</span>
+This will ensure that all JS and CSS assets are inlined into the <code>index.html</code> file on build, making it ready to be served by your MCP server as a single resource.</p>
+</div>
+<h3 id="step-2-leveraging-a2ui-over-mcp">Step 2: Leveraging A2UI-over-MCP<a class="headerlink" href="#step-2-leveraging-a2ui-over-mcp" title="Permanent link">¶</a></h3>
+<p>Your inlined app is now running in the sandbox. To leverage A2UI:</p>
+<ol>
+<li><strong>Include the A2UI Angular/Lit libraries</strong> in your app's bundle.</li>
+<li><strong>Define a communication contract</strong> with your Host to interact with the MCP Server.</li>
+<li>When you receive the response from the Host, look for the <code>application/json+a2ui</code> mimeType in the content.</li>
+<li>Parse the JSON text and pass it to the A2UI <a href="https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_8/data/processor.ts"><code>MessageProcessor</code></a>.</li>
+</ol>
+<p><strong>Example: Fetching and Rendering A2UI</strong></p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1">// 1. Request A2UI data from Host</span>
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">callHostMethod</span><span class="p">(</span><span class="s2">"ui/fetch_counter_a2ui"</span><span class="p">);</span>
+</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1">// 2. Find and parse the A2UI resource</span>
+</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="kd">const</span><span class="w"> </span><span class="nx">a2uiResource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span>
+</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="nx">c</span><span class="p">.</span><span class="kr">type</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'resource'</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">resource</span><span class="o">?</span><span class="p">.</span><span class="nx">mimeType</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'application/json+a2ui'</span>
+</span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="p">);</span>
+</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">a2uiResource</span><span class="o">?</span><span class="p">.</span><span class="nx">resource</span><span class="o">?</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">a2uiResource</span><span class="p">.</span><span class="nx">resource</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+</span><span id="__span-1-11"><a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">processMessages</span><span class="p">(</span><span class="nx">messages</span><span class="p">);</span>
+</span><span id="__span-1-12"><a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="p">}</span>
+</span><span id="__span-1-13"><a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="c1">// Utility for JSON-RPC communication</span>
+</span><span id="__span-1-16"><a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="kd">function</span><span class="w"> </span><span class="nx">callHostMethod</span><span class="p">(</span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{})</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-17"><a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span><span class="w"> </span><span class="nx">reject</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-18"><a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">requestId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">-</span><span class="si">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+</span><span id="__span-1-19"><a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a>
+</span><span id="__span-1-20"><a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="o">:</span><span class="w"> </span><span class="kt">MessageEvent</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-21"><a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="nx">requestId</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-1-22"><a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">            </span><span class="nb">window</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span><span class="w"> </span><span class="nx">handler</span><span class="p">);</span>
+</span><span id="__span-1-23"><a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a>
+</span><span id="__span-1-24"><a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-25"><a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">                </span><span class="nx">reject</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">);</span>
+</span><span id="__span-1-26"><a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-27"><a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">                </span><span class="nx">resolve</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
+</span><span id="__span-1-28"><a href="#__codelineno-1-28" id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-1-29"><a href="#__codelineno-1-29" id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">        </span><span class="p">};</span>
+</span><span id="__span-1-30"><a href="#__codelineno-1-30" id="__codelineno-1-30" name="__codelineno-1-30"></a>
+</span><span id="__span-1-31"><a href="#__codelineno-1-31" id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="w">        </span><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span><span class="w"> </span><span class="nx">handler</span><span class="p">);</span>
+</span><span id="__span-1-32"><a href="#__codelineno-1-32" id="__codelineno-1-32" name="__codelineno-1-32"></a>
+</span><span id="__span-1-33"><a href="#__codelineno-1-33" id="__codelineno-1-33" name="__codelineno-1-33"></a><span class="w">        </span><span class="nb">window</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
+</span><span id="__span-1-34"><a href="#__codelineno-1-34" id="__codelineno-1-34" name="__codelineno-1-34"></a><span class="w">            </span><span class="nx">jsonrpc</span><span class="o">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span>
+</span><span id="__span-1-35"><a href="#__codelineno-1-35" id="__codelineno-1-35" name="__codelineno-1-35"></a><span class="w">            </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">requestId</span><span class="p">,</span>
+</span><span id="__span-1-36"><a href="#__codelineno-1-36" id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="w">            </span><span class="nx">method</span><span class="p">,</span>
+</span><span id="__span-1-37"><a href="#__codelineno-1-37" id="__codelineno-1-37" name="__codelineno-1-37"></a><span class="w">            </span><span class="nx">params</span>
+</span><span id="__span-1-38"><a href="#__codelineno-1-38" id="__codelineno-1-38" name="__codelineno-1-38"></a><span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="s2">"*"</span><span class="p">);</span><span class="w"> </span><span class="c1">// Note: Replace "*" with explicit target origin in production</span>
+</span><span id="__span-1-39"><a href="#__codelineno-1-39" id="__codelineno-1-39" name="__codelineno-1-39"></a><span class="w">    </span><span class="p">});</span>
+</span><span id="__span-1-40"><a href="#__codelineno-1-40" id="__codelineno-1-40" name="__codelineno-1-40"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="2-maintain-accessibility">2. Maintain Accessibility<a class="headerlink" href="#2-maintain-accessibility" title="Permanent link">¶</a></h3>
+<h3 id="step-3-handling-user-actions-on-a2ui-components">Step 3: Handling User Actions on A2UI Components<a class="headerlink" href="#step-3-handling-user-actions-on-a2ui-components" title="Permanent link">¶</a></h3>
+<p>To handle interactivity within the rendered A2UI surface, your MCP App must capture A2UI events and forward them to the Host using JSON-RPC.</p>
+<p><strong>Example: Handling User Actions</strong></p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1">// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/main.ts))</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">userAction</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`ui/</span><span class="si">${</span><span class="nx">event</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">userAction</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+</span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">userAction</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">      </span><span class="c1">// Translate A2UI UserAction to JSON-RPC, send to Host, and await response</span>
+</span><span id="__span-2-10"><a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">callHostMethod</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="p">);</span>
+</span><span id="__span-2-11"><a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">      </span><span class="c1">// Parse the updated A2UI payload and update the rendering</span>
+</span><span id="__span-2-13"><a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">extractA2UIMessages</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</span><span id="__span-2-14"><a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">messages</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-15"><a href="#__codelineno-2-15" id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">          </span><span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">processMessages</span><span class="p">(</span><span class="nx">messages</span><span class="p">);</span>
+</span><span id="__span-2-16"><a href="#__codelineno-2-16" id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-17"><a href="#__codelineno-2-17" id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-18"><a href="#__codelineno-2-18" id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="sb">`Error handling user action[</span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb">]:`</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+</span><span id="__span-2-19"><a href="#__codelineno-2-19" id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-20"><a href="#__codelineno-2-20" id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="p">});</span>
+</span></code></pre></div>
+<p>This pattern enables the MCP App to serve as a dynamic interface for the MCP Server's A2UI capabilities while maintaining strict security isolation.</p>
+<h2 id="security-considerations">Security Considerations<a class="headerlink" href="#security-considerations" title="Permanent link">¶</a></h2>
 <ul>
-<li>Ensure sufficient color contrast (WCAG AA: 4.5:1 for normal text, 3:1 for large text)</li>
-<li>Test with screen readers</li>
-<li>Support keyboard navigation</li>
-<li>Test in both light and dark modes</li>
-</ul>
-<h3 id="3-use-design-tokens">3. Use Design Tokens<a class="headerlink" href="#3-use-design-tokens" title="Permanent link">¶</a></h3>
-<p>Define reusable design tokens (colors, spacing, etc.) and reference them throughout your styles for consistency.</p>
-<h3 id="4-test-across-platforms">4. Test Across Platforms<a class="headerlink" href="#4-test-across-platforms" title="Permanent link">¶</a></h3>
-<ul>
-<li>Test your theming on all target platforms (web, mobile, desktop)</li>
-<li>Verify both light and dark modes</li>
-<li>Check different screen sizes and orientations</li>
-<li>Ensure consistent brand experience across platforms</li>
-</ul>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">¶</a></h2>
-<ul>
-<li><strong><a href="../defining-your-own-catalog/">Defining Your Own Catalog</a></strong>: Build custom components with your styling</li>
-<li><strong><a href="../../reference/components/">Component Reference</a></strong>: See styling options for all components</li>
-<li><strong><a href="../client-setup/">Client Setup</a></strong>: Set up the renderer in your app</li>
+<li><strong>Explicit Target Origin</strong>: Always use specific target origins (e.g., <code>'https://trusted-host.com'</code>) instead of <code>*</code> when calling <code>postMessage</code> if the host origin is known. This prevents malicious iframes from intercepting your RPC requests.</li>
+<li><strong>Null Origin Handling</strong>: Remember that inside a strict sandbox (<code>sandbox="allow-scripts"</code> without <code>allow-same-origin</code>), <code>window.location.origin</code> will evaluate to <code>"null"</code>. You must validate incoming messages carefully by comparing <code>event.source</code> against the expected window object (e.g., <code>window.parent</code>).</li>
 </ul>
 </article>
 </div>
@@ -1306,7 +1294,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Authoring Custom Components" class="md-footer__link md-footer__link--prev" href="../authoring-components/">
+<a aria-label="Previous: MCP Apps in A2UI" class="md-footer__link md-footer__link--prev" href="../mcp-apps-in-a2ui-surface/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </div>
@@ -1315,17 +1303,17 @@
                 Previous
               </span>
 <div class="md-ellipsis">
-                Authoring Custom Components
+                MCP Apps in A2UI
               </div>
 </div>
 </a>
-<a aria-label="Next: A2UI over MCP" class="md-footer__link md-footer__link--next" href="../a2ui_over_mcp/">
+<a aria-label="Next: Component Gallery" class="md-footer__link md-footer__link--next" href="../../reference/components/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                A2UI over MCP
+                Component Gallery
               </div>
 </div>
 <div class="md-footer__button md-icon">
