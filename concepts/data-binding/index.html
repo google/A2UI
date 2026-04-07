@@ -2243,14 +2243,18 @@
 
 
 <h1 id="data-binding">Data Binding<a class="headerlink" href="#data-binding" title="Permanent link">&para;</a></h1>
-<p>Data binding connects UI components to application state using JSON Pointer paths (<a href="https://tools.ietf.org/html/rfc6901">RFC 6901</a>). It's what allows A2UI to efficiently define layouts for large arrays of data, or to show updated content without being regenerated from scratch.</p>
+<p>Data binding connects UI components to application state using JSON Pointer paths (<a href="https://tools.ietf.org/html/rfc6901">RFC 6901</a>). It allows A2UI to efficiently define layouts for large arrays of data and to show updated content without regenerating it from scratch.</p>
 <h2 id="structure-vs-state">Structure vs. State<a class="headerlink" href="#structure-vs-state" title="Permanent link">&para;</a></h2>
 <p>A2UI separates:</p>
 <ol>
 <li><strong>UI Structure</strong> (Components): What the interface looks like</li>
 <li><strong>Application State</strong> (Data Model): What data it displays</li>
 </ol>
-<p>This enables: reactive updates, data-driven UIs, reusable templates, and bidirectional binding.</p>
+<p>This enables:
+- Reactive updates.
+- Data-driven UIs.
+- Reusable templates.
+- Bidirectional binding.</p>
 <h2 id="the-data-model">The Data Model<a class="headerlink" href="#the-data-model" title="Permanent link">&para;</a></h2>
 <p>Each surface has a JSON object holding state:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
@@ -2409,8 +2413,10 @@
 </tbody>
 </table>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
-<p><strong>1. Use granular updates</strong> - Update only changed paths:
-<div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+<ul>
+<li>
+<p><strong>Use granular updates</strong>: Update only changed paths.
+  <div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;dataModelUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/user&quot;</span><span class="p">,</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">&quot;contents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -2419,12 +2425,18 @@
 </span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="p">}</span>
 </span></code></pre></div></p>
-<p><strong>2. Organize by domain</strong> - Group related data:
-<div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span><span class="nt">&quot;user&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;cart&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;ui&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
+</li>
+<li>
+<p><strong>Organize by domain</strong>: Group related data.
+  <div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span><span class="nt">&quot;user&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;cart&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;ui&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}}</span>
 </span></code></pre></div></p>
-<p><strong>3. Pre-compute display values</strong> - Agent formats data (currency, dates) before sending:
-<div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$19.99&quot;</span><span class="p">}</span><span class="w">  </span><span class="c1">// Not: {&quot;price&quot;: 19.99}</span>
+</li>
+<li>
+<p><strong>Pre-compute display values</strong>: Formats data (currency, dates) on the agent before sending.
+  <div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$19.99&quot;</span><span class="p">}</span><span class="w">  </span><span class="c1">// Not: {&quot;price&quot;: 19.99}</span>
 </span></code></pre></div></p>
+</li>
+</ul>
 
 
 

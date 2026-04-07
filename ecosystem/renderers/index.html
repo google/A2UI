@@ -2212,15 +2212,12 @@
 
 <h1 id="ecosystem-renderers">Ecosystem Renderers<a class="headerlink" href="#ecosystem-renderers" title="Permanent link">&para;</a></h1>
 <p>Community and third-party A2UI renderer implementations.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>These renderers are maintained by their respective authors, not the A2UI team.
-Check each project for compatibility, version support, and maintenance status.</p>
-</div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>Looking for the <strong>official</strong> A2UI React renderer? See <a href="https://www.npmjs.com/package/@a2ui/react"><code>@a2ui/react</code></a> — the core A2UI React renderer maintained by the A2UI team.</p>
-</div>
+<blockquote>
+<p>NOTE
+These renderers are maintained by their respective authors, not the A2UI team. Check each project for compatibility, version support, and maintenance status.</p>
+<p>TIP
+Looking for the <strong>official</strong> A2UI React renderer? See <a href="https://www.npmjs.com/package/@a2ui/react"><code>@a2ui/react</code></a> — the core A2UI React renderer maintained by the A2UI team.</p>
+</blockquote>
 <h2 id="community-renderers">Community Renderers<a class="headerlink" href="#community-renderers" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2287,9 +2284,9 @@ Check each project for compatibility, version support, and maintenance status.</
 <h3 id="notable-mentions">Notable Mentions<a class="headerlink" href="#notable-mentions" title="Permanent link">&para;</a></h3>
 <p>These projects are early-stage or experimental:</p>
 <ul>
-<li><strong><a href="https://www.npmjs.com/package/@xpert-ai/a2ui-react">xpert-ai/a2ui-react</a></strong> (<code>@xpert-ai/a2ui-react</code>) — React renderer with ShadCN UI components (v0.0.1, published Jan 2026)</li>
-<li><strong><a href="https://github.com/josh-english-2k18/a2ui-3d-renderer">josh-english-2k18/a2ui-3d-renderer</a></strong> — Experimental Three.js/WebGL 3D renderer for A2UI (~2 stars)</li>
-<li><strong><a href="https://github.com/AINative-Studio/ai-kit-a2ui">AINative-Studio/ai-kit-a2ui</a></strong> — React + ShadCN renderer for the AIKit framework (~2 stars)</li>
+<li><strong><a href="https://www.npmjs.com/package/@xpert-ai/a2ui-react">xpert-ai/a2ui-react</a></strong> (<code>@xpert-ai/a2ui-react</code>) — React renderer with ShadCN UI components (v0.0.1, published Jan 2026).</li>
+<li><strong><a href="https://github.com/josh-english-2k18/a2ui-3d-renderer">josh-english-2k18/a2ui-3d-renderer</a></strong> — Experimental Three.js/WebGL 3D renderer for A2UI (~2 stars).</li>
+<li><strong><a href="https://github.com/AINative-Studio/ai-kit-a2ui">AINative-Studio/ai-kit-a2ui</a></strong> — React + ShadCN renderer for the AIKit framework (~2 stars).</li>
 </ul>
 <h3 id="related-projects">Related Projects<a class="headerlink" href="#related-projects" title="Permanent link">&para;</a></h3>
 <p>These projects are not directly A2UI renderers but are closely related and do support A2UI:</p>
@@ -2317,8 +2314,9 @@ Check each project for compatibility, version support, and maintenance status.</
 <p><strong>sivamrudram-eng/a2ui-react-native</strong> is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.</p>
 <p><strong>BBC6BAE9/a2ui-swift</strong> (formerly <strong>a2ui-swiftui</strong>) is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.</p>
 <h2 id="submitting-a-renderer">Submitting a Renderer<a class="headerlink" href="#submitting-a-renderer" title="Permanent link">&para;</a></h2>
-<p>Built an A2UI renderer? We'd love to list it here.</p>
+<p>If you have built an A2UI renderer, submit it to be listed here.</p>
 <h3 id="how-to-submit">How to submit<a class="headerlink" href="#how-to-submit" title="Permanent link">&para;</a></h3>
+<p>To submit a renderer, follow these steps:</p>
 <ol>
 <li><strong>Fork</strong> the <a href="https://github.com/google/A2UI">google/A2UI</a> repository</li>
 <li><strong>Edit</strong> this file (<code>docs/ecosystem/renderers.md</code>) — add a row to the Community Renderers table with your renderer's name, platform, npm package (if any), version support, and a link to the source</li>
@@ -2327,13 +2325,13 @@ Check each project for compatibility, version support, and maintenance status.</
 </ol>
 <p>Need inspiration? Browse the <strong><a href="https://github.com/google/A2UI/tree/main/samples">community samples</a></strong> in the repo — these cover Angular, Lit, and ADK-based agents and are a good starting point.</p>
 <h3 id="what-makes-a-good-community-renderer">What makes a good community renderer?<a class="headerlink" href="#what-makes-a-good-community-renderer" title="Permanent link">&para;</a></h3>
-<p>A listing is more likely to be accepted and used if it:</p>
+<p>A listing is more likely to be accepted and used if it meets the following criteria:</p>
 <ul>
-<li>Has <strong>published source code</strong> (open-source preferred, MIT or Apache 2.0)</li>
-<li>Clearly states <strong>which A2UI spec version</strong> it supports (v0.8, v0.9, or both)</li>
-<li>Covers the <strong>basic components</strong> from the other A2UI renderers: text, buttons, inputs, basic layout components, etc</li>
-<li>Includes a <strong>README</strong> with install instructions and a minimal usage example</li>
-<li>Is <strong>actively maintained</strong> — flag it as archived if you're no longer supporting it</li>
+<li>Has <strong>published source code</strong> (open-source preferred, MIT or Apache 2.0).</li>
+<li>Clearly states <strong>which A2UI spec version</strong> it supports (v0.8, v0.9, or both).</li>
+<li>Covers the <strong>basic components</strong> from the other A2UI renderers: text, buttons, inputs, basic layout components, etc.</li>
+<li>Includes a <strong>README</strong> with install instructions and a minimal usage example.</li>
+<li>Is <strong>actively maintained</strong> — flag it as archived if you're no longer supporting it.</li>
 </ul>
 <p>Community renderers don't need to be production-ready to be listed — experimental and early-stage projects are welcome in the Notable Mentions section.</p>
 

@@ -2448,10 +2448,11 @@
 </video>
 
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>Ensure you have the following installed before you begin:</p>
 <ul>
-<li><strong>Python 3.10+</strong></li>
-<li><strong><a href="https://docs.astral.sh/uv/">uv</a></strong> — fast Python package manager</li>
-<li><strong>Node.js 18+</strong> (for the MCP Inspector)</li>
+<li><strong>Python</strong> (version 3.10 or later).</li>
+<li><strong><a href="https://docs.astral.sh/uv/">uv</a></strong> for fast Python package management.</li>
+<li><strong>Node.js</strong> (version 18 or later) for the MCP Inspector.</li>
 </ul>
 <h2 id="quick-start-run-the-sample">Quick Start: Run the Sample<a class="headerlink" href="#quick-start-run-the-sample" title="Permanent link">&para;</a></h2>
 <p>Before diving into the protocol details, let's get a working example running. The A2UI repo includes a ready-to-go MCP recipe demo.</p>
@@ -2472,12 +2473,12 @@
 <li>Click <strong>List Tools</strong> → you'll see <code>get_recipe_a2ui</code></li>
 <li>Run the tool → the response contains A2UI JSON that renders a recipe card</li>
 </ol>
-<div class="admonition warning">
-<p class="admonition-title">Note</p>
+<blockquote>
+<p>NOTE: Note</p>
 <p>The sample uses a local path reference to the A2UI Agent SDK. For your own projects, install from PyPI:
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>a2ui-agent-sdk
 </span></code></pre></div></p>
-</div>
+</blockquote>
 <p>See all samples at <a href="https://github.com/google/A2UI/tree/main/samples/agent/mcp"><code>samples/agent/mcp/</code></a>.</p>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p>An MCP server returns A2UI content as <strong>Embedded Resources</strong> inside tool responses. The client detects the <code>application/json+a2ui</code> MIME type and routes the payload to an A2UI renderer.</p>
@@ -2599,10 +2600,10 @@
 </span><span id="__span-6-45"><a id="__codelineno-6-45" name="__codelineno-6-45" href="#__codelineno-6-45"></a>
 </span><span id="__span-6-46"><a id="__codelineno-6-46" name="__codelineno-6-46" href="#__codelineno-6-46"></a>    <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">CallToolResult</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="p">[</span><span class="n">text_content</span><span class="p">,</span> <span class="n">a2ui_resource</span><span class="p">])</span>
 </span></code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Tip</p>
+<blockquote>
+<p>TIP: Tip</p>
 <p>Always include a <code>TextContent</code> alongside your A2UI resource. Clients that don't support A2UI will fall back to showing the text.</p>
-</div>
+</blockquote>
 <h2 id="handling-user-actions">Handling User Actions<a class="headerlink" href="#handling-user-actions" title="Permanent link">&para;</a></h2>
 <p>Interactive components like <code>Button</code> can trigger actions that are sent back to the server as MCP tool calls.</p>
 <h3 id="1-define-a-button-with-an-action">1. Define a Button with an Action<a class="headerlink" href="#1-define-a-button-with-an-action" title="Permanent link">&para;</a></h3>

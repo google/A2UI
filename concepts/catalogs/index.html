@@ -2812,7 +2812,7 @@
 <p>While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system.</p>
 <p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons. This catalog can be built entirely from scratch, or it can import definitions from the Basic Catalog to save time (e.g., using the Basic text definitions while defining your own unique Card component).</p>
 <p>For simplicity we recommend building catalogs that directly reflect a client's design system rather than trying to map the Basic Catalog to it through an adapter. Since A2UI is designed for GenUI, we expect the LLM can interpret different catalogs for different clients.</p>
-<p><a href="../samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json">See an example Rizzcharts catalog</a></p>
+<p><a href="../../samples/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json">See an example Rizzcharts catalog</a></p>
 <h3 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2990,7 +2990,7 @@
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">message?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>You can see a working example of a client renderer in the <a href="../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts">Rizzcharts demo</a>.</p>
+<p>You can see a working example of a client renderer in the <a href="../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts">Rizzcharts demo</a>.</p>
 <h2 id="a2ui-catalog-negotiation">A2UI Catalog Negotiation<a class="headerlink" href="#a2ui-catalog-negotiation" title="Permanent link">&para;</a></h2>
 <p>Because clients and agents can support multiple catalogs, they must agree on which catalog to use through a catalog negotiation handshake.</p>
 <h3 id="step-1-agent-advertises-its-support-catalogs-optional">Step 1: Agent advertises its support catalogs (optional)<a class="headerlink" href="#step-1-agent-advertises-its-support-catalogs-optional" title="Permanent link">&para;</a></h3>
@@ -3165,7 +3165,7 @@
 </span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="inline-catalogs">Inline Catalogs<a class="headerlink" href="#inline-catalogs" title="Permanent link">&para;</a></h2>
-<p>Inline catalogs sent by the client at runtime are supported but not recommended in production. More details about them can be found <a href="../../specification/v0_9/docs/a2ui_protocol/#client-capabilities--metadata">here</a>.</p>
+<p>Inline catalogs sent by the client at runtime are supported but not recommended in production. More details about them can be found <a href="../../specification/v0_9/docs/a2ui_protocol.md#client-capabilities--metadata">here</a>.</p>
 
 
 

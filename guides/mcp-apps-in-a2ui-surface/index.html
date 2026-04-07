@@ -1164,7 +1164,7 @@
 <h1 id="mcp-apps-integration-in-a2ui-surfaces">MCP Apps Integration in A2UI Surfaces<a class="headerlink" href="#mcp-apps-integration-in-a2ui-surfaces" title="Permanent link">¶</a></h1>
 <p>This guide explains how <strong>Model Context Protocol (MCP) Applications</strong> are integrated and displayed within the <strong>A2UI</strong> surface, along with the security model and testing guidelines.</p>
 <blockquote>
-<p><strong>Looking for the core A2UI-over-MCP protocol?</strong> See <a href="../a2ui_over_mcp/">A2UI over MCP</a> for how to return A2UI JSON payloads from MCP tool calls.</p>
+<p>NOTE: Looking for the core A2UI-over-MCP protocol? See <a href="../a2ui_over_mcp/">A2UI over MCP</a> for how to return A2UI JSON payloads from MCP tool calls.</p>
 </blockquote>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
 <p>The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.</p>
@@ -1218,7 +1218,7 @@
 </span><span id="__span-0-15"><a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="p">}</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Catalog</span><span class="p">;</span>
 </span></code></pre></div>
 <h3 id="2-usage-in-a2ui-message">2. Usage in A2UI Message<a class="headerlink" href="#2-usage-in-a2ui-message" title="Permanent link">¶</a></h3>
-<p>In the Host or Agent context, you send an A2UI message that translates to this custom node.</p>
+<p>In the Host or Agent context, send an A2UI message that translates to this custom node.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span>
 </span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"McpApp"</span><span class="p">,</span>

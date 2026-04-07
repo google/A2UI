@@ -2233,19 +2233,19 @@
 <p><strong>Better:</strong> Agent generates a form with date picker, time selector, and submit button. Users interact with UI, not text.</p>
 <h2 id="the-challenge">The Challenge<a class="headerlink" href="#the-challenge" title="Permanent link">&para;</a></h2>
 <p>In multi-agent systems, agents often run remotely (different servers, organizations). They can't directly manipulate your UI—they must send messages.</p>
-<p><strong>Traditional approach:</strong> Send HTML/JavaScript in iframes</p>
+<p><strong>Traditional approach:</strong> Send HTML/JavaScript in iframes.</p>
 <ul>
-<li>Heavy, visually disjointed</li>
-<li>Security complexity</li>
-<li>Doesn't match app styling</li>
+<li>Heavy, visually disjointed.</li>
+<li>Security complexity.</li>
+<li>Doesn't match app styling.</li>
 </ul>
 <p><strong>Need:</strong> Transmit UI that's safe like data, expressive like code.</p>
 <h2 id="the-solution">The Solution<a class="headerlink" href="#the-solution" title="Permanent link">&para;</a></h2>
 <p>A2UI: JSON messages describing UI that:</p>
 <ul>
-<li>LLMs generate as structured output</li>
-<li>Travel over any transport (A2A, AG UI, SSE, WebSockets)</li>
-<li>Client renders using its own native components</li>
+<li>LLMs generate as structured output.</li>
+<li>Travel over any transport (A2A, AG UI, SSE, WebSockets).</li>
+<li>Client renders using its own native components.</li>
 </ul>
 <p><strong>Result:</strong> Client controls security and styling, agent-generated UI feels native.</p>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
@@ -2383,18 +2383,19 @@
 <p><strong>3. Separation of Concerns:</strong> Three layers—UI structure, application state, client rendering. Enables data binding, reactive updates, clean architecture.</p>
 <h2 id="what-a2ui-is-not">What A2UI Is NOT<a class="headerlink" href="#what-a2ui-is-not" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Not a framework (it's a protocol)</li>
-<li>Not a replacement for HTML (for agent-generated UIs, not static sites)</li>
-<li>Not a robust styling system (client controls styling with limited serverside styling support)</li>
-<li>Not limited to web (works on mobile and desktop)</li>
+<li>Not a framework (it is a protocol).</li>
+<li>Not a replacement for HTML (for agent-generated UIs, not static sites).</li>
+<li>Not a robust styling system (client controls styling with limited server-side styling support).</li>
+<li>Not limited to web (works on mobile and desktop).</li>
 </ul>
 <h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
+<p>A2UI relies on the following key concepts:</p>
 <ul>
-<li><strong>Surface</strong>: Canvas for components (dialog, sidebar, main view)</li>
-<li><strong>Component</strong>: UI element (Button, TextField, Card, etc.)</li>
-<li><strong>Data Model</strong>: Application state, components bind to it</li>
-<li><strong>Catalog</strong>: Available component types</li>
-<li><strong>Message</strong>: JSON object (<code>surfaceUpdate</code>, <code>dataModelUpdate</code>, <code>beginRendering</code>, etc.)</li>
+<li><strong>Surface</strong>: Canvas for components (dialog, sidebar, main view).</li>
+<li><strong>Component</strong>: UI element (Button, TextField, Card, etc.).</li>
+<li><strong>Data Model</strong>: Application state, components bind to it.</li>
+<li><strong>Catalog</strong>: Available component types.</li>
+<li><strong>Message</strong>: JSON object (<code>surfaceUpdate</code>, <code>dataModelUpdate</code>, <code>beginRendering</code>, etc.).</li>
 </ul>
 <p>For a comparison of similar projects, see <a href="../agent-ui-ecosystem/">Agent UI Ecosystem</a>.</p>
 

@@ -1470,15 +1470,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#different-types-of-agents-you-will-use-a2a-with" class="md-nav__link">
+  <a href="#agent-types-in-a2a" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Different types of agents you will use A2A with
+        Agent Types in A2A
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Different types of agents you will use A2A with">
+    <nav class="md-nav" aria-label="Agent Types in A2A">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2051,15 +2051,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#different-types-of-agents-you-will-use-a2a-with" class="md-nav__link">
+  <a href="#agent-types-in-a2a" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Different types of agents you will use A2A with
+        Agent Types in A2A
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Different types of agents you will use A2A with">
+    <nav class="md-nav" aria-label="Agent Types in A2A">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2182,48 +2182,46 @@
 after messages are <a href="../../concepts/transports/">transported</a> to the client.
 The agent is only responsible for generating the A2UI messages.</p>
 <h2 id="how-agents-work">How Agents Work<a class="headerlink" href="#how-agents-work" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>User Input → Agent Logic → LLM → A2UI JSON → Send to Client
-</span></code></pre></div>
+<p>The agent workflow typically involves the following steps:</p>
 <ol>
-<li><strong>Receive</strong> user message</li>
-<li><strong>Process</strong> with LLM (Gemini, GPT, Claude, etc.)</li>
-<li><strong>Generate</strong> A2UI JSON messages as structured output</li>
-<li><strong>Send</strong> to client via transport</li>
+<li><strong>Receive</strong> user message.</li>
+<li><strong>Process</strong> with LLM (Gemini, GPT, Claude, etc.).</li>
+<li><strong>Generate</strong> A2UI JSON messages as structured output.</li>
+<li><strong>Send</strong> to client via transport.</li>
 </ol>
 <p>User interactions from the client can be treated as new user input.</p>
 <h2 id="sample-agents">Sample Agents<a class="headerlink" href="#sample-agents" title="Permanent link">&para;</a></h2>
 <p>The A2UI repository includes sample agents you can learn from:</p>
 <ul>
 <li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder">Restaurant Finder</a> <ul>
-<li>Table reservations with forms</li>
-<li>Written with the ADK</li>
+<li>Table reservations with forms.</li>
+<li>Written with the ADK.</li>
 </ul>
 </li>
 <li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup">Contact Lookup</a> <ul>
-<li>Search with result lists</li>
-<li>Written with the ADK</li>
+<li>Search with result lists.</li>
+<li>Written with the ADK.</li>
 </ul>
 </li>
 <li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts">Rizzcharts</a> <ul>
-<li>A2UI Custom components demo</li>
-<li>Written with the ADK</li>
+<li>A2UI Custom components demo.</li>
+<li>Written with the ADK.</li>
 </ul>
 </li>
 <li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator">Orchestrator</a> <ul>
-<li>Passes A2UI messages from remote subagents</li>
-<li>Written with the ADK</li>
+<li>Passes A2UI messages from remote subagents.</li>
+<li>Written with the ADK.</li>
 </ul>
 </li>
 </ul>
-<h2 id="different-types-of-agents-you-will-use-a2a-with">Different types of agents you will use A2A with<a class="headerlink" href="#different-types-of-agents-you-will-use-a2a-with" title="Permanent link">&para;</a></h2>
+<h2 id="agent-types-in-a2a">Agent Types in A2A<a class="headerlink" href="#agent-types-in-a2a" title="Permanent link">&para;</a></h2>
 <h3 id="1-user-facing-agent-standalone">1. User Facing Agent (standalone)<a class="headerlink" href="#1-user-facing-agent-standalone" title="Permanent link">&para;</a></h3>
 <p>A user facing agent is one that is directly interacted with by the user. </p>
 <h3 id="2-user-facing-agent-as-a-host-for-a-remote-agent">2. User Facing Agent as a host for a Remote Agent<a class="headerlink" href="#2-user-facing-agent-as-a-host-for-a-remote-agent" title="Permanent link">&para;</a></h3>
 <p>This is a pattern where the user facing agent is a host for one or more remote agents. The user facing agent will call the remote agent and the remote agent will generate the A2UI messages. This is a common pattern in <a href="https://a2a-protocol.org">A2A</a> with the client agent calling the server agent.</p>
-<ul>
-<li>The user facing agent may "passthrough" the A2UI message without altering them</li>
-<li>The user facing agent may alter the A2UI message before sending it to the client</li>
-</ul>
+<p>In this pattern, the user-facing agent can handle messages in two ways:
+- The user facing agent may "passthrough" the A2UI message without altering them.
+- The user facing agent may alter the A2UI message before sending it to the client.</p>
 <h3 id="3-remote-agent">3. Remote Agent<a class="headerlink" href="#3-remote-agent" title="Permanent link">&para;</a></h3>
 <p>A remote agent is not directly a part of the user facing UI. Instead it is registered in as a remote agent and can be called by the user facing agent. This is a common pattern in <a href="https://a2a-protocol.org">A2A</a> with the client agent calling the server agent.</p>
 

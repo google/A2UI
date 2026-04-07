@@ -1146,19 +1146,19 @@
 <li><strong>Agents describe <em>what</em> to show</strong> (components and structure)</li>
 <li><strong>Renderers decide <em>how</em> it looks</strong> (colors, fonts, spacing)</li>
 </ul>
-<p>This ensures:</p>
+<p>A renderer-controlled approach provides the following benefits:</p>
 <ul>
-<li>✅ <strong>Brand consistency</strong>: All UIs match your app's design system</li>
-<li>✅ <strong>Security</strong>: Agents can't inject arbitrary CSS or styling</li>
-<li>✅ <strong>Accessibility</strong>: You control contrast, focus states, and ARIA attributes</li>
-<li>✅ <strong>Platform-native feel</strong>: Web apps look like web, mobile looks like mobile</li>
+<li><strong>Brand consistency</strong>: All UIs match your app's design system.</li>
+<li><strong>Security</strong>: Agents cannot inject arbitrary CSS or styling.</li>
+<li><strong>Accessibility</strong>: You control contrast, focus states, and ARIA attributes.</li>
+<li><strong>Platform-native feel</strong>: Web apps look like web, mobile looks like mobile.</li>
 </ul>
 <h2 id="styling-layers">Styling Layers<a class="headerlink" href="#styling-layers" title="Permanent link">¶</a></h2>
 <p>A2UI styling works in layers:</p>
 <pre class="mermaid"><code>flowchart TD
     A["1. Semantic Hints&lt;br/&gt;Agent provides hints&lt;br/&gt;(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration&lt;br/&gt;You configure&lt;br/&gt;(colors, fonts, spacing)"]
-    C["3. Component Overrides&lt;br/&gt;You customize&lt;br/&gt;(CSS/styles for specific components)"]
+    B["2. Theme Configuration&lt;br/&gt;Developer configures&lt;br/&gt;(colors, fonts, spacing)"]
+    C["3. Component Overrides&lt;br/&gt;Developer customizes&lt;br/&gt;(CSS/styles for specific components)"]
     D["4. Rendered Output&lt;br/&gt;Native platform widgets"]
 
     A --&gt; B --&gt; C --&gt; D</code></pre>

@@ -2373,27 +2373,25 @@
 <p>All web renderers (Lit, Angular, React) share a common foundation: <strong><code>@a2ui/web-lib</code></strong>. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.</p>
 <p>This means core protocol handling is consistent across web platforms — only the component rendering differs.</p>
 <h2 id="web-components-lit">Web Components (Lit)<a class="headerlink" href="#web-components-lit" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Attention</p>
-<p>The Lit client library is not yet published to NPM. Check back in the
-coming days.</p>
-</div>
+<blockquote>
+<p>NOTE: Attention</p>
+<p>The Lit client library is not yet published to NPM. Check back in the coming days.</p>
+</blockquote>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/web-lib<span class="w"> </span>lit<span class="w"> </span>@lit-labs/signals
 </span></code></pre></div>
 <p>The Lit renderer uses:</p>
 <ul>
-<li><strong>Message Processor</strong>: Manages A2UI state and processes incoming messages</li>
-<li><strong><code>&lt;a2ui-surface&gt;</code> component</strong>: Renders surfaces in your app</li>
-<li><strong>Lit Signals</strong>: Provides reactive state management for automatic UI updates</li>
+<li><strong>Message Processor</strong>: Manages A2UI state and processes incoming messages.</li>
+<li><strong><code>&lt;a2ui-surface&gt;</code> component</strong>: Renders surfaces in your app.</li>
+<li><strong>Lit Signals</strong>: Provides reactive state management for automatic UI updates.</li>
 </ul>
 <p>TODO: Add verified setup example.</p>
 <p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell">Lit shell sample</a></p>
 <h2 id="angular">Angular<a class="headerlink" href="#angular" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Attention</p>
-<p>The Angular client library is not yet published to NPM. Check back in the
-coming days.</p>
-</div>
+<blockquote>
+<p>NOTE: Attention</p>
+<p>The Angular client library is not yet published to NPM. Check back in the coming days.</p>
+</blockquote>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/angular<span class="w"> </span>@a2ui/web_core
 </span></code></pre></div>
 <p>The Angular renderer provides:</p>
@@ -2469,10 +2467,10 @@ coming days.</p>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Common errors to handle:</p>
 <ul>
-<li><strong>Invalid Surface ID</strong>: Surface referenced before <code>beginRendering</code> (v0.8) or <code>createSurface</code> (v0.9) was received</li>
-<li><strong>Invalid Component ID</strong>: Component IDs must be unique within a surface</li>
-<li><strong>Invalid Data Path</strong>: Check data model structure and JSON Pointer syntax</li>
-<li><strong>Schema Validation Failed</strong>: Verify message format matches A2UI specification</li>
+<li><strong>Invalid Surface ID</strong>: Surface referenced before <code>beginRendering</code> (v0.8) or <code>createSurface</code> (v0.9) was received.</li>
+<li><strong>Invalid Component ID</strong>: Component IDs must be unique within a surface.</li>
+<li><strong>Invalid Data Path</strong>: Check data model structure and JSON Pointer syntax.</li>
+<li><strong>Schema Validation Failed</strong>: Verify message format matches A2UI specification.</li>
 </ul>
 <p>TODO: Add error handling examples.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>

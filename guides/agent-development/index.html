@@ -2131,7 +2131,7 @@
 <li><strong>Handle actions</strong> → Respond to user interactions</li>
 </ol>
 <h2 id="start-with-a-simple-agent">Start with a simple agent<a class="headerlink" href="#start-with-a-simple-agent" title="Permanent link">&para;</a></h2>
-<p>We will use the ADK to build a simple agent.  We will start with text and eventually upgrade it to A2UI.</p>
+<p>This guide uses the ADK to build a simple agent, starting with text and upgrading it to A2UI.</p>
 <p>See step-by-step instructions at the <a href="https://google.github.io/adk-docs/get-started/python/">ADK quickstart</a>.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>google-adk
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>adk<span class="w"> </span>create<span class="w"> </span>my_agent
@@ -2196,18 +2196,16 @@
 <p>Select <code>my_agent</code> from the list, and ask questions about restaurants in New York.  You should see a list of restaurants in the UI as plain text.</p>
 <h2 id="generating-a2ui-messages">Generating A2UI Messages<a class="headerlink" href="#generating-a2ui-messages" title="Permanent link">&para;</a></h2>
 <p>Getting the LLM to generate A2UI messages requires some prompt engineering.  </p>
-<div class="admonition warning">
-<p class="admonition-title">Attention</p>
-<p>This is an area we are still designing.  The developer ergonomics of this are not yet finalized.</p>
-</div>
-<p>For now, let's copy the <code>a2ui_schema.py</code> from the contact lookup example.  This is the easiest way to get the A2UI schema and examples for your agent (subject to change).</p>
+<p>IMPORTANT: Attention
+This area is under active design. The developer ergonomics are not yet finalized.</p>
+<p>For now, copy the <code>a2ui_schema.py</code> from the contact lookup example. This is the easiest way to get the A2UI schema and examples for your agent (subject to change).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cp<span class="w"> </span>samples/agent/adk/contact_lookup/a2ui_schema.py<span class="w"> </span>my_agent/
 </span></code></pre></div>
-<p>First lets add the new imports to the <code>agent.py</code> file:</p>
+<p>First, add the new imports to the <code>agent.py</code> file:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># The schema for any A2UI message.  This never changes.</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">.a2ui_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">A2UI_SCHEMA</span>
 </span></code></pre></div>
-<p>Now we will modify the agent instructions to generate A2UI messages instead of plain text.  We will leave a placeholder for future UI examples.</p>
+<p>Now, modify the agent instructions to generate A2UI messages instead of plain text. Leave a placeholder for future UI examples.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Eventually you can copy &amp; paste some UI examples here, for few-shot in context learning</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">RESTAURANT_UI_EXAMPLES</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="s2">&quot;&quot;&quot;</span>
@@ -2224,26 +2222,27 @@
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="s2">4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.</span>
 </span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
 </span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="s2">--- UI TEMPLATE RULES ---</span>
-</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="s2">-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the &quot;items&quot; key).</span>
-</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="s2">-   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.</span>
-</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="s2">-   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.</span>
-</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="s2">-   If the query is to book a restaurant (e.g., &quot;USER_WANTS_TO_BOOK...&quot;), you MUST use the `BOOKING_FORM_EXAMPLE` template.</span>
-</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="s2">-   If the query is a booking submission (e.g., &quot;User submitted a booking...&quot;), you MUST use the `CONFIRMATION_EXAMPLE` template.</span>
-</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
-</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="si">{</span><span class="n">RESTAURANT_UI_EXAMPLES</span><span class="si">}</span>
-</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
-</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="s2">---BEGIN A2UI JSON SCHEMA---</span>
-</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="si">{</span><span class="n">A2UI_SCHEMA</span><span class="si">}</span>
-</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="s2">---END A2UI JSON SCHEMA---</span>
-</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>
-</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="n">root_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span>
-</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gemini-2.5-flash&#39;</span><span class="p">,</span>
-</span><span id="__span-6-32"><a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;restaurant_agent&quot;</span><span class="p">,</span>
-</span><span id="__span-6-33"><a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An agent that finds restaurants and helps book tables.&quot;</span><span class="p">,</span>
-</span><span id="__span-6-34"><a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>    <span class="n">instruction</span><span class="o">=</span><span class="n">A2UI_AND_AGENT_INSTRUCTION</span><span class="p">,</span>
-</span><span id="__span-6-35"><a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_restaurants</span><span class="p">],</span>
-</span><span id="__span-6-36"><a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a><span class="p">)</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="s2">Follow these rules to select the appropriate UI template:</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="s2">-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the &quot;items&quot; key).</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="s2">-   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="s2">-   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="s2">-   If the query is to book a restaurant (e.g., &quot;USER_WANTS_TO_BOOK...&quot;), you MUST use the `BOOKING_FORM_EXAMPLE` template.</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="s2">-   If the query is a booking submission (e.g., &quot;User submitted a booking...&quot;), you MUST use the `CONFIRMATION_EXAMPLE` template.</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="si">{</span><span class="n">RESTAURANT_UI_EXAMPLES</span><span class="si">}</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="s2">---BEGIN A2UI JSON SCHEMA---</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="si">{</span><span class="n">A2UI_SCHEMA</span><span class="si">}</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="s2">---END A2UI JSON SCHEMA---</span>
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="s2">&quot;&quot;&quot;</span>
+</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>
+</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="n">root_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span>
+</span><span id="__span-6-32"><a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gemini-2.5-flash&#39;</span><span class="p">,</span>
+</span><span id="__span-6-33"><a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;restaurant_agent&quot;</span><span class="p">,</span>
+</span><span id="__span-6-34"><a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An agent that finds restaurants and helps book tables.&quot;</span><span class="p">,</span>
+</span><span id="__span-6-35"><a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>    <span class="n">instruction</span><span class="o">=</span><span class="n">A2UI_AND_AGENT_INSTRUCTION</span><span class="p">,</span>
+</span><span id="__span-6-36"><a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_restaurants</span><span class="p">],</span>
+</span><span id="__span-6-37"><a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="understanding-the-output">Understanding the Output<a class="headerlink" href="#understanding-the-output" title="Permanent link">&para;</a></h2>
 <p>Your agent will no longer strictly output text. Instead, it will output text and a <strong>JSON list</strong> of A2UI messages.</p>

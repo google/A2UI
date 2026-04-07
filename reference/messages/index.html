@@ -3329,13 +3329,12 @@
 </span></code></pre></div>
 <p>The component with <code>id: "greeting"</code> is updated (not duplicated).</p>
 <h3 id="usage-notes">Usage Notes<a class="headerlink" href="#usage-notes" title="Permanent link">&para;</a></h3>
-<ul>
-<li>One component must be designated as the <code>root</code> in the <code>beginRendering</code> message to serve as the tree root.</li>
-<li>Components form an adjacency list (flat structure with ID references).</li>
-<li>Sending a component with an existing ID updates that component.</li>
-<li>Children are referenced by ID.</li>
-<li>Components can be added incrementally (streaming).</li>
-</ul>
+<p>Keep these usage notes in mind:
+- One component must be designated as the <code>root</code> in the <code>beginRendering</code> message to serve as the tree root.
+- Components form an adjacency list (flat structure with ID references).
+- Sending a component with an existing ID updates that component.
+- Children are referenced by ID.
+- Components can be added incrementally (streaming).</p>
 </div>
 <div class="tabbed-block">
 <h3 id="schema_3">Schema<a class="headerlink" href="#schema_3" title="Permanent link">&para;</a></h3>
@@ -3447,13 +3446,12 @@
 </span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="usage-notes_1">Usage Notes<a class="headerlink" href="#usage-notes_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li>One component must have <code>"id": "root"</code> to serve as the tree root (convention, not a separate message field).</li>
-<li>Component type is a string (<code>"component": "Text"</code>) instead of a wrapper object.</li>
-<li>Properties are flat on the component object (no nesting under type key).</li>
-<li>Data binding uses <code>{"path": "/pointer"}</code> (JSON Pointer) — same key name as v0.8 but with standard JSON Pointer paths.</li>
-<li>Components can be added incrementally (streaming).</li>
-</ul>
+<p>Keep these usage notes in mind:
+- One component must have <code>"id": "root"</code> to serve as the tree root (convention, not a separate message field).
+- Component type is a string (<code>"component": "Text"</code>) instead of a wrapper object.
+- Properties are flat on the component object (no nesting under type key).
+- Data binding uses <code>{"path": "/pointer"}</code> (JSON Pointer) — same key name as v0.8 but with standard JSON Pointer paths.
+- Components can be added incrementally (streaming).</p>
 </div>
 </div>
 </div>
@@ -3574,13 +3572,12 @@
 </span></code></pre></div>
 <p>This will change <code>/user/email</code> without affecting <code>/user/name</code>.</p>
 <h3 id="usage-notes_2">Usage Notes<a class="headerlink" href="#usage-notes_2" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Data model is per-surface.</li>
-<li>Components automatically re-render when their bound data changes.</li>
-<li>Prefer granular updates to specific paths over replacing the entire model.</li>
-<li>Uses typed value fields (<code>valueString</code>, <code>valueNumber</code>, <code>valueBoolean</code>, <code>valueMap</code>) — LLM-friendly, no type inference needed.</li>
-<li>Any data transformation (e.g., formatting a date) must be done by the server before sending the message.</li>
-</ul>
+<p>Keep these usage notes in mind:
+- Data model is per-surface.
+- Components automatically re-render when their bound data changes.
+- Prefer granular updates to specific paths over replacing the entire model.
+- Uses typed value fields (<code>valueString</code>, <code>valueNumber</code>, <code>valueBoolean</code>, <code>valueMap</code>) — LLM-friendly, no type inference needed.
+- Any data transformation (e.g., formatting a date) must be done by the server before sending the message.</p>
 </div>
 <div class="tabbed-block">
 <h3 id="schema_5">Schema<a class="headerlink" href="#schema_5" title="Permanent link">&para;</a></h3>
@@ -3652,13 +3649,12 @@
 </span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="usage-notes_3">Usage Notes<a class="headerlink" href="#usage-notes_3" title="Permanent link">&para;</a></h3>
-<ul>
-<li>v0.9 uses standard JSON Pointer paths and plain JSON values — no typed wrappers.</li>
-<li><code>path</code> defaults to <code>"/"</code> (root) if omitted.</li>
-<li><code>value</code> can be any JSON type (string, number, boolean, object, array, null). Omit to delete.</li>
-<li>Simpler than v0.8's <code>contents</code> adjacency list — closer to standard JSON Patch semantics.</li>
-<li>Components referencing <code>{"path": "/user/email"}</code> auto-update when that path changes.</li>
-</ul>
+<p>Keep these usage notes in mind:
+- v0.9 uses standard JSON Pointer paths and plain JSON values — no typed wrappers.
+- <code>path</code> defaults to <code>"/"</code> (root) if omitted.
+- <code>value</code> can be any JSON type (string, number, boolean, object, array, null). Omit to delete.
+- Simpler than v0.8's <code>contents</code> adjacency list — closer to standard JSON Patch semantics.
+- Components referencing <code>{"path": "/user/email"}</code> auto-update when that path changes.</p>
 </div>
 </div>
 </div>
@@ -3723,17 +3719,17 @@
 </tbody>
 </table>
 <h3 id="usage-notes_4">Usage Notes<a class="headerlink" href="#usage-notes_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Removes all components associated with the surface</li>
-<li>Clears the data model for the surface</li>
-<li>Client should remove the surface from the UI</li>
-<li>Safe to delete non-existent surface (no-op)</li>
-<li>Use when closing modals, dialogs, or navigating away</li>
-<li>Identical structure in both versions (v0.9 just adds the <code>version</code> field)</li>
-</ul>
+<p>Keep these usage notes in mind:
+- Removes all components associated with the surface.
+- Clears the data model for the surface.
+- Client should remove the surface from the UI.
+- Safe to delete non-existent surface (no-op).
+- Use when closing modals, dialogs, or navigating away.
+- Identical structure in both versions (v0.9 just adds the <code>version</code> field).</p>
 <hr />
 <h2 id="message-ordering">Message Ordering<a class="headerlink" href="#message-ordering" title="Permanent link">&para;</a></h2>
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<p>Message ordering must satisfy the following requirements:</p>
 <ol>
 <li><code>beginRendering</code> must come after the initial <code>surfaceUpdate</code> messages for that surface.</li>
 <li><code>surfaceUpdate</code> can come before or after <code>dataModelUpdate</code>.</li>
@@ -3783,15 +3779,15 @@
 <div class="tabbed-block">
 <p>Validate against:</p>
 <ul>
-<li><strong><a href="https://a2ui.org/specification/v0_8/server_to_client.json">server_to_client.json</a></strong>: Message envelope schema</li>
-<li><strong><a href="https://a2ui.org/specification/v0_8/standard_catalog_definition.json">standard_catalog_definition.json</a></strong>: Component schemas</li>
+<li><strong><a href="../../specification/v0_8/json/server_to_client.json">server_to_client.json</a></strong>: Message envelope schema.</li>
+<li><strong><a href="../../specification/v0_8/json/standard_catalog_definition.json">standard_catalog_definition.json</a></strong>: Component schemas.</li>
 </ul>
 </div>
 <div class="tabbed-block">
 <p>Validate against:</p>
 <ul>
-<li><strong><a href="https://a2ui.org/specification/v0_9/server_to_client.json">server_to_client.json</a></strong>: Message envelope schema</li>
-<li><strong><a href="https://a2ui.org/specification/v0_9/basic_catalog.json">basic_catalog.json</a></strong>: Component schemas</li>
+<li><strong><a href="../../specification/v0_9/json/server_to_client.json">server_to_client.json</a></strong>: Message envelope schema.</li>
+<li><strong><a href="../../specification/v0_9/json/basic_catalog.json">basic_catalog.json</a></strong>: Component schemas.</li>
 </ul>
 </div>
 </div>

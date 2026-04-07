@@ -2199,13 +2199,12 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 <p>A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
 and is in active development <a href="https://github.com/google/A2UI">on GitHub</a>.</p>
-<p>The problem A2UI solves is: <strong>how can AI agents safely send rich UIs across trust boundaries?</strong></p>
+<p>A2UI solves the following problem: <strong>how can AI agents safely send rich UIs across trust boundaries?</strong></p>
 <p>Instead of text-only responses or risky code execution, A2UI lets agents send <strong>declarative component descriptions</strong> that clients render using their own native widgets. It's like having agents speak a universal UI language.</p>
-<p>In this repo you will find
-<a href="specification/v0.8-a2ui/">A2UI specifications</a> (v0.8 stable, v0.9 draft),
-implementations for
-<a href="reference/renderers/">renderers</a> (Angular, Flutter, Lit, Markdown, etc.) on the client side,
-and <a href="concepts/transports/">transports</a> (A2A, etc.) which communicate A2UI messages between agents and clients.</p>
+<p>This repository contains:
+- <strong><a href="specification/v0.8-a2ui/">A2UI specifications</a></strong> (v0.8 stable, v0.9 draft).
+- <strong>Implementations for <a href="reference/renderers/">renderers</a></strong> (Angular, Flutter, Lit, Markdown, etc.) on the client side.
+- <strong>Transports like <a href="concepts/transports/">A2A</a></strong> which communicate A2UI messages between agents and clients.</p>
 <div class="grid cards">
 <ul>
 <li>
@@ -2260,6 +2259,7 @@ and <a href="concepts/transports/">transports</a> (A2A, etc.) which communicate 
 </ul>
 </div>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<p>The typical interaction flow consists of these steps:</p>
 <ol>
 <li><strong>User sends a message</strong> to an AI agent</li>
 <li><strong>Agent generates A2UI messages</strong> describing the UI (structure + data)</li>

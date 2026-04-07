@@ -1472,34 +1472,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Building a Renderer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#key-requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key requirements:
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2092,34 +2064,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Building a Renderer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#key-requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key requirements:
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2270,13 +2214,12 @@ The client renderer library must buffer and handle A2UI messages, implement the 
 </ul>
 <p>See the <strong><a href="../../ecosystem/renderers/">full ecosystem renderers list</a></strong> for more community projects and how to submit your own.</p>
 <h2 id="how-renderers-work">How Renderers Work<a class="headerlink" href="#how-renderers-work" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>A2UI JSON → Renderer → Native Components → Your App
-</span></code></pre></div>
+<p>The rendering process typically involves the following steps:</p>
 <ol>
-<li><strong>Receive</strong> A2UI messages from the transport</li>
-<li><strong>Parse</strong> the JSON and validate against the schema</li>
-<li><strong>Render</strong> using platform-native components</li>
-<li><strong>Style</strong> according to your app's theme</li>
+<li><strong>Receive</strong> A2UI messages from the transport.</li>
+<li><strong>Parse</strong> the JSON and validate against the schema.</li>
+<li><strong>Render</strong> using platform-native components.</li>
+<li><strong>Style</strong> according to your app's theme.</li>
 </ol>
 <h2 id="using-a-renderer">Using a Renderer<a class="headerlink" href="#using-a-renderer" title="Permanent link">&para;</a></h2>
 <p>Get started integrating A2UI into your application by following the setup guide for your chosen renderer:</p>
@@ -2293,20 +2236,20 @@ The client renderer library must buffer and handle A2UI messages, implement the 
 <li>Review existing renderers for patterns.</li>
 <li>Check out our <a href="../../guides/renderer-development/">Renderer Development Guide</a> for details on implementing a renderer.</li>
 </ul>
-<h3 id="key-requirements">Key requirements:<a class="headerlink" href="#key-requirements" title="Permanent link">&para;</a></h3>
+<p>A compliant renderer must meet the following key requirements:</p>
 <ul>
-<li>Parse A2UI JSON messages, specifically the adjacency list format</li>
-<li>Map A2UI components to native widgets</li>
-<li>Handle data binding, lifecycle events</li>
-<li>Process a sequence of incremental A2UI messages to build and update the UI</li>
-<li>Support server initiated updates</li>
-<li>Support user actions</li>
+<li>Parse A2UI JSON messages, specifically the adjacency list format.</li>
+<li>Map A2UI components to native widgets.</li>
+<li>Handle data binding, lifecycle events.</li>
+<li>Process a sequence of incremental A2UI messages to build and update the UI.</li>
+<li>Support server-initiated updates.</li>
+<li>Support user actions.</li>
 </ul>
-<h3 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h3>
+<p>For more information, see the following resources:</p>
 <ul>
-<li><strong><a href="../../guides/client-setup/">Client Setup Guide</a></strong>: Integration instructions</li>
-<li><strong><a href="../../quickstart/">Quickstart</a></strong>: Try the Lit renderer</li>
-<li><strong><a href="../components/">Component Reference</a></strong>: What components to support</li>
+<li><strong><a href="../../guides/client-setup/">Client Setup Guide</a></strong>: Integration instructions.</li>
+<li><strong><a href="../../quickstart/">Quickstart</a></strong>: Try the Lit renderer.</li>
+<li><strong><a href="../components/">Component Reference</a></strong>: What components to support.</li>
 </ul>
 
 
