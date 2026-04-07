@@ -172,7 +172,7 @@ class RestaurantAgent:
   async def stream(
       self, query, session_id, ui_version: Optional[str] = None
   ) -> AsyncIterable[dict[str, Any]]:
-    session_state = {"base_url": self.base_url}
+    session_state = {"base_url": self.base_url, "expression": "{expression}"}
 
     # Determine which runner to use based on whether the a2ui extension is active.
     if ui_version:

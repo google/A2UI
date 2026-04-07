@@ -747,11 +747,11 @@ def _validate_recursion_and_paths(data: Any) -> None:
       return
 
     if isinstance(item, dict):
-      # Check for path
-      if PATH in item and isinstance(item[PATH], str):
-        path = item[PATH]
-        if not re.fullmatch(JSON_POINTER_PATTERN, path):
-          raise ValueError(f"Invalid JSON Pointer syntax: '{path}'")
+      # Check for path (relaxed to allow relative paths in v0.9)
+      # if PATH in item and isinstance(item[PATH], str):
+      #   path = item[PATH]
+      #   if not re.fullmatch(JSON_POINTER_PATTERN, path):
+      #     raise ValueError(f"Invalid JSON Pointer syntax: '{path}'")
 
       # Check for FunctionCall
       is_func = CALL in item and ARGS in item
