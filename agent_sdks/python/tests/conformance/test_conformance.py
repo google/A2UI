@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import yaml
 import pytest
@@ -68,8 +82,11 @@ def get_conformance_cases(filename):
   return [(case["name"], case) for case in cases]
 
 
+cases_parser = get_conformance_cases("parser.yaml")
+
+
 @pytest.mark.parametrize(
-    "name, test_case", get_conformance_cases("parser.yaml"), ids=lambda x: x
+    "name, test_case", cases_parser, ids=[c[0] for c in cases_parser]
 )
 def test_parser_conformance(name, test_case):
   catalog_config = test_case.get("catalog")
@@ -97,8 +114,11 @@ def test_parser_conformance(name, test_case):
       assert_parts_match(parts, step["expect"])
 
 
+cases_validator = get_conformance_cases("validator.yaml")
+
+
 @pytest.mark.parametrize(
-    "name, test_case", get_conformance_cases("validator.yaml"), ids=lambda x: x
+    "name, test_case", cases_validator, ids=[c[0] for c in cases_validator]
 )
 def test_validator_conformance(name, test_case):
   catalog_config = test_case.get("catalog")
