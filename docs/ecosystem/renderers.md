@@ -18,7 +18,7 @@ Community and third-party A2UI renderer implementations.
 | **sivamrudram-eng/a2ui-react-native** | React Native | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/sivamrudram-eng/a2ui-react-native?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/sivamrudram-eng/a2ui-react-native?style=flat-square&label=updated) | [GitHub](https://github.com/sivamrudram-eng/a2ui-react-native) |
 | **zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
 | **jem-computer/A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |
-| **BBC6BAE9/a2ui-swiftui** | Apple (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅ | ✅ | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swift?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swift?style=flat-square&label=updated) | [GitHub](https://github.com/BBC6BAE9/a2ui-swift) |
+| **BBC6BAE9/a2ui-swift** | Apple (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅ | ✅ | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swift?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swift?style=flat-square&label=updated) | [GitHub](https://github.com/BBC6BAE9/a2ui-swift) |
 
 
 ### Notable Mentions
@@ -45,7 +45,7 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 **sivamrudram-eng/a2ui-react-native** is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.
 
-**BBC6BAE9/a2ui-swiftui** is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
+**BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui*) is a native Swift renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
 
 ## Submitting a Renderer
 
