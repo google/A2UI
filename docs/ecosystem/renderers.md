@@ -7,7 +7,7 @@ Community and third-party A2UI renderer implementations.
     Check each project for compatibility, version support, and maintenance status.
 
 !!! tip
-    Looking for the **official** React renderer? See [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react) — the core A2UI React renderer maintained by the A2UI team.
+    Looking for the **official** A2UI React renderer? See [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react) — the core A2UI React renderer maintained by the A2UI team.
 
 ## Community Renderers
 
@@ -16,7 +16,7 @@ Community and third-party A2UI renderer implementations.
 | **easyops-cn/a2ui-sdk** (`@a2ui-sdk/react`) | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/easyops-cn/a2ui-sdk?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/easyops-cn/a2ui-sdk?style=flat-square&label=updated) | [GitHub](https://github.com/easyops-cn/a2ui-sdk) · [npm](https://www.npmjs.com/package/@a2ui-sdk/react) · [Docs](https://a2ui-sdk.js.org/) |
 | **lmee/A2UI-Android** | Android (Compose) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/lmee/A2UI-Android?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/lmee/A2UI-Android?style=flat-square&label=updated) | [GitHub](https://github.com/lmee/A2UI-Android) |
 | **sivamrudram-eng/a2ui-react-native** | React Native | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/sivamrudram-eng/a2ui-react-native?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/sivamrudram-eng/a2ui-react-native?style=flat-square&label=updated) | [GitHub](https://github.com/sivamrudram-eng/a2ui-react-native) |
-| **@zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
+| **zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
 | **jem-computer/A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |
 | **BBC6BAE9/a2ui-swiftui** | SwiftUI (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅ | ✅ | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swiftui?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swiftui?style=flat-square&label=updated) | [GitHub](https://github.com/BBC6BAE9/a2ui-swiftui) |
 
@@ -30,7 +30,7 @@ These projects are early-stage or experimental:
 
 ### Related Projects
 
-These projects are not A2UI renderers but are relevant to the generative UI space:
+These projects are not directly A2UI renderers but are closely related and do support A2UI:
 
 | Project | Platform | Description | Links |
 |---------|----------|-------------|-------|
@@ -38,17 +38,13 @@ These projects are not A2UI renderers but are relevant to the generative UI spac
 
 ### Highlights
 
-**easyops-cn/a2ui-sdk** (`@a2ui-sdk/react`) is the most fully-featured community React renderer, with 11 published versions, Radix UI primitives, Tailwind CSS styling, and a dedicated docs site. It was [announced on the A2UI discussions](https://github.com/google/A2UI/discussions/489). For the official React renderer, see [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react).
+**easyops-cn/a2ui-sdk** (`@a2ui-sdk/react`) is the most fully-featured community React renderer, with 11 published versions, Radix UI primitives, Tailwind CSS styling, and a dedicated docs site. It was [announced on the A2UI discussions](https://github.com/google/A2UI/discussions/489). For the official A2UI React renderer, see [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react).
 
-**lmee/A2UI-Android** fills an important gap — it's the only community Jetpack Compose renderer, covering Android 5.0+ with 20+ components, data binding, and accessibility support.
+**lmee/A2UI-Android** fills an important gap — it's currently the only Jetpack Compose renderer, covering Android 5.0+ with 20+ components, data binding, and accessibility support.
 
 **sivamrudram-eng/a2ui-react-native** is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.
 
 **BBC6BAE9/a2ui-swiftui** is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
-
-### Python / PyPI
-
-No credible A2UI renderer packages were found on PyPI as of March 2026. A2UI renderers are client-side (UI) libraries, so the ecosystem is naturally focused on JavaScript/TypeScript and native mobile frameworks.
 
 ## Submitting a Renderer
 
@@ -69,7 +65,7 @@ A listing is more likely to be accepted and used if it:
 
 - Has **published source code** (open-source preferred, MIT or Apache 2.0)
 - Clearly states **which A2UI spec version** it supports (v0.8, v0.9, or both)
-- Covers **core components**: text, buttons, inputs, and basic layout
+- Covers the **basic components** from the other A2UI renderers: text, buttons, inputs, basic layout components, etc
 - Includes a **README** with install instructions and a minimal usage example
 - Is **actively maintained** — flag it as archived if you're no longer supporting it
 
