@@ -35,6 +35,7 @@ export * from './state/surface-components-model.js';
 export * from './state/surface-group-model.js';
 export * from './state/surface-model.js';
 export * from './errors.js';
+export { injectDefaultA2uiTheme } from './styles/default.js';
 
 export {effect, Signal, signal, computed} from '@preact/signals-core';
 
