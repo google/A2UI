@@ -22,7 +22,7 @@ from a2a.server.tasks import TaskUpdater
 from a2a.types import (DataPart, Part, TaskState, TextPart, AgentCard)
 from a2a.utils import new_agent_parts_message, new_task
 from agent import ComponentGalleryAgent
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
 
 logger = logging.getLogger(__name__)
 
