@@ -105,7 +105,11 @@ class A2uiStreamParser:
     # (surfaceId, cid) -> hash of content for change detection
     self._yielded_contents: Dict[Any, str] = {}
 
-    self._root_id: Optional[str] = None  # The root component ID for the layout tree
+    self._root_ids: Dict[str, str] = {}  # The root component IDs mapped per surface
+    self._default_root_id: Optional[str] = None  # Base default root ID for the protocol
+    self._unbound_root_id: Optional[str] = (
+        None  # Temporary holding variable for when root arrives before surfaceId
+    )
     self._surface_id: Optional[str] = None  # The active surface ID tracking the context
     self._msg_types: List[str] = []  # Running list of message types seen in the block
 
@@ -143,14 +147,30 @@ class A2uiStreamParser:
   @surface_id.setter
   def surface_id(self, value: Optional[str]):
     self._surface_id = value
+    if value is not None and self._unbound_root_id is not None:
+      self._root_ids[value] = self._unbound_root_id
+      self._unbound_root_id = None
 
   @property
   def root_id(self) -> Optional[str]:
-    return self._root_id
+    if self._surface_id:
+      return self._root_ids.get(self._surface_id, self._default_root_id)
+    # Return unbound root ID if explicitly sniffed, otherwise use protocol default
+    return (
+        self._unbound_root_id
+        if self._unbound_root_id is not None
+        else self._default_root_id
+    )
 
   @root_id.setter
   def root_id(self, value: Optional[str]):
-    self._root_id = value
+    if self._surface_id:
+      if value is not None:
+        self._root_ids[self._surface_id] = value
+      else:
+        self._root_ids.pop(self._surface_id, None)
+    else:
+      self._unbound_root_id = value
 
   @property
   def msg_types(self) -> List[str]:
@@ -205,7 +225,7 @@ class A2uiStreamParser:
       if self._validator:
         try:
           self._validator.validate(
-              m, root_id=self._root_id, strict_integrity=strict_integrity
+              m, root_id=self.root_id, strict_integrity=strict_integrity
           )
         except ValueError as e:
           if strict_integrity:
@@ -835,7 +855,7 @@ class A2uiStreamParser:
         raise_on_orphans: If True, uses strict topology analysis to catch loops.
     """
     active_msg_type = self._get_active_msg_type_for_components()
-    if not self._root_id or not active_msg_type:
+    if not self.root_id or not active_msg_type:
       return
 
     # Buffer components until we have a beginRendering or createSurface for a known surface.
@@ -850,13 +870,13 @@ class A2uiStreamParser:
       # Analyze topology of current seen components
       components_to_analyze = list(self._seen_components.values())
 
-      if check_root and self._root_id not in self._seen_components:
+      if check_root and self.root_id not in self._seen_components:
         raise ValueError(
-            f"No root component (id='{self._root_id}') found in {active_msg_type}"
+            f"No root component (id='{self.root_id}') found in {active_msg_type}"
         )
 
       reachable_ids = analyze_topology(
-          self._root_id,
+          self.root_id,
           components_to_analyze,
           self._ref_fields_map,
           raise_on_orphans=raise_on_orphans,
@@ -867,7 +887,7 @@ class A2uiStreamParser:
 
       if check_root and not available_reachable:
         raise ValueError(
-            f"No root component (id='{self._root_id}') found in {active_msg_type}"
+            f"No root component (id='{self.root_id}') found in {active_msg_type}"
         )
 
       # 1. Process placeholders and partial children

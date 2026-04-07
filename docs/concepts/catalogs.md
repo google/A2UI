@@ -4,9 +4,9 @@
 
 This guide defines the A2UI Catalog architecture and provides a roadmap for implementation. It explains the structure of catalog schemas, outlines strategies for using the pre-built "Basic Catalog” versus defining your own application-specific catalog, and details the technical protocols for catalog negotiation, versioning, and runtime validation.
 
-## Catalog Definition
+## Catalog Schema
 
-A catalog is a [JSON Schema file](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) outlining the components, functions, and themes that agents can use to define A2UI surfaces using server-driven UI. All A2UI JSON sent from the agent is validated against the chosen catalog.
+A catalog schema is a [JSON Schema file](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) outlining the components, functions, and themes that agents can use to define A2UI surfaces using server-driven UI. All A2UI JSON sent from the agent is validated against the chosen catalog.
 
 [Catalog JSON Schema](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) is below
 
@@ -404,10 +404,10 @@ We recommend including the version in the catalogId. This allows using A2UI cata
 
 **Recommended Pattern:**
 
-| Change Type  | URI Example                    | Description                                                        |
-| :----------- | :----------------------------- | :----------------------------------------------------------------- |
-| **Current**  | .../rizzcharts/v1/catalog.json | Version 1.x. Supports all additive updates in the 1.x branch.      |
-| **Breaking** | .../rizzcharts/v2/catalog.json | A new schema introducing breaking structural changes.              |
+| Change Type  | URI Example                    | Description                                                   |
+| :----------- | :----------------------------- | :------------------------------------------------------------ |
+| **Current**  | .../rizzcharts/v1/catalog.json | Version 1.x. Supports all additive updates in the 1.x branch. |
+| **Breaking** | .../rizzcharts/v2/catalog.json | A new schema introducing breaking structural changes.         |
 
 ### Handling Migrations
 

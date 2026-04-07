@@ -28,12 +28,24 @@ export abstract class MarkdownRenderer {
   providedIn: 'root',
 })
 export class DefaultMarkdownRenderer extends MarkdownRenderer {
+  private static warningLogged = false;
+
   override async render(
     markdown: string,
     options?: Types.MarkdownRendererOptions,
   ): Promise<string> {
-    // Basic implementation for v0.8
-    return markdown;
+    try {
+      // @ts-ignore - optional peer dependency
+      const { renderMarkdown } = await import('@a2ui/markdown-it');
+      return await renderMarkdown(markdown, options);
+    } catch (e) {
+      if (!DefaultMarkdownRenderer.warningLogged) {
+        console.warn("[DefaultMarkdownRenderer] Failed to load optional `@a2ui/markdown-it` renderer. Using fallback regex.");
+        DefaultMarkdownRenderer.warningLogged = true;
+      }
+      // Basic implementation for v0.8
+      return markdown;
+    }
   }
 }
 

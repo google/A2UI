@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+from collections import OrderedDict
 from collections.abc import AsyncIterable
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
@@ -42,10 +43,11 @@ from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTI
 from tools import get_contact_info
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response
+from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.a2a import (
     get_a2ui_agent_extension,
+    parse_response_to_parts,
     stream_response_to_parts,
 )
 
@@ -65,7 +67,8 @@ class ContactAgent:
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
-    self._parsers: Dict[str, A2uiStreamParser] = {}
+    self._parsers: OrderedDict[str, A2uiStreamParser] = OrderedDict()
+    self._max_parsers = 1000  # Max active sessions to keep in memory
 
     for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
@@ -259,8 +262,12 @@ class ContactAgent:
       if selected_catalog:
         from a2ui.core.parser.streaming import A2uiStreamParser
 
-        if session_id not in self._parsers:
+        if session_id in self._parsers:
+          self._parsers.move_to_end(session_id)
+        else:
           self._parsers[session_id] = A2uiStreamParser(catalog=selected_catalog)
+          if len(self._parsers) > self._max_parsers:
+            self._parsers.popitem(last=False)
 
         async for part in stream_response_to_parts(
             self._parsers[session_id],
@@ -357,13 +364,16 @@ class ContactAgent:
 
       if is_valid:
         logger.info(
-            "--- ContactAgent.stream: Response is valid. Task complete (Attempt"
-            f" {attempt}). ---"
+            "--- ContactAgent.stream: Response is valid. Sending final response"
+            f" (Attempt {attempt}). ---"
+        )
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
         )
 
         yield {
             "is_task_complete": True,
-            "parts": [],
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
