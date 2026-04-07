@@ -4,14 +4,14 @@ This guide explains how A2UI handles user interactions. Components use the `acti
 
 ## Action Architecture
 
-Actions allow UI components to trigger behavior defined in the [`Action`](../../specification/v0_9/json/common_types.json#L271-L313) schema in `common_types.json`. Both use the `action` key in the component JSON but differ in their payload (`functionCall` vs `event`).
+Actions allow UI components to trigger behavior defined in the [`Action`](../../specification/v0_9/json/common_types.json#L271-L313) schema in `common_types.json`. Actions can trigger:
 
 1.  **Events**: Dispatched to the Agent for processing (executed on Agent, e.g., clicking "Submit").
 2.  **Functions**: Executed entirely on the renderer using [`FunctionCall`](../../specification/v0_9/json/common_types.json#L200-L242) (executed on Renderer, e.g., opening a URL).
 
 ### 1. Functions (Local)
 
-Functions execute immediate behavior on the renderer without a network round-trip. They use the `functionCall` keyword.
+Functions execute immediate behavior on the renderer without a network round-trip. The agent is not informed of local function calls. They use the `functionCall` keyword.
 
 ```json
 {
@@ -93,7 +93,7 @@ Before an Event is even dispatched, the renderer is already managing the state o
 1.  **Read (Model → View)**: When a component renders, it pulls its value from the bound `path` in the Data Model.
 2.  **Write (View → Model)**: As soon as a user interacts (e.g., typing a character or clicking a checkbox), the renderer **immediately** writes the new value into the local Data Model.
 
-This means the local model is **always** the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the renderer. Only when an Event (like a Button click) is triggered is this state synchronized back to the agent.
+This means the local model is **always** the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the renderer. The data model is only sent to the agent when an event occurs (like a Button click).
 
 IMPORTANT: **Synchronous Updates**: Local model updates are **synchronous**. This guarantees that the Data Model is fully updated before any Event resolves its `context` paths or a `DataModelSync` payload is packaged. There are no race conditions between typing and clicking; the "Write" is always committed first.
 
