@@ -422,3 +422,50 @@ def test_with_pruning_messages_v08():
   assert "deleteSurface" in pruned_s2c["properties"]
   assert "surfaceUpdate" not in pruned_s2c["properties"]
   assert pruned_s2c["required"] == ["surfaceId"]
+
+
+def test_resolve_examples_path_handling():
+  from a2ui.schema.catalog import resolve_examples_path
+
+  assert resolve_examples_path(None) is None
+  assert resolve_examples_path("/absolute/examples") == "/absolute/examples"
+  assert resolve_examples_path("file:///absolute/examples") == "/absolute/examples"
+
+  with pytest.raises(ValueError, match="Unsupported examples URL scheme"):
+    resolve_examples_path("https://a2ui.org/examples")
+
+
+def test_catalog_config_from_path_schemes():
+  from a2ui.schema.catalog import CatalogConfig
+  # Test local path
+  config = CatalogConfig.from_path(
+      name="test_file", catalog_path="relative_path/to/catalog.json"
+  )
+  assert config.provider.path == "relative_path/to/catalog.json"
+
+  # Test file:// scheme
+  config = CatalogConfig.from_path(
+      name="test_file", catalog_path="file:///absolute_path/to/catalog.json"
+  )
+  assert config.provider.path == "/absolute_path/to/catalog.json"
+
+  # Test HTTP raises NotImplementedError
+  with pytest.raises(NotImplementedError, match="HTTP support is coming soon."):
+    CatalogConfig.from_path(
+        name="test_http", catalog_path="http://a2ui.org/catalog.json"
+    )
+
+  # Test unsupported scheme raises ValueError
+  with pytest.raises(ValueError, match="Unsupported catalog URL scheme"):
+    CatalogConfig.from_path(name="test_ftp", catalog_path="ftp://a2ui.org/catalog.json")
+
+
+def test_basic_catalog_get_config_examples_path():
+  from a2ui.basic_catalog.provider import BasicCatalog
+  from a2ui.schema.constants import VERSION_0_9
+
+  # Test get_config with file:// scheme examples path
+  config = BasicCatalog.get_config(
+      version=VERSION_0_9, examples_path="file:///absolute/examples"
+  )
+  assert config.examples_path == "/absolute/examples"

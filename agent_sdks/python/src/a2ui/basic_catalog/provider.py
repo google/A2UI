@@ -14,7 +14,7 @@
 
 from typing import Any, Dict, Optional
 
-from ..schema.catalog import CatalogConfig
+from ..schema.catalog import CatalogConfig, resolve_examples_path
 from ..schema.catalog_provider import A2uiCatalogProvider
 from ..schema.utils import load_from_bundled_resource
 from ..schema.constants import BASE_SCHEMA_URL, CATALOG_ID_KEY, CATALOG_SCHEMA_KEY
@@ -57,5 +57,5 @@ class BasicCatalog:
     return CatalogConfig(
         name=BASIC_CATALOG_NAME,
         provider=BundledCatalogProvider(version),
-        examples_path=examples_path,
+        examples_path=resolve_examples_path(examples_path),
     )

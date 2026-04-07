@@ -19,6 +19,7 @@ import logging
 import os
 from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from urllib.parse import urlparse
 
 from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
 from .constants import (
@@ -52,12 +53,30 @@ class CatalogConfig:
   def from_path(
       cls, name: str, catalog_path: str, examples_path: Optional[str] = None
   ) -> "CatalogConfig":
-    """Returns a CatalogConfig that loads from a file path."""
+    """Returns a CatalogConfig that loads from a local path or 'file://' URI."""
+    parsed = urlparse(catalog_path)
+    if not parsed.scheme or parsed.scheme == "file":
+      catalog_provider = FileSystemCatalogProvider(parsed.path)
+    elif parsed.scheme in ["http", "https"]:
+      raise NotImplementedError("HTTP support is coming soon.")
+    else:
+      raise ValueError(f"Unsupported catalog URL scheme: {catalog_path}")
+
     return cls(
         name=name,
-        provider=FileSystemCatalogProvider(catalog_path),
-        examples_path=examples_path,
+        provider=catalog_provider,
+        examples_path=resolve_examples_path(examples_path),
     )
+
+
+def resolve_examples_path(path: Optional[str]) -> Optional[str]:
+  if path:
+    parsed = urlparse(path)
+    if not parsed.scheme or parsed.scheme == "file":
+      return parsed.path
+    else:
+      raise ValueError(f"Unsupported examples URL scheme: {path}")
+  return None
 
 
 def _collect_refs(obj: Any) -> set[str]:
