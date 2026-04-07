@@ -25,3 +25,7 @@ dependencies = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true

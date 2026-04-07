@@ -9,12 +9,14 @@ from a2ui.core.schema.validator import A2uiValidator
 
 import json
 
+
 def load_json_file(filename):
   path = os.path.abspath(
       os.path.join(os.path.dirname(__file__), "../../../conformance", filename)
   )
   with open(path, "r") as f:
     return json.load(f)
+
 
 def load_tests(filename):
   path = os.path.abspath(
@@ -23,19 +25,20 @@ def load_tests(filename):
   with open(path, "r") as f:
     return yaml.safe_load(f)
 
+
 def setup_catalog(catalog_config):
   version = catalog_config["version"]
-  
+
   s2c_schema = catalog_config.get("s2c_schema")
   if isinstance(s2c_schema, str):
     s2c_schema = load_json_file(s2c_schema)
-    
+
   catalog_schema = catalog_config.get("catalog_schema")
   if isinstance(catalog_schema, str):
     catalog_schema = load_json_file(catalog_schema)
   elif catalog_schema is None:
     catalog_schema = {"catalogId": "test_catalog", "components": {}}
-    
+
   return A2uiCatalog(
       version=version,
       name="test_catalog",
