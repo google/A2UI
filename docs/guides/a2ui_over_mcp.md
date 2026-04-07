@@ -9,9 +9,11 @@ This guide shows you how to serve **rich, interactive A2UI interfaces** from an 
 
 ## Prerequisites
 
-- **Python 3.10+**
-- **[uv](https://docs.astral.sh/uv/)** — fast Python package manager
-- **Node.js 18+** (for the MCP Inspector)
+Ensure you have the following installed before you begin:
+
+- **Python** (version 3.10 or later).
+- **[uv](https://docs.astral.sh/uv/)** for fast Python package management.
+- **Node.js** (version 18 or later) for the MCP Inspector.
 
 ## Quick Start: Run the Sample
 
@@ -39,7 +41,7 @@ In the Inspector:
 3. Click **List Tools** → you'll see `get_recipe_a2ui`
 4. Run the tool → the response contains A2UI JSON that renders a recipe card
 
-> ⚠️ **Note**
+> NOTE: Note
 >
 > The sample uses a local path reference to the A2UI Agent SDK. For your own projects, install from PyPI:
 > ```bash
@@ -187,7 +189,7 @@ def get_hello_world_ui():
     return types.CallToolResult(content=[text_content, a2ui_resource])
 ```
 
-> ⚠️ **Tip**
+> TIP: Tip
 >
 > Always include a `TextContent` alongside your A2UI resource. Clients that don't support A2UI will fall back to showing the text.
 

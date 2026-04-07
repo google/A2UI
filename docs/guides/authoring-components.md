@@ -19,7 +19,7 @@ The catalog schema defines the API of your catalog. It lists available component
 
 **This schema acts as a contract between the client and the server (agent).** Both must agree on this schema for rendering to work. The client advertises what catalogs it supports, and the server selects a compatible one. For details on how this handshake works, see [A2UI Catalog Negotiation](../concepts/catalogs.md#a2ui-catalog-negotiation).
 
-In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/README.md) example, the catalog schema is defined in [`rizzcharts_catalog_definition.json`](../../samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json).
+In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/README.md) example, the catalog schema is defined in [`rizzcharts_catalog_definition.json`](../../samples/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json).
 
 Here is the schema for the `Chart` component:
 
@@ -137,9 +137,9 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
 }
 ```
 
-Key points:
--   **Extend `DynamicComponent`**: This gives you access to `resolvePrimitive` for data binding resolution.
--   **Use Angular Inputs**: Map properties from the schema to Angular inputs.
+Keep these key points in mind when implementing components:
+- **Extend `DynamicComponent`**: This gives you access to `resolvePrimitive` for data binding resolution.
+- **Use Angular Inputs**: Map properties from the schema to Angular inputs.
 
 ---
 
@@ -169,9 +169,9 @@ export const RIZZ_CHARTS_CATALOG = {
 } as Catalog;
 ```
 
-Key points:
--   **Lazy Loading**: Use `import()` to lazy-load the component code.
--   **Input Bindings**: Use `inputBinding` to map properties from the schema to Angular inputs.
+Key points for registration:
+- **Lazy Loading**: Use `import()` to lazy-load the component code.
+- **Input Bindings**: Use `inputBinding` to map properties from the schema to Angular inputs.
 
 ---
 

@@ -9,12 +9,12 @@ A2UI follows a **renderer-controlled styling** approach:
 - **Agents describe *what* to show** (components and structure)
 - **Renderers decide *how* it looks** (colors, fonts, spacing)
 
-This ensures:
+A renderer-controlled approach provides the following benefits:
 
-- ✅ **Brand consistency**: All UIs match your app's design system
-- ✅ **Security**: Agents can't inject arbitrary CSS or styling
-- ✅ **Accessibility**: You control contrast, focus states, and ARIA attributes
-- ✅ **Platform-native feel**: Web apps look like web, mobile looks like mobile
+- **Brand consistency**: All UIs match your app's design system.
+- **Security**: Agents cannot inject arbitrary CSS or styling.
+- **Accessibility**: You control contrast, focus states, and ARIA attributes.
+- **Platform-native feel**: Web apps look like web, mobile looks like mobile.
 
 ## Styling Layers
 
@@ -23,8 +23,8 @@ A2UI styling works in layers:
 ```mermaid
 flowchart TD
     A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration<br/>You configure<br/>(colors, fonts, spacing)"]
-    C["3. Component Overrides<br/>You customize<br/>(CSS/styles for specific components)"]
+    B["2. Theme Configuration<br/>Developer configures<br/>(colors, fonts, spacing)"]
+    C["3. Component Overrides<br/>Developer customizes<br/>(CSS/styles for specific components)"]
     D["4. Rendered Output<br/>Native platform widgets"]
 
     A --> B --> C --> D
