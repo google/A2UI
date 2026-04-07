@@ -34,7 +34,9 @@ from .constants import (
 )
 
 # A2UI relaxed path pattern (extends RFC 6901 to support relative paths)
-RELAXED_PATH_PATTERN = re.compile(r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$")
+RELAXED_PATH_PATTERN = re.compile(
+    r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$"
+)
 
 # Recursion Limits
 MAX_GLOBAL_DEPTH = 50
