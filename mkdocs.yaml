@@ -182,6 +182,9 @@ markdown_extensions:
   - toc:
       permalink: true
 
+hooks:
+  - hooks.py
+
 # Plugins
 plugins:
   - search
