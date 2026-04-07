@@ -45,7 +45,7 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 **sivamrudram-eng/a2ui-react-native** is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.
 
-**BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui**) is a native Swift renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
+**BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui**) is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
 
 ## Submitting a Renderer
 
