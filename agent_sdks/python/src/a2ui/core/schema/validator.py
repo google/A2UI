@@ -33,10 +33,8 @@ from .constants import (
     VERSION_0_9,
 )
 
-# RFC 6901 compliant regex for JSON Pointer
-RELAXED_PATH_PATTERN = re.compile(
-    r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$"
-)
+# A2UI relaxed path pattern (extends RFC 6901 to support relative paths)
+RELAXED_PATH_PATTERN = re.compile(r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$")
 
 # Recursion Limits
 MAX_GLOBAL_DEPTH = 50
