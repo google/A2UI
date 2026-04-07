@@ -19,7 +19,7 @@ import {type ComponentContext} from '@a2ui/web_core/v0_9';
 
 export const ChildList: React.FC<{
   childList: unknown;
-  context: ComponentContext;
+  context: ComponentContext<'react'>;
   buildChild: (id: string, basePath?: string) => React.ReactNode;
 }> = ({childList, buildChild}) => {
   if (Array.isArray(childList)) {

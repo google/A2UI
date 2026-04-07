@@ -16,7 +16,11 @@
 
 import {Subscription as BaseSubscription} from '../common/events.js';
 import {A2uiDataError} from '../errors.js';
-import {signal, Signal, batch, effect} from '@preact/signals-core';
+import {
+  FrameworkSignal,
+  SignalKinds,
+  WritableSignalKinds,
+} from '../reactivity/signals.js';
 
 /**
  * Represents a reactive connection to a specific path in the data model.
@@ -36,9 +40,10 @@ function isNumeric(value: string): boolean {
  * A standalone, observable data store representing the client-side state.
  * It handles JSON Pointer path resolution and subscription management.
  */
-export class DataModel {
+export class DataModel<SK extends keyof SignalKinds<any>> {
   private data: Record<string, unknown> = {};
-  private readonly signals: Map<string, Signal<any>> = new Map();
+  private readonly signals: Map<string, WritableSignalKinds<any>[SK]> =
+    new Map();
   private readonly subscriptions: Set<() => void> = new Set(); // To track direct subscriptions for dispose
 
   /**
@@ -46,7 +51,10 @@ export class DataModel {
    *
    * @param initialData The initial data for the model. Defaults to an empty object.
    */
-  constructor(initialData: Record<string, unknown> = {}) {
+  constructor(
+    private readonly frameworkSignal: FrameworkSignal<SK>,
+    initialData: Record<string, unknown> = {},
+  ) {
     this.data = initialData;
   }
 
@@ -59,12 +67,15 @@ export class DataModel {
    * @param path The JSON pointer path to create or retrieve a signal for.
    * @returns A Preact Signal representing the value at the specified path.
    */
-  getSignal<T>(path: string): Signal<T | undefined> {
+  getSignal<T>(path: string): SignalKinds<T>[SK] {
     const normalizedPath = this.normalizePath(path);
     if (!this.signals.has(normalizedPath)) {
-      this.signals.set(normalizedPath, signal(this.get(normalizedPath)));
+      this.signals.set(
+        normalizedPath,
+        this.frameworkSignal.wrap(this.get(normalizedPath)),
+      );
     }
-    return this.signals.get(normalizedPath) as Signal<T | undefined>;
+    return this.signals.get(normalizedPath)!;
   }
 
   /**
@@ -187,10 +198,10 @@ export class DataModel {
   ): DataSubscription<T> {
     const sig = this.getSignal<T>(path);
     let isSync = true;
-    let currentValue = sig.peek();
+    let currentValue = this.frameworkSignal.unwrap(sig);
 
-    const dispose = effect(() => {
-      const val = sig.value;
+    const dispose = this.frameworkSignal.effect(() => {
+      const val = this.frameworkSignal.unwrap(sig);
       currentValue = val;
       if (!isSync) {
         onChange(val);
@@ -236,24 +247,21 @@ export class DataModel {
   private notifySignals(path: string): void {
     const normalizedPath = this.normalizePath(path);
 
-    batch(() => {
-      this.updateSignal(normalizedPath);
+    this.updateSignal(normalizedPath);
 
-      // Notify Ancestors
-      let parentPath = normalizedPath;
-      while (parentPath !== '/' && parentPath !== '') {
-        parentPath =
-          parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
-        this.updateSignal(parentPath);
-      }
+    // Notify Ancestors
+    let parentPath = normalizedPath;
+    while (parentPath !== '/' && parentPath !== '') {
+      parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
+      this.updateSignal(parentPath);
+    }
 
-      // Notify Descendants
-      for (const subPath of this.signals.keys()) {
-        if (this.isDescendant(subPath, normalizedPath)) {
-          this.updateSignal(subPath);
-        }
+    // Notify Descendants
+    for (const subPath of this.signals.keys()) {
+      if (this.isDescendant(subPath, normalizedPath)) {
+        this.updateSignal(subPath);
       }
-    });
+    }
   }
 
   private updateSignal(path: string): void {
@@ -261,21 +269,19 @@ export class DataModel {
     if (sig) {
       const val = this.get(path);
       if (Array.isArray(val)) {
-        sig.value = [...val];
+        this.frameworkSignal.set(sig, [...val]);
       } else if (typeof val === 'object' && val !== null) {
-        sig.value = {...val};
+        this.frameworkSignal.set(sig, {...val});
       } else {
-        sig.value = val;
+        this.frameworkSignal.set(sig, val);
       }
     }
   }
 
   private notifyAllSignals(): void {
-    batch(() => {
-      for (const path of this.signals.keys()) {
-        this.updateSignal(path);
-      }
-    });
+    for (const path of this.signals.keys()) {
+      this.updateSignal(path);
+    }
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
