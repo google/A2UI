@@ -1130,9 +1130,10 @@ fadapter--&gt;core;</code></pre>
 </table>
 <p>See <a href="https://github.com/google/A2UI/blob/main/specification/v0_9/json/common_types.json#L200">example</a>.</p>
 <h3 id="action">Action<a class="headerlink" href="#action" title="Permanent link">¶</a></h3>
-<p>A string that explains to the agent what should be done.</p>
-<p>It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).</p>
-<p>See <a href="https://github.com/google/A2UI/blob/main/docs/concepts/actions.md">detailed guide on actions</a>.</p>
+<p>Interactivity defined in the component schema using the <code>action</code> property. Actions have two types:
+- <strong>Events</strong>: Dispatched to the agent for processing.
+- <strong>Functions</strong>: Executed locally on the renderer.</p>
+<p>See the <a href="../concepts/actions/">detailed guide on actions</a>.</p>
 <h2 id="generative-ui-terms">Generative UI terms<a class="headerlink" href="#generative-ui-terms" title="Permanent link">¶</a></h2>
 <p>Terms, not required by A2UI protocol, but commonly used in the context of generative UI.</p>
 <h3 id="known-patterns-of-genui">Known patterns of GenUI<a class="headerlink" href="#known-patterns-of-genui" title="Permanent link">¶</a></h3>

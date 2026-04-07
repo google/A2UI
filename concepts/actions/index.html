@@ -157,7 +157,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#a2ui-renderer-to-agent-actions" class="md-skip">
+        <a href="#handling-user-actions" class="md-skip">
           Skip to content
         </a>
       
@@ -899,10 +899,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#action-wiring-in-schema" class="md-nav__link">
+  <a href="#1-functions-local" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action Wiring in Schema
+        1. Functions (Local)
       
     </span>
   </a>
@@ -910,10 +910,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#local-actions-vs-agent-events" class="md-nav__link">
+  <a href="#2-events-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Local Actions vs. Agent Events
+        2. Events (Agent)
       
     </span>
   </a>
@@ -921,10 +921,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#basic-catalog-action-validation-checks" class="md-nav__link">
+  <a href="#basic-catalog-function-validation-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Catalog Action Validation (Checks)
+        Basic Catalog Function Validation (Checks)
       
     </span>
   </a>
@@ -1212,10 +1212,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-routing-user-actions" class="md-nav__link">
+  <a href="#2-routing-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Routing User Actions
+        2. Routing Events
       
     </span>
   </a>
@@ -2365,10 +2365,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#action-wiring-in-schema" class="md-nav__link">
+  <a href="#1-functions-local" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action Wiring in Schema
+        1. Functions (Local)
       
     </span>
   </a>
@@ -2376,10 +2376,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#local-actions-vs-agent-events" class="md-nav__link">
+  <a href="#2-events-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Local Actions vs. Agent Events
+        2. Events (Agent)
       
     </span>
   </a>
@@ -2387,10 +2387,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#basic-catalog-action-validation-checks" class="md-nav__link">
+  <a href="#basic-catalog-function-validation-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Catalog Action Validation (Checks)
+        Basic Catalog Function Validation (Checks)
       
     </span>
   </a>
@@ -2678,10 +2678,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-routing-user-actions" class="md-nav__link">
+  <a href="#2-routing-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Routing User Actions
+        2. Routing Events
       
     </span>
   </a>
@@ -2824,61 +2824,58 @@
   
 
 
-<h1 id="a2ui-renderer-to-agent-actions">A2UI Renderer-to-Agent Actions<a class="headerlink" href="#a2ui-renderer-to-agent-actions" title="Permanent link">&para;</a></h1>
-<p>Interactivity in A2UI relies on a bidirectional communication loop. While the Agent drives the UI by streaming component and data updates, the Renderer communicates user intent back to the Agent through <strong>Actions</strong> and <strong>Data Model Synchronization</strong>.</p>
+<h1 id="handling-user-actions">Handling User Actions<a class="headerlink" href="#handling-user-actions" title="Permanent link">&para;</a></h1>
+<p>This guide explains how A2UI handles user interactions. Components use the <code>action</code> property to trigger either local <strong>Functions</strong> (executed on the renderer) or <strong>Events</strong> (dispatched to the agent). In addition, <strong>Data Model Synchronization</strong> ensures the agent always has access to the full UI state, enabling seamless multi-modal interactions like voice commands. This design enables highly responsive interfaces while maintaining a secure, restricted environment.</p>
 <h2 id="action-architecture">Action Architecture<a class="headerlink" href="#action-architecture" title="Permanent link">&para;</a></h2>
-<p>Actions allow UI components to trigger behavior. They are defined in the <code>Action</code> schema in <a href="../../specification/v0_9/json/common_types.json"><code>common_types.json</code></a> and come in two flavors:</p>
+<p>Actions allow UI components to trigger behavior defined in the <a href="../../specification/v0_9/json/common_types.json#L271-L313"><code>Action</code></a> schema in <code>common_types.json</code>. Actions can trigger:</p>
 <ol>
-<li><strong>Agent Events</strong>: Dispatched to the Agent for processing (e.g., clicking "Submit").</li>
-<li><strong>Local Function Calls</strong>: Executed entirely on the renderer (e.g., opening a URL).</li>
+<li><strong>Events</strong>: Dispatched to the Agent for processing (executed on Agent, e.g., clicking "Submit").</li>
+<li><strong>Functions</strong>: Executed entirely on the renderer using <a href="../../specification/v0_9/json/common_types.json#L200-L242"><code>FunctionCall</code></a> (executed on Renderer, e.g., opening a URL).</li>
 </ol>
-<h3 id="action-wiring-in-schema">Action Wiring in Schema<a class="headerlink" href="#action-wiring-in-schema" title="Permanent link">&para;</a></h3>
-<p>Components like <code>Button</code> expose an <code>action</code> property. Here is how an agent event is wired:</p>
+<h3 id="1-functions-local">1. Functions (Local)<a class="headerlink" href="#1-functions-local" title="Permanent link">&para;</a></h3>
+<p>Functions execute immediate behavior on the renderer without a network round-trip. The agent is not informed of local function calls. They use the <code>functionCall</code> keyword.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-btn&quot;</span><span class="p">,</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;help-btn&quot;</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btn-text&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;help-text&quot;</span><span class="p">,</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit_reservation&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservationTime&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/partySize&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;functionCall&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;call&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openUrl&quot;</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.org/help&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Common uses for Functions include:
+- <strong>Navigation</strong>: Opening a URL or switching tabs.
+- <strong>Validation</strong>: Checking inputs before submission (see Checks below).</p>
+<h3 id="2-events-agent">2. Events (Agent)<a class="headerlink" href="#2-events-agent" title="Permanent link">&para;</a></h3>
+<p>Events send data to the agent for processing. They use the <code>event</code> keyword.</p>
+<p>Components like <code>Button</code> expose an <code>action</code> property. Here is how an Event is wired:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-btn&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btn-text&quot;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit_reservation&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservationTime&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/partySize&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <ul>
 <li><strong><code>name</code></strong>: A stable identifier for the agent to switch on.</li>
 <li><strong><code>context</code></strong>: A map of key-value pairs. Values can be literal or use a <code>path</code> to pull from the current state of the data model. </li>
 </ul>
-<div class="admonition note">
-<p><strong>Context vs. Data Model</strong>: While the Data Model represents the entire state tree of a surface, the <code>context</code> in an action is effectively a hand-picked <strong>"view"</strong> or subset of that state. This simplifies the Agent's job by providing exactly the values needed for a specific event, without requiring the Agent to navigate a potentially large and complex data model.</p>
-</div>
-<h3 id="local-actions-vs-agent-events">Local Actions vs. Agent Events<a class="headerlink" href="#local-actions-vs-agent-events" title="Permanent link">&para;</a></h3>
-<p>While Agent Events are the primary way to interact with an agent, <strong>Local Actions</strong> allow for immediate renderer-side behavior without a network round-trip. This is essential for responsive UI patterns.</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;help-btn&quot;</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;help-text&quot;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;functionCall&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;call&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openUrl&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.org/help&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>Common uses for Local Actions include:</p>
+<p>NOTE: <strong>Context vs. Data Model</strong>: While the Data Model represents the entire state tree of a surface, the <code>context</code> in an action is effectively a hand-picked <strong>"view"</strong> or subset of that state. This simplifies the Agent's job by providing exactly the values needed for a specific event, without requiring the Agent to navigate a potentially large and complex data model.</p>
+<h3 id="basic-catalog-function-validation-checks">Basic Catalog Function Validation (Checks)<a class="headerlink" href="#basic-catalog-function-validation-checks" title="Permanent link">&para;</a></h3>
+<p>The basic catalog defines a limited set of checks that can be performed on the renderer. Interactive components can define a list of <code>checks</code> (using the <a href="../../specification/v0_9/json/common_types.json#L258-L270"><code>Checkable</code></a> schema in <code>common_types.json</code>). For a <code>Button</code>, if any check fails, the button is <strong>automatically disabled</strong> on the renderer.</p>
 <ul>
-<li><strong>Validation</strong>: Validating inputs for a form before submitting it to the agent.</li>
-<li><strong>Formatting</strong>: Using <code>formatString</code> to format a local display value.</li>
-</ul>
-<h3 id="basic-catalog-action-validation-checks">Basic Catalog Action Validation (Checks)<a class="headerlink" href="#basic-catalog-action-validation-checks" title="Permanent link">&para;</a></h3>
-<p>The basic catalog defines a limited set of checks that can be performed on the renderer. Interactive components can define a list of <code>checks</code> (using the <code>Checkable</code> schema in <a href="../../specification/v0_9/json/common_types.json"><code>common_types.json</code></a>). For a <code>Button</code>, if any check fails, the button is <strong>automatically disabled</strong> on the renderer.</p>
-<ul>
-<li><strong>UX Focus</strong>: Action checks are designed to manage <strong>UI State (User Experience)</strong> by preventing invalid interactions before they happen. They are not a replacement for <strong>Data Integrity</strong> checks, which must still be performed on the agent.</li>
+<li><strong>UX Focus</strong>: Validation checks are designed to manage <strong>UI State (User Experience)</strong> by preventing invalid interactions before they happen. They are not a replacement for <strong>Data Integrity</strong> checks, which must still be performed on the agent.</li>
 </ul>
 <p>This allows the UI to enforce requirements (like a non-empty field) before the user even tries to submit.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
@@ -2898,22 +2895,20 @@
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="local-state-updates-the-write-contract">Local State Updates &amp; The "Write" Contract<a class="headerlink" href="#local-state-updates-the-write-contract" title="Permanent link">&para;</a></h2>
-<p>Before an action is even dispatched, the renderer is already managing the state of the UI locally. A2UI defines a <strong>Read/Write Contract</strong> for all input components (like <code>TextField</code>, <code>CheckBox</code>, or <code>Slider</code>).</p>
+<p>Before an Event is even dispatched, the renderer is already managing the state of the UI locally. A2UI defines a <strong>Read/Write Contract</strong> for all input components (like <code>TextField</code>, <code>CheckBox</code>, or <code>Slider</code>).</p>
 <ol>
 <li><strong>Read (Model → View)</strong>: When a component renders, it pulls its value from the bound <code>path</code> in the Data Model.</li>
 <li><strong>Write (View → Model)</strong>: As soon as a user interacts (e.g., typing a character or clicking a checkbox), the renderer <strong>immediately</strong> writes the new value into the local Data Model.</li>
 </ol>
-<p>This means the local model is <strong>always</strong> the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the renderer. Only when a User Action (like a Button click) is triggered is this state synchronized back to the agent.</p>
-<div class="admonition info">
-<p><strong>Synchronous Updates</strong>: Local model updates are <strong>synchronous</strong>. This guarantees that the Data Model is fully updated before any Action resolves its <code>context</code> paths or a <code>DataModelSync</code> payload is packaged. There are no race conditions between typing and clicking; the "Write" is always committed first.</p>
-</div>
-<p>This local-first approach offers a significant <strong>Performance Benefit</strong>. Because synchronization is immediate and local, developers don't need to implement network debouncing or worry about latency jitters as a user types in a <code>TextField</code>. The network is completely protected from "UI noise" (like individual keystrokes) until the user is ready to dispatch a formal Action.</p>
+<p>This means the local model is <strong>always</strong> the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the renderer. The data model is only sent to the agent when an event occurs (like a Button click).</p>
+<p>IMPORTANT: <strong>Synchronous Updates</strong>: Local model updates are <strong>synchronous</strong>. This guarantees that the Data Model is fully updated before any Event resolves its <code>context</code> paths or a <code>DataModelSync</code> payload is packaged. There are no race conditions between typing and clicking; the "Write" is always committed first.</p>
+<p>This local-first approach offers a significant <strong>Performance Benefit</strong>. Because synchronization is immediate and local, developers don't need to implement network debouncing or worry about latency jitters as a user types in a <code>TextField</code>. The network is completely protected from "UI noise" (like individual keystrokes) until the user is ready to dispatch a formal Event.</p>
 <h3 id="the-form-submission-pattern">The Form Submission Pattern<a class="headerlink" href="#the-form-submission-pattern" title="Permanent link">&para;</a></h3>
 <p>This separation allows for a robust form submission pattern:</p>
 <ul>
 <li><strong>Binding</strong>: A <code>TextField</code> is bound to <code>/reservationTime</code>.</li>
 <li><strong>Interaction</strong>: The user types "7:00 PM". The local model at <code>/reservationTime</code> is updated instantly.</li>
-<li><strong>Submission</strong>: The user clicks a "Book" button. The button's action resolves the <code>path: "/reservationTime"</code> from the local model and sends the current value to the agent.</li>
+<li><strong>Submission</strong>: The user clicks a "Book" button. The button's Event resolves the <code>path: "/reservationTime"</code> from the local model and sends the current value to the agent.</li>
 </ul>
 <h2 id="user-interaction-flow">User Interaction Flow<a class="headerlink" href="#user-interaction-flow" title="Permanent link">&para;</a></h2>
 <p>When a user interacts with a component (e.g., clicks a button):</p>
@@ -2938,11 +2933,9 @@
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="admonition info">
-<p><strong>A Note on Versioning (v0.8 vs v0.9)</strong>: In v0.8, the top-level payload key was <code>userAction</code> (e.g., <code>{"userAction": {...}}</code>). v0.9 transitioned to the simpler <code>action</code> key shown above. Standard protocol parsers will expect the key corresponding to the version declared in the payload.</p>
-</div>
+<p>IMPORTANT: <strong>A Note on Versioning (v0.8 vs v0.9)</strong>: In v0.8, the top-level payload key was <code>userAction</code> (e.g., <code>{"userAction": {...}}</code>). v0.9 transitioned to the simpler <code>action</code> key shown above. Standard protocol parsers expect the key corresponding to the version declared in the payload.</p>
 <h2 id="agent-processing">Agent Processing<a class="headerlink" href="#agent-processing" title="Permanent link">&para;</a></h2>
-<p>The Agent (or an Orchestrator) receives this event and acts on it. In an agentic system, this usually involves turning the event into a hidden user query for the LLM.</p>
+<p>The Agent (or an Orchestrator) receives this event and acts on it. In an agentic system, the agent usually converts the event into a hidden user query for the LLM.</p>
 <p><strong>Example Agent Processing (Python):</strong></p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span> <span class="n">action_name</span> <span class="o">==</span> <span class="s2">&quot;submit_reservation&quot;</span><span class="p">:</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">time</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -2952,7 +2945,7 @@
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="renderer-to-agent-error-reporting">Renderer-to-Agent Error Reporting<a class="headerlink" href="#renderer-to-agent-error-reporting" title="Permanent link">&para;</a></h2>
-<p>In addition to user actions, the renderer can report system-level errors back to the agent using the <code>error</code> payload defined in <a href="../../specification/v0_9/json/client_to_server.json"><code>client_to_server.json</code></a>.</p>
+<p>In addition to Events triggered by the user, the renderer can report system-level errors back to the agent using the <code>error</code> payload defined in <a href="../../specification/v0_9/json/client_to_server.json"><code>client_to_server.json</code></a>.</p>
 <h3 id="validation-failures">Validation Failures<a class="headerlink" href="#validation-failures" title="Permanent link">&para;</a></h3>
 <p>If the agent sends A2UI JSON that violates the catalog schema or protocol rules, the renderer sends a <code>VALIDATION_FAILED</code> error. This is a critical feedback loop for agentic systems:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
@@ -2967,7 +2960,7 @@
 </span></code></pre></div>
 <p>The agent can catch this error, apologize (or self-correct internally), and re-send the corrected UI.</p>
 <h2 id="data-model-sync-v09">Data Model Sync (v0.9)<a class="headerlink" href="#data-model-sync-v09" title="Permanent link">&para;</a></h2>
-<p>In A2UI v0.9, we introduced a powerful "stateless" synchronization feature. This allows the renderer to automatically include the <strong>entire data model</strong> of a surface in the metadata of every message it sends to the agent.</p>
+<p>A2UI v0.9 introduced a powerful "stateless" synchronization feature. This allows the renderer to automatically include the <strong>entire data model</strong> of a surface in the metadata of every message it sends to the agent.</p>
 <h3 id="enabling-sync">Enabling Sync<a class="headerlink" href="#enabling-sync" title="Permanent link">&para;</a></h3>
 <p>Synchronization is requested by the agent during surface initialization. By setting <code>sendDataModel: true</code> in the <code>createSurface</code> message, the agent instructs the renderer to start the sync loop.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
@@ -3003,7 +2996,7 @@
 <ul>
 <li><strong>Simpler Wiring</strong>: You don't need to manually map every input field into a button's <code>context</code> property. The agent can simply inspect the metadata to see the current state of all fields.</li>
 <li><strong>Stateless Agents</strong>: The agent doesn't need to maintain local state for every user session; it receives the full current context with every single interaction.</li>
-<li><strong>Verbal Shortcuts</strong>: Allows the user to trigger actions via voice or text (e.g., "okay submit") even without clicking a specific button. Since the agent receives the updated data model with the text message, it can process the request immediately.</li>
+<li><strong>Verbal Shortcuts</strong>: Allows the user to trigger Events via voice or text (e.g., "okay submit") even without clicking a specific button. Since the agent receives the updated data model with the text message, it can process the request immediately.</li>
 </ul>
 <h2 id="renderer-metadata-capabilities">Renderer Metadata &amp; Capabilities<a class="headerlink" href="#renderer-metadata-capabilities" title="Permanent link">&para;</a></h2>
 <p>Before an agent can safely send a UI, the renderer must advertise which component catalogs it supports. This is handled via the <code>a2uiClientCapabilities</code> object.</p>
@@ -3032,9 +3025,7 @@
 <li><strong>mimeType</strong>: <code>application/json+a2ui</code></li>
 </ul>
 <p>The <code>data</code> field of the <code>DataPart</code> contains a <strong>list</strong> of A2UI messages. This allows multiple updates (e.g., <code>createSurface</code> followed by <code>updateComponents</code>) to be sent in a single network packet.</p>
-<div class="admonition note">
-<p><strong>A2A Versioning</strong>: The use of a <strong>list</strong> in the <code>data</code> field was introduced in <strong>A2A v1.0</strong>. Earlier versions of the A2A protocol expect the <code>data</code> field to contain a single JSON object.</p>
-</div>
+<p>NOTE: <strong>A2A Versioning</strong>: The use of a <strong>list</strong> in the <code>data</code> field was introduced in <strong>A2A v1.0</strong>. Earlier versions of the A2A protocol expect the <code>data</code> field to contain a single JSON object.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -3069,9 +3060,9 @@
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="c1"># Store the mapping in the orchestrator&#39;s session state</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">session</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;owner_of_</span><span class="si">{</span><span class="n">surface_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">agent_name</span><span class="p">})</span>
 </span></code></pre></div>
-<h4 id="2-routing-user-actions">2. Routing User Actions<a class="headerlink" href="#2-routing-user-actions" title="Permanent link">&para;</a></h4>
+<h4 id="2-routing-events">2. Routing Events<a class="headerlink" href="#2-routing-events" title="Permanent link">&para;</a></h4>
 <p>When the renderer sends an <code>action</code> back to the orchestrator, the orchestrator looks up the <code>surfaceId</code> and transfers the request to the correct sub-agent.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Simplified Orchestrator Logic: Route Action</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Simplified Orchestrator Logic: Route Event</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_incoming_action</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">action</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">)</span>
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">surface_id</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;surfaceId&quot;</span><span class="p">)</span>
@@ -3105,9 +3096,7 @@
 </span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>    <span class="k">return</span> <span class="n">request_payload</span>
 </span></code></pre></div>
 <p>By stripping the metadata, the orchestrator ensures that sub-agents only receive the portion of the data model they are authorized to see.</p>
-<div class="admonition danger">
-<p><strong>Security Risk: State Scraping</strong>: If an Orchestrator fails to strip the <code>a2uiClientDataModel</code>, a malicious or compromised sub-agent could potentially "scrape" the state of other active surfaces. For example, a weather sub-agent could read sensitive data from a banking surface if the orchestrator leaks the entire multi-surface data model. Stripping is a mandatory security requirement in multi-agent systems.</p>
-</div>
+<p>CAUTION: <strong>Security Risk: State Scraping</strong>: If an Orchestrator fails to strip the <code>a2uiClientDataModel</code>, a malicious or compromised sub-agent could potentially "scrape" the state of other active surfaces. For example, a weather sub-agent could read sensitive data from a banking surface if the orchestrator leaks the entire multi-surface data model. Stripping is a mandatory security requirement in multi-agent systems.</p>
 <hr />
 <h2 id="comprehensive-examples">Comprehensive Examples<a class="headerlink" href="#comprehensive-examples" title="Permanent link">&para;</a></h2>
 <h3 id="1-button-submit-explicit-context">1. Button Submit (Explicit Context)<a class="headerlink" href="#1-button-submit-explicit-context" title="Permanent link">&para;</a></h3>
@@ -3160,8 +3149,8 @@ The renderer sends an A2A message containing the user's text and the data model 
 </span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><strong>Agent Action:</strong>
-The agent sees the user's intent ("submit") and looks at the <code>metadata</code> to find the current values of <code>partySize</code> and <code>reservationTime</code>, allowing it to complete the action without further clarification.</p>
+<p><strong>Agent Processing:</strong>
+The agent sees the user's intent ("submit") and looks at the <code>metadata</code> to find the current values of <code>partySize</code> and <code>reservationTime</code>, allowing it to complete the task without further clarification.</p>
 
 
 
