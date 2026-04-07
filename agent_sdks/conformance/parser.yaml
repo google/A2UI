@@ -1223,6 +1223,7 @@
   description: Tests that partial chunks are buffered and yielded correctly for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1351,6 +1352,7 @@
   description: Tests that components are not yielded until reachable from root for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1397,6 +1399,7 @@
   description: Tests that orphan components (not reachable from root) are ignored for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1429,6 +1432,7 @@
   description: Tests that circular references are detected during streaming for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1452,6 +1456,7 @@
   description: Tests that self-references are detected during streaming for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1475,6 +1480,7 @@
   description: Tests that conversational text and A2UI content are interleaved correctly for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1499,6 +1505,7 @@
   description: Tests that the parser handles the opening tag split across chunks correctly for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1523,6 +1530,7 @@
   description: Verifies that v0.9 createSurface fails when catalogId is missing.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1537,6 +1545,7 @@
   description: Tests that createSurface is yielded only when complete for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1559,6 +1568,7 @@
   description: Tests that multiple A2UI blocks are handled correctly with interleaved text for v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1596,6 +1606,7 @@
   description: Tests that partial JSON yields incremental updates.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1635,6 +1646,7 @@
   description: Tests that partial single child string yields placeholder.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1686,6 +1698,7 @@
   description: Tests that partial template componentId yields placeholder after path is seen.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1744,6 +1757,7 @@
   description: Tests that partial children lists yield placeholders.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1783,6 +1797,7 @@
   description: Tests that data model before components works.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1837,6 +1852,7 @@
   description: Tests that data model after components works.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1891,6 +1907,7 @@
   description: Tests that partial paths are buffered.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1938,6 +1955,7 @@
   description: Tests that atomic IDs are buffered when cut.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -1993,6 +2011,7 @@
   description: Tests that cuttable text is yielded incrementally.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2045,6 +2064,7 @@
   description: Tests that updateComponents is buffered until createSurface arrives.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2085,6 +2105,7 @@
   description: Tests that data model before components works.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2138,6 +2159,7 @@
   description: Tests that data model after components works.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2191,6 +2213,7 @@
   description: Tests that partial paths are handled correctly.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2239,6 +2262,7 @@
   description: Tests that cutting atomic ID buffers the component.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2294,6 +2318,7 @@
   description: Tests that cutting cuttable text yields partial text.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2346,6 +2371,7 @@
   description: Tests that updateComponents before createSurface is buffered.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2386,6 +2412,7 @@
   description: Tests that deleteSurface before createSurface is ignored.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2407,6 +2434,7 @@
   description: Tests that cutting non-cuttable path buffers the component.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2455,6 +2483,7 @@
   description: Tests that invalid message fails validation.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2469,6 +2498,7 @@
   description: Tests that missing required fields fail validation.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2501,6 +2531,7 @@
   description: Tests that the parser correctly assembles components from small deltas.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2559,6 +2590,7 @@
   description: Tests that updateDataModel yields expected updates.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2632,6 +2664,7 @@
   description: Tests that the parser yields surface updates as items arrive in a updateDataModel stream.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2717,6 +2750,7 @@
   description: Tests that sniffing a partial DM update that would fail validation doesn't crash.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2736,6 +2770,7 @@
   description: Tests that an unclosed string yields previous valid entries.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2770,6 +2805,7 @@
   description: Tests that unchanged keys are retained in partial updateDataModels.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2799,6 +2835,7 @@
   description: Tests that entries with only a key and no value are pruned.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2821,6 +2858,7 @@
   description: Tests that an incomplete trailing empty dictionary is dropped.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2843,6 +2881,7 @@
   description: Tests that an incomplete component with an empty children dictionary is discarded.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2901,6 +2940,7 @@
   description: Tests that partial empty dict is discarded until populated.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2956,6 +2996,7 @@
   description: Tests that partial component is discarded if it lacks required fields.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
@@ -2999,6 +3040,7 @@
   description: Tests that the parser can handle multiple surfaces simultaneously.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"

@@ -32,6 +32,7 @@
   description: Tests validation of v0.9 messages.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -187,6 +188,7 @@
   description: Tests validation with a custom catalog in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: custom
@@ -352,6 +354,7 @@
   description: Tests that duplicate IDs are detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -422,6 +425,7 @@
   description: Tests that missing root component is detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -506,6 +510,7 @@
   description: Tests that dangling references are detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -597,6 +602,7 @@
   description: Tests that self-references are detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -682,6 +688,7 @@
   description: Tests that function call recursion limit is exceeded in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -772,6 +779,7 @@
   description: Tests that orphaned components are detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -867,6 +875,7 @@
   description: Tests template reachability in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -1042,6 +1051,7 @@
   description: Tests invalid paths in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -1355,6 +1365,7 @@
   description: Tests that global recursion limit is exceeded in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -1766,6 +1777,7 @@
   description: Tests that global recursion limit is valid in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -1937,6 +1949,7 @@
   description: Tests that global recursion limit is exceeded for data model in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
@@ -2064,6 +2077,7 @@
   description: Tests that circular references are detected in v0.9.
   catalog:
     version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
     s2c_schema: "simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"

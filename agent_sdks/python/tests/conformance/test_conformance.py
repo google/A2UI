@@ -39,11 +39,17 @@ def setup_catalog(catalog_config):
   elif catalog_schema is None:
     catalog_schema = {"catalogId": "test_catalog", "components": {}}
 
+  common_types_schema = catalog_config.get("common_types_schema")
+  if isinstance(common_types_schema, str):
+    common_types_schema = load_json_file(common_types_schema)
+  elif common_types_schema is None:
+    common_types_schema = {}
+
   return A2uiCatalog(
       version=version,
       name="test_catalog",
       s2c_schema=s2c_schema,
-      common_types_schema={},
+      common_types_schema=common_types_schema,
       catalog_schema=catalog_schema,
   )
 

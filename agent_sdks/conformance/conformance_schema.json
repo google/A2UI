@@ -34,6 +34,12 @@
               { "type": "string", "description": "Path to catalog file." },
               { "type": "object", "description": "Inlined catalog object." }
             ]
+          },
+          "common_types_schema": {
+            "oneOf": [
+              { "type": "string", "description": "Path to common types schema file." },
+              { "type": "object", "description": "Inlined common types schema object." }
+            ]
           }
         },
         "required": ["version", "s2c_schema"]
