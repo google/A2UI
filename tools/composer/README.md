@@ -27,18 +27,18 @@ Since the composer depends on shared renderers in this repository, you must buil
 ```bash
 # Build markdown-it renderer
 cd ../../renderers/markdown/markdown-it
-npm install
-npm run build
+yarn install
+yarn build
 
 # Build web-core renderer
 cd ../../web_core
-npm install
-npm run build
+yarn install
+yarn build
 
 # Build lit renderer
 cd ../lit
-npm install
-npm run build
+yarn install
+yarn build
 
 # Back to composer
 cd ../../tools/composer
@@ -46,17 +46,17 @@ cd ../../tools/composer
 
 Then, just install, build, and run!
 ```bash
-pnpm i && pnpm build
-pnpm dev
+yarn i && yarn build
+yarn dev
 ```
 
 ## Testing
 To run the tests:
 ```bash
-pnpm test
+yarn test
 ```
 
 To run tests in watch mode:
 ```bash
-pnpm test:watch
+yarn test:watch
 ```

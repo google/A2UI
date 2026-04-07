@@ -13,7 +13,7 @@ To speed up test execution, install the dependencies locally:
 
 ```bash
 cd specification/v0_10/test
-pnpm install
+yarn install
 ```
 
 ## Running Tests

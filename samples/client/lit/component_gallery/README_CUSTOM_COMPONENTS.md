@@ -49,9 +49,9 @@ uv run .
 ### 2. Start this Client
 The client connects to the agent and renders the UI.
 ```bash
-# In this directory (samples/client/lit/contact)
-npm install
-npm run dev
+# In this directory (samples/client/lit/component_gallery)
+yarn install
+yarn dev
 ```
 *The client acts as a shell, connecting to localhost:10004 by default.*
 

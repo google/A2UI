@@ -19,7 +19,8 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ExternalLink, Copy, Check } from 'lucide-react';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import dynamic from 'next/dynamic';
+const A2UIViewer = dynamic(() => import('@copilotkit/a2ui-renderer').then(mod => mod.A2UIViewer), { ssr: false });
 
 // 100 most important Material Icons for common UI patterns
 const MATERIAL_ICONS = [

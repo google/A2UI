@@ -267,7 +267,7 @@ export function createBookingFormMessages(
               TextField: {
                 label: { literalString: 'Party Size' },
                 text: { path: '/partySize' },
-                type: 'number',
+                textFieldType: 'number',
               },
             },
           },
@@ -275,7 +275,6 @@ export function createBookingFormMessages(
             id: 'datetime-field',
             component: {
               DateTimeInput: {
-                label: { literalString: 'Date & Time' },
                 value: { path: '/reservationTime' },
                 enableDate: true,
                 enableTime: true,

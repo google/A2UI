@@ -31,8 +31,8 @@ Complete Steps 1–6 in [Quickstart.ipynb](Quickstart.ipynb) first to set up GCP
 
 ```bash
 cd samples/personalized_learning
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 Open the URL shown in your terminal (typically http://localhost:5174, but the port may vary) and try prompts like:

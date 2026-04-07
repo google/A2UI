@@ -19,7 +19,8 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { COMPONENTS_DATA, ComponentDoc } from '@/lib/components-data';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import dynamic from 'next/dynamic';
+const A2UIViewer = dynamic(() => import('@copilotkit/a2ui-renderer').then(mod => mod.A2UIViewer), { ssr: false });
 
 function ComponentSidebar({
   selectedComponent,

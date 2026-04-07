@@ -13,7 +13,7 @@ To fully run the sample, you need to start **both** the Agent (frontend logic) a
 ### Prerequisites
 
 -   Python 3.10+ & `uv` (for Agent)
--   Node.js 18+ & `npm` (for Client)
+-   Node.js 18+ & `yarn` (for Client)
 
 ### 1. Run the Agent (Backend)
 
@@ -39,14 +39,15 @@ The client connects to the agent and renders the UI.
     cd samples/client/lit/component_gallery
     ```
 
-2.  Install dependencies:
+2.  Make sure you have installed dependencies and built packages from the repository root:
     ```bash
-    npm install
+    yarn install
+    yarn build:all
     ```
 
 3.  Start the development server:
     ```bash
-    npm run dev
+    yarn dev
     ```
     Open your browser to the URL shown (usually `http://localhost:5173`).
 

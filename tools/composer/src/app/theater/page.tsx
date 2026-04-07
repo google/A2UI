@@ -24,7 +24,12 @@ import {
 } from 'lucide-react';
 import { useStreamingPlayer } from '@/components/theater/useStreamingPlayer';
 import { useA2UISurface } from '@/components/theater/useA2UISurface';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import dynamic from 'next/dynamic';
+
+const A2UIViewer = dynamic(
+  () => import('@copilotkit/a2ui-renderer').then((mod) => mod.A2UIViewer),
+  { ssr: false }
+);
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { scenarios, ScenarioId } from '@/data/theater';

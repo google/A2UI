@@ -17,7 +17,8 @@
 'use client';
 
 import { Widget } from '@/types/widget';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import dynamic from 'next/dynamic';
+const A2UIViewer = dynamic(() => import('@copilotkit/a2ui-renderer').then(mod => mod.A2UIViewer), { ssr: false });
 
 interface GalleryWidgetProps {
   widget: Widget;
