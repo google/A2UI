@@ -534,8 +534,10 @@ class TestValidator:
             "updateDataModel": {
                 "surfaceId": "recipe-card",
                 "value": {
-                    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop"
-                }
+                    "image": (
+                        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop"
+                    )
+                },
             },
         },
         {"version": "v0.9", "deleteSurface": {}},
