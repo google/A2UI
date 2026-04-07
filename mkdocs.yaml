@@ -57,8 +57,8 @@ nav:
       - Theming & Styling: guides/theming.md
       - A2UI + MCP:
           - A2UI over MCP: guides/a2ui_over_mcp.md
-          - A2UI Surface containing MCP Apps: guides/mcp-apps-in-a2ui-surface.md
-          - MCP Apps containing A2UI Surface: guides/guide_a2ui_dynamic_mcp.md
+          - MCP Apps in A2UI: guides/mcp-apps-in-a2ui-surface.md
+          - A2UI in MCP Apps: guides/guide_a2ui_dynamic_mcp.md
   - Reference:
       - Component Gallery: reference/components.md
       - Message Reference: reference/messages.md

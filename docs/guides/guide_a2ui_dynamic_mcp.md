@@ -24,7 +24,7 @@ The system consists of three main actors interacting through a chain of communic
 
 ## Deep Dive: The Communication Flow
 
-The uniqueness of this pattern lies in how A2UI payloads are delivered to the Sandboxed MCP App. Instead of the Host rendering the A2UI, the **MCP App** renders it.
+A key aspect of this pattern is that the **MCP App** renders the A2UI payloads directly, rather than relying on the Client Host Application to do so.
 
 ### Loading A2UI Components in MCP Apps
 Here is the sequence of events for dynamically loading A2UI components into MCP Apps:
@@ -208,7 +208,7 @@ this.processor.events.subscribe(async (event) => {
 });
 ```
 
-By following this pattern, your MCP App becomes a dynamic window into the capabilities provided by your MCP Server, all while maintaining strict security boundaries.
+This pattern enables the MCP App to serve as a dynamic interface for the MCP Server's A2UI capabilities while maintaining strict security isolation.
 
 ## Security Considerations
 
