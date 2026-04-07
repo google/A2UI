@@ -127,6 +127,7 @@ function getDefaultStyleSheet(): CSSStyleSheet {
  * of the page, if it's not already present.
  */
 export function injectDefaultA2uiTheme() {
+  if (typeof document === "undefined") return;
   const sheet = getDefaultStyleSheet();
   if (!document.adoptedStyleSheets.includes(sheet)) {
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
