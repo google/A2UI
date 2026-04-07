@@ -981,22 +981,8 @@ class TestValidator:
   @pytest.mark.parametrize(
       "payload",
       [
-          {
-              "updateDataModel": {
-                  "surfaceId": "surface1",
-                  "path": "invalid//path",
-                  "value": {"some": "data"},
-              }
-          },
-          {
-              "updateComponents": {
-                  "components": [{
-                      "id": "root",
-                      "component": "Text",
-                      "text": {"path": "invalid path with spaces"},
-                  }]
-              }
-          },
+
+
           {
               "updateDataModel": {
                   "surfaceId": "surface1",
@@ -1007,6 +993,8 @@ class TestValidator:
       ],
   )
   def test_validate_invalid_paths(self, test_catalog, payload):
+
+
     # Use make_payload to ensure correct wrapping and 'version' field for v0.9
     if "updateComponents" in payload:
       p = self.make_payload(
@@ -1027,10 +1015,16 @@ class TestValidator:
     with pytest.raises(
         ValueError,
         match=(
-            "(Invalid JSON Pointer syntax|is not valid under any of the given schemas)"
+            "(Invalid path syntax|is not valid under any of the given schemas)"
         ),
     ):
       test_catalog.validator.validate(p)
+
+  def test_validate_relative_paths(self, test_catalog):
+    """Tests that relative paths are allowed."""
+    components = [{"id": "root", "component": "Text", "text": {"path": "relative/path"}}]
+    payload = self.make_payload(test_catalog, components=components)
+    test_catalog.validator.validate(payload)
 
   def test_validate_global_recursion_limit_exceeded(self, test_catalog):
     deep_data = {"level": 0}
