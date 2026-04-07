@@ -58,9 +58,14 @@ function formatBytes(bytes: number): string {
 }
 
 export default function TheaterPage() {
+  const [mounted, setMounted] = useState(false);
   const [leftTab, setLeftTab] = useState<LeftTab>('data');
   const [mobileView, setMobileView] = useState<'left' | 'renderer'>('renderer');
   const [renderer, setRenderer] = useState<RendererType>(RENDERERS[0]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId>(() => {
     const url = readURL();
     return (url.scenario && url.scenario in scenarios) ? url.scenario as ScenarioId : 'restaurant-booking';
@@ -133,6 +138,10 @@ export default function TheaterPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [playbackState, progress, totalChunks, play, pause, seek]);
+
+  if (!mounted) {
+    return <div className="flex h-screen items-center justify-center bg-background text-foreground font-sans">Loading...</div>;
+  }
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
@@ -381,7 +390,7 @@ export default function TheaterPage() {
                     <span className="text-[10px] text-muted-foreground font-mono">{selectedScenario}</span>
                   </div>
                   <div className="p-4 bg-dot-pattern">
-                    {activeMessages.length > 0 ? (
+                    {surfaceState.components.length > 0 ? (
                       <div className="w-full flex items-start justify-center">
                         <A2UIViewer
                           root={surfaceState.root}
