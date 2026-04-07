@@ -14,15 +14,46 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { CheckBoxApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-checkbox")
 export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
+  /**
+   * The styles of the checkbox can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-checkbox-size`: Size of the box. Defaults to `1rem`.
+   * - `--a2ui-checkbox-border-radius`: Default corner rounding of the box.
+   * - `--a2ui-checkbox-gap`: Spacing between the checkbox and its label. Defaults to `8px`.
+   */
+  static styles = css`
+    :host {
+      display: inline-block;
+    }
+    label.a2ui-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--a2ui-checkbox-gap, var(--a2ui-spacing-s, 0.5rem));
+      cursor: pointer;
+    }
+    input {
+      width: var(--a2ui-checkbox-size, 1rem);
+      height: var(--a2ui-checkbox-size, 1rem);
+      border-radius: var(--a2ui-checkbox-border-radius, 4px);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, CheckBoxApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {

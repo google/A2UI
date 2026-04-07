@@ -14,45 +14,88 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-tabs")
 export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
+  /**
+   * The styles of the tabs can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-tabs-header-background`: Default transparent.
+   * - `--a2ui-tabs-header-background-active`: Default `--a2ui-color-secondary`.
+   * - `--a2ui-tabs-header-color`: Default `--a2ui-color-on-surface`.
+   * - `--a2ui-tabs-header-color-active`: Default `--a2ui-color-on-secondary`.
+   * - `--a2ui-tabs-border`: Default `--a2ui-border-width` solid `--a2ui-color-border`.
+   * - `--a2ui-tabs-content-padding`: Default `0 var(--a2ui-spacing-m, 0.5rem)`.
+   */
+  static styles = css`
+    :host {
+      display: block;
+    }
+    .a2ui-tabs-headers {
+      display: flex;
+      gap: var(--a2ui-spacing-xs, 0.25rem);
+      border-bottom: var(--a2ui-tabs-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      margin-bottom: var(--a2ui-spacing-m, 0.5rem);
+    }
+    .a2ui-tabs-header {
+      padding: var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem);
+      background: var(--a2ui-tabs-header-background, transparent);
+      color: var(--a2ui-tabs-header-color, var(--a2ui-color-on-surface));
+      border: none;
+      border-radius: var(--a2ui-border-radius, 0.25rem) var(--a2ui-border-radius, 0.25rem) 0 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .a2ui-tabs-header.active {
+      background: var(--a2ui-tabs-header-background-active, var(--a2ui-color-secondary, #eee));
+      color: var(--a2ui-tabs-header-color-active, var(--a2ui-color-on-secondary, #333));
+    }
+    .a2ui-tabs-content {
+      padding: var(--a2ui-tabs-content-padding, 0 var(--a2ui-spacing-m, 0.5rem));
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, TabsApi);
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
+  }
+
   @state() accessor activeIndex = 0;
 
   render() {
     const props = this.controller.props;
     if (!props || !props.tabs) return nothing;
     return html`
-      <div class="a2ui-tabs">
-        <div
-          class="a2ui-tab-headers"
-          style="display:flex; gap: 8px; border-bottom: 1px solid #ccc; margin-bottom: 16px;"
-        >
-          ${props.tabs.map(
-            (tab: any, i: number) => html`
-              <button
-                @click=${() => (this.activeIndex = i)}
-                style="padding: 8px; background: ${i === this.activeIndex
-                  ? "#eee"
-                  : "transparent"}; border: none;"
-              >
-                ${tab.title}
-              </button>
-            `,
-          )}
-        </div>
-        <div class="a2ui-tab-content">
-          ${props.tabs[this.activeIndex]
-            ? html`${this.renderNode(props.tabs[this.activeIndex].child)}`
-            : nothing}
-        </div>
+      <div class="a2ui-tabs-headers">
+        ${props.tabs.map(
+          (tab: any, i: number) => html`
+            <button
+              class=${classMap({
+                "a2ui-tabs-header": true,
+                active: i === this.activeIndex,
+              })}
+              @click=${() => (this.activeIndex = i)}
+            >
+              ${tab.title}
+            </button>
+          `,
+        )}
+      </div>
+      <div class="a2ui-tabs-content">
+        ${props.tabs[this.activeIndex]
+          ? html`${this.renderNode(props.tabs[this.activeIndex].child)}`
+          : nothing}
       </div>
     `;
   }

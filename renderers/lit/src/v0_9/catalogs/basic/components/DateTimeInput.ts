@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { DateTimeInputApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-datetimeinput")
 export class A2uiDateTimeInputElement extends A2uiLitElement<
   typeof DateTimeInputApi
 > {
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-spacing-xs, 0.25rem);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, DateTimeInputApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {
@@ -38,15 +52,13 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<
           ? "date"
           : "time";
     return html`
-      <div class="a2ui-datetime">
-        ${props.label ? html`<label>${props.label}</label>` : nothing}
-        <input
-          type=${type}
-          .value=${props.value || ""}
-          @input=${(e: Event) =>
-            props.setValue?.((e.target as HTMLInputElement).value)}
-        />
-      </div>
+      ${props.label ? html`<label>${props.label}</label>` : nothing}
+      <input
+        type=${type}
+        .value=${props.value || ""}
+        @input=${(e: Event) =>
+          props.setValue?.((e.target as HTMLInputElement).value)}
+      />
     `;
   }
 }

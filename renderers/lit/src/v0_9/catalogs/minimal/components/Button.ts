@@ -14,16 +14,87 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
+/**
+ * A button component that can be used to trigger an action.
+ */
 @customElement("a2ui-button")
 export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
+  /**
+   * The styles of the button can be customized by redefining the following
+   * CSS variables:
+   *
+   * - Primary variant:
+   *   - `--a2ui-color-primary`: The color for the primary variant.
+   *   - `--a2ui-color-on-primary`: The color of the text on the primary variant.
+   * - Standard/default variant:
+   *   - `--a2ui-color-secondary`: The color for the default variant.
+   *   - `--a2ui-color-on-secondary`: The color of the text on the default variant.
+   * - `--a2ui-button-border`: The styling for the button border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
+   * - `--a2ui-button-border-radius`: The border radius of the button. Defaults to `--a2ui-border-radius`.
+   * - `--a2ui-button-padding`: The padding of the button. Defaults to `--a2ui-spacing-m`.
+   */
+  static styles = css`
+    :where(:host) {
+      --_color-primary: var(--a2ui-color-primary, #17e);
+      --_button-border-radius: var(
+        --a2ui-button-border-radius,
+        var(--a2ui-spacing-s, 0.25rem)
+      );
+      --_button-padding: var(
+        --a2ui-button-padding,
+        var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem)
+      );
+      --_button-border: var(
+        --a2ui-button-border,
+        var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
+      );
+    }
+    .a2ui-button {
+      --_a2ui-text-margin: 0;
+      --_a2ui-text-color: var(--a2ui-color-on-secondary, #333);
+      padding: var(--_button-padding);
+      background-color: var(--a2ui-color-secondary, #ddd);
+      color: var(--a2ui-color-on-secondary, #333);
+      border: var(--_button-border);
+      border-radius: var(--_button-border-radius);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .a2ui-button.a2ui-button-primary {
+      --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
+      border-color: var(--_color-primary);
+      background-color: var(--_color-primary);
+      color: var(--a2ui-color-on-primary, #fff);
+    }
+    .a2ui-button:hover {
+      background-color: var(--a2ui-color-secondary-hover, #ddd);
+    }
+    .a2ui-button.a2ui-button-primary:hover {
+      background-color: var(--a2ui-color-primary-hover, #fbd);
+    }
+    .a2ui-button.a2ui-button-borderless {
+      background: none;
+      padding: 0;
+      color: var(--_color-primary);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ButtonApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {

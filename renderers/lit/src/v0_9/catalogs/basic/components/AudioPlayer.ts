@@ -14,27 +14,41 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { AudioPlayerApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-audioplayer")
 export class A2uiAudioPlayerElement extends A2uiLitElement<
   typeof AudioPlayerApi
 > {
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-spacing-xs, 0.25rem);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, AudioPlayerApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    return html`<div class="a2ui-audioplayer">
+    return html`
       ${props.description ? html`<p>${props.description}</p>` : nothing}
       <audio src=${props.url} controls></audio>
-    </div>`;
+    `;
   }
 }
 

@@ -14,18 +14,65 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TextFieldApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-basic-textfield")
 export class A2uiBasicTextFieldElement extends A2uiLitElement<
   typeof TextFieldApi
 > {
+  /**
+   * The styles of the text field can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-textfield-border`: The styling for the text field border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
+   * - `--a2ui-textfield-border-radius`: The border radius of the text field. Defaults to `--a2ui-border-radius`.
+   * - `--a2ui-textfield-padding`: The padding of the text field. Defaults to `--a2ui-spacing-s`.
+   * - `--a2ui-textfield-color-border-focus`: The border color on focus. Defaults to `--a2ui-color-primary`.
+   * - `--a2ui-textfield-color-error`: The color for both invalid border and error text. Defaults to red.
+   *
+   * It also inherits global input variables:
+   * - `--a2ui-color-input`: Background color.
+   * - `--a2ui-color-on-input`: Text color.
+   */
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-spacing-xs, 0.25rem);
+    }
+    .a2ui-textfield {
+      background-color: var(--a2ui-color-input, #fff);
+      color: var(--a2ui-color-on-input, #333);
+      border: var(--a2ui-textfield-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      border-radius: var(--a2ui-textfield-border-radius, var(--a2ui-border-radius, 0.25rem));
+      padding: var(--a2ui-textfield-padding, var(--a2ui-spacing-s, 0.25rem));
+      font-family: inherit;
+    }
+    .a2ui-textfield:focus {
+      outline: none;
+      border-color: var(--a2ui-textfield-color-border-focus, var(--a2ui-color-primary, #17e));
+    }
+    .a2ui-textfield.invalid {
+      border-color: var(--a2ui-textfield-color-error, red);
+    }
+    .error {
+      color: var(--a2ui-textfield-color-error, red);
+      font-size: var(--a2ui-font-size-xs, 0.75rem);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, TextFieldApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {
@@ -42,8 +89,7 @@ export class A2uiBasicTextFieldElement extends A2uiLitElement<
     const classes = { "a2ui-textfield": true, invalid: isInvalid };
 
     return html`
-      <div class="a2ui-textfield-container">
-        ${props.label ? html`<label>${props.label}</label>` : nothing}
+      ${props.label ? html`<label>${props.label}</label>` : nothing}
         ${props.variant === "longText"
           ? html`<textarea
               class=${classMap(classes)}
@@ -59,7 +105,6 @@ export class A2uiBasicTextFieldElement extends A2uiLitElement<
         ${isInvalid && props.validationErrors?.length
           ? html`<div class="error">${props.validationErrors[0]}</div>`
           : nothing}
-      </div>
     `;
   }
 }

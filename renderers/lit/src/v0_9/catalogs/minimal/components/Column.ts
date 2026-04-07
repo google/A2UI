@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { ColumnApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 function mapJustify(justify: string | undefined): string {
   switch (justify) {
@@ -59,8 +60,41 @@ function mapAlign(align: string | undefined): string {
 
 @customElement("a2ui-column")
 export class A2uiColumnElement extends A2uiLitElement<typeof ColumnApi> {
+  /**
+   * The styles of the column can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-column-gap`: The gap between items in the column. Defaults to `--a2ui-spacing-m`.
+   */
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-column-gap, var(--a2ui-spacing-m));
+    }
+    :host > * {
+      display: flex;
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ColumnApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
+  }
+
+  updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    const props = this.controller.props;
+    if (props) {
+      this.style.flex =
+        props.weight !== undefined ? String(props.weight) : "initial";
+      this.style.justifyContent = mapJustify(props.justify);
+      this.style.alignItems = mapAlign(props.align);
+    }
   }
 
   render() {
@@ -69,21 +103,8 @@ export class A2uiColumnElement extends A2uiLitElement<typeof ColumnApi> {
 
     const childrenArray = Array.isArray(props.children) ? props.children : [];
 
-    const styles = {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: mapJustify(props.justify),
-      alignItems: mapAlign(props.align),
-      flex: props.weight !== undefined ? String(props.weight) : "initial",
-    };
-
     return html`
-      <div
-        class="a2ui-column"
-        style=${styleMap(styles as Record<string, string>)}
-      >
-        ${map(childrenArray, (child: any) => html`${this.renderNode(child)}`)}
-      </div>
+      ${map(childrenArray, (child: any) => html`${this.renderNode(child)}`)}
     `;
   }
 }

@@ -14,30 +14,63 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { DividerApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-divider")
 export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
+  /**
+   * The styles of the divider can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-divider-border`: The styling for the divider border. Defaults to `--a2ui-border-width` solid `--a2ui-color-border`.
+   * - `--a2ui-divider-spacing`: The spacing around the divider. Defaults to `--a2ui-spacing-m`.
+   */
+  static styles = css`
+    :host {
+      display: block;
+    }
+    .a2ui-divider.horizontal {
+      height: 0;
+      overflow: hidden;
+      font-size: 0.1px;
+      line-height: 0;
+      border-top: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      margin: var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 0.5rem)) 0;
+      flex: 1;
+    }
+    .a2ui-divider.vertical {
+      width: var(--a2ui-border-width, 1px);
+      background-color: var(--a2ui-color-border, #ccc);
+      height: 100%;
+      margin: 0 var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 0.5rem));
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, DividerApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    return props.axis === "vertical"
-      ? html`<div
-          class="a2ui-divider-vertical"
-          style="width: 1px; background: #ccc; height: 100%;"
-        ></div>`
-      : html`<hr
-          class="a2ui-divider"
-          style="border: none; border-top: 1px solid #ccc; margin: 16px 0;"
-        />`;
+    const classes = {
+      "a2ui-divider": true,
+      vertical: props.axis === "vertical",
+      horizontal: props.axis !== "vertical",
+    };
+
+    return html`<div class=${classMap(classes)}>&mdash;</div>`;
   }
 }
 

@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { VideoApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-video")
 export class A2uiVideoElement extends A2uiLitElement<typeof VideoApi> {
+  /**
+   * The styles of the video can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-video-border-radius`: Controls the rounded corners of the video. Defaults to `0`.
+   */
+  static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+    }
+    video {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: var(--a2ui-video-border-radius, 0);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, VideoApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {

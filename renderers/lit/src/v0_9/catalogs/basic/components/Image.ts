@@ -14,28 +14,91 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
-import { styleMap } from "lit/directives/style-map.js";
+import { classMap } from "lit/directives/class-map.js";
 import { ImageApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-image")
 export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
+  /**
+   * The styles of the image can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-image-border-radius`: Controls the rounded corners of the image. Defaults to `0`.
+   * - `--a2ui-image-icon-size`: Controls the size of the `icon` variant. Defaults to `24px`.
+   * - `--a2ui-image-avatar-size`: Controls the size of the `avatar` variant. Defaults to `40px`.
+   * - `--a2ui-image-small-feature-width`: Controls the max-width of the `smallFeature` variant. Defaults to `100px`.
+   * - `--a2ui-image-large-feature-height`: Controls the max-height of the `largeFeature` variant. Defaults to `400px`.
+   * - `--a2ui-image-header-height`: Controls the height of the `header` variant. Defaults to `200px`.
+   */
+  static styles = css`
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: var(--a2ui-image-border-radius, 0);
+    }
+    :host(.icon),
+    img.icon {
+      width: var(--a2ui-image-icon-size, 24px);
+      height: var(--a2ui-image-icon-size, 24px);
+    }
+    img.avatar {
+      width: var(--a2ui-image-avatar-size, 40px);
+      height: var(--a2ui-image-avatar-size, 40px);
+      border-radius: 50%;
+    }
+    :host(.smallFeature),
+    img.smallFeature {
+      max-width: var(--a2ui-image-small-feature-size, 100px);
+    }
+    :host(.largeFeature),
+    img.largeFeature {
+      max-height: var(--a2ui-image-large-feature-size, 400px);
+    }
+    :host(.header),
+    img.header {
+      height: var(--a2ui-image-header-size, 200px);
+      object-fit: cover;
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ImageApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
+  }
+
+  updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    const props = this.controller.props;
+    if (props) {
+      const img = this.shadowRoot?.querySelector("img");
+      if (img) {
+        img.style.objectFit = props.fit || "fill";
+      }
+    }
   }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const styles = { objectFit: props.fit || "fill", width: "100%" };
+    const classes = {
+      "a2ui-image": true,
+      [props.variant || ""]: !!props.variant,
+    };
+
     return html`<img
       src=${props.url}
       alt=${props.description || ""}
-      class=${"a2ui-image " + (props.variant || "")}
-      style=${styleMap(styles)}
+      class=${classMap(classes)}
     />`;
   }
 }

@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { CardApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-card")
 export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
+  /**
+   * The styles of the card can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-card-border`: The styling for the card border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
+   * - `--a2ui-card-border-radius`: The border radius of the card. Defaults to `--a2ui-border-radius`.
+   * - `--a2ui-card-padding`: The padding of the card. Defaults to `--a2ui-spacing-m`.
+   */
+  static styles = css`
+    :host {
+      display: block;
+      border: var(--a2ui-card-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      border-radius: var(--a2ui-card-border-radius, var(--a2ui-border-radius, 8px));
+      padding: var(--a2ui-card-padding, var(--a2ui-spacing-m, 16px));
+      background-color: var(--a2ui-color-surface, #fff);
+      color: var(--a2ui-color-on-surface, #333);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, CardApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectDefaultA2uiTheme();
   }
 
   render() {
@@ -30,12 +55,7 @@ export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
     if (!props) return nothing;
 
     return html`
-      <div
-        class="a2ui-card"
-        style="border: 1px solid #ccc; border-radius: 8px; padding: 16px;"
-      >
-        ${props.child ? html`${this.renderNode(props.child)}` : nothing}
-      </div>
+      ${props.child ? html`${this.renderNode(props.child)}` : nothing}
     `;
   }
 }
