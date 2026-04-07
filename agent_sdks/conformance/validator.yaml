@@ -2122,3 +2122,332 @@
                 component: "Card"
                 child: "root"
       expect_error: "Circular reference detected"
+
+- name: test_validate_multi_surface_v08
+  description: Tests that multiple surfaces with different root IDs validate correctly.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Card:
+          type: object
+          properties:
+            child:
+              type: string
+        Text:
+          type: object
+          properties:
+            text:
+              type: string
+  validate:
+  - payload:
+    - beginRendering:
+        surfaceId: surface-a
+        root: root-a
+    - beginRendering:
+        surfaceId: surface-b
+        root: root-b
+    - surfaceUpdate:
+        surfaceId: surface-a
+        components:
+        - id: root-a
+          component:
+            Card:
+              child: child-a
+        - id: child-a
+          component:
+            Text:
+              text: Hello A
+    - surfaceUpdate:
+        surfaceId: surface-b
+        components:
+        - id: root-b
+          component:
+            Card:
+              child: child-b
+        - id: child-b
+          component:
+            Text:
+              text: Hello B
+
+- name: test_validate_multi_surface_missing_root_v08
+  description: Tests that missing root in one surface still fails validation.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Text:
+          type: object
+          properties:
+            text:
+              type: string
+  validate:
+  - payload:
+    - beginRendering:
+        surfaceId: surface-a
+        root: root-a
+    - beginRendering:
+        surfaceId: surface-b
+        root: root-b
+    - surfaceUpdate:
+        surfaceId: surface-a
+        components:
+        - id: root-a
+          component:
+            Text:
+              text: Hello A
+    - surfaceUpdate:
+        surfaceId: surface-b
+        components:
+        - id: not-root-b
+          component:
+            Text:
+              text: Hello B
+    expect_error: 'Missing root component.*root-b'
+
+- name: test_incremental_update_no_root_v08
+  description: Incremental update without root component should pass.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Card:
+          type: object
+          properties:
+            child:
+              type: string
+        Text:
+          type: object
+          properties:
+            text:
+              type: string
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: contact-card
+        components:
+        - id: main_card
+          component:
+            Card:
+              child: col
+        - id: col
+          component:
+            Text:
+              text: Updated
+
+- name: test_incremental_update_no_root_v09
+  description: Incremental update without root component should pass (v0.9).
+  catalog:
+    version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: std
+      components:
+        Card:
+          type: object
+          properties:
+            component:
+              const: Card
+            child:
+              type: string
+          required:
+          - component
+          - child
+        Text:
+          type: object
+          properties:
+            component:
+              const: Text
+            text:
+              type: string
+          required:
+          - component
+          - text
+      $defs:
+        anyComponent:
+          oneOf:
+          - $ref: '#/components/Card'
+          - $ref: '#/components/Text'
+          discriminator:
+            propertyName: component
+  validate:
+  - payload:
+    - version: v0.9
+      updateComponents:
+        surfaceId: contact-card
+        components:
+        - id: card1
+          component: Card
+          child: text1
+        - id: text1
+          component: Text
+          text: Updated
+
+- name: test_incremental_update_orphans_allowed_v08
+  description: Incremental update with 'orphaned' components should pass.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Text:
+          type: object
+          properties:
+            text:
+              type: string
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: contact-card
+        components:
+        - id: text1
+          component:
+            Text:
+              text: Hello
+        - id: text2
+          component:
+            Text:
+              text: World
+
+- name: test_validate_global_recursion_limit_exceeded_v08
+  description: Tests that global recursion limit is exceeded in v0.8.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        DeepComp:
+          type: object
+          additionalProperties: true
+  validate:
+  - payload:
+    - beginRendering:
+        surfaceId: test-surface
+        root: root
+    - surfaceUpdate:
+        surfaceId: test-surface
+        components:
+        - id: root
+          component:
+            DeepComp:
+              level: 0
+              next:
+                level: 1
+                next:
+                  level: 2
+                  next:
+                    level: 3
+                    next:
+                      level: 4
+                      next:
+                        level: 5
+                        next:
+                          level: 6
+                          next:
+                            level: 7
+                            next:
+                              level: 8
+                              next:
+                                level: 9
+                                next:
+                                  level: 10
+                                  next:
+                                    level: 11
+                                    next:
+                                      level: 12
+                                      next:
+                                        level: 13
+                                        next:
+                                          level: 14
+                                          next:
+                                            level: 15
+                                            next:
+                                              level: 16
+                                              next:
+                                                level: 17
+                                                next:
+                                                  level: 18
+                                                  next:
+                                                    level: 19
+                                                    next:
+                                                      level: 20
+                                                      next:
+                                                        level: 21
+                                                        next:
+                                                          level: 22
+                                                          next:
+                                                            level: 23
+                                                            next:
+                                                              level: 24
+                                                              next:
+                                                                level: 25
+                                                                next:
+                                                                  level: 26
+                                                                  next:
+                                                                    level: 27
+                                                                    next:
+                                                                      level: 28
+                                                                      next:
+                                                                        level: 29
+                                                                        next:
+                                                                          level: 30
+                                                                          next:
+                                                                            level: 31
+                                                                            next:
+                                                                              level: 32
+                                                                              next:
+                                                                                level: 33
+                                                                                next:
+                                                                                  level: 34
+                                                                                  next:
+                                                                                    level: 35
+                                                                                    next:
+                                                                                      level: 36
+                                                                                      next:
+                                                                                        level: 37
+                                                                                        next:
+                                                                                          level: 38
+                                                                                          next:
+                                                                                            level: 39
+                                                                                            next:
+                                                                                              level: 40
+                                                                                              next:
+                                                                                                level: 41
+                                                                                                next:
+                                                                                                  level: 42
+                                                                                                  next:
+                                                                                                    level: 43
+                                                                                                    next:
+                                                                                                      level: 44
+                                                                                                      next:
+                                                                                                        level: 45
+                                                                                                        next:
+                                                                                                          level: 46
+                                                                                                          next:
+                                                                                                            level: 47
+                                                                                                            next:
+                                                                                                              level: 48
+                                                                                                              next:
+                                                                                                                level: 49
+                                                                                                                next:
+                                                                                                                  level: 50
+                                                                                                                  next:
+                                                                                                                    level: 51
+                                                                                                                    next:
+                                                                                                                      level: 52
+                                                                                                                      next:
+                                                                                                                        level: 53
+                                                                                                                        next:
+                                                                                                                          level: 54
+                                                                                                                          next:
+                                                                                                                            level: 55
+    expect_error: Global recursion limit exceeded
