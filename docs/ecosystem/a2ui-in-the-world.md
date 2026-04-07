@@ -115,6 +115,32 @@ AG UI excels at creating high-bandwidth connections between custom frontends and
 
 ---
 
+### AG2: Multi-Agent Framework with Native A2UI
+
+[AG2](https://ag2.ai/) is a popular multi-agent framework, offering advanced orchestration of agents. Its [A2UIAgent](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent) is a reference agent with native A2UI support, enabling AG2 agents to generate rich, interactive UI served over both A2A and AG-UI.
+
+**How AG2 uses A2UI:**
+
+A2UIAgent extends AG2's ConversableAgent with built-in A2UI capabilities — prompt engineering, schema validation with retry, and action handling — so developers can add generative UI to their agents without custom rendering code.
+
+- **Validated output**: Built-in schema validation and retry ensures reliable A2UI generation
+- **Dual transport**: Serves the same UI over A2A (JSON-RPC) and AG-UI (SSE)
+- **Cross-platform**: One agent serves web, desktop, and mobile clients
+- **Custom catalogs**: Extend the component catalog with domain-specific components
+
+> "A2UIAgent brings the A2UI protocol to AG2, enabling agent expression with dynamic, rich, and interactive UIs. Reliable, client-agnostic rendering means our developers spend less time on integration and more time building great experiences."
+>
+> **— Mark Sze**, Founding Engineer, AG2
+
+**Learn more:**
+
+- [A2UIAgent Documentation](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent)
+- [Technical Deep Dive](https://docs.ag2.ai/latest/docs/blog/2026/03/20/AG2-A2UI/) — Building A2UI agents with AG2
+- [A2UIAgent + Flutter Example](https://github.com/ag2ai/build-with-ag2/tree/main/a2ui/flutter) — A2UIAgent served over A2A to a Flutter GenUI client
+- [AG2](https://ag2.ai/)
+
+---
+
 ### Google's AI-Powered Products
 
 As Google adopts AI across the company, A2UI provides a **standardized way for AI agents to exchange user interfaces**, not just text.

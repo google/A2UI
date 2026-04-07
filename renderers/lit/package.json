@@ -102,6 +102,14 @@
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
+  "peerDependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/markdown-it": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
     "@lit-labs/signals": "^0.1.3",

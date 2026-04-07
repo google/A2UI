@@ -61,7 +61,7 @@ Key features:
 | **Genkit** | 💡 Proposed | Community interest |
 | **LangGraph** | 💡 Proposed | Community interest |
 | **CrewAI** | 💡 Proposed | Community interest |
-| **AG2** | 💡 Proposed | Community interest |
+| **AG2** | ✅ Complete | [A2UIAgent](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent) |
 | **Claude Agent SDK** | 💡 Proposed | Community interest |
 | **OpenAI Agent SDK** | 💡 Proposed | Community interest |
 | **Microsoft Agent Framework** | 💡 Proposed | Community interest |

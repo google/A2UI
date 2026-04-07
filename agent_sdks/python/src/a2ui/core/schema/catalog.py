@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import collections
 import copy
 import json
 import logging
@@ -20,7 +21,13 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
-from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY
+from .constants import (
+    A2UI_SCHEMA_BLOCK_START,
+    A2UI_SCHEMA_BLOCK_END,
+    CATALOG_COMPONENTS_KEY,
+    CATALOG_ID_KEY,
+    VERSION_0_8,
+)
 
 
 @dataclass
@@ -53,6 +60,52 @@ class CatalogConfig:
     )
 
 
+def _collect_refs(obj: Any) -> set[str]:
+  """Recursively collects all $ref values from a JSON object."""
+  refs = set()
+  if isinstance(obj, dict):
+    for k, v in obj.items():
+      if k == "$ref" and isinstance(v, str):
+        refs.add(v)
+      else:
+        refs.update(_collect_refs(v))
+  elif isinstance(obj, list):
+    for item in obj:
+      refs.update(_collect_refs(item))
+  return refs
+
+
+def _prune_defs_by_reachability(
+    defs: Dict[str, Any],
+    root_def_names: List[str],
+    internal_ref_prefix: str = "#/$defs/",
+) -> Dict[str, Any]:
+  """Prunes definitions not reachable from the provided roots.
+
+  Args:
+    defs: The dictionary of definitions to prune.
+    root_def_names: The names of the definitions to start the traversal from.
+    internal_ref_prefix: The prefix used for internal references.
+
+  Returns:
+    A new dictionary containing only reachable definitions.
+  """
+  visited_defs = set()
+  refs_queue = collections.deque(root_def_names)
+
+  while refs_queue:
+    def_name = refs_queue.popleft()
+    if def_name in defs and def_name not in visited_defs:
+      visited_defs.add(def_name)
+
+      internal_refs = _collect_refs(defs[def_name])
+      for ref in internal_refs:
+        if ref.startswith(internal_ref_prefix):
+          refs_queue.append(ref.split(internal_ref_prefix)[-1])
+
+  return {k: v for k, v in defs.items() if k in visited_defs}
+
+
 @dataclass(frozen=True)
 class A2uiCatalog:
   """Represents a processed component catalog with its schema.
@@ -83,7 +136,7 @@ class A2uiCatalog:
 
     return A2uiValidator(self)
 
-  def with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
+  def _with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
     """Returns a new catalog with only allowed components.
 
     Args:
@@ -93,11 +146,10 @@ class A2uiCatalog:
       A copy of the catalog with only allowed components.
     """
 
-    schema_copy = copy.deepcopy(self.catalog_schema)
-
-    # Allow all components if no allowed components are specified
     if not allowed_components:
       return self
+
+    schema_copy = copy.deepcopy(self.catalog_schema)
 
     if CATALOG_COMPONENTS_KEY in schema_copy and isinstance(
         schema_copy[CATALOG_COMPONENTS_KEY], dict
@@ -129,24 +181,117 @@ class A2uiCatalog:
 
     return replace(self, catalog_schema=schema_copy)
 
+  def _with_pruned_messages(self, allowed_messages: List[str]) -> "A2uiCatalog":
+    """Returns a new catalog with only allowed messages.
+
+    Args:
+      allowed_messages: List of message names to include in s2c_schema.
+
+    Returns:
+      A copy of the catalog with only allowed messages.
+    """
+    if not allowed_messages:
+      return self
+
+    s2c_schema_copy = copy.deepcopy(self.s2c_schema)
+
+    if self.version == VERSION_0_8:
+      # 0.8 style: Messages are in root properties.
+      if "properties" in s2c_schema_copy and isinstance(
+          s2c_schema_copy["properties"], dict
+      ):
+        s2c_schema_copy["properties"] = _prune_defs_by_reachability(
+            defs=s2c_schema_copy["properties"],
+            root_def_names=allowed_messages,
+            internal_ref_prefix="#/properties/",
+        )
+    else:
+      # 0.9+ style: Messages are in $defs and referenced via oneOf.
+      if "oneOf" in s2c_schema_copy and isinstance(s2c_schema_copy["oneOf"], list):
+        s2c_schema_copy["oneOf"] = [
+            item
+            for item in s2c_schema_copy["oneOf"]
+            if "$ref" in item
+            and item["$ref"].startswith("#/$defs/")
+            and item["$ref"].split("/")[-1] in allowed_messages
+        ]
+
+      if "$defs" in s2c_schema_copy and isinstance(s2c_schema_copy["$defs"], dict):
+        s2c_schema_copy["$defs"] = _prune_defs_by_reachability(
+            defs=s2c_schema_copy["$defs"],
+            root_def_names=allowed_messages,
+            internal_ref_prefix="#/$defs/",
+        )
+
+    return replace(self, s2c_schema=s2c_schema_copy)
+
+  def with_pruning(
+      self,
+      allowed_components: Optional[List[str]] = None,
+      allowed_messages: Optional[List[str]] = None,
+  ) -> "A2uiCatalog":
+    """Returns a new catalog with pruned components and messages.
+
+    Args:
+      allowed_components: List of component names to include.
+      allowed_messages: List of message names to include in s2c_schema.
+
+    Returns:
+      A copy of the catalog with pruned components and messages.
+    """
+    catalog = self
+    if allowed_components:
+      catalog = catalog._with_pruned_components(allowed_components)
+
+    if allowed_messages:
+      catalog = catalog._with_pruned_messages(allowed_messages)
+
+    return catalog._with_pruned_common_types()
+
+  def _with_pruned_common_types(self) -> "A2uiCatalog":
+    """Returns a new catalog with unused common types pruned from the schema."""
+    if not self.common_types_schema or "$defs" not in self.common_types_schema:
+      return self
+
+    # Initialize roots with ONLY refs targeting common_types.json from external schemas
+    external_refs = _collect_refs(self.catalog_schema)
+    external_refs.update(_collect_refs(self.s2c_schema))
+
+    root_common_types = []
+    for ref in external_refs:
+      if ref.startswith("common_types.json#/$defs/"):
+        root_common_types.append(ref.split("#/$defs/")[-1])
+
+    new_common_types_schema = copy.deepcopy(self.common_types_schema)
+    new_common_types_schema["$defs"] = _prune_defs_by_reachability(
+        defs=new_common_types_schema["$defs"],
+        root_def_names=root_common_types,
+    )
+
+    return replace(self, common_types_schema=new_common_types_schema)
+
   def render_as_llm_instructions(self) -> str:
     """Renders the catalog and schema as LLM instructions."""
     all_schemas = []
-    all_schemas.append("---BEGIN A2UI JSON SCHEMA---")
+    all_schemas.append(A2UI_SCHEMA_BLOCK_START)
 
     server_client_str = (
         json.dumps(self.s2c_schema, indent=2) if self.s2c_schema else "{}"
     )
     all_schemas.append(f"### Server To Client Schema:\n{server_client_str}")
 
-    if self.common_types_schema:
+    if (
+        self.common_types_schema
+        and "$defs" in self.common_types_schema
+        and self.common_types_schema["$defs"]
+    ):
       common_str = json.dumps(self.common_types_schema, indent=2)
       all_schemas.append(f"### Common Types Schema:\n{common_str}")
 
     catalog_str = json.dumps(self.catalog_schema, indent=2)
     all_schemas.append(f"### Catalog Schema:\n{catalog_str}")
 
-    all_schemas.append("---END A2UI JSON SCHEMA---")
+    all_schemas.append(A2UI_SCHEMA_BLOCK_END)
 
     return "\n\n".join(all_schemas)
 
@@ -166,7 +311,7 @@ class A2uiCatalog:
           content = f.read()
 
         if validate:
-          self._validate_example(full_path, basename, content)
+          self._validate_example(full_path, content)
 
         merged_examples.append(
             f"---BEGIN {basename}---\n{content}\n---END {basename}---"
@@ -176,7 +321,7 @@ class A2uiCatalog:
       return ""
     return "\n\n".join(merged_examples)
 
-  def _validate_example(self, full_path: str, basename: str, content: str) -> None:
+  def _validate_example(self, full_path: str, content: str) -> None:
     try:
       json_data = json.loads(content)
       self.validator.validate(json_data)

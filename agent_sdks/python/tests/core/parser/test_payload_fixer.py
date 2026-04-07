@@ -70,3 +70,11 @@ def test_fix_payload_success_after_fix(caplog):
   assert result == [{"type": "Text", "text": "Hello"}]
   assert "Initial A2UI payload validation failed" in caplog.text
   assert "Detected trailing commas in LLM output; applied autofix." in caplog.text
+
+
+def test_normalizes_smart_quotes():
+  """Replaces smart quotes with standard straight quotes."""
+  smart_quotes_json = '{"type": “Text”, "other": "Value’s"}'
+  result = parse_and_fix(smart_quotes_json)
+
+  assert result == [{"type": "Text", "other": "Value's"}]

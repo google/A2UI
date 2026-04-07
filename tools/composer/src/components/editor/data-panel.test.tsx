@@ -96,8 +96,13 @@ describe('DataPanel', () => {
     const xIcons = screen.getAllByTestId('x-icon');
     // State 1 doesn't have X, State 2 does. So there should be only 1 X icon.
     expect(xIcons.length).toBe(1);
-    const deleteButton = xIcons[0].closest('button')!;
-    fireEvent.click(deleteButton);
+    const firstXIcon = xIcons[0];
+    if (firstXIcon) {
+      const deleteButton = firstXIcon.closest('button');
+      if (deleteButton) {
+        fireEvent.click(deleteButton);
+      }
+    }
     expect(mockProps.onDeleteState).toHaveBeenCalledWith(1);
   });
 });
