@@ -4,7 +4,7 @@ This guide explains how A2UI handles user interactions. Components use the `acti
 
 ## Action Architecture
 
-Actions allow UI components to trigger behavior defined in the [`Action`](../../specification/v0_9/json/common_types.json#L271-L313) schema in `common_types.json`. Both uses share the `"action"` key in the component JSON but differ in their payload (`functionCall` vs `event`).
+Actions allow UI components to trigger behavior defined in the [`Action`](../../specification/v0_9/json/common_types.json#L271-L313) schema in `common_types.json`. Both use the `action` key in the component JSON but differ in their payload (`functionCall` vs `event`).
 
 1.  **Events**: Dispatched to the Agent for processing (executed on Agent, e.g., clicking "Submit").
 2.  **Functions**: Executed entirely on the renderer using [`FunctionCall`](../../specification/v0_9/json/common_types.json#L200-L242) (executed on Renderer, e.g., opening a URL).
