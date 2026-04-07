@@ -327,9 +327,14 @@ class A2uiValidator:
         val = self._get_sub_validator("CreateSurfaceMessage")
         all_errors.extend(self._get_formatted_errors(val, message, f"messages[{idx}]"))
       elif "updateComponents" in message:
-        all_errors.extend(self._get_update_components_errors(message, f"messages[{idx}]"))
+        all_errors.extend(
+            self._get_update_components_errors(message, f"messages[{idx}]")
+        )
       elif "updateDataModel" in message:
         val = self._get_sub_validator("UpdateDataModelMessage")
+        all_errors.extend(self._get_formatted_errors(val, message, f"messages[{idx}]"))
+      elif "deleteSurface" in message:
+        val = self._get_sub_validator("DeleteSurfaceMessage")
         all_errors.extend(self._get_formatted_errors(val, message, f"messages[{idx}]"))
       else:
         keys = list(message.keys())
@@ -367,21 +372,32 @@ class A2uiValidator:
     sub_schema = self._catalog.s2c_schema["$defs"][def_name]
     return Draft202012Validator(sub_schema, registry=self._validator._registry)
 
-  def _get_formatted_errors(self, validator: Draft202012Validator, instance: Any, base_path: str) -> List[str]:
+  def _get_formatted_errors(
+      self, validator: Draft202012Validator, instance: Any, base_path: str
+  ) -> List[str]:
     errors = list(validator.iter_errors(instance))
     formatted = []
     for err in errors:
       path_str = ".".join(str(p) for p in err.path)
       full_path = f"{base_path}.{path_str}" if path_str else base_path
-      
+
       message = err.message
-      if ("Unevaluated properties are not allowed" in message or "Additional properties are not allowed" in message) and "(" in message and ")" in message:
-        message = message[message.find("(")+1 : message.rfind(")")]
-        
+      if (
+          (
+              "Unevaluated properties are not allowed" in message
+              or "Additional properties are not allowed" in message
+          )
+          and "(" in message
+          and ")" in message
+      ):
+        message = message[message.find("(") + 1 : message.rfind(")")]
+
       formatted.append(f"{full_path}: {message}")
     return formatted
 
-  def _get_update_components_errors(self, message: Dict[str, Any], path: str) -> List[str]:
+  def _get_update_components_errors(
+      self, message: Dict[str, Any], path: str
+  ) -> List[str]:
     errors = []
     if "version" not in message or message["version"] != "v0.9":
       errors.append(f"{path}: Invalid version, expected 'v0.9'")
@@ -401,9 +417,13 @@ class A2uiValidator:
 
     for idx, comp in enumerate(components):
       comp_id = comp.get("id")
-      comp_path = f"{path}.updateComponents.components[id='{comp_id}']" if comp_id else f"{path}.updateComponents.components[{idx}]"
+      comp_path = (
+          f"{path}.updateComponents.components[id='{comp_id}']"
+          if comp_id
+          else f"{path}.updateComponents.components[{idx}]"
+      )
       errors.extend(self._get_single_component_errors(comp, comp_path))
-      
+
     return errors
 
   def _get_single_component_errors(self, comp: Dict[str, Any], path: str) -> List[str]:
@@ -424,7 +444,7 @@ class A2uiValidator:
 
     temp_schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$ref": f"catalog.json#/components/{comp_type}"
+        "$ref": f"catalog.json#/components/{comp_type}",
     }
 
     validator = Draft202012Validator(temp_schema, registry=self._validator._registry)
