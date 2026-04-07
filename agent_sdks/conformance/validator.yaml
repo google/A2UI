@@ -2317,6 +2317,200 @@
             Text:
               text: World
 
+- name: test_incremental_update_self_ref_still_fails_v08
+  description: Self-references should still be caught in incremental updates (v0.8).
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Card:
+          type: object
+          properties:
+            child:
+              type: string
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: s1
+        components:
+        - id: card1
+          component:
+            Card:
+              child: card1
+    expect_error: Self-reference detected
+
+- name: test_incremental_update_self_ref_still_fails_v09
+  description: Self-references should still be caught in incremental updates (v0.9).
+  catalog:
+    version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: std
+      components:
+        Card:
+          type: object
+          properties:
+            component:
+              const: Card
+            child:
+              type: string
+          required:
+          - component
+          - child
+      $defs:
+        anyComponent:
+          oneOf:
+          - $ref: '#/components/Card'
+          discriminator:
+            propertyName: component
+  validate:
+  - payload:
+    - version: v0.9
+      updateComponents:
+        surfaceId: s1
+        components:
+        - id: card1
+          component: Card
+          child: card1
+    expect_error: Self-reference detected
+
+- name: test_incremental_update_cycle_still_fails_v08
+  description: Cycles should still be caught in incremental updates (v0.8).
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Card:
+          type: object
+          properties:
+            child:
+              type: string
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: s1
+        components:
+        - id: a
+          component:
+            Card:
+              child: b
+        - id: b
+          component:
+            Card:
+              child: a
+    expect_error: Circular reference detected
+
+- name: test_incremental_update_cycle_still_fails_v09
+  description: Cycles should still be caught in incremental updates (v0.9).
+  catalog:
+    version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: std
+      components:
+        Card:
+          type: object
+          properties:
+            component:
+              const: Card
+            child:
+              type: string
+          required:
+          - component
+          - child
+      $defs:
+        anyComponent:
+          oneOf:
+          - $ref: '#/components/Card'
+          discriminator:
+            propertyName: component
+  validate:
+  - payload:
+    - version: v0.9
+      updateComponents:
+        surfaceId: s1
+        components:
+        - id: a
+          component: Card
+          child: b
+        - id: b
+          component: Card
+          child: a
+    expect_error: Circular reference detected
+
+- name: test_incremental_update_duplicates_still_fail_v08
+  description: Duplicate IDs should still be caught in incremental updates (v0.8).
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Text:
+          type: object
+          properties:
+            text:
+              type: string
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: s1
+        components:
+        - id: text1
+          component:
+            Text:
+              text: A
+        - id: text1
+          component:
+            Text:
+              text: B
+    expect_error: Duplicate component ID
+
+- name: test_incremental_update_duplicates_still_fail_v09
+  description: Duplicate IDs should still be caught in incremental updates (v0.9).
+  catalog:
+    version: "0.9"
+    common_types_schema: "simplified_common_types_v09.json"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: std
+      components:
+        Text:
+          type: object
+          properties:
+            component:
+              const: Text
+            text:
+              type: string
+          required:
+          - component
+          - text
+      $defs:
+        anyComponent:
+          oneOf:
+          - $ref: '#/components/Text'
+          discriminator:
+            propertyName: component
+  validate:
+  - payload:
+    - version: v0.9
+      updateComponents:
+        surfaceId: s1
+        components:
+        - id: text1
+          component: Text
+          text: A
+        - id: text1
+          component: Text
+          text: B
+    expect_error: Duplicate component ID
+
 - name: test_validate_global_recursion_limit_exceeded_v08
   description: Tests that global recursion limit is exceeded in v0.8.
   catalog:
