@@ -2443,7 +2443,7 @@
 <h1 id="a2ui-over-model-context-protocol-mcp">A2UI over Model Context Protocol (MCP)<a class="headerlink" href="#a2ui-over-model-context-protocol-mcp" title="Permanent link">&para;</a></h1>
 <p>This guide shows you how to serve <strong>rich, interactive A2UI interfaces</strong> from an <strong>MCP server</strong> using Tools and Embedded Resources. By the end, you'll have a working MCP server that returns A2UI components to any MCP-compatible client.</p>
 <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; margin-bottom: 24px;">
-  <source src="../assets/guides-a2ui-over-mcp-tour.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/google/A2UI/main/docs/assets/guides-a2ui-over-mcp-tour.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -2478,7 +2478,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>a2ui-agent-sdk
 </span></code></pre></div></p>
 </div>
-<p>See all samples at <a href="../../samples/agent/mcp"><code>samples/agent/mcp/</code></a>.</p>
+<p>See all samples at <a href="https://github.com/google/A2UI/tree/main/samples/agent/mcp"><code>samples/agent/mcp/</code></a>.</p>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p>An MCP server returns A2UI content as <strong>Embedded Resources</strong> inside tool responses. The client detects the <code>application/json+a2ui</code> MIME type and routes the payload to an A2UI renderer.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Client → tools/call → MCP Server
