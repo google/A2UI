@@ -172,11 +172,11 @@ See [example](https://github.com/google/A2UI/blob/main/specification/v0_9/json/c
 
 ### Action
 
-A string that explains to the agent what should be done.
+Interactivity defined in the component schema using the `action` property. Actions have two types:
+- **Events**: Dispatched to the agent for processing.
+- **Functions**: Executed locally on the renderer.
 
-It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
-
-See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/actions.md).
+See the [detailed guide on actions](concepts/actions.md).
 
 ## Generative UI terms
 
