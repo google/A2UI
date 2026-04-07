@@ -18,11 +18,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'renderers/web_core/**/*'
+      - 'renderers/web_core/**'
       - '.github/workflows/web_build_and_test.yml'
   pull_request:
     paths:
-      - 'renderers/web_core/**/*'
+      - 'renderers/web_core/**'
       - '.github/workflows/web_build_and_test.yml'
 
 jobs:
@@ -49,6 +49,8 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run test
   lint:
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v6
 
