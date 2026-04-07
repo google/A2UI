@@ -20,10 +20,11 @@ import {SurfaceModel} from './surface-model.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {ComponentModel} from './component-model.js';
 import {ComponentContext} from '../rendering/component-context.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('SurfaceModel', () => {
-  let surface: SurfaceModel<ComponentApi>;
-  let catalog: Catalog<ComponentApi>;
+  let surface: SurfaceModel<ComponentApi, 'preact'>;
+  let catalog: Catalog<ComponentApi, 'preact'>;
   let actions: any[] = [];
   let errors: any[] = [];
 
@@ -31,7 +32,7 @@ describe('SurfaceModel', () => {
     actions = [];
     errors = [];
     catalog = new Catalog('test-catalog', []);
-    surface = new SurfaceModel<ComponentApi>('surface-1', catalog, {});
+    surface = new SurfaceModel('surface-1', catalog, testFrameworkSignal, {});
     surface.onAction.subscribe(async action => {
       actions.push(action);
     });
@@ -85,7 +86,12 @@ describe('SurfaceModel', () => {
 
   it('creates a component context', () => {
     surface.componentsModel.addComponent(new ComponentModel('root', 'Box', {}));
-    const ctx = new ComponentContext(surface, 'root', '/mydata');
+    const ctx = new ComponentContext(
+      surface,
+      'root',
+      testFrameworkSignal,
+      '/mydata',
+    );
     assert.ok(ctx);
     assert.strictEqual(ctx.dataContext.path, '/mydata');
   });

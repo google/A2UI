@@ -19,18 +19,23 @@ import {describe, it, beforeEach} from 'node:test';
 import {MessageProcessor} from './message-processor.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {z} from 'zod';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('MessageProcessor', () => {
-  let processor: MessageProcessor<ComponentApi>;
-  let testCatalog: Catalog<ComponentApi>;
+  let processor: MessageProcessor<ComponentApi, 'preact'>;
+  let testCatalog: Catalog<ComponentApi, 'preact'>;
   let actions: any[] = [];
 
   beforeEach(() => {
     actions = [];
     testCatalog = new Catalog('test-catalog', []);
-    processor = new MessageProcessor<ComponentApi>([testCatalog], async a => {
-      actions.push(a);
-    });
+    processor = new MessageProcessor(
+      [testCatalog],
+      testFrameworkSignal,
+      async a => {
+        actions.push(a);
+      },
+    );
   });
 
   describe('getClientCapabilities', () => {
@@ -52,7 +57,7 @@ describe('MessageProcessor', () => {
         }),
       };
       const cat = new Catalog('cat-1', [buttonApi]);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
 
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
       const inlineCat = caps['v0.9'].inlineCatalogs![0];
@@ -89,7 +94,7 @@ describe('MessageProcessor', () => {
         }),
       };
       const cat = new Catalog('cat-ref', [customApi]);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
 
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
       const titleSchema =
@@ -129,7 +134,7 @@ describe('MessageProcessor', () => {
       });
 
       const cat = new Catalog('cat-full', [buttonApi], [addFn], themeSchema);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
 
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
       const inlineCat = caps['v0.9'].inlineCatalogs![0];
@@ -163,7 +168,7 @@ describe('MessageProcessor', () => {
     it('omits functions and theme when catalog has none', () => {
       const compApi: ComponentApi = {name: 'EmptyComp', schema: z.object({})};
       const cat = new Catalog('cat-empty', [compApi]);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
       const inlineCat = caps['v0.9'].inlineCatalogs![0];
 
@@ -188,7 +193,7 @@ describe('MessageProcessor', () => {
         }),
       };
       const cat = new Catalog('cat-deep', [deepApi]);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
 
       const properties =
@@ -212,7 +217,7 @@ describe('MessageProcessor', () => {
         }),
       };
       const cat = new Catalog('cat-edge', [edgeApi]);
-      const proc = new MessageProcessor([cat]);
+      const proc = new MessageProcessor([cat], testFrameworkSignal);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
 
       const properties =
@@ -245,7 +250,7 @@ describe('MessageProcessor', () => {
       const themeSchema = z.object({color: z.string()});
       const cat2 = new Catalog('cat-2', [], [addFn], themeSchema);
 
-      const proc = new MessageProcessor([cat1, cat2]);
+      const proc = new MessageProcessor([cat1, cat2], testFrameworkSignal);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
 
       assert.strictEqual(caps['v0.9'].inlineCatalogs!.length, 2);

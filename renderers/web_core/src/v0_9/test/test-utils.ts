@@ -18,10 +18,11 @@ import {ComponentContext} from '../rendering/component-context.js';
 import {SurfaceModel} from '../state/surface-model.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {ComponentModel} from '../state/component-model.js';
+import {testFrameworkSignal} from './test_signals.js';
 
-export class TestSurfaceModel extends SurfaceModel<ComponentApi> {
+export class TestSurfaceModel extends SurfaceModel<ComponentApi, 'preact'> {
   constructor(actionHandler: any = async () => {}) {
-    super('test', new Catalog('test-catalog', []), {});
+    super('test', new Catalog('test-catalog', []), testFrameworkSignal, {});
     this.onAction.subscribe(actionHandler);
   }
 }
@@ -34,7 +35,12 @@ export function createTestContext(
   const component = new ComponentModel('test-id', 'TestComponent', properties);
   surface.componentsModel.addComponent(component);
 
-  const context = new ComponentContext(surface, 'test-id', '/');
+  const context = new ComponentContext(
+    surface,
+    'test-id',
+    testFrameworkSignal,
+    '/',
+  );
 
   return context;
 }

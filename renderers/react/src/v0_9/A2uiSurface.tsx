@@ -17,6 +17,7 @@
 import React, {useSyncExternalStore, memo, useMemo, useCallback} from 'react';
 import {type SurfaceModel, ComponentContext, type ComponentModel} from '@a2ui/web_core/v0_9';
 import type {ReactComponentImplementation} from './adapter';
+import {reactSignal} from './reactSignal';
 
 const ResolvedChild = memo(
   ({
@@ -26,7 +27,7 @@ const ResolvedChild = memo(
     compImpl,
     componentModel,
   }: {
-    surface: SurfaceModel<ReactComponentImplementation>;
+    surface: SurfaceModel<ReactComponentImplementation, 'react'>;
     id: string;
     basePath: string;
     componentModel: ComponentModel;
@@ -34,9 +35,10 @@ const ResolvedChild = memo(
   }) => {
     const ComponentToRender = compImpl.render;
 
-    // Create context. Recreate if the componentModel instance changes (e.g. type change recreation).
+    // Create context. Recreate if the componentModel instance changes (e.g.
+    // type change recreation).
     const context = useMemo(
-      () => new ComponentContext(surface, id, basePath),
+      () => new ComponentContext(surface, id, reactSignal, basePath),
       // componentModel is used as a trigger for recreation even if not in the body
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [surface, id, basePath, componentModel]
@@ -63,7 +65,7 @@ const ResolvedChild = memo(
 ResolvedChild.displayName = 'ResolvedChild';
 
 export const DeferredChild: React.FC<{
-  surface: SurfaceModel<ReactComponentImplementation>;
+  surface: SurfaceModel<ReactComponentImplementation, 'react'>;
   id: string;
   basePath: string;
 }> = memo(({surface, id, basePath}) => {
@@ -124,9 +126,9 @@ export const DeferredChild: React.FC<{
 });
 DeferredChild.displayName = 'DeferredChild';
 
-export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({
-  surface,
-}) => {
+export const A2uiSurface: React.FC<{
+  surface: SurfaceModel<ReactComponentImplementation, 'react'>;
+}> = ({surface}) => {
   // The root component always has ID 'root' and base path '/'
   return <DeferredChild surface={surface} id="root" basePath="/" />;
 };

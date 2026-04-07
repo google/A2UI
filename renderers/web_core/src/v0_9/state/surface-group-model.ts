@@ -18,21 +18,25 @@ import {SurfaceModel} from './surface-model.js';
 import {ComponentApi} from '../catalog/types.js';
 import {EventEmitter, EventSource, Subscription} from '../common/events.js';
 import {A2uiClientAction} from '../schema/client-to-server.js';
+import {SignalKinds} from '../reactivity/signals.js';
 
 /**
  * The root state model for the A2UI system.
  * Manages the collection of active surfaces.
  */
-export class SurfaceGroupModel<T extends ComponentApi> {
-  private surfaces: Map<string, SurfaceModel<T>> = new Map();
+export class SurfaceGroupModel<
+  T extends ComponentApi,
+  SK extends keyof SignalKinds<any>,
+> {
+  private surfaces: Map<string, SurfaceModel<T, SK>> = new Map();
   private surfaceUnsubscribers: Map<string, Subscription> = new Map();
 
-  private readonly _onSurfaceCreated = new EventEmitter<SurfaceModel<T>>();
+  private readonly _onSurfaceCreated = new EventEmitter<SurfaceModel<T, SK>>();
   private readonly _onSurfaceDeleted = new EventEmitter<string>();
   private readonly _onAction = new EventEmitter<A2uiClientAction>();
 
   /** Fires when a new surface is added. */
-  readonly onSurfaceCreated: EventSource<SurfaceModel<T>> =
+  readonly onSurfaceCreated: EventSource<SurfaceModel<T, SK>> =
     this._onSurfaceCreated;
   /** Fires when a surface is removed. */
   readonly onSurfaceDeleted: EventSource<string> = this._onSurfaceDeleted;
@@ -45,7 +49,7 @@ export class SurfaceGroupModel<T extends ComponentApi> {
    *
    * @param surface The surface model to add.
    */
-  addSurface(surface: SurfaceModel<T>): void {
+  addSurface(surface: SurfaceModel<T, SK>): void {
     if (this.surfaces.has(surface.id)) {
       console.warn(`Surface ${surface.id} already exists. Ignoring.`);
       return;
@@ -90,14 +94,14 @@ export class SurfaceGroupModel<T extends ComponentApi> {
    * @param id The ID of the surface to retrieve.
    * @returns The surface model, or undefined if not found.
    */
-  getSurface(id: string): SurfaceModel<T> | undefined {
+  getSurface(id: string): SurfaceModel<T, SK> | undefined {
     return this.surfaces.get(id);
   }
 
   /**
    * Returns a readonly map of all active surfaces.
    */
-  get surfacesMap(): ReadonlyMap<string, SurfaceModel<T>> {
+  get surfacesMap(): ReadonlyMap<string, SurfaceModel<T, SK>> {
     return this.surfaces;
   }
 

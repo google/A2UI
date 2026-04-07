@@ -23,15 +23,24 @@ import {DataModel} from '../../state/data-model.js';
 import {DataContext} from '../../rendering/data-context.js';
 import {A2uiExpressionError} from '../../errors.js';
 import {Catalog, ComponentApi} from '../../catalog/types.js';
+import {testFrameworkSignal} from '../../test/test_signals.js';
 
-const testCatalog = new Catalog<ComponentApi>('test', [], BASIC_FUNCTIONS);
+const testCatalog = new Catalog<ComponentApi, 'preact'>(
+  'test',
+  [],
+  BASIC_FUNCTIONS,
+);
 
-function invoke(name: string, args: Record<string, any>, context: DataContext) {
+function invoke(
+  name: string,
+  args: Record<string, any>,
+  context: DataContext<'preact'>,
+) {
   return testCatalog.invoker(name, args, context);
 }
 
 const createTestDataContext = (
-  model: DataModel,
+  model: DataModel<'preact'>,
   path: string,
   functionInvoker: any = testCatalog.invoker,
 ) => {
@@ -40,11 +49,11 @@ const createTestDataContext = (
     catalog: {invoker: functionInvoker},
     dispatchError: () => {},
   } as any;
-  return new DataContext(mockSurface, path);
+  return new DataContext(mockSurface, testFrameworkSignal, path);
 };
 
 describe('BASIC_FUNCTIONS', () => {
-  const dataModel = new DataModel({a: 10, b: 20});
+  const dataModel = new DataModel(testFrameworkSignal, {a: 10, b: 20});
   const context = createTestDataContext(dataModel, '/');
 
   describe('Arithmetic', () => {

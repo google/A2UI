@@ -25,7 +25,7 @@ import type {
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
   render: React.FC<{
-    context: ComponentContext;
+    context: ComponentContext<'react'>;
     buildChild: (id: string, basePath?: string) => React.ReactNode;
   }>;
 }
@@ -33,7 +33,7 @@ export interface ReactComponentImplementation extends ComponentApi {
 export type ReactA2uiComponentProps<T> = {
   props: T;
   buildChild: (id: string, basePath?: string) => React.ReactNode;
-  context: ComponentContext;
+  context: ComponentContext<'react'>;
 };
 
 // --- Component Factories ---
@@ -57,19 +57,21 @@ export function createReactComponent<Api extends ComponentApi>(
   });
 
   const ReactWrapper: React.FC<{
-    context: ComponentContext;
+    context: ComponentContext<'react'>;
     buildChild: (id: string, basePath?: string) => React.ReactNode;
   }> = ({context, buildChild}) => {
-    const bindingRef = useRef<GenericBinder<Props> | null>(null);
+    const bindingRef = useRef<GenericBinder<Props, 'react'> | null>(null);
 
     // Create or recreate the binder if the context object changes.
     // DeferredChild memoizes `context`, so reference changes strictly correspond
     // to ComponentModel updates (like type changes) or Base Path adjustments.
     if (!bindingRef.current) {
-      bindingRef.current = new GenericBinder<Props>(context, api.schema);
-    } else if ((bindingRef.current as unknown as {context: ComponentContext}).context !== context) {
+      bindingRef.current = new GenericBinder<Props, 'react'>(context, api.schema);
+    } else if (
+      (bindingRef.current as unknown as {context: ComponentContext<'react'>}).context !== context
+    ) {
       bindingRef.current.dispose();
-      bindingRef.current = new GenericBinder<Props>(context, api.schema);
+      bindingRef.current = new GenericBinder<Props, 'react'>(context, api.schema);
     }
     const binding = bindingRef.current;
 
@@ -107,7 +109,7 @@ export function createReactComponent<Api extends ComponentApi>(
 export function createBinderlessComponent(
   api: ComponentApi,
   RenderComponent: React.FC<{
-    context: ComponentContext;
+    context: ComponentContext<'react'>;
     buildChild: (id: string, basePath?: string) => React.ReactNode;
   }>
 ): ReactComponentImplementation {

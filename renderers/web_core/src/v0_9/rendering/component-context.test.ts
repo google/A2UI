@@ -19,9 +19,14 @@ import * as assert from 'node:assert';
 import {ComponentContext} from './component-context.js';
 import {SurfaceModel} from '../state/surface-model.js';
 import {ComponentModel} from '../state/component-model.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('ComponentContext', () => {
-  const mockSurface = new SurfaceModel('surface1', {} as any);
+  const mockSurface = new SurfaceModel(
+    'surface1',
+    {} as any,
+    testFrameworkSignal,
+  );
   const componentId = 'comp1';
 
   // Add a component to the surface model for testing
@@ -29,14 +34,22 @@ describe('ComponentContext', () => {
   mockSurface.componentsModel.addComponent(componentModel);
 
   it('initializes correctly', () => {
-    const context = new ComponentContext(mockSurface, componentId);
+    const context = new ComponentContext(
+      mockSurface,
+      componentId,
+      testFrameworkSignal,
+    );
     assert.strictEqual(context.componentModel, componentModel);
     assert.ok(context.dataContext);
     assert.strictEqual(context.surfaceComponents, mockSurface.componentsModel);
   });
 
   it('dispatches actions', async () => {
-    const context = new ComponentContext(mockSurface, componentId);
+    const context = new ComponentContext(
+      mockSurface,
+      componentId,
+      testFrameworkSignal,
+    );
     let actionDispatched: any = null;
 
     const subscription = mockSurface.onAction.subscribe((action: any) => {
@@ -53,12 +66,17 @@ describe('ComponentContext', () => {
 
   it('throws error if component not found', () => {
     assert.throws(() => {
-      new ComponentContext(mockSurface, 'nonExistentId');
+      new ComponentContext(mockSurface, 'nonExistentId', testFrameworkSignal);
     }, /Component not found: nonExistentId/);
   });
 
   it('creates data context with correct base path', () => {
-    const context = new ComponentContext(mockSurface, componentId, '/foo/bar');
+    const context = new ComponentContext(
+      mockSurface,
+      componentId,
+      testFrameworkSignal,
+      '/foo/bar',
+    );
     assert.strictEqual(context.dataContext.path, '/foo/bar');
   });
 });
