@@ -34,7 +34,9 @@ from .constants import (
 )
 
 # RFC 6901 compliant regex for JSON Pointer
-RELAXED_PATH_PATTERN = re.compile(r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$")
+RELAXED_PATH_PATTERN = re.compile(
+    r"^(?:(?:\/(?:[^~\/]|~[01])*)*|(?:[^~\/]|~[01])+(?:\/(?:[^~\/]|~[01])*)*)$"
+)
 
 # Recursion Limits
 MAX_GLOBAL_DEPTH = 50

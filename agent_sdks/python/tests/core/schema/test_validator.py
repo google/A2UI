@@ -981,8 +981,6 @@ class TestValidator:
   @pytest.mark.parametrize(
       "payload",
       [
-
-
           {
               "updateDataModel": {
                   "surfaceId": "surface1",
@@ -993,7 +991,6 @@ class TestValidator:
       ],
   )
   def test_validate_invalid_paths(self, test_catalog, payload):
-
 
     # Use make_payload to ensure correct wrapping and 'version' field for v0.9
     if "updateComponents" in payload:
@@ -1014,15 +1011,15 @@ class TestValidator:
 
     with pytest.raises(
         ValueError,
-        match=(
-            "(Invalid path syntax|is not valid under any of the given schemas)"
-        ),
+        match="(Invalid path syntax|is not valid under any of the given schemas)",
     ):
       test_catalog.validator.validate(p)
 
   def test_validate_relative_paths(self, test_catalog):
     """Tests that relative paths are allowed."""
-    components = [{"id": "root", "component": "Text", "text": {"path": "relative/path"}}]
+    components = [
+        {"id": "root", "component": "Text", "text": {"path": "relative/path"}}
+    ]
     payload = self.make_payload(test_catalog, components=components)
     test_catalog.validator.validate(payload)
 
