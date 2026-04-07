@@ -11,7 +11,7 @@ This guide shows you how to serve rich, interactive A2UI interfaces within [MCP 
 
 ## Quick Start: Run the Sample
 
-For detailed instructions on how to run this sample, please refer to the [README.md](../../samples/agent/mcp/a2ui-in-mcpapps/README.md).
+For detailed instructions on how to run this sample, please refer to the [README.md](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/README.md).
 
 ## Architecture Overview
 
@@ -131,7 +131,7 @@ Your inlined app is now running in the sandbox. To leverage A2UI:
 1.  **Include the A2UI Angular/Lit libraries** in your app's bundle.
 2.  **Define a communication contract** with your Host to interact with the MCP Server.
 3.  When you receive the response from the Host, look for the `application/json+a2ui` mimeType in the content.
-4.  Parse the JSON text and pass it to the A2UI `MessageProcessor`.
+4.  Parse the JSON text and pass it to the A2UI [`MessageProcessor`](https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_8/data/processor.ts).
 
 **Example: Fetching and Rendering A2UI**
 
@@ -186,7 +186,7 @@ To handle interactivity within the rendered A2UI surface, your MCP App must capt
 **Example: Handling User Actions**
 
 ```typescript
-// Subscribing to A2UI events in the MCP App (main.ts)
+// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/main.ts))
 this.processor.events.subscribe(async (event) => {
   if (!event.message.userAction) return;
   
