@@ -369,7 +369,9 @@ class A2uiValidator:
       _validate_recursion_and_paths(message)
 
   def _get_sub_validator(self, def_name: str) -> Draft202012Validator:
-    sub_schema = self._catalog.s2c_schema["$defs"][def_name]
+    sub_schema = self._catalog.s2c_schema.get("$defs", {}).get(def_name)
+    if not sub_schema:
+      raise ValueError(f"Definition {def_name} not found in schema")
     return Draft202012Validator(sub_schema, registry=self._validator._registry)
 
   def _get_formatted_errors(
