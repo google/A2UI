@@ -198,18 +198,20 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
         console.log('ALL messages in response:');
         response.forEach((m, i) => console.log(`Message ${i}:`, m));
 
-        // Delete surface if it already exists in the incoming messages
-        response.forEach(message => {
+        // TODO: Remove message-by-message processing and fallback to processor.processMessages(response)
+        // once the agent is fixed to not send duplicate createSurface messages in a single response.
+        // Process messages one by one and delete surface if it exists
+        // This handles cases where the agent sends duplicates in a single response
+        for (const message of response) {
           if (typeof message === 'object' && message !== null && 'createSurface' in message) {
             const id = (message as any).createSurface.surfaceId;
             if (processor.model.getSurface(id)) {
-              console.warn(`[DemoApp] Surface ${id} already exists. Deleting it.`);
+              console.warn(`[DemoApp] Surface ${id} already exists. Deleting it before recreation.`);
               processor.model.deleteSurface(id);
             }
           }
-        });
-        
-        processor.processMessages(response);
+          processor.processMessages([message]);
+        }
         setMessages(response);
       } catch (err) {
         console.error('Error sending message:', err);
