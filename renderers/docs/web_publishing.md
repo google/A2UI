@@ -42,21 +42,13 @@ If you attempt to run `npm publish` in their root directories, it will fail and 
 
 ### Publish to NPM
 
-Because these are scoped packages (`@a2ui/`), they default to **private** publishing.
+Because these are scoped packages (`@a2ui/`), they require the `--access public` flag to be published to the public registry. The `publish:package` script handles this automatically.
 
-#### Option A: Publish as Private (Default)
-This is useful for testing or internal releases.
 ```sh
 npm run publish:package
 ```
 
-#### Option B: Publish as Public
-Use this for official releases.
-```sh
-npm run publish:public
-```
-
-*Note: `npm run publish:public` is a shortcut for `npm run publish:package -- --access public`.*
+*Note: This command runs the build, prepares the `dist/` directory, and then executes `npm publish dist/ --access public`.*
 
 ---
 
