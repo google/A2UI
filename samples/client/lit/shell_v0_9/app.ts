@@ -286,27 +286,17 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   #processor = new v0_9.MessageProcessor(
     [basicCatalog],
-    async (action: any): Promise<any> => {
+    async (action: v0_9.A2uiClientAction): Promise<any> => {
       console.log("Action", action);
 
-      const context: any = {};
-      if (action.context) {
-        for (const item of action.context) {
-          if (item.value.literalBoolean !== undefined) {
-            context[item.key] = item.value.literalBoolean;
-          } else if (item.value.literalNumber !== undefined) {
-            context[item.key] = item.value.literalNumber;
-          } else if (item.value.literalString !== undefined) {
-            context[item.key] = item.value.literalString;
-          }
-        }
-      }
+      const context: Record<string, any> = { ...action.context };
 
-      const message: any = {
+      // Do we need to update this to a more strict v0.9 type?
+      const message = {
         userAction: {
           name: action.name,
           surfaceId: action.surfaceId,
-          sourceComponentId: action.sourceId,
+          sourceComponentId: action.sourceComponentId,
           timestamp: new Date().toISOString(),
           context,
         },
@@ -518,7 +508,15 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     console.log("Received", messages);
 
     this.#lastMessages = messages;
+
     // this.#processor.clearSurfaces();
+    // Why? Shouldn't `deleteSurface` be sent from the agent to the client?
+    for (const surfaceId of Array.from(
+      this.#processor.model.surfacesMap.keys(),
+    )) {
+      this.#processor.model.deleteSurface(surfaceId);
+    }
+
     this.#processor.processMessages(messages);
   }
 
