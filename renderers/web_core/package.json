@@ -58,9 +58,9 @@
     "src"
   ],
   "scripts": {
-    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
-    "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
-    "prepack": "npm run build",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `yarn build` then `cd dist && yarn npm publish`'); process.exit(1); }\"",
+    "publish:package": "yarn build && node ../scripts/prepare-publish.mjs && cd dist && yarn npm publish --access public",
+    "prepack": "yarn build",
     "build": "wireit",
     "build:tsc": "wireit",
     "test": "wireit",
@@ -104,7 +104,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test dist",
+      "command": "node --test \"dist/**/*.test.js\"",
       "dependencies": [
         "build"
       ]
@@ -119,7 +119,7 @@
     "google-artifactregistry-auth": "^3.5.0",
     "gts": "^7.0.0",
     "rxjs": "^7.8.2",
-    "typescript": "^5.9.3",
+    "typescript": "5.9.3",
     "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {

@@ -33,6 +33,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/restaurant/dist",
             "browser": "projects/restaurant/src/main.ts",
             "tsConfig": "projects/restaurant/tsconfig.app.json",
             "preserveSymlinks": true,
@@ -113,6 +114,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/rizzcharts/dist",
             "browser": "projects/rizzcharts/src/main.ts",
             "tsConfig": "projects/rizzcharts/tsconfig.app.json",
             "preserveSymlinks": true,
@@ -197,6 +199,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/contact/dist",
             "browser": "projects/contact/src/main.ts",
             "tsConfig": "projects/contact/tsconfig.app.json",
             "preserveSymlinks": true,
@@ -281,6 +284,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/gallery/dist",
             "browser": "projects/gallery/src/main.ts",
             "tsConfig": "projects/gallery/tsconfig.app.json",
             "preserveSymlinks": true,
@@ -419,6 +423,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/orchestrator/dist",
             "browser": "projects/orchestrator/src/main.ts",
             "tsConfig": "projects/orchestrator/tsconfig.app.json",
             "preserveSymlinks": true,
@@ -532,6 +537,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "projects/mcp_calculator/dist",
             "browser": "projects/mcp_calculator/src/main.ts",
             "tsConfig": "projects/mcp_calculator/tsconfig.app.json",
             "preserveSymlinks": true,

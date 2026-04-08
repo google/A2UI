@@ -10,25 +10,21 @@ This is a UI to generate and visualize A2UI responses.
 
 This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
 
-1. **Build the renderer:**
+1. **Install and build dependencies:**
+   From the repository root, install dependencies and build all packages:
    ```bash
-   cd ../../../renderers/web_core
-   npm install
-   npm run build
-   cd ../lit
-   npm install
-   npm run build
+   yarn install
+   yarn build:all
    ```
 
 2. **Run this sample:**
    ```bash
-   cd - # back to the sample directory
-   npm install
+   cd samples/client/lit/shell
    ```
 
 3. **Run the servers:**
-   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `npm run demo:restaurant`
-   - Run the dev server: `npm run dev`
+   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `yarn demo:restaurant`
+   - Run the dev server: `yarn dev`
 
 ### Running the Contact Sample
 
@@ -36,7 +32,7 @@ The shell app supports multiple configured applications. To run the Contact samp
 
 1. **Start the Contact Agent:**
    ```bash
-   npm run demo:contact
+   yarn demo:contact
    ```
 
 2. **Open the Contact App:**

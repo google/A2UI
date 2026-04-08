@@ -21,7 +21,7 @@ generate rich, interactive user interfaces through declarative JSON.
 ## Installation
 
 ```bash
-npm install @a2ui/react
+yarn install @a2ui/react
 ```
 
 **Peer Dependencies:** - React 18.x or 19.x - React DOM 18.x or 19.x
@@ -491,27 +491,27 @@ removeStyles();
 ### Setup
 
 ```bash
-cd renderers/react
-npm install
+# In the A2UI monorepo root
+yarn install
 ```
 
 ### Build
 
 ```bash
-npm run build    # Build the package
-npm run dev      # Watch mode
+yarn build    # Build the package
+yarn dev      # Watch mode
 ```
 
 ### Type Check
 
 ```bash
-npm run typecheck
+yarn typecheck
 ```
 
 ### Lint
 
 ```bash
-npm run lint
+yarn lint
 ```
 
 ## Testing
@@ -522,8 +522,8 @@ Uses [Vitest](https://vitest.dev/) +
 [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
 
 ```bash
-npm test              # Run once
-npm run test:watch    # Watch mode
+yarn test              # Run once
+yarn test:watch    # Watch mode
 ```
 
 **Structure:** `tests/ ├── setup.ts # Initializes component catalog ├──
@@ -554,24 +554,23 @@ between both renderers.
 
 ```bash
 cd visual-parity
-npm install
-npm test
+yarn test
 ```
 
 ### Quick Commands
 
 ```bash
 # Run all tests
-npm test
+yarn test
 
 # Run specific component tests
-npm test -- --grep "button"
+yarn test --grep "button"
 
 # Run with UI mode
-npm run test:ui
+yarn test:ui
 
 # Start dev servers for manual inspection
-npm run dev
+yarn dev
 # React: http://localhost:5001
 # Lit: http://localhost:5002
 ```

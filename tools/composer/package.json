@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 3001",
+    "build": "wireit",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -67,6 +67,21 @@
     "typescript": "5.9.3",
     "typescript-eslint": "^8.40.0",
     "vitest": "^4.0.18",
+    "wireit": "^0.15.0-pre.2",
     "wrangler": "^4.73.0"
+  },
+  "wireit": {
+    "build": {
+      "command": "next build",
+      "files": [
+        "src/**/*",
+        "public/**/*",
+        "tsconfig.json",
+        "*.config.*"
+      ],
+      "output": [
+        ".next/"
+      ]
+    }
   }
 }

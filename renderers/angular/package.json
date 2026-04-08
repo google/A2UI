@@ -21,23 +21,23 @@
   ],
   "scripts": {
     "generate-examples": "node scripts/generate-examples.mjs",
-    "build": "npm run generate-examples && ng build && node ../scripts/prepare-publish.mjs --source ./dist/package.json --skip-path-adjustment",
-    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
-    "publish:package": "npm run build && npm publish dist/ --access public",
-    "demo": "npm run generate-examples && ng serve a2ui_explorer",
-    "test": "npm run generate-examples && ng test lib --browsers=ChromeHeadless",
-    "test:ci": "npm run generate-examples && ng test lib --watch=false --browsers=ChromeHeadless"
+    "build": "wireit",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `yarn build` then `cd dist && yarn npm publish`'); process.exit(1); }\"",
+    "publish:package": "yarn build && cd dist && yarn npm publish --access public",
+    "demo": "yarn generate-examples && ng serve a2ui_explorer",
+    "test": "yarn generate-examples && ng test lib --watch=false --browsers=ChromeHeadless",
+    "test:watch": "yarn generate-examples && ng test lib --browsers=ChromeHeadless"
   },
   "dependencies": {
-    "@a2ui/web_core": "file:../web_core",
+    "@a2ui/web_core": "workspace:*",
     "tslib": "^2.3.0",
     "zod": "^3.25.76"
   },
   "peerDependencies": {
-    "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0",
-    "@angular/platform-browser": "^21.2.0",
-    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+    "@a2ui/markdown-it": "*",
+    "@angular/common": "^21.2.5",
+    "@angular/core": "^21.2.5",
+    "@angular/platform-browser": "^21.2.5"
   },
   "peerDependenciesMeta": {
     "@a2ui/markdown-it": {
@@ -45,11 +45,11 @@
     }
   },
   "devDependencies": {
-    "@angular/build": "^21.2.0",
-    "@angular/cli": "^21.2.0",
-    "@angular/compiler": "^21.2.0",
-    "@angular/compiler-cli": "^21.2.0",
-    "@angular/core": "^21.2.0",
+    "@angular/build": "^21.2.5",
+    "@angular/cli": "^21.2.5",
+    "@angular/compiler": "^21.2.5",
+    "@angular/compiler-cli": "^21.2.5",
+    "@angular/core": "^21.2.5",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
@@ -69,8 +69,9 @@
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
     "tslib": "^2.8.1",
-    "typescript": "~5.9.2",
-    "vitest": "^4.0.15"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.15",
+    "wireit": "^0.15.0-pre.2"
   },
   "sideEffects": false,
   "prettier": {
@@ -84,5 +85,22 @@
         }
       }
     ]
+  },
+  "wireit": {
+    "build": {
+      "command": "yarn generate-examples && ng build && node ../scripts/prepare-publish.mjs --source ./dist/package.json --skip-path-adjustment",
+      "dependencies": [
+        "../../renderers/web_core:build",
+        "../../renderers/markdown/markdown-it:build"
+      ],
+      "files": [
+        "src/**/*",
+        "tsconfig.json",
+        "scripts/**/*"
+      ],
+      "output": [
+        "dist/"
+      ]
+    }
   }
 }

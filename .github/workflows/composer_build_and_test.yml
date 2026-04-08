@@ -31,30 +31,23 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: 'tools/composer/pnpm-lock.yaml'
+          cache: 'yarn'
 
       - name: Install dependencies
-        working-directory: ./tools/composer
-        run: pnpm install
+        run: yarn install --immutable
 
       - name: Lint
         working-directory: ./tools/composer
-        run: pnpm lint
+        run: yarn lint
 
       - name: Build
         working-directory: ./tools/composer
-        run: pnpm build
+        run: yarn build
 
       - name: Test
         working-directory: ./tools/composer
-        run: pnpm test
+        run: yarn test

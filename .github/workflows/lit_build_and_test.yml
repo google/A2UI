@@ -38,23 +38,22 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
+          cache: 'yarn'
 
       - name: Install web_core dependencies
-        working-directory: ./renderers/web_core
-        run: npm i
+        run: yarn install --immutable
 
       - name: Build web_core
         working-directory: ./renderers/web_core
-        run: npm run build
+        run: yarn build
 
       - name: Install Lit renderer dependencies
-        working-directory: ./renderers/lit
-        run: npm i
+        run: yarn install --immutable
 
       - name: Build Lit renderer
         working-directory: ./renderers/lit
-        run: npm run build
+        run: yarn build
 
       - name: Run Lit renderer tests
         working-directory: ./renderers/lit
-        run: npm test
+        run: yarn test

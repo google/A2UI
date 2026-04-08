@@ -1,0 +1,28 @@
+{
+  "name": "a2ui-workspace",
+  "private": true,
+  "packageManager": "yarn@4.13.0",
+  "workspaces": [
+    "renderers/*",
+    "renderers/markdown/*",
+    "renderers/react/*",
+    "samples/client/angular",
+    "samples/client/angular/projects/*",
+    "samples/client/lit",
+    "samples/client/lit/*",
+    "samples/client/react/*",
+    "samples/personalized_learning",
+    "specification/*/eval",
+    "specification/*/test",
+    "tools/*"
+  ],
+  "scripts": {
+    "build:all": "yarn workspaces foreach -A -p --topological-dev run build",
+    "test:all": "yarn workspaces foreach -A -p --topological-dev run test"
+  },
+  "devDependencies": {
+    "google-artifactregistry-auth": "^3.5.0",
+    "typescript": "5.9.3",
+    "wireit": "^0.15.0-pre.2"
+  }
+}

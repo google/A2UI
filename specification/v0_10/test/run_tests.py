@@ -75,11 +75,7 @@ def cleanup_catalog_alias():
 
 def validate_ajv(schema_path, data_path, all_schemas):
     """Runs ajv validate via subprocess."""
-    local_ajv = os.path.join(TEST_DIR, "node_modules", ".bin", "ajv")
-    if os.path.exists(local_ajv):
-        cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
-    else:
-        cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
+    cmd = ["yarn", "run", "ajv", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
 
     # Add all other schemas as references
     for name, path in all_schemas.items():

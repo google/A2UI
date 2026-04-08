@@ -11,15 +11,9 @@ Before running this gallery, you **must** build the shared A2UI renderers.
 Navigate to the project root and run:
 
 ```bash
-# Build Web Core
-cd renderers/web_core
-npm install
-npm run build
-
-# Build Lit Renderer
-cd ../lit
-npm install
-npm run build
+```bash
+yarn install
+yarn build:all
 ```
 
 For more details on building the renderers, see:
@@ -33,14 +27,9 @@ For more details on building the renderers, see:
     cd samples/client/lit/local_gallery
     ```
 
-2.  **Install dependencies**:
+2.  **Run the development server**:
     ```bash
-    npm install
-    ```
-
-3.  **Run the development server**:
-    ```bash
-    npm run dev
+    yarn dev
     ```
     This command will:
     - Sync all JSON examples from `specification/v0_8/json/catalogs/minimal/examples/`.

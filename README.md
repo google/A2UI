@@ -134,25 +134,13 @@ The best way to understand A2UI is to run the samples.
     Open a new terminal window:
 
     ```bash
-    # Install and build the Markdown renderer
-    cd renderers/markdown/markdown-it
-    npm install
-    npm run build
+    # Install dependencies and build all packages in the correct order
+    yarn install
+    yarn build:all
 
-    # Install and build the Web Core library
-    cd ../../web_core
-    npm install
-    npm run build
-
-    # Install and build the Lit renderer
-    cd ../lit
-    npm install
-    npm run build
-
-    # Install and run the shell client
-    cd ../../samples/client/lit/shell
-    npm install
-    npm run dev
+    # Run the shell client
+    cd samples/client/lit/shell
+    yarn dev
     ```
 
 For Flutter developers, check out the [GenUI SDK](https://github.com/flutter/genui),

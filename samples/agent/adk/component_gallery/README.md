@@ -43,12 +43,12 @@ The client connects to the agent and renders the UI.
 
 2.  Install dependencies:
     ```bash
-    npm install
+    yarn install
     ```
 
 3.  Start the development server:
     ```bash
-    npm run dev
+    yarn dev
     ```
     Open your browser to the URL shown (usually `http://localhost:5173`).
 

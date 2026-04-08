@@ -36,18 +36,18 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
+          cache: 'yarn'
 
       - name: Install web_core dependencies
-        working-directory: ./renderers/web_core
-        run: npm i
+        run: yarn install --immutable
 
       - name: Build web_core
         working-directory: ./renderers/web_core
-        run: npm run build
+        run: yarn build
 
       - name: Test web_core
         working-directory: ./renderers/web_core
-        run: npm run test
+        run: yarn test
   lint:
     steps:
       - uses: actions/checkout@v6
@@ -56,15 +56,15 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
+          cache: 'yarn'
 
       - name: Install web_core dependencies
-        working-directory: ./renderers/web_core
-        run: npm i
+        run: yarn install --immutable
 
       - name: Build web_core
         working-directory: ./renderers/web_core
-        run: npm run build
+        run: yarn build
 
       - name: Lint web_core
         working-directory: ./renderers/web_core
-        run: npm run lint
+        run: yarn lint

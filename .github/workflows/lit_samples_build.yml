@@ -34,17 +34,17 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
+          cache: 'yarn'
+
+      - name: Install workspaces' dependencies
+        run: yarn install --immutable
 
       - name: Build lit renderer and its dependencies
         working-directory: ./samples/client/lit
-        run: npm run build:renderer
-
-      - name: Install all lit samples workspaces' dependencies
-        working-directory: ./samples/client/lit
-        run: npm install --workspaces
+        run: yarn build:renderer
 
       - name: Build all lit samples workspaces
         working-directory: ./samples/client/lit
-        run: npm run build --workspaces
+        run: yarn workspaces foreach -R --exclude '@a2ui/lit-samples' run build
 
 

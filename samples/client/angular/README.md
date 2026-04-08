@@ -19,26 +19,25 @@ cp ../../agent/adk/restaurant_finder/.env.example ../../agent/adk/restaurant_fin
 # Edit the .env file with your actual API key (do not commit .env)
 
 # Start the restaurant app frontend
-npm install 
-npm run demo:restaurant 
+yarn install 
+yarn demo:restaurant 
 ```
 
 Here are the instructions if you want to do each step manually. 
 
-1. Build the shared dependencies by running `npm install && npm run build` in the `renderers/lit` directory
-2. Install the dependencies: `npm install`
-3. Run the relevant A2A server:
+1. Install monorepo dependencies and build the shared libraries by running `yarn install` and `yarn build:all` in the repository root directory.
+2. Run the relevant A2A server:
   * [For the restaurant app](../../agent/adk/restaurant_finder/)
   * [For the contact app](../../agent/adk/contact_lookup/)
   * [For the rizzcharts app](../../agent/adk/rizzcharts/)
   * [For the orchestrator app](../../agent/adk/orchestrator/)
-4. Run the relevant app:
-  * `npm start -- restaurant`
-  * `npm start -- contact`
-  * `npm start -- rizzcharts`
-  * `npm start -- orchestrator`
-  * `npm run build:sandbox && npm start -- mcp_calculator`
-  * `npm start -- gallery` (Client-only, no server required)
+3. Run the relevant app:
+  * `yarn start restaurant`
+  * `yarn start contact`
+  * `yarn start rizzcharts`
+  * `yarn start orchestrator`
+  * `yarn build:sandbox && yarn start mcp_calculator`
+  * `yarn start gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 
 ## Streaming
@@ -47,7 +46,7 @@ By default, the Angular client uses the non-streaming API to communicate with th
 
 ```bash
 export ENABLE_STREAMING=true
-npm start -- contact
+yarn start contact
 ```
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.

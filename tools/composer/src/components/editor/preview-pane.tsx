@@ -19,7 +19,9 @@
 import { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { A2UIViewer, type ComponentInstance } from '@copilotkit/a2ui-renderer';
+import type { ComponentInstance } from '@copilotkit/a2ui-renderer';
+import dynamic from 'next/dynamic';
+const A2UIViewer = dynamic(() => import('@copilotkit/a2ui-renderer').then(mod => mod.A2UIViewer), { ssr: false });
 
 interface PreviewPaneProps {
   root: string;

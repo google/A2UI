@@ -9,6 +9,7 @@ dist
 __pycache__
 *.pyc
 .angular
+*.tsbuildinfo
 
 # MkDocs build output
 site/
@@ -24,6 +25,15 @@ a2a_agents/python/a2ui_agent/src/a2ui/assets/**/*.json
 agent_sdks/python/src/a2ui/assets/**/*.json
 ## Generated files for sandbox frame.
 samples/client/angular/projects/mcp_calculator/public/mcp_apps_inner_iframe/
+
+# Yarn Modern
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn/cache
 
 ## Generated files for a2ui-in-mcpapps
 samples/agent/mcp/a2ui-in-mcpapps/server/apps/dist

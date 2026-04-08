@@ -34,27 +34,27 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
+          cache: 'yarn'
 
       - name: Install top-level deps
-        working-directory: ./samples/client/angular
-        run: npm i
+        run: yarn install --immutable
 
       - name: Build Angular renderer and its dependencies
         working-directory: ./samples/client/angular
-        run: npm run build:renderer
+        run: yarn build:renderer
 
       - name: Build contact sample
         working-directory: ./samples/client/angular
-        run: npm run build contact
+        run: yarn ng build contact
 
       - name: Build restaurant sample
         working-directory: ./samples/client/angular
-        run: npm run build restaurant
+        run: yarn ng build restaurant
 
       - name: Build Rizzchart sample
         working-directory: ./samples/client/angular
-        run: npm run build rizzcharts
+        run: yarn ng build rizzcharts
 
       - name: Build Orchestrator
         working-directory: ./samples/client/angular
-        run: npm run build orchestrator
+        run: yarn ng build orchestrator

@@ -49,8 +49,8 @@ cd samples/client/lit
 Run the one-command demo launcher:
 
 ```bash
-npm install
-npm run demo:all
+yarn install
+yarn demo:all
 ```
 
 This command will:
@@ -181,7 +181,7 @@ The repository includes several other demos:
 See all available A2UI components:
 
 ```bash
-npm start -- gallery
+yarn start gallery
 ```
 
 This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.
@@ -191,7 +191,7 @@ This runs a client-only demo showcasing every standard component (Card, Button, 
 Try a different agent use case:
 
 ```bash
-npm run demo:contact
+yarn demo:contact
 ```
 
 This demonstrates a contact lookup agent that generates search forms and result lists.
