@@ -35,6 +35,7 @@ import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 import * as v0_9 from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
+import { overridesSheet } from "./theme/v0_9-overrides.js";
 
 // App elements.
 import "./ui/ui.js";
@@ -157,6 +158,21 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         }
       }
 
+      .material-symbols {
+        font-family: "Material Symbols Outlined", sans-serif;
+        font-variation-settings: "FILL" 1;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+      }
+
       .rotate {
         animation: rotate 1s linear infinite;
       }
@@ -199,7 +215,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         height: 48px;
         font-size: 32px;
 
-        & .g-icon {
+        & .material-symbols {
+          font-family: "Material Symbols Outlined";
           pointer-events: none;
 
           &::before {
@@ -209,7 +226,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       }
 
       @container style(--color-scheme: dark) {
-        .theme-toggle .g-icon::before {
+        .theme-toggle .material-symbols::before {
           content: "light_mode";
           color: var(--n-90);
         }
@@ -314,6 +331,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
+    if (!document.adoptedStyleSheets.includes(overridesSheet)) {
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, overridesSheet];
+    }
+
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
     const appKey = urlParams.get("app");
@@ -359,7 +380,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         }}
         class="theme-toggle"
       >
-        <span class="g-icon filled-heavy"></span>
+        <span class="material-symbols"></span>
       </button>
     </div>`;
   }
@@ -406,7 +427,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
           ?disabled=${this.#requesting}
         />
         <button type="submit" ?disabled=${this.#requesting}>
-          <span class="g-icon filled-heavy">send</span>
+          <span class="material-symbols">send</span>
         </button>
       </div>
     </form>`;
