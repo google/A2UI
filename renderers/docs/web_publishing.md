@@ -10,7 +10,7 @@ This guide is for project maintainers. It details the manual publishing process 
 
 ---
 
-## 🚀 Setup Authentication
+## Setup Authentication
 
 Ensure you have an NPM Access Token with rights to the `@a2ui` organization.
 
@@ -25,7 +25,7 @@ Ensure you have an NPM Access Token with rights to the `@a2ui` organization.
 
 ---
 
-## 📦 Publishing Packages
+## Publishing Packages
 
 All `@a2ui` web packages follow a similar build and publish workflow. They must be published from their generated `dist/` folders to ensure correct paths and clean `package.json` files.
 
