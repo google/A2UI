@@ -139,7 +139,7 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeTruthy();
-    expect(host.componentInstance.componentId()).toBe('child1');
+    expect(host.componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
   });
 
   it('should not show child component host if child prop is absent', () => {

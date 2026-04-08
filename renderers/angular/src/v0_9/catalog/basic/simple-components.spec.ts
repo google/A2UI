@@ -379,7 +379,7 @@ describe('Simple Components', () => {
       fixture.detectChanges();
       const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
       expect(host).toBeTruthy();
-      expect(host.componentInstance.componentId()).toBe('child-1');
+      expect(host.componentInstance.componentKey()).toEqual({ id: 'child-1', basePath: '/' });
     });
   });
 });

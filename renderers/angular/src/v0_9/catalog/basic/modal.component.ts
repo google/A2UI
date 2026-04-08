@@ -30,11 +30,10 @@ import { BoundProperty } from '../../core/types';
   template: `
     <div class="a2ui-modal-wrapper">
       <div (click)="openModal()" class="a2ui-modal-trigger">
-        @if (trigger()) {
+        @if (normalizedTrigger()) {
           <a2ui-v09-component-host
-            [componentId]="trigger()!"
+            [componentKey]="normalizedTrigger()!"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
           >
           </a2ui-v09-component-host>
         }
@@ -44,11 +43,10 @@ import { BoundProperty } from '../../core/types';
         <div class="a2ui-modal-overlay" (click)="closeModal()">
           <div class="a2ui-modal-content" (click)="$event.stopPropagation()">
             <button class="a2ui-modal-close" (click)="closeModal()">&times;</button>
-            @if (content()) {
+            @if (normalizedContent()) {
               <a2ui-v09-component-host
-                [componentId]="content()!"
+                [componentKey]="normalizedContent()!"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             }
@@ -122,6 +120,24 @@ export class ModalComponent {
 
   trigger = computed(() => this.props()['trigger']?.value());
   content = computed(() => this.props()['content']?.value());
+
+  protected normalizedTrigger = computed(() => {
+    const trigger = this.trigger();
+    if (!trigger) return null;
+    if (typeof trigger === 'object' && trigger !== null && 'id' in trigger) {
+      return trigger as { id: string; basePath: string };
+    }
+    return { id: trigger as string, basePath: this.dataContextPath() };
+  });
+
+  protected normalizedContent = computed(() => {
+    const content = this.content();
+    if (!content) return null;
+    if (typeof content === 'object' && content !== null && 'id' in content) {
+      return content as { id: string; basePath: string };
+    }
+    return { id: content as string, basePath: this.dataContextPath() };
+  });
 
   openModal() {
     this.isOpen.set(true);

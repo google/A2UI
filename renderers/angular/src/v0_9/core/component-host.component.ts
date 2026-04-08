@@ -50,7 +50,7 @@ import { ComponentBinder } from './component-binder.service';
           inputs: {
           props: props,
           surfaceId: surfaceId(),
-          componentId: componentId(),
+          componentId: resolvedComponentId,
           dataContextPath: resolvedDataContextPath,
         }
         "
@@ -60,17 +60,11 @@ import { ComponentBinder } from './component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentHostComponent implements OnInit {
-  /** The ID of the component to render. Defaults to 'root'. */
-  componentId = input<string | { id: string; basePath: string }>('root');
+  /** The key of the component to render, either an ID string or an object with ID and basePath. Defaults to 'root'. */
+  componentKey = input<string | { id: string; basePath: string }>('root');
 
   /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
-
-  /**
-   * The path within the surface's data model that represents the current data state.
-   * Defaults to '/'.
-   */
-  dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
   private binder = inject(ComponentBinder);
@@ -79,10 +73,8 @@ export class ComponentHostComponent implements OnInit {
   protected componentType: Type<any> | null = null;
   protected props: any = {};
   private context?: ComponentContext;
-
-  protected get resolvedDataContextPath(): string {
-    return this.context?.dataContext.path || this.dataContextPath();
-  }
+  protected resolvedComponentId: string = '';
+  protected resolvedDataContextPath: string = '/';
 
   ngOnInit(): void {
     const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
@@ -92,17 +84,19 @@ export class ComponentHostComponent implements OnInit {
       return;
     }
 
-    const compId = this.componentId();
+    const key = this.componentKey();
     let id: string;
     let basePath: string;
 
-    if (typeof compId === 'object' && compId !== null && 'id' in compId) {
-      id = compId.id;
-      basePath = compId.basePath || this.dataContextPath();
+    if (typeof key === 'object' && key !== null && 'id' in key) {
+      id = key.id;
+      basePath = key.basePath || '/';
     } else {
-      id = compId as string;
-      basePath = this.dataContextPath();
+      id = key;
+      basePath = '/';
     }
+
+    this.resolvedComponentId = id;
 
     const componentModel = surface.componentsModel.get(id);
 
@@ -124,6 +118,7 @@ export class ComponentHostComponent implements OnInit {
     // Create context
     this.context = new ComponentContext(surface, id, basePath);
     this.props = this.binder.bind(this.context);
+    this.resolvedDataContextPath = this.context.dataContext.path;
 
     this.destroyRef.onDestroy(() => {
       // ComponentContext itself doesn't have a dispose, but its inner components might.
