@@ -56,6 +56,7 @@ describe('SurfaceComponent', () => {
       },
     };
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    mockBinder.bind.and.returnValue({});
 
     await TestBed.configureTestingModule({
       imports: [SurfaceComponent],

@@ -43,28 +43,32 @@ export class ComponentBinder {
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, any> = {};
+    console.log(`[ComponentBinder] binding props for component:`, context.componentModel.id, `props:`, Object.keys(props));
 
     for (const key of Object.keys(props)) {
       const value = props[key];
+      console.log(`[ComponentBinder] processing prop:`, key, `value:`, value);
       
       let preactSig;
       const isChildListTemplate = value && typeof value === 'object' && 'componentId' in value && 'path' in value;
       const isBoundPath = value && typeof value === 'object' && 'path' in value && !('componentId' in value);
       
       if (isChildListTemplate) {
+        console.log(`[ComponentBinder] prop ${key} is child list template`);
         const listSig = context.dataContext.resolveSignal({ path: value.path });
         const listContext = context.dataContext.nested(value.path);
         preactSig = computed(() => {
           const arr = listSig.value;
           const currentArr = Array.isArray(arr) ? arr : [];
+          console.log(`[ComponentBinder] resolving child list template for ${key}, array length:`, currentArr.length);
           return currentArr.map((_, i) => ({
             id: value.componentId,
             basePath: listContext.nested(String(i)).path,
           }));
         });
       } else {
+        console.log(`[ComponentBinder] prop ${key} is normal value or bound path`);
         preactSig = context.dataContext.resolveSignal(value);
-
       }
 
       const angSig = toAngularSignal(preactSig as any, this.destroyRef, this.ngZone);
@@ -73,10 +77,12 @@ export class ComponentBinder {
         value: angSig,
         raw: value,
         onUpdate: isBoundPath
-          ? (newValue: any) => context.dataContext.set(value.path, newValue)
+          ? (newValue: any) => {
+              console.log(`[ComponentBinder] updating bound path ${value.path} with:`, newValue);
+              context.dataContext.set(value.path, newValue);
+            }
           : () => {}, // No-op for non-bound values
       };
-
       if (key === 'checks') {
         const checksArray = Array.isArray(value) ? value : [];
         
@@ -109,6 +115,7 @@ export class ComponentBinder {
           onUpdate: () => {},
         };
       }
+      console.log(`[ComponentBinder] bound prop ${key} successfully`);
     }
 
     return bound;

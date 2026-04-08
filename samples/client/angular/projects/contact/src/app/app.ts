@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MessageProcessor, Surface } from '@a2ui/angular';
+import { SurfaceComponent, A2uiRendererService } from '@a2ui/angular/v0_9';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Client } from './client';
 
@@ -22,18 +22,36 @@ import { Client } from './client';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: 'app.css',
-  imports: [Surface],
+  imports: [SurfaceComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected client = inject(Client);
-  protected processor = inject(MessageProcessor);
+  protected renderer = inject(A2uiRendererService);
 
   protected hasData = signal(false);
   protected userInput = signal('Casey Smith');
-  protected surfaces = computed(() => {
-    return Array.from(this.processor.getSurfaces().entries());
-  });
+  protected surfaces = signal<[string, any][]>([]);
+
+  constructor() {
+    this.updateSurfaces();
+    this.renderer.surfaceGroup.onSurfaceCreated.subscribe(() => this.updateSurfaces());
+    this.renderer.surfaceGroup.onSurfaceDeleted.subscribe(() => this.updateSurfaces());
+  }
+
+  private updateSurfaces() {
+    const entries = Array.from(this.renderer.surfaceGroup.surfacesMap.entries());
+    console.log('updateSurfaces entries:', entries);
+    for (const [id, surface] of entries) {
+      const components = Array.from(surface.componentsModel.entries).map(([cid, c]: [string, any]) => ({
+        id: cid,
+        type: c.type,
+        props: Object.keys(c.properties)
+      }));
+      console.log(`Surface ${id} components:`, components);
+    }
+    this.surfaces.set(entries);
+  }
 
   protected statusText = computed(() => {
     if (!this.client.isLoading()) return null;

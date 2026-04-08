@@ -19,6 +19,7 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  effect,
   HostBinding,
   OnInit,
   Type,
@@ -80,6 +81,16 @@ export class ComponentHostComponent implements OnInit {
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
   protected weight = signal<string | number | null>(null);
+  private pendingSub?: any;
+  private componentSub?: any;
+
+  constructor() {
+    effect(() => {
+      this.componentKey(); // track changes
+      this.loadComponent();
+      this.cdr.markForCheck();
+    });
+  }
 
   @HostBinding('style.flex')
   get flexStyle() {
@@ -88,6 +99,10 @@ export class ComponentHostComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initialization is handled by the effect watching componentId
+  }
+
+  private loadComponent(): void {
     const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
 
     if (!surface) {
@@ -111,23 +126,50 @@ export class ComponentHostComponent implements OnInit {
 
     const componentModel = surface.componentsModel.get(id);
 
-    if (!componentModel) {
-      console.warn(`Component ${id} not found in surface ${this.surfaceId()}. Waiting for it...`);
+    if (this.pendingSub) {
+      this.pendingSub.unsubscribe();
+      this.pendingSub = undefined;
+    }
 
-      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+    if (this.componentSub) {
+      this.componentSub.unsubscribe();
+      this.componentSub = undefined;
+    }
+
+    if (!componentModel) {
+      console.warn(
+        `Component ${id} not found in surface ${this.surfaceId()}. Waiting for it...`,
+      );
+
+      this.pendingSub = surface.componentsModel.onCreated.subscribe((comp: any) => {
         if (comp.id === id) {
-          console.log(`Component ${id} arrived! Initializing...`);
-          this.initializeComponent(surface, comp, id, basePath);
+          this.setupComponent(surface, comp, id, basePath);
           this.cdr.markForCheck();
-          sub.unsubscribe();
+          this.pendingSub?.unsubscribe();
+          this.pendingSub = undefined;
         }
       });
 
-      this.destroyRef.onDestroy(() => sub.unsubscribe());
+      this.destroyRef.onDestroy(() => {
+        this.pendingSub?.unsubscribe();
+      });
       return;
     }
 
+    this.setupComponent(surface, componentModel, id, basePath);
+  }
+
+  private setupComponent(surface: any, componentModel: any, id: string, basePath: string): void {
     this.initializeComponent(surface, componentModel, id, basePath);
+
+    this.componentSub = componentModel.onUpdated?.subscribe((updatedModel: any) => {
+      this.initializeComponent(surface, updatedModel, id, basePath);
+      this.cdr.markForCheck();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.componentSub?.unsubscribe();
+    });
   }
 
   private initializeComponent(
@@ -141,15 +183,24 @@ export class ComponentHostComponent implements OnInit {
     const api = catalog.components.get(componentModel.type);
 
     if (!api) {
-      console.error(`Component type "${componentModel.type}" not found in catalog "${catalog.id}"`);
+      console.error(
+        `Component type "${componentModel.type}" not found in catalog "${catalog.id}"`,
+      );
+      console.log(
+        `[ComponentHost] Available components in catalog:`,
+        Array.from(catalog.components.keys()),
+      );
       return;
     }
     this.componentType = api.component;
+    console.log(`[ComponentHost] Found component type:`, this.componentType);
 
     // Create context
     this.context = new ComponentContext(surface, id, basePath);
+    console.log(`[ComponentHost] Calling binder.bind for ${id}`);
     this.props = this.binder.bind(this.context);
     this.resolvedDataContextPath = this.context.dataContext.path;
+    console.log(`[ComponentHost] Bound props for ${id}:`, Object.keys(this.props));
 
     if (componentModel.weight) {
       this.weight.set(componentModel.weight);

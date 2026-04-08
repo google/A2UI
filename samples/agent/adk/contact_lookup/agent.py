@@ -242,6 +242,7 @@ class ContactAgent:
       )
 
       full_content_list = []
+      parts_streamed = False
 
       async def token_stream():
         async for event in runner.run_async(
@@ -259,6 +260,7 @@ class ContactAgent:
                 yield p.text
 
       if selected_catalog:
+        parts_streamed = True
         if session_id in self._parsers:
           self._parsers.move_to_end(session_id)
         else:
@@ -370,7 +372,7 @@ class ContactAgent:
 
         yield {
             "is_task_complete": True,
-            "parts": final_parts,
+            "parts": [] if parts_streamed else final_parts,
         }
         return  # We're done, exit the generator
 

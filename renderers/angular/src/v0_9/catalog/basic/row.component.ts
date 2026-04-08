@@ -43,6 +43,8 @@ import { getNormalizedPath } from '../../core/utils';
             [surfaceId]="surfaceId()"
           >
           </a2ui-v09-component-host>
+        } @empty {
+          <div class="a2ui-skeleton"></div>
         }
       }
 
@@ -53,10 +55,38 @@ import { getNormalizedPath } from '../../core/utils';
             [surfaceId]="surfaceId()"
           >
           </a2ui-v09-component-host>
+        } @empty {
+          <div class="a2ui-skeleton"></div>
         }
       }
     </div>
   `,
+  styles: [
+    `
+      .a2ui-row {
+        padding: 4px;
+        border: 1px dashed #ccc; /* Add dashed border to see the row */
+      }
+      .a2ui-skeleton {
+        height: 20px;
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        animation: a2ui-pulse 1.5s infinite ease-in-out;
+      }
+      @keyframes a2ui-pulse {
+        0% {
+          background-color: #e0e0e0;
+        }
+        50% {
+          background-color: #f5f5f5;
+        }
+        100% {
+          background-color: #e0e0e0;
+        }
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RowComponent {
@@ -77,9 +107,12 @@ export class RowComponent {
   protected align = computed(() => this.props()['align']?.value());
 
   protected children = computed(() => {
-    const raw = this.props()['children']?.value() || [];
+    const raw = this.props()['children']?.value();
+    console.log(`[RowComponent] ${this.componentId()} children resolved to:`, raw);
     return Array.isArray(raw) ? raw : [];
   });
+
+  protected rawValue = computed(() => this.props()['children']?.value());
 
   protected isRepeating = computed(() => {
     return !!this.props()['children']?.raw?.componentId;

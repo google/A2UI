@@ -32,7 +32,7 @@ import { BoundProperty } from '../../core/types';
         <path [attr.d]="path()"></path>
       </svg>
     } @else {
-      <i class="material-icons a2ui-icon" [style.color]="color()">
+      <i class="google-symbols a2ui-icon" [style.color]="color()">
         {{ iconName() }}
       </i>
     }
@@ -44,7 +44,7 @@ import { BoundProperty } from '../../core/types';
         width: 24px;
         height: 24px;
         font-size: 24px;
-        font-family: 'Material Icons';
+        font-family: 'Google Symbols';
         line-height: 1;
         text-transform: none;
         letter-spacing: normal;

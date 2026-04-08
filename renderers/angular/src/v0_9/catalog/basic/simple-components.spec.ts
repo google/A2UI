@@ -69,6 +69,7 @@ describe('Simple Components', () => {
       },
     };
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    mockBinder.bind.and.returnValue({});
   });
 
   @Component({

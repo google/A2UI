@@ -14,35 +14,42 @@
  * limitations under the License.
  */
 
-import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
+import { A2AServerPayload } from '@a2ui/angular';
+import { A2uiRendererService } from '@a2ui/angular/v0_9';
 import * as Types from '@a2ui/web_core/types/types';
-import { Injectable, inject, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { A2uiMessage } from '@a2ui/web_core/v0_9';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
-  private processor = inject(MessageProcessor);
+  private renderer = inject(A2uiRendererService);
   private contextId?: string;
+
+  async handleAction(action: any) {
+    try {
+      const messages = await this.makeRequest({
+        userAction: {
+          surfaceId: 'default',
+          type: 'USER_ACTION',
+          actionName: action.actionName || action
+        }
+      } as any);
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   readonly isLoading = signal(false);
 
-  constructor() {
-    this.processor.events.subscribe(async (event) => {
-      try {
-        const messages = await this.makeRequest(event.message);
-        event.completion.next(messages);
-        event.completion.complete();
-      } catch (err) {
-        event.completion.error(err);
-      }
-    });
-  }
+
 
   async makeRequest(request: Types.A2UIClientEventMessage | string): Promise<Types.ServerToClientMessage[]> {
     let messages: Types.ServerToClientMessage[] = [];
     try {
       this.isLoading.set(true);
-      // Clear surfaces at the start of a new request
-      this.processor.clearSurfaces();
+      // Clear surfaces at the start of a new request if needed.
+      // v0.9 handles replacement based on createSurface updates.
 
       const isString = typeof request === 'string';
       const bodyData = isString
@@ -148,11 +155,15 @@ export class Client {
     for (const item of parts) {
       if (item.kind === 'text') continue;
       if (item.data) {
-        messages.push(item.data);
+        if (Array.isArray(item.data)) {
+          messages.push(...item.data);
+        } else {
+          messages.push(item.data);
+        }
       }
     }
     if (messages.length > 0) {
-      this.processor.processMessages(messages);
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
     }
     return messages;
   }

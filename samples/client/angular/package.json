@@ -13,7 +13,9 @@
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it'; do (cd \"$dir\" && npm install && npm run build); done",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "demo:restaurant": "npm run build:renderer && npx concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "serve:agent:contact": "cd ../../agent/adk/contact_lookup && uv run .",
+    "demo:contact": "npm run build:renderer && npx concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:contact\" \"ENABLE_STREAMING=true npm start -- contact\"",
     "build:sandbox": "esbuild ../shared/mcp_apps_inner_iframe/sandbox.ts --bundle --outfile=projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.js --format=esm --platform=browser --alias:@modelcontextprotocol/ext-apps/app-bridge=./node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js && cp ../shared/mcp_apps_inner_iframe/sandbox.html projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.html"
   },
   "prettier": {

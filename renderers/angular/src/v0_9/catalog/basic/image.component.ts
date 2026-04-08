@@ -31,6 +31,8 @@ import { BoundProperty } from '../../core/types';
       [src]="url()"
       [alt]="description()"
       [style.object-fit]="fit()"
+      [style.width.px]="width()"
+      [style.height.px]="height()"
       [class]="'a2ui-image ' + variant()"
     />
   `,
@@ -40,6 +42,7 @@ import { BoundProperty } from '../../core/types';
         display: block;
         max-width: 100%;
         height: auto;
+        margin: 0 auto;
       }
       .a2ui-image.circle {
         border-radius: 50%;
@@ -92,8 +95,10 @@ export class ImageComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  url = computed(() => this.props()['url']?.value());
+  url = computed(() => this.props()['url']?.value() || this.props()['src']?.value());
   description = computed(() => this.props()['description']?.value() || '');
   fit = computed(() => this.props()['fit']?.value() || 'cover');
   variant = computed(() => this.props()['variant']?.value() || 'default');
+  width = computed(() => this.props()['width']?.value());
+  height = computed(() => this.props()['height']?.value());
 }

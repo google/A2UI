@@ -35,6 +35,11 @@ import { BoundProperty } from '../../core/types';
           [surfaceId]="surfaceId()"
         >
         </a2ui-v09-component-host>
+      } @else {
+        <div class="debug-missing-child">
+          Card {{ componentId() }} has no child.
+          Available props: {{ propKeys().join(', ') }}
+        </div>
       }
     </div>
   `,
@@ -46,6 +51,14 @@ import { BoundProperty } from '../../core/types';
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         background-color: white;
         border: 1px solid #eee;
+      }
+      .debug-missing-child {
+        color: #d93025;
+        font-family: monospace;
+        font-size: 12px;
+        padding: 8px;
+        background-color: #fce8e6;
+        border-radius: 4px;
       }
     `,
   ],
@@ -63,7 +76,11 @@ export class CardComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  child = computed(() => this.props()['child']?.value());
+  child = computed(() => {
+    const c = this.props()['child']?.value();
+    console.log(`[CardComponent] ${this.componentId()} child resolved to:`, c);
+    return c;
+  });
 
   protected normalizedChild = computed(() => {
     const child = this.child();
@@ -73,4 +90,6 @@ export class CardComponent {
     }
     return { id: child as string, basePath: this.dataContextPath() };
   });
+
+  propKeys = computed(() => Object.keys(this.props()));
 }
