@@ -163,10 +163,12 @@ export class DataModel {
     let current: any = this.data;
     for (const segment of segments) {
       if (current === undefined || current === null) {
+        console.log(`[DataModel] get(${path}) resolving to undefined at segment "${segment}"`);
         return undefined;
       }
       current = current[segment];
     }
+    console.log(`[DataModel] get(${path}) resolving to ${typeof current === 'object' ? 'object' : current}`);
     return current;
   }
 

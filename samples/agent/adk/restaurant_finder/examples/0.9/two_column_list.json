@@ -49,16 +49,8 @@
           "id": "card-layout-1",
           "component": "Column",
           "children": [
-            "template-image-1",
             "card-details-1"
           ]
-        },
-        {
-          "id": "template-image-1",
-          "component": "Image",
-          "url": {
-            "path": "/items/0/imageUrl"
-          }
         },
         {
           "id": "card-details-1",
@@ -67,7 +59,6 @@
             "template-name-1",
             "template-rating-1",
             "template-detail-1",
-            "template-link-1",
             "template-book-button-1"
           ]
         },
@@ -91,13 +82,6 @@
           "component": "Text",
           "text": {
             "path": "/items/0/detail"
-          }
-        },
-        {
-          "id": "template-link-1",
-          "component": "Text",
-          "text": {
-            "path": "/items/0/infoLink"
           }
         },
         {
@@ -136,16 +120,8 @@
           "id": "card-layout-2",
           "component": "Column",
           "children": [
-            "template-image-2",
             "card-details-2"
           ]
-        },
-        {
-          "id": "template-image-2",
-          "component": "Image",
-          "url": {
-            "path": "/items/1/imageUrl"
-          }
         },
         {
           "id": "card-details-2",
@@ -154,7 +130,6 @@
             "template-name-2",
             "template-rating-2",
             "template-detail-2",
-            "template-link-2",
             "template-book-button-2"
           ]
         },
@@ -178,13 +153,6 @@
           "component": "Text",
           "text": {
             "path": "/items/1/detail"
-          }
-        },
-        {
-          "id": "template-link-2",
-          "component": "Text",
-          "text": {
-            "path": "/items/1/infoLink"
           }
         },
         {
@@ -227,18 +195,12 @@
           {
             "name": "The Fancy Place",
             "rating": 4.8,
-            "detail": "Fine dining experience",
-            "infoLink": "https://example.com/fancy",
-            "imageUrl": "https://example.com/fancy.jpg",
-            "address": "123 Main St"
+            "detail": "Fine dining experience"
           },
           {
             "name": "Quick Bites",
             "rating": 4.2,
-            "detail": "Casual and fast",
-            "infoLink": "https://example.com/quick",
-            "imageUrl": "https://example.com/quick.jpg",
-            "address": "456 Oak Ave"
+            "detail": "Casual and fast"
           }
         ]
       }

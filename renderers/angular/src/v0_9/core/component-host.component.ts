@@ -16,6 +16,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   OnInit,
@@ -75,6 +76,7 @@ export class ComponentHostComponent implements OnInit {
   private rendererService = inject(A2uiRendererService);
   private binder = inject(ComponentBinder);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected componentType: Type<any> | null = null;
   protected props: any = {};
@@ -107,10 +109,25 @@ export class ComponentHostComponent implements OnInit {
     const componentModel = surface.componentsModel.get(id);
 
     if (!componentModel) {
-      console.warn(`Component ${id} not found in surface ${this.surfaceId()}`);
+      console.warn(`Component ${id} not found in surface ${this.surfaceId()}. Waiting for it...`);
+      
+      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+        if (comp.id === id) {
+          console.log(`Component ${id} arrived! Initializing...`);
+          this.initializeComponent(surface, comp, id, basePath);
+          this.cdr.markForCheck();
+          sub.unsubscribe();
+        }
+      });
+      
+      this.destroyRef.onDestroy(() => sub.unsubscribe());
       return;
     }
 
+    this.initializeComponent(surface, componentModel, id, basePath);
+  }
+
+  private initializeComponent(surface: any, componentModel: any, id: string, basePath: string): void {
     // Resolve component from the surface's catalog
     const catalog = surface.catalog as AngularCatalog;
     const api = catalog.components.get(componentModel.type);

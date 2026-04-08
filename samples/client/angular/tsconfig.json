@@ -8,6 +8,9 @@
       "@a2ui/angular": [
         "./projects/lib/src/public-api.ts"
       ],
+      "@a2ui/angular/v0_9": [
+        "./projects/lib/src/v0_9/public-api.ts"
+      ],
       "@a2a_chat_canvas/*": [
         "./projects/a2a-chat-canvas/src/lib/*"
       ],

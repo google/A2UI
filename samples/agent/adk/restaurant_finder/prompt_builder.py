@@ -23,7 +23,8 @@ ROLE_DESCRIPTION = (
 )
 
 UI_DESCRIPTION = """
--   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) object (e.g., for the "items" key).
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `updateDataModel` message.
+-   MANDATORY: You MUST use `path: "/items"` in `updateDataModel` when updating the list of restaurants, and the `value` MUST be the array of restaurants. Do NOT put `items` key inside the value unless you are also updating the `title` at path `/`.
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.

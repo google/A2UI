@@ -49,14 +49,13 @@
           "id": "card-layout",
           "component": "Row",
           "children": [
-            "template-image",
+            "card-image",
             "card-details"
           ]
         },
         {
-          "id": "template-image",
+          "id": "card-image",
           "component": "Image",
-          "weight": 1,
           "url": {
             "path": "imageUrl"
           }
@@ -138,24 +137,18 @@
       "surfaceId": "default",
       "path": "/",
       "value": {
-        "items": {
-          "item1": {
+        "items": [
+          {
             "name": "The Fancy Place",
             "rating": 4.8,
-            "detail": "Fine dining experience",
-            "infoLink": "https://example.com/fancy",
-            "imageUrl": "https://example.com/fancy.jpg",
-            "address": "123 Main St"
+            "detail": "Fine dining experience"
           },
-          "item2": {
+          {
             "name": "Quick Bites",
             "rating": 4.2,
-            "detail": "Casual and fast",
-            "infoLink": "https://example.com/quick",
-            "imageUrl": "https://example.com/quick.jpg",
-            "address": "456 Oak Ave"
+            "detail": "Casual and fast"
           }
-        }
+        ]
       }
     }
   }

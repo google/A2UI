@@ -48,10 +48,18 @@ describe('ComponentHostComponent', () => {
       components: new Map([['TestType', { component: TestChildComponent }]]),
     };
 
+    const compMap = new Map([
+      ['comp1', { id: 'comp1', type: 'TestType', properties: { text: 'Hello' } }],
+    ]);
+    const mockOnCreated = jasmine.createSpyObj('onCreated', ['subscribe']);
+    mockOnCreated.subscribe.and.returnValue({ unsubscribe: () => {} });
+
     mockSurface = {
-      componentsModel: new Map([
-        ['comp1', { id: 'comp1', type: 'TestType', properties: { text: 'Hello' } }],
-      ]),
+      componentsModel: {
+        get: (id: string) => compMap.get(id),
+        clear: () => compMap.clear(),
+        onCreated: mockOnCreated,
+      },
       catalog: mockCatalog,
     };
 
@@ -134,7 +142,7 @@ describe('ComponentHostComponent', () => {
 
       // @ts-ignore
       expect(component.componentType).toBeNull();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1');
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1. Waiting for it...');
     });
 
     it('should error and return if component type not in catalog', () => {

@@ -64,6 +64,10 @@ export class SurfaceModel<T extends ComponentApi> {
     readonly sendDataModel: boolean = false,
   ) {
     this.dataModel = new DataModel({});
+    if (typeof window !== 'undefined') {
+      (window as any).dataModel = this.dataModel;
+      (window as any).surface = this;
+    }
     this.componentsModel = new SurfaceComponentsModel();
   }
 

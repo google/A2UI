@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MessageProcessor, Surface } from '@a2ui/angular';
+import { SurfaceComponent, A2uiRendererService } from '@a2ui/angular/v0_9';
 import * as Types from '@a2ui/web_core/types/types';
 import { ChangeDetectionStrategy, Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Client } from './client';
@@ -23,12 +23,13 @@ import { Client } from './client';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: 'app.css',
-  imports: [Surface],
+  imports: [SurfaceComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App {
   protected client = inject(Client);
-  protected processor = inject(MessageProcessor);
+  protected renderer = inject(A2uiRendererService);
+
   private document = inject(DOCUMENT);
   private loadingInterval: number | undefined;
 
