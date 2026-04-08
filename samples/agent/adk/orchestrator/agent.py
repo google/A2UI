@@ -226,7 +226,7 @@ class OrchestratorAgent:
                     httpx_client=httpx.AsyncClient(
                         timeout=httpx.Timeout(timeout=DEFAULT_TIMEOUT),
                     ),
-                    streaming=False,
+                    streaming=True,
                     polling=False,
                     supported_transports=[A2ATransport.jsonrpc],
                 )

@@ -137,6 +137,11 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
   ):
     session = await super()._prepare_session(context, run_request, runner)
 
+    from google.adk.agents import run_config
+    if not run_request.run_config:
+      run_request.run_config = run_config.RunConfig()
+    run_request.run_config.streaming_mode = run_config.StreamingMode.SSE
+
     active_ui_version = try_activate_a2ui_extension(context, self._agent_card)
     if active_ui_version:
       client_capabilities = (
