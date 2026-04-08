@@ -20,7 +20,7 @@ import { Catalog } from './rendering/catalog';
 import { DEFAULT_CATALOG } from './catalog';
 import { Theme } from './rendering/theming';
 import { MessageProcessor } from './data/processor';
-import { MarkdownRenderer, DefaultMarkdownRenderer } from './data/markdown';
+import { MarkdownRenderer } from './data/markdown';
 import { Component } from '@angular/core';
 import * as restaurantCardMock from './test_data/mocks/restaurant-card.json';
 import * as contactCardMock from './test_data/mocks/contact-card.json';
@@ -92,7 +92,6 @@ class TestHost {
 describe('v0.8 Angular Renderer Integration', () => {
   let fixture: ComponentFixture<TestHost>;
   let processor: jasmine.SpyObj<MessageProcessor>;
-  let catalog: Catalog;
 
   beforeEach(async () => {
     processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath', 'version']);
@@ -150,7 +149,6 @@ describe('v0.8 Angular Renderer Integration', () => {
     });
 
     fixture = TestBed.createComponent(TestHost);
-    catalog = TestBed.inject(Catalog);
   });
 
   it('should inject structural styles and they should be effective', () => {

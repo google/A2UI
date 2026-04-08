@@ -48,3 +48,6 @@ yarn-error.log*
 __pycache__
 
 .playwright-mcp
+
+# OpenNext
+.open-next

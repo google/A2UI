@@ -18,11 +18,11 @@ from pathlib import Path
 from typing import Dict, Any
 import pytest
 
-from a2ui.core.schema.constants import VERSION_0_9
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.catalog_provider import A2uiCatalogProvider
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.catalog_provider import A2uiCatalogProvider
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent.parent.parent  # a2ui root
@@ -42,11 +42,11 @@ SAMPLE_CONFIGS = [
         "validate": False,  # Use invalid examples to test retry logic
     },
     {
-        "name": "contact_multiple_surfaces",
-        "path": SAMPLES_DIR / "contact_multiple_surfaces",
+        "name": "custom-components-example",
+        "path": SAMPLES_DIR / "custom-components-example",
         "catalogs": [
             CatalogConfig.from_path(
-                name="contact_multiple_surfaces_inline_catalog",
+                name="custom-components-example_inline_catalog",
                 catalog_path="inline_catalog_0.9.json",
                 examples_path=f"examples/{VERSION_0_9}",
             ),

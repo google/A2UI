@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
@@ -79,7 +78,6 @@ export class TextFieldComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  private rendererService = inject(A2uiRendererService);
 
   label = computed(() => this.props()['label']?.value());
   value = computed(() => this.props()['value']?.value() || '');

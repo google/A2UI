@@ -1,4 +1,4 @@
-# How Can I Use A2UI?
+# How to Use A2UI
 
 Choose the integration path that matches your role and use case.
 
@@ -10,8 +10,8 @@ Integrate A2UI rendering into your existing app or build a new agent-powered fro
 
 **Choose a renderer:**
 
-- **Web:** Lit, Angular, React
-- **Mobile/Desktop:** Flutter GenUI SDK
+- **Web:** Lit, Angular, React.
+- **Mobile/Desktop:** Flutter GenUI SDK.
 
 **Quick setup:**
 
@@ -39,8 +39,8 @@ Create an agent that generates A2UI responses for any compatible client.
 
 **Choose your framework:**
 
-- **Python:** Google ADK, LangChain, custom
-- **Node.js:** A2A SDK, Vercel AI SDK, custom
+- **Python:** Google ADK, LangChain, custom.
+- **Node.js:** A2A SDK, Vercel AI SDK, custom.
 
 Include the A2UI schema in your LLM prompts, generate JSONL messages, and stream to clients over SSE, WebSockets, or A2A.
 
@@ -52,7 +52,7 @@ Include the A2UI schema in your LLM prompts, generate JSONL messages, and stream
 
 Use A2UI through frameworks with built-in support:
 
-- **[AG UI / CopilotKit](https://ag-ui.com/)** - Full-stack React framework with A2UI rendering
-- **[Flutter GenUI SDK](https://docs.flutter.dev/ai/genui)** - Cross-platform generative UI (uses A2UI internally)
+- **[AG UI / CopilotKit](https://ag-ui.com/)** - Full-stack React framework with A2UI rendering.
+- **[Flutter GenUI SDK](https://docs.flutter.dev/ai/genui)** - Cross-platform generative UI (uses A2UI internally).
 
 **Next:** [Agent UI Ecosystem](agent-ui-ecosystem.md) | [Where is A2UI Used?](../ecosystem/a2ui-in-the-world.md)

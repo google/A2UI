@@ -36,9 +36,14 @@ from a2a.client.client import Consumer, Client
 from a2a.client.middleware import ClientCallContext, ClientCallInterceptor
 from a2a.client.client import ClientConfig as A2AClientConfig
 from a2a.client.client_factory import ClientFactory as A2AClientFactory
-from a2ui.a2a import *
+from a2ui.a2a.extension import (
+    A2UI_EXTENSION_BASE_URI,
+    AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY,
+    AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY,
+)
+from a2ui.a2a.parts import is_a2ui_part
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
-from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
 
 logger = logging.getLogger(__name__)
 

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 
 /**
@@ -120,7 +119,6 @@ export class ChoicePickerComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  private rendererService = inject(A2uiRendererService);
 
   displayStyle = computed(() => this.props()['displayStyle']?.value());
   choices = computed(
