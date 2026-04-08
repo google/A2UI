@@ -115,19 +115,22 @@ function getDefaultStyleSheet(): CSSStyleSheet {
 }
 
 /**
- * Injects the default A2UI theme variables into the document.
+ * Injects CSS variables for the A2UI basic catalog into the document.
  *
- * This method is used by the A2UI-provided basic catalogs of each renderer,
- * as needed, so design token values can be shared across all of them.
+ * This method is used by the A2UI-provided basic catalogs of each renderer
+ * so design token values can be shared across all of them.
  *
- * End users may redefine the CSS variables defined in the default stylesheet
- * to customize the theme.
+ * It is only meant to be used by the basic catalog implementations provided
+ * by `@a2ui/lit`, `@a2ui/angular` and `@a2ui/react`, and should not be
+ * considered as part of the A2UI spec. This package is just a convenient
+ * location for it.
  *
- * This method ensures the default stylesheet is added to the root document
- * of the page, if it's not already present.
+ * Users may redefine the values of the CSS variables exposed in the default
+ * stylesheet above (and the specific ones exposed by each basic catalog
+ * package) to customize the appearance of the items of the basic catalog.
  */
-export function injectDefaultA2uiTheme() {
-  if (typeof document === "undefined") return;
+export function injectBasicCatalogStyles() {
+  if (typeof document === 'undefined') return;
   const sheet = getDefaultStyleSheet();
   if (!document.adoptedStyleSheets.includes(sheet)) {
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
