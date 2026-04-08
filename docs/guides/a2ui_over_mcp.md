@@ -327,7 +327,7 @@ pip install a2ui-agent-sdk
 ```
 
 ```python
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 
 # Initialize the schema manager with the basic catalog

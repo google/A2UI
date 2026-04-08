@@ -104,14 +104,11 @@ from typing import (
 import jsonschema
 
 from a2a import types as a2a_types
-from a2ui.a2a import (
-    create_a2ui_part,
-    parse_response_to_parts,
-)
-from a2ui.core.parser.parser import has_a2ui_parts
-from a2ui.core.parser.payload_fixer import parse_and_fix
-from a2ui.core.schema.constants import A2UI_SCHEMA_BLOCK_START, A2UI_SCHEMA_BLOCK_END
-from a2ui.core.schema.catalog import A2uiCatalog
+from a2ui.a2a.parts import create_a2ui_part, parse_response_to_parts
+from a2ui.parser.parser import has_a2ui_parts
+from a2ui.parser.payload_fixer import parse_and_fix
+from a2ui.schema.constants import A2UI_SCHEMA_BLOCK_START, A2UI_SCHEMA_BLOCK_END
+from a2ui.schema.catalog import A2uiCatalog
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest

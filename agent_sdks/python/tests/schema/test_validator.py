@@ -16,10 +16,10 @@ import json
 import copy
 import pytest
 from unittest.mock import MagicMock
-from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
-from a2ui.core.schema.validator import (
+from a2ui.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.schema.validator import (
     _find_root_id as find_root_id,
     extract_component_ref_fields,
     analyze_topology,

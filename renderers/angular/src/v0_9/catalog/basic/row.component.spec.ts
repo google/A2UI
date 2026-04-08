@@ -104,8 +104,8 @@ describe('RowComponent', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentId()).toBe('child1');
-    expect(hosts[1].componentInstance.componentId()).toBe('child2');
+    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
+    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'child2', basePath: '/' });
   });
 
   it('should render repeating children', () => {
@@ -124,10 +124,8 @@ describe('RowComponent', () => {
 
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentId()).toBe('template1');
-    expect(hosts[0].componentInstance.dataContextPath()).toBe('/items/0');
-    expect(hosts[1].componentInstance.componentId()).toBe('template1');
-    expect(hosts[1].componentInstance.dataContextPath()).toBe('/items/1');
+    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'template1', basePath: '/items/0' });
+    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'template1', basePath: '/items/1' });
   });
 
   it('should handle non-array children value', () => {

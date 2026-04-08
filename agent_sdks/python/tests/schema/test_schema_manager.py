@@ -14,16 +14,16 @@ import pytest
 import json
 import os
 from unittest.mock import patch, MagicMock, PropertyMock
-from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
+from a2ui.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
 from a2ui.basic_catalog import BasicCatalog
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
-from a2ui.core.schema.constants import (
+from a2ui.schema.constants import (
     DEFAULT_WORKFLOW_RULES,
     INLINE_CATALOG_NAME,
     VERSION_0_8,
     VERSION_0_9,
 )
-from a2ui.core.schema.constants import (
+from a2ui.schema.constants import (
     A2UI_SCHEMA_BLOCK_START,
     A2UI_SCHEMA_BLOCK_END,
     INLINE_CATALOGS_KEY,

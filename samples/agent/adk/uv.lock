@@ -37,7 +37,7 @@ wheels = [
 
 [[package]]
 name = "a2ui-agent-sdk"
-source = { directory = "../../../agent_sdks/python" }
+source = { editable = "../../../agent_sdks/python" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "google-adk" },
@@ -78,7 +78,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "google-adk", specifier = ">=1.28.0" },
     { name = "google-genai", specifier = ">=1.27.0" },
@@ -109,7 +109,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "fastapi", specifier = ">=0.123.10" },
     { name = "google-adk", specifier = ">=1.28.0" },
@@ -140,7 +140,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", directory = "../../../agent_sdks/python" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "google-adk", specifier = ">=1.28.0" },
     { name = "google-genai", specifier = ">=1.27.0" },
@@ -1689,7 +1689,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "anyio" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "google-adk", specifier = ">=1.28.0" },
@@ -2044,7 +2044,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "google-adk", specifier = ">=1.28.0" },
     { name = "google-genai", specifier = ">=1.27.0" },
@@ -2620,7 +2620,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
+    { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "google-adk", specifier = ">=1.28.0" },
     { name = "google-genai", specifier = ">=1.27.0" },

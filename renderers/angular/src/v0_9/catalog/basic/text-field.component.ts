@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  Component,
-  input,
-  computed,
-  ChangeDetectionStrategy,
-  inject,
-  NgZone,
-  Signal,
-  signal,
-  effect,
-} from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentContext, effect as preactEffect } from '@a2ui/web_core/v0_9';
 
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
@@ -49,10 +37,10 @@ import { ComponentContext, effect as preactEffect } from '@a2ui/web_core/v0_9';
         [value]="value()"
         (input)="handleInput($event)"
         [placeholder]="placeholder()"
-        [class.invalid]="failedChecks().length > 0"
+        [class.invalid]="props()['isValid']?.value() === false"
       />
-      @for (check of failedChecks(); track check.message) {
-        <div class="a2ui-error-message">{{ check.message }}</div>
+      @for (message of props()['validationErrors']?.value(); track message) {
+        <div class="a2ui-error-message">{{ message }}</div>
       }
     </div>
   `,
@@ -101,69 +89,10 @@ export class TextFieldComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  private rendererService = inject(A2uiRendererService);
-  private ngZone = inject(NgZone);
-
-  resolvedChecks = signal<{ message: string; condition: Signal<boolean> }[]>([]);
-
   label = computed(() => this.props()['label']?.value());
   value = computed(() => this.props()['value']?.value() || '');
   placeholder = computed(() => this.props()['placeholder']?.value() || '');
   variant = computed(() => this.props()['variant']?.value());
-
-  constructor() {
-    effect((onCleanup) => {
-      const checksProp = this.props()['checks'];
-      const checksValue = checksProp?.value();
-      const checksArray = Array.isArray(checksValue) ? checksValue : [];
-
-      if (!this.rendererService.surfaceGroup) return;
-      const surface = this.rendererService.surfaceGroup.getSurface(this.surfaceId());
-      if (!surface) return;
-
-      const context = new ComponentContext(
-        surface,
-        this.componentId() || '',
-        this.dataContextPath(),
-      );
-
-      const disposes: (() => void)[] = [];
-
-      const resolved = checksArray.map((check) => {
-        if (!check || !check.condition) {
-          return {
-            message: check?.message || 'Malformed validation check',
-            condition: signal(false).asReadonly(),
-          };
-        }
-
-        const conditionSig = context.dataContext.resolveSignal(check.condition);
-        const s = signal<boolean>(!!conditionSig.peek());
-
-        const dispose = preactEffect(() => {
-          const val = !!conditionSig.value;
-          this.ngZone.run(() => s.set(val));
-        });
-
-        disposes.push(dispose);
-
-        return {
-          message: check.message,
-          condition: s.asReadonly(),
-        };
-      });
-
-      this.resolvedChecks.set(resolved);
-
-      onCleanup(() => {
-        disposes.forEach((d) => d());
-      });
-    });
-  }
-
-  failedChecks = computed(() => {
-    return this.resolvedChecks().filter((check) => !check.condition());
-  });
 
   inputType = computed(() => {
     switch (this.variant()) {

@@ -20,7 +20,7 @@ import { Catalog } from '../rendering/catalog';
 import { DEFAULT_CATALOG } from '../catalog';
 import { Theme } from '../rendering/theming';
 import { MessageProcessor } from '../data/processor';
-import { MarkdownRenderer, DefaultMarkdownRenderer } from '../data/markdown';
+import { MarkdownRenderer } from '../data/markdown';
 import { Component } from '@angular/core';
 
 @Component({

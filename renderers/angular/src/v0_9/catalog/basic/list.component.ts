@@ -32,12 +32,11 @@ import { BoundProperty } from '../../core/types';
     @switch (listTag()) {
       @case ('ol') {
         <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child) {
+          @for (child of normalizedChildren(); track child.id) {
             <li>
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </li>
@@ -46,12 +45,11 @@ import { BoundProperty } from '../../core/types';
       }
       @case ('ul') {
         <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child) {
+          @for (child of normalizedChildren(); track child.id) {
             <li>
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </li>
@@ -60,12 +58,11 @@ import { BoundProperty } from '../../core/types';
       }
       @default {
         <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
-          @for (child of children(); track child) {
+          @for (child of normalizedChildren(); track child.id) {
             <div class="a2ui-list-item-none">
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </div>
@@ -119,6 +116,15 @@ export class ListComponent {
   children = computed(() => {
     const raw = this.props()['children']?.value();
     return Array.isArray(raw) ? raw : [];
+  });
+
+  protected normalizedChildren = computed(() => {
+    return this.children().map(child => {
+      if (typeof child === 'object' && child !== null && 'id' in child) {
+        return child as { id: string; basePath: string };
+      }
+      return { id: child as string, basePath: this.dataContextPath() };
+    });
   });
 
   listTag = computed(() => {

@@ -20,13 +20,9 @@ import {
   computed,
   ChangeDetectionStrategy,
   inject,
-  NgZone,
-  Signal,
-  signal,
-  effect,
 } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { ComponentContext, DataContext, effect as preactEffect } from '@a2ui/web_core/v0_9';
+import { DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BoundProperty } from '../../core/types';
 
@@ -45,13 +41,12 @@ import { BoundProperty } from '../../core/types';
       [type]="variant() === 'primary' ? 'submit' : 'button'"
       [class]="'a2ui-button ' + variant()"
       (click)="handleClick()"
-      [disabled]="failedChecks().length > 0"
+      [disabled]="props()['isValid']?.value() === false"
     >
-      @if (child()) {
+      @if (normalizedChild()) {
         <a2ui-v09-component-host
-          [componentId]="child()!"
+          [componentKey]="normalizedChild()!"
           [surfaceId]="surfaceId()"
-          [dataContextPath]="dataContextPath()"
         >
         </a2ui-v09-component-host>
       }
@@ -102,67 +97,18 @@ export class ButtonComponent {
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
-  private ngZone = inject(NgZone);
-
-  resolvedChecks = signal<{ message: string; condition: Signal<boolean> }[]>([]);
 
   variant = computed(() => this.props()['variant']?.value() ?? 'default');
   child = computed(() => this.props()['child']?.value());
   action = computed(() => this.props()['action']?.value());
 
-  constructor() {
-    effect((onCleanup) => {
-      const checksProp = this.props()['checks'];
-      const checksValue = checksProp?.value();
-      const checksArray = Array.isArray(checksValue) ? checksValue : [];
-
-      if (checksArray.length === 0) {
-        this.resolvedChecks.set([]);
-        return;
-      }
-
-      if (!this.rendererService.surfaceGroup) return;
-      const surface = this.rendererService.surfaceGroup.getSurface(this.surfaceId());
-      if (!surface) return;
-
-      const context = new ComponentContext(surface, this.componentId(), this.dataContextPath());
-
-      const disposes: (() => void)[] = [];
-
-      const resolved = checksArray.map((check) => {
-        if (!check || !check.condition) {
-          return {
-            message: check?.message || 'Malformed validation check',
-            condition: signal(false).asReadonly(),
-          };
-        }
-
-        const conditionSig = context.dataContext.resolveSignal(check.condition);
-        const s = signal<boolean>(!!conditionSig.peek());
-
-        const dispose = preactEffect(() => {
-          const val = !!conditionSig.value;
-          this.ngZone.run(() => s.set(val));
-        });
-
-        disposes.push(dispose);
-
-        return {
-          message: check.message,
-          condition: s.asReadonly(),
-        };
-      });
-
-      this.resolvedChecks.set(resolved);
-
-      onCleanup(() => {
-        disposes.forEach((d) => d());
-      });
-    });
-  }
-
-  failedChecks = computed(() => {
-    return this.resolvedChecks().filter((check) => !check.condition());
+  protected normalizedChild = computed(() => {
+    const child = this.child();
+    if (!child) return null;
+    if (typeof child === 'object' && child !== null && 'id' in child) {
+      return child as { id: string; basePath: string };
+    }
+    return { id: child as string, basePath: this.dataContextPath() };
   });
 
   handleClick() {

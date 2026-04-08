@@ -480,12 +480,12 @@ describe('Complex Components', () => {
       expect(tabs[0].textContent).toContain('Tab 1');
 
       let host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
-      expect(host.componentInstance.componentId()).toBe('content-1');
+      expect(host.componentInstance.componentKey()).toEqual({ id: 'content-1', basePath: '/' });
 
       tabs[1].click();
       fixture.detectChanges();
       host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
-      expect(host.componentInstance.componentId()).toBe('content-2');
+      expect(host.componentInstance.componentKey()).toEqual({ id: 'content-2', basePath: '/' });
     });
 
     it('should handle missing tabs property', () => {
@@ -538,7 +538,7 @@ describe('Complex Components', () => {
       const triggerHost = fixture.debugElement.query(
         By.css('.a2ui-modal-trigger a2ui-v09-component-host'),
       );
-      expect(triggerHost.componentInstance.componentId()).toBe('trigger-btn');
+      expect(triggerHost.componentInstance.componentKey()).toEqual({ id: 'trigger-btn', basePath: '/' });
 
       expect(fixture.nativeElement.querySelector('.a2ui-modal-overlay')).toBeFalsy();
 
@@ -550,7 +550,7 @@ describe('Complex Components', () => {
       const contentHost = fixture.debugElement.query(
         By.css('.a2ui-modal-overlay a2ui-v09-component-host'),
       );
-      expect(contentHost.componentInstance.componentId()).toBe('modal-content');
+      expect(contentHost.componentInstance.componentKey()).toEqual({ id: 'modal-content', basePath: '/' });
     });
 
     it('should close modal when close button clicked', () => {

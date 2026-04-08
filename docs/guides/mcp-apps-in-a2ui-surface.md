@@ -134,7 +134,7 @@ This sample verifies the sandbox with a Lit-based client and an ADK-based A2A ag
 
 **What to expect**: A contact page where actions prompt an app interface on specific interactions.
 
-### 2. MCP Apps (Calculator) (Angular)
+### 2. MCP Apps (Calculator + Pong) (Angular)
 
 This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
 
@@ -149,7 +149,11 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
     -   Command: `npm start -- mcp_calculator` (requires `npm run build:sandbox` and `npm install`)
     -   URL: `http://localhost:4200/?disable_security_self_test=true`
 
-**What to expect**: A basic calculator will be rendered. You can execute arithmetic calculations cleanly through the sandbox.
+**What to expect**: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.
+
+| Calculator App | Pong App |
+| :---: | :---: |
+| ![An animated GIF of the calculator app being used to perform multiplications.](../assets/calculator_demo.gif) | ![An animated GIF of the pong app being played.](../assets/pong_demo.gif) |
 
 ## URL Options for Testing
 

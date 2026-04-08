@@ -16,8 +16,8 @@ import json
 import os
 import pytest
 from typing import Any, Dict, List
-from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import (
+from a2ui.schema.catalog import A2uiCatalog
+from a2ui.schema.constants import (
     A2UI_SCHEMA_BLOCK_START,
     A2UI_SCHEMA_BLOCK_END,
     VERSION_0_8,

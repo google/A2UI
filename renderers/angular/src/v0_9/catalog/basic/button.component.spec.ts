@@ -139,7 +139,7 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeTruthy();
-    expect(host.componentInstance.componentId()).toBe('child1');
+    expect(host.componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
   });
 
   it('should not show child component host if child prop is absent', () => {
@@ -152,66 +152,20 @@ describe('ButtonComponent', () => {
     expect(host).toBeFalsy();
   });
 
-  it('should be disabled when checks fail', async () => {
-    const failSig = preactSignal(true);
-
-    mockSurface.dataModel = {
-      getSignal: jasmine.createSpy('getSignal').and.returnValue(failSig),
-    };
-    mockSurface.componentsModel.set('comp1', { id: 'comp1', type: 'Button', properties: {} });
-    mockSurface.catalog.invoker = {};
+  it('should be disabled when isValid is false', () => {
+    const isValidSig = signal(true);
 
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      checks: {
-        value: () => [{ condition: { path: 'mock/condition' }, message: 'Condition not met' }],
-        peek: () => [{ condition: { path: 'mock/condition' }, message: 'Condition not met' }],
-      },
+      isValid: { value: isValidSig, raw: true, onUpdate: () => {} },
     });
 
     fixture.detectChanges();
-
-    failSig.value = false;
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    fixture.detectChanges();
-
     const button = fixture.debugElement.query(By.css('button'));
-    expect(button.nativeElement.disabled).toBeTrue();
-
-    failSig.value = true;
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    fixture.detectChanges();
-
     expect(button.nativeElement.disabled).toBeFalse();
-  });
-  it('should be reactive to changes in checks property', async () => {
-    const checksSig = signal([{ condition: { path: 'mock/condition' }, message: 'Error 1' }]);
 
-    const conditionSig = preactSignal(false);
-
-    mockSurface.dataModel = {
-      getSignal: jasmine.createSpy('getSignal').and.returnValue(conditionSig),
-    };
-    mockSurface.componentsModel.set('comp1', { id: 'comp1', type: 'Button', properties: {} });
-    mockSurface.catalog.invoker = {};
-
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      checks: {
-        value: checksSig,
-        peek: () => checksSig(),
-      },
-    });
-
+    isValidSig.set(false);
     fixture.detectChanges();
-
-    const button = fixture.debugElement.query(By.css('button'));
     expect(button.nativeElement.disabled).toBeTrue();
-
-    // Change the checks!
-    checksSig.set([]);
-    fixture.detectChanges();
-
-    expect(button.nativeElement.disabled).toBeFalse();
   });
 });

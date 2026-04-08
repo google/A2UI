@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import pytest
-from a2ui.core.parser.parser import parse_response, ResponsePart
-from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.parser.parser import parse_response, ResponsePart
+from a2ui.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 
 
 def test_parse_empty_response():

@@ -23,6 +23,7 @@ import { A2uiMessage } from '@a2ui/web_core/v0_9';
 @Injectable({ providedIn: 'root' })
 export class Client {
   private renderer = inject(A2uiRendererService);
+  private contextId?: string;
 
   readonly isLoading = signal(false);
 
@@ -54,8 +55,13 @@ export class Client {
         ? { userAction: { surfaceId: 'default', type: 'USER_ACTION', actionName: request } }
         : request;
 
+      const isString = typeof request === 'string';
+      const bodyData = isString
+        ? { query: request, contextId: this.contextId }
+        : { event: request, contextId: this.contextId };
+
       const response = await fetch('/a2a', {
-        body: JSON.stringify(payload),
+        body: JSON.stringify(bodyData),
         method: 'POST',
       });
 
@@ -107,18 +113,22 @@ export class Client {
         if (line.startsWith('data: ')) {
           const jsonStr = line.slice(6);
           try {
-            const data = JSON.parse(jsonStr) as A2AServerPayload;
-            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, data);
+            const responseData = JSON.parse(jsonStr);
+            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, responseData);
 
-            if ('error' in data) {
-              throw new Error(data.error);
+            if (responseData.error) {
+              throw new Error(responseData.error);
             } else {
+              if (responseData.contextId) {
+                this.contextId = responseData.contextId;
+              }
+              const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
               console.log(
-                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${data.length} parts`
+                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${parts.length} parts`
               );
               // Use a microtask to ensure we don't block the stream reader
               await Promise.resolve();
-              const newMessages = this.processParts(data as any[]);
+              const newMessages = this.processParts(parts);
               messages.push(...newMessages);
             }
           } catch (e) {
@@ -133,9 +143,14 @@ export class Client {
     response: Response,
     messages: Types.ServerToClientMessage[]
   ): Promise<void> {
-    const data = (await response.json()) as any[];
-    console.log(`[client] Received JSON response:`, data);
-    const newMessages = this.processParts(data);
+    const responseData = await response.json();
+    console.log(`[client] Received JSON response:`, responseData);
+
+    if (responseData.contextId) {
+      this.contextId = responseData.contextId;
+    }
+    const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
+    const newMessages = this.processParts(parts);
     messages.push(...newMessages);
   }
 

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 
 ROLE_DESCRIPTION = (
