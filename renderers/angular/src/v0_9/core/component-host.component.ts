@@ -116,7 +116,6 @@ export class ComponentHostComponent implements OnInit {
 
       const sub = surface.componentsModel.onCreated.subscribe((comp) => {
         if (comp.id === id) {
-          console.log(`Component ${id} arrived! Initializing...`);
           this.initializeComponent(surface, comp, id, basePath);
           this.cdr.markForCheck();
           sub.unsubscribe();
