@@ -41,8 +41,7 @@
             "children": {
               "componentId": "item-row",
               "path": "/items"
-            },
-            "listStyle": "unordered"
+            }
           },
           {
             "id": "item-row",
