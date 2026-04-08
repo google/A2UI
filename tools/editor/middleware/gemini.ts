@@ -20,7 +20,7 @@ import { GoogleGenAI } from "@google/genai";
 import { v0_8 } from "@a2ui/lit";
 import { createA2UIPrompt, createImageParsePrompt } from "./prompts";
 
-// TODO: Reenable.
+// TODO: Re-enable.
 // import ServerToClientMessage from "../schemas/a2ui-message.js";
 
 let catalog: v0_8.Types.ClientCapabilitiesDynamic | null = null;
