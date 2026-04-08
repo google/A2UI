@@ -28,12 +28,17 @@ export class A2uiChoicePickerElement extends A2uiLitElement<
     :host {
       display: flex;
       flex-direction: column;
-      gap: var(--a2ui-spacing-xs, 0.25rem);
+      gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
+      padding: var(--a2ui-choicepicker-padding, 0);
     }
     .options {
       display: flex;
       flex-direction: column;
-      gap: var(--a2ui-spacing-xs, 0.25rem);
+      gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
+    }
+    label {
+      color: var(--a2ui-choicepicker-label-color, inherit);
+      font-size: var(--a2ui-choicepicker-label-font-size, inherit);
     }
   `;
 

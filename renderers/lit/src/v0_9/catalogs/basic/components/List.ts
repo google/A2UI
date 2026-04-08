@@ -28,6 +28,7 @@ export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
       display: flex;
       overflow: auto;
       gap: var(--a2ui-list-gap, var(--a2ui-spacing-m, 0.5rem));
+      padding: var(--a2ui-list-padding, 0);
     }
   `;
 

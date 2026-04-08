@@ -29,6 +29,9 @@ export class A2uiAudioPlayerElement extends A2uiLitElement<
       display: flex;
       flex-direction: column;
       gap: var(--a2ui-spacing-xs, 0.25rem);
+      background: var(--a2ui-audioplayer-background, transparent);
+      border-radius: var(--a2ui-audioplayer-border-radius, 0);
+      padding: var(--a2ui-audioplayer-padding, 0);
     }
   `;
 

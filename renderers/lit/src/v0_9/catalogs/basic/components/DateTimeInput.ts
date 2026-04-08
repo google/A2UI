@@ -30,6 +30,11 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<
       flex-direction: column;
       gap: var(--a2ui-spacing-xs, 0.25rem);
     }
+    input {
+      background: var(--a2ui-datetimeinput-background, inherit);
+      border: var(--a2ui-datetimeinput-border, auto);
+      padding: var(--a2ui-datetimeinput-padding, inherit);
+    }
   `;
 
   protected createController() {

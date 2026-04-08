@@ -54,6 +54,10 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
       line-height: var(--a2ui-line-height-body, 1.5);
     }
     .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) { font-size: var(--a2ui-font-size-xs); }
+    a {
+      color: var(--a2ui-text-a-color, inherit);
+      font-weight: var(--a2ui-text-a-font-weight, inherit);
+    }
   `;
 
   // Retrieve a MarkdownRenderer provided by the application.

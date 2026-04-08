@@ -38,11 +38,14 @@ export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
       display: inline-flex;
       align-items: center;
       gap: var(--a2ui-checkbox-gap, var(--a2ui-spacing-s, 0.5rem));
+      font-size: var(--a2ui-checkbox-label-font-size, inherit);
       cursor: pointer;
     }
     input {
       width: var(--a2ui-checkbox-size, 1rem);
       height: var(--a2ui-checkbox-size, 1rem);
+      background: var(--a2ui-checkbox-background, inherit);
+      border: var(--a2ui-checkbox-border, auto);
       border-radius: var(--a2ui-checkbox-border-radius, 4px);
     }
   `;

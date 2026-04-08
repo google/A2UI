@@ -36,7 +36,7 @@ export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
       border: var(--a2ui-card-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
       border-radius: var(--a2ui-card-border-radius, var(--a2ui-border-radius, 8px));
       padding: var(--a2ui-card-padding, var(--a2ui-spacing-m, 16px));
-      background-color: var(--a2ui-color-surface, #fff);
+      background: var(--a2ui-card-background, var(--a2ui-color-surface, #fff));
       color: var(--a2ui-color-on-surface, #333);
     }
   `;
