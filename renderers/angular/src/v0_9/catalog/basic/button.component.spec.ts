@@ -20,6 +20,7 @@ import { ButtonComponent } from './button.component';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
+import { preactSignal } from '../../core/utils';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -47,10 +48,10 @@ describe('ButtonComponent', () => {
                   template: 'Dummy Text',
                 })
                 class DummyText {
-                    props = input<any>();
-                    surfaceId = input<string>();
-                    componentId = input<string>();
-                    dataContextPath = input<string>();
+                  props = input<any>();
+                  surfaceId = input<string>();
+                  componentId = input<string>();
+                  dataContextPath = input<string>();
                 }
                 return DummyText;
               })(),
@@ -138,7 +139,7 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeTruthy();
-    expect(host.componentInstance.componentId()).toBe('child1');
+    expect(host.componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
   });
 
   it('should not show child component host if child prop is absent', () => {
@@ -149,5 +150,22 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeFalsy();
+  });
+
+  it('should be disabled when isValid is false', () => {
+    const isValidSig = signal(true);
+
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      isValid: { value: isValidSig, raw: true, onUpdate: () => {} },
+    });
+
+    fixture.detectChanges();
+    const button = fixture.debugElement.query(By.css('button'));
+    expect(button.nativeElement.disabled).toBeFalse();
+
+    isValidSig.set(false);
+    fixture.detectChanges();
+    expect(button.nativeElement.disabled).toBeTrue();
   });
 });

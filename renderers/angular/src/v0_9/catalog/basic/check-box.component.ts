@@ -72,7 +72,6 @@ export class CheckBoxComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-
   value = computed(() => this.props()['value']?.value() === true);
   label = computed(() => this.props()['label']?.value());
 

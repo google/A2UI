@@ -83,8 +83,7 @@ describe('SurfaceComponent', () => {
     const host = fixture.debugElement.query(By.directive(ComponentHostComponent));
     expect(host).toBeTruthy();
     expect(host.componentInstance.surfaceId()).toBe('test-surface');
-    expect(host.componentInstance.dataContextPath()).toBe('/custom/path');
-    expect(host.componentInstance.componentId()).toBe('root');
+    expect(host.componentInstance.componentKey()).toEqual({ id: 'root', basePath: '/custom/path' });
   });
 
   it('should use default dataContextPath of "/"', () => {
@@ -92,6 +91,6 @@ describe('SurfaceComponent', () => {
     fixture.detectChanges();
 
     const host = fixture.debugElement.query(By.directive(ComponentHostComponent));
-    expect(host.componentInstance.dataContextPath()).toBe('/');
+    expect(host.componentInstance.componentKey()).toEqual({ id: 'root', basePath: '/' });
   });
 });

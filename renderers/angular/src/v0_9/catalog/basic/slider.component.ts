@@ -80,7 +80,6 @@ export class SliderComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-
   label = computed(() => this.props()['label']?.value());
   value = computed(() => this.props()['value']?.value());
   min = computed(() => this.props()['min']?.value() ?? 0);

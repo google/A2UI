@@ -29,11 +29,10 @@ import { BoundProperty } from '../../core/types';
   imports: [ComponentHostComponent],
   template: `
     <div class="a2ui-card">
-      @if (child()) {
+      @if (normalizedChild()) {
         <a2ui-v09-component-host
-          [componentId]="child()!"
+          [componentKey]="normalizedChild()!"
           [surfaceId]="surfaceId()"
-          [dataContextPath]="dataContextPath()"
         >
         </a2ui-v09-component-host>
       }
@@ -65,4 +64,13 @@ export class CardComponent {
   dataContextPath = input<string>('/');
 
   child = computed(() => this.props()['child']?.value());
+
+  protected normalizedChild = computed(() => {
+    const child = this.child();
+    if (!child) return null;
+    if (typeof child === 'object' && child !== null && 'id' in child) {
+      return child as { id: string; basePath: string };
+    }
+    return { id: child as string, basePath: this.dataContextPath() };
+  });
 }

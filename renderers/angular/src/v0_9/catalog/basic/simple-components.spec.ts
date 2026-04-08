@@ -15,7 +15,7 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, signal as angularSignal, signal, input } from '@angular/core';
+import { Component, signal as angularSignal, input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { DividerComponent } from './divider.component';
 import { ImageComponent } from './image.component';
@@ -185,7 +185,21 @@ describe('Simple Components', () => {
       const img = fixture.nativeElement.querySelector('img') as HTMLImageElement;
       expect(img.alt).toBe('A cute cat');
     });
+
+    it('should support all specified variants', () => {
+      const variants = ['icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header'];
+      for (const variant of variants) {
+        fixture.componentRef.setInput('props', {
+          url: createBoundProperty('https://example.com/image.png'),
+          variant: createBoundProperty(variant),
+        });
+        fixture.detectChanges();
+        const img = fixture.nativeElement.querySelector('img') as HTMLImageElement;
+        expect(img.className).toContain(variant);
+      }
+    });
   });
+
 
   describe('IconComponent', () => {
     let component: IconComponent;
@@ -365,7 +379,7 @@ describe('Simple Components', () => {
       fixture.detectChanges();
       const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
       expect(host).toBeTruthy();
-      expect(host.componentInstance.componentId()).toBe('child-1');
+      expect(host.componentInstance.componentKey()).toEqual({ id: 'child-1', basePath: '/' });
     });
   });
 });

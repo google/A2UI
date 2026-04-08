@@ -41,12 +41,11 @@ import { BoundProperty } from '../../core/types';
           </button>
         }
       </div>
-      @if (activeTab()) {
+      @if (normalizedActiveTabContent()) {
         <div class="a2ui-tab-content">
           <a2ui-v09-component-host
-            [componentId]="activeTab()?.content"
+            [componentKey]="normalizedActiveTabContent()!"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
           >
           </a2ui-v09-component-host>
         </div>
@@ -102,6 +101,15 @@ export class TabsComponent {
 
   tabs = computed(() => this.props()['tabs']?.value() || []);
   activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
+
+  protected normalizedActiveTabContent = computed(() => {
+    const content = this.activeTab()?.content;
+    if (!content) return null;
+    if (typeof content === 'object' && content !== null && 'id' in content) {
+      return content as { id: string; basePath: string };
+    }
+    return { id: content as string, basePath: this.dataContextPath() };
+  });
 
   setActiveTab(index: number) {
     this.activeTabIndex.set(index);

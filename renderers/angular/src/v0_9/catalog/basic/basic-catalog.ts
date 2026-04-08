@@ -134,7 +134,7 @@ export class BasicCatalogBase extends AngularCatalog {
     const components: AngularComponentImplementation[] = [
       ...Object.entries(DEFAULT_COMPONENT_IMPLEMENTATIONS).map(([key, defaultValue]) => {
         const impl = (overrides as any)[key] ?? defaultValue;
-        return { ...impl, name: key };
+        return { ...impl, name: impl.name || key };
       }),
       ...(options.extraComponents ?? []),
     ];

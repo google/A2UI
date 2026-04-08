@@ -13,83 +13,83 @@
       "components": [
         {
           "id": "root",
-          "component": "card",
+          "component": "Card",
           "child": "main-column"
         },
         {
           "id": "main-column",
-          "component": "column",
+          "component": "Column",
           "children": ["restaurant-image", "content"]
         },
         {
           "id": "restaurant-image",
-          "component": "image",
+          "component": "Image",
           "url": { "path": "/image" },
           "fit": "cover"
         },
         {
           "id": "content",
-          "component": "column",
+          "component": "Column",
           "children": ["name-row", "cuisine", "rating-row", "details-row"]
         },
         {
           "id": "name-row",
-          "component": "row",
+          "component": "Row",
           "children": ["restaurant-name", "price-range"],
           "justify": "spaceBetween",
           "align": "center"
         },
         {
           "id": "restaurant-name",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/name" },
           "weight": 700
         },
         {
           "id": "price-range",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/priceRange" }
         },
         {
           "id": "cuisine",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/cuisine" },
           "style": "italic"
         },
         {
           "id": "rating-row",
-          "component": "row",
+          "component": "Row",
           "children": ["star-icon", "rating", "reviews"],
           "align": "center"
         },
         {
           "id": "star-icon",
-          "component": "icon",
+          "component": "Icon",
           "name": "star"
         },
         {
           "id": "rating",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/rating" }
         },
         {
           "id": "reviews",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/reviewCount" }
         },
         {
           "id": "details-row",
-          "component": "row",
+          "component": "Row",
           "children": ["distance", "delivery-time"]
         },
         {
           "id": "distance",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/distance" }
         },
         {
           "id": "delivery-time",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/deliveryTime" }
         }
       ]
