@@ -30,6 +30,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 let client: A2AClient | null = null;
+const enableStreaming = process.env['ENABLE_STREAMING'] === 'true';
 
 app.use(
   express.static(browserDistFolder, {
@@ -77,22 +78,57 @@ app.post('/a2a', (req, res) => {
       return;
     }
 
-    let response: SendMessageResponse;
-    try {
-      response = await client.sendMessage(sendParams);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to send message.' });
-      return;
+    if (enableStreaming) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
+      res.status(200);
+
+      try {
+        const stream = client.sendMessageStream(sendParams);
+        for await (const event of stream) {
+          console.log(`[server] Received event from agent: ${event.kind}`);
+          let parts: Part[] = [];
+          if (event.kind === 'task' || event.kind === 'status-update') {
+            parts = event.status.message?.parts || [];
+          } else if (event.kind === 'artifact-update') {
+            parts = event.artifact.parts || [];
+          }
+
+          if (parts.length > 0) {
+            console.log(`[server] Streaming ${parts.length} parts to client`);
+            res.write(`data: ${JSON.stringify(parts)}\n\n`);
+          }
+        }
+        res.end();
+      } catch (error: any) {
+        console.error('Streaming error:', error.message);
+        if (!res.headersSent) {
+          res.status(500).json({ error: error.message });
+        } else if (!res.writableEnded) {
+          res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+          res.end();
+        }
+      }
+    } else {
+      let response;
+      try {
+        response = await client.sendMessage(sendParams);
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to send message.' });
+        return;
+      }
+
+      res.set('Cache-Control', 'no-store');
+
+      if ('error' in response) {
+        res.status(500).json({ error: JSON.stringify(response.error) });
+        return;
+      }
+
+      res.json(response);
     }
-
-    res.set('Cache-Control', 'no-store');
-
-    if ('error' in response) {
-      res.status(500).json({ error: JSON.stringify(response.error) });
-      return;
-    }
-
-    res.json(response);
   });
 });
 

@@ -16,27 +16,112 @@
 
 import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { A2aService } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { Injectable } from '@angular/core';
+import { Injectable, inject, Injector } from '@angular/core';
+import { MessageProcessor } from '@a2ui/angular';
 
 @Injectable({
   providedIn: 'root',
 })
 export class A2aServiceImpl implements A2aService {
 
+  private readonly messageProcessor = inject(MessageProcessor);
+  private readonly injector = inject(Injector);
+
   async sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
     const response = await fetch('/a2a', {
-      body: JSON.stringify({ parts: parts }),
+      body: JSON.stringify({
+        parts: parts,
+        metadata: {
+          a2uiClientCapabilities: {
+            supportedCatalogIds: ['https://a2ui.org/specification/v0_8/standard_catalog_definition.json']
+          },
+          streaming: true
+        }
+      }),
       method: 'POST',
       signal,
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data;
+    if (!response.ok) {
+      const error = (await response.json()) as { error: string };
+      throw new Error(error.error);
     }
 
-    const error = (await response.json()) as { error: string };
-    throw new Error(error.error);
+    const contentType = response.headers.get('content-type');
+    if (contentType?.includes('text/event-stream')) {
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No response body');
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      let containerMounted = false;
+      const chatServiceModule = await import('@a2a_chat_canvas/services/chat-service');
+      const cs = this.injector.get(chatServiceModule.ChatService) as any;
+      const u = await import('@a2a_chat_canvas/utils/ui-message-utils');
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const jsonStr = line.slice(6);
+            try {
+              const parsed = JSON.parse(jsonStr);
+              if (Array.isArray(parsed)) {
+                for (const part of parsed) {
+                  if (part.data && (part.data.surfaceUpdate || part.data.dataModelUpdate || part.data.beginRendering)) {
+                    (this.messageProcessor as any).processMessages([part.data]);
+                    cs.a2uiSurfaces.set(new Map((this.messageProcessor as any).getSurfaces()));
+                    if (!containerMounted && part.data.beginRendering) {
+                      containerMounted = true;
+                      cs.history.update((history: any[]) => {
+                        if (history.length === 0) return history;
+                        const last = history[history.length - 1];
+                        return [...history.slice(0, -1), {
+                          ...last,
+                          contents: [...last.contents, u.convertPartToUiMessageContent(part, cs.partResolvers)],
+                          lastUpdated: new Date().toISOString(),
+                        }];
+                      });
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.error('SSE parse error', e);
+            }
+          }
+        }
+      }
+
+      return {
+        id: 'streaming-response',
+        jsonrpc: '2.0',
+        result: {
+          id: 'streaming-task',
+          contextId: 'streaming-context',
+          kind: 'task',
+          status: {
+            state: 'completed',
+            message: {
+              kind: 'message',
+              messageId: 'streaming-message-id',
+              role: 'agent',
+              parts: [],
+            }
+          }
+        }
+      };
+    }
+
+    const data = await response.json();
+    return data;
   }
 
   async getAgentCard(): Promise<AgentCard> {
