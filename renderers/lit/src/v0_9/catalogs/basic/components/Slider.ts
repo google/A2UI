@@ -18,7 +18,7 @@ import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { SliderApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 @customElement("a2ui-slider")
 export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
@@ -46,7 +46,7 @@ export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   render() {

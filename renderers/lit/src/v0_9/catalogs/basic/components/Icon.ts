@@ -18,7 +18,7 @@ import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { IconApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 import { classMap } from "lit/directives/class-map.js";
 
@@ -68,6 +68,11 @@ export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
 
   protected createController() {
     return new A2uiController(this, IconApi);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    injectBasicCatalogStyles();
   }
 
   render() {

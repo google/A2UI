@@ -20,7 +20,7 @@ import { consume } from "@lit/context";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController, Context } from "@a2ui/lit/v0_9";
 import * as Types from "@a2ui/web_core/types/types";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 import { markdown } from "../../../directives/directives.js";
 
@@ -66,7 +66,7 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   render() {

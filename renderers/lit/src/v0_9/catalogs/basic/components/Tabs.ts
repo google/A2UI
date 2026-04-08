@@ -19,7 +19,7 @@ import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 @customElement("a2ui-tabs")
 export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
@@ -68,7 +68,7 @@ export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   @state() accessor activeIndex = 0;

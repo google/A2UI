@@ -19,7 +19,7 @@ import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 @customElement("a2ui-list")
 export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
@@ -37,7 +37,7 @@ export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   updated(changedProperties: PropertyValues) {

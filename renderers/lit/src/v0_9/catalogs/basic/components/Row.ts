@@ -20,7 +20,7 @@ import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 const JUSTIFY_MAP: Record<string, string> = {
   start: "flex-start",
@@ -64,7 +64,7 @@ export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   updated(changedProperties: PropertyValues) {

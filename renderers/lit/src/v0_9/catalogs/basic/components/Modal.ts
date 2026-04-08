@@ -18,7 +18,7 @@ import { html, nothing, css } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 @customElement("a2ui-modal")
 export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
@@ -52,7 +52,7 @@ export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
   @query("dialog") accessor dialog!: HTMLDialogElement;
 

@@ -19,7 +19,7 @@ import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TextFieldApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectDefaultA2uiTheme } from "@a2ui/web_core/v0_9";
+import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 @customElement("a2ui-textfield")
 export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
@@ -68,7 +68,7 @@ export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
 
   connectedCallback() {
     super.connectedCallback();
-    injectDefaultA2uiTheme();
+    injectBasicCatalogStyles();
   }
 
   render() {
