@@ -17,6 +17,7 @@
 import { Part, SendMessageSuccessResponse, Task } from "@a2a-js/sdk";
 import { A2AClient } from "@a2a-js/sdk/client";
 import { v0_8 } from "@a2ui/lit";
+import { createA2AClientWithRetry } from "./a2a-client-factory.js";
 
 const A2UI_MIME_TYPE = "application/json+a2ui";
 
@@ -38,15 +39,8 @@ export class A2UIClient {
       // Default to localhost:10002 if no URL provided (fallback for restaurant app default)
       const baseUrl = this.#serverUrl || "http://localhost:10002";
 
-      this.#client = await A2AClient.fromCardUrl(
-        `${baseUrl}/.well-known/agent-card.json`,
-        {
-          fetchImpl: async (url, init) => {
-            const headers = new Headers(init?.headers);
-            headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
-            return fetch(url, { ...init, headers });
-          }
-        }
+      this.#client = await createA2AClientWithRetry(
+        `${baseUrl}/.well-known/agent-card.json`
       );
     }
     return this.#client;
