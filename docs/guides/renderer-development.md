@@ -1,12 +1,75 @@
 # A2UI Renderer Implementation Guide
 
-This document outlines the required features for a new renderer implementation of the A2UI protocol, based on the version 0.8 specification. It is intended for developers building new renderers (e.g., for React, Flutter, iOS, etc.).
+This document outlines the required features for a new renderer implementation of the A2UI protocol. It is intended for developers building new renderers (e.g., for React, Flutter, iOS, etc.).
+
+> NOTE: Version Notes
+>
+> This guide primarily describes the v0.8 message flow. v0.9 renames several messages (`surfaceUpdate` → `updateComponents`, `dataModelUpdate` → `updateDataModel`, `beginRendering` → `createSurface`) and uses a flatter component format. See the [v0.9 specification](../specification/v0.9-a2ui.md) for details.
+
+## Web Renderers: Use `@a2ui/web-lib` (`web_core`)
+
+If you're building a renderer for the web (React, Vue, Svelte, etc.), you don't need to implement message processing, state management, or schema validation from scratch. The **[`@a2ui/web-lib`](https://github.com/google/A2UI/tree/main/renderers/web_core)** package (`web_core`) provides all the framework-agnostic logic that the maintained Lit, Angular, and React renderers share.
+
+### What `web_core` provides
+
+| Module | What it does |
+|--------|-------------|
+| **`MessageProcessor`** | Processes the A2UI JSONL stream, dispatches messages, manages surface lifecycle |
+| **`SurfaceModel` / `SurfaceGroupModel`** | State management for surfaces, components, and data models |
+| **`DataModel` / `DataContext`** | Data binding resolution, path-based lookups, template list rendering |
+| **`ComponentModel`** | Component tree state, adjacency list → tree resolution |
+| **Types & Schemas** | TypeScript types for all A2UI components, primitives, colors, styles, and JSON schema validation |
+| **Expression parser** | Client-side function evaluation (v0.9) |
+
+### How the maintained renderers use it
+
+All three web renderers follow the same pattern — `web_core` handles the protocol, the renderer handles the UI:
+
+```typescript
+// Types — shared across all renderers
+import type * as Types from '@a2ui/web_core/types/types';
+import type * as Primitives from '@a2ui/web_core/types/primitives';
+
+// v0.8: Message processing and state
+import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
+
+// v0.9: Message processing, surfaces, catalogs
+import { MessageProcessor } from '@a2ui/web_core/v0_9';
+import { SurfaceModel } from '@a2ui/web_core/v0_9';
+
+// Styles and layout helpers
+import * as Styles from '@a2ui/web_core/styles/index';
+```
+
+Your renderer only needs to:
+
+1. **Map A2UI component types to your framework's components** (e.g., `Text` → `<p>`, `Button` → `<button>`)
+2. **Subscribe to state changes** from `web_core` and re-render
+3. **Forward user actions** back through the `MessageProcessor`
+
+See the [React renderer](https://github.com/google/A2UI/tree/main/renderers/react), [Lit renderer](https://github.com/google/A2UI/tree/main/renderers/lit), and [Angular renderer](https://github.com/google/A2UI/tree/main/renderers/angular) for working examples of this pattern.
+
+### Version support
+
+`web_core` exports both v0.8 and v0.9 APIs:
+
+- `@a2ui/web_core/v0_8` or `@a2ui/web_core` (default) — stable v0.8
+- `@a2ui/web_core/v0_9` — v0.9 with `createSurface`, custom catalogs, client-side functions
+- `@a2ui/web_core/v0_9/basic_catalog` — v0.9 basic catalog expression parser and built-in functions
+
+> TIP: Start with `web_core`
+>
+> Building a web renderer without `web_core` means reimplementing ~3,000 lines of message processing, state management, and schema validation. Unless you have a specific reason to diverge, use it.
+
+---
 
 ## I. Core Protocol Implementation Checklist
 
 This section details the fundamental mechanics of the A2UI protocol. A compliant renderer must implement these systems to successfully parse the server stream, manage state, and handle user interactions.
 
 ### Message Processing & State Management
+
+A compliant renderer must implement the following message processing and state management features:
 
 - **JSONL Stream Parsing**: Implement a parser that can read a streaming response line by line, decoding each line as a distinct JSON object.
 - **Message Dispatcher**: Create a dispatcher to identify the message type (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`, `deleteSurface`) and route it to the correct handler.
@@ -22,6 +85,8 @@ This section details the fundamental mechanics of the A2UI protocol. A compliant
   - Handle `dataModelUpdate`: Update the data model at the specified `path`. The `contents` will be in an adjacency list format (e.g., `[{ "key": "name", "valueString": "Bob" }]`).
 
 ### Rendering Logic
+
+Implement the following rendering logic:
 
 - **Progressive Rendering Control**:
   - Buffer all incoming `surfaceUpdate` and `dataModelUpdate` messages without rendering immediately.
@@ -40,6 +105,8 @@ This section details the fundamental mechanics of the A2UI protocol. A compliant
 
 ### Client-to-Server Communication
 
+Implement the following communication features:
+
 - **Event Handling**:
   - When a user interacts with a component that has an `action` defined, construct a `userAction` payload.
   - Resolve all data bindings within the `action.context` against the data model.
@@ -56,6 +123,8 @@ To ensure a consistent user experience across platforms, A2UI defines a standard
 
 ### Basic Content
 
+The standard catalog includes the following basic content components:
+
 - **Text**: Render text content. Must support data binding on `text` and a `usageHint` for styling (h1-h5, body, caption).
 - **Image**: Render an image from a URL. Must support `fit` (cover, contain, etc.) and `usageHint` (avatar, hero, etc.) properties.
 - **Icon**: Render a predefined icon from the standard set specified in the catalog.
@@ -65,6 +134,8 @@ To ensure a consistent user experience across platforms, A2UI defines a standard
 
 ### Layout & Containers
 
+The standard catalog includes the following layout and container components:
+
 - **Row**: Arrange children horizontally. Must support `distribution` (justify-content) and `alignment` (align-items). Children can have a `weight` property to control flex-grow behavior.
 - **Column**: Arrange children vertically. Must support `distribution` and `alignment`. Children can have a `weight` property to control flex-grow behavior.
 - **List**: Render a scrollable list of items. Must support `direction` (`horizontal`/`vertical`) and `alignment`.
@@ -73,6 +144,8 @@ To ensure a consistent user experience across platforms, A2UI defines a standard
 - **Modal**: A dialog that appears on top of the main content. It is triggered by an `entryPointChild` (e.g. a button) and displays the `contentChild` when activated.
 
 ### Interactive & Input Components
+
+The standard catalog includes the following interactive and input components:
 
 - **Button**: A clickable element that triggers a `userAction`. Must be able to contain a `child` component (typically Text or Icon) and may vary in style based on the `primary` boolean.
 - **CheckBox**: A checkbox that can be toggled, reflecting a boolean value.

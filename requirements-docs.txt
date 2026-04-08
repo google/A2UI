@@ -1,5 +1,4 @@
 mkdocs-material
-mkdocs-redirects
 mkdocs-macros-plugin
 mkdocs-llmstxt
 mkdocs-include-markdown-plugin
@@ -8,3 +7,4 @@ sphinx
 furo
 myst-parser
 mkdocs-static-i18n
+mkdocs-redirects

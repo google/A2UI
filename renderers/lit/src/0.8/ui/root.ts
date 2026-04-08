@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { SignalWatcher } from "@lit-labs/signals";
@@ -28,9 +28,9 @@ import {
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
-import { StringValue } from "../types/primitives.js";
-import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import { StringValue } from "@a2ui/web_core/types/primitives";
+import { AnyComponentNode, SurfaceID, Theme } from "@a2ui/web_core/types/types";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 import { componentRegistry } from "./component-registry.js";
@@ -299,6 +299,7 @@ export class Root extends SignalWatcher(LitElement) {
             .dataContextPath=${node.dataContextPath ?? ""}
             .action=${node.properties.action}
             .childComponents=${[node.properties.child]}
+            .primary=${node.properties.primary}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-button>`;
         }
@@ -385,6 +386,8 @@ export class Root extends SignalWatcher(LitElement) {
             .options=${node.properties.options}
             .maxAllowedSelections=${node.properties.maxAllowedSelections}
             .selections=${node.properties.selections}
+            .variant=${(node as any).properties.variant}
+            .filterable=${node.properties.filterable}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-multiplechoice>`;
         }
@@ -419,7 +422,7 @@ export class Root extends SignalWatcher(LitElement) {
             .dataContextPath=${node.dataContextPath}
             .label=${node.properties.label}
             .text=${node.properties.text}
-            .type=${node.properties.type}
+            .textFieldType=${node.properties.textFieldType}
             .validationRegexp=${node.properties.validationRegexp}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-textfield>`;

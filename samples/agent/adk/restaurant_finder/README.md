@@ -13,7 +13,7 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 1. Navigate to the samples directory:
 
     ```bash
-    cd a2a_samples/a2ui_restaurant_finder
+    cd samples/agent/adk/restaurant_finder
     ```
 
 2. Create an environment file with your API key:

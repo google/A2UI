@@ -1,34 +1,34 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
-import { ResolvedRow } from "../types/types";
+import * as Types from "@a2ui/web_core/types/types";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-row")
 export class Row extends Root {
   @property({ reflect: true, type: String })
-  accessor alignment: ResolvedRow["alignment"] = "stretch";
+  accessor alignment: Types.ResolvedRow["alignment"] = "stretch";
 
   @property({ reflect: true, type: String })
-  accessor distribution: ResolvedRow["distribution"] = "start";
+  accessor distribution: Types.ResolvedRow["distribution"] = "start";
 
   static styles = [
     structuralStyles,

@@ -1,0 +1,157 @@
+MCAT PRACTICE: BOND ENERGY AND THERMODYNAMICS
+==============================================
+
+This document contains the key concepts and question patterns Maria should master for MCAT success.
+
+CORE MCAT CONCEPTS
+------------------
+
+1. BOND ENERGY IS ENERGY REQUIRED TO BREAK A BOND
+   - Always positive (endothermic)
+   - Higher bond energy = stronger bond = more stable
+   - Breaking bonds costs energy; forming bonds releases energy
+
+2. ENTHALPY OF REACTION (ΔH)
+   ΔH = Σ(bond energies broken) - Σ(bond energies formed)
+
+   - If ΔH < 0: Exothermic (more energy released forming bonds than consumed breaking bonds)
+   - If ΔH > 0: Endothermic (more energy consumed breaking bonds than released forming bonds)
+
+3. GIBBS FREE ENERGY (ΔG)
+   ΔG = ΔH - TΔS
+
+   - If ΔG < 0: Spontaneous (products more stable than reactants)
+   - If ΔG > 0: Non-spontaneous (products less stable than reactants)
+   - If ΔG = 0: At equilibrium
+
+4. RELATIONSHIP BETWEEN STABILITY AND ENERGY
+   - Lower energy = more stable
+   - Spontaneous reactions move toward stability (lower ΔG)
+   - Energy is released when systems become more stable
+
+COMMON MCAT QUESTION TYPES
+--------------------------
+
+TYPE 1: Calculate ΔH from bond energies
+
+Example:
+Given: C-H = 414 kJ/mol, O=O = 498 kJ/mol, C=O = 803 kJ/mol, O-H = 464 kJ/mol
+
+Calculate ΔH for: CH4 + 2O2 → CO2 + 2H2O
+
+Solution:
+Bonds broken: 4(C-H) + 2(O=O) = 4(414) + 2(498) = 2652 kJ
+Bonds formed: 2(C=O) + 4(O-H) = 2(803) + 4(464) = 3462 kJ
+ΔH = 2652 - 3462 = -810 kJ/mol (exothermic)
+
+Key insight: More energy released forming products than consumed breaking reactants.
+
+TYPE 2: Predict spontaneity
+
+Example:
+A reaction has ΔH = +50 kJ/mol and ΔS = +200 J/mol·K. At what temperature does it become spontaneous?
+
+Solution:
+Spontaneous when ΔG < 0
+ΔG = ΔH - TΔS < 0
+ΔH < TΔS
+T > ΔH/ΔS = 50,000 J / 200 J/K = 250 K
+
+Above 250 K, the entropy increase overcomes the positive enthalpy.
+
+TYPE 3: Compare stability
+
+Example:
+Why is ATP hydrolysis spontaneous?
+
+WRONG answer: "Because energy stored in the phosphate bond is released"
+CORRECT answer: "Because the products (ADP + Pi) are more thermodynamically stable than ATP due to reduced electrostatic repulsion, increased resonance stabilization, and improved solvation"
+
+TYPE 4: Coupled reactions
+
+Example:
+Given: ATP hydrolysis: ΔG = -30.5 kJ/mol
+       Glutamine synthesis: ΔG = +14.2 kJ/mol
+
+Is the coupled reaction spontaneous?
+
+Solution:
+ΔG_total = -30.5 + 14.2 = -16.3 kJ/mol
+Yes, spontaneous (negative ΔG)
+
+ATP hydrolysis drives the otherwise unfavorable synthesis.
+
+CRITICAL DISTINCTIONS
+---------------------
+
+BOND ENERGY vs. STABILITY
+- High bond energy = strong bond = stable molecule
+- It takes MORE energy to break strong bonds
+- Strong bonds don't "store" more energy - they're just harder to break
+
+EXOTHERMIC vs. SPONTANEOUS
+- Exothermic (ΔH < 0): Releases heat
+- Spontaneous (ΔG < 0): Thermodynamically favorable
+
+A reaction can be:
+- Exothermic AND spontaneous (most common for favorable reactions)
+- Endothermic AND spontaneous (if TΔS is large enough)
+- Exothermic AND non-spontaneous (if TΔS is negative enough)
+
+BREAKING vs. FORMING BONDS
+- Breaking bonds: ALWAYS requires energy (endothermic step)
+- Forming bonds: ALWAYS releases energy (exothermic step)
+- Net effect depends on the balance
+
+ATP-SPECIFIC MCAT POINTS
+------------------------
+
+1. ATP hydrolysis ΔG° ≈ -30.5 kJ/mol under standard conditions
+
+2. Why is ATP high-energy?
+   - Electrostatic repulsion between phosphate groups
+   - NOT because the P-O bond is "weak" or "stores energy"
+
+3. Why is ADP + Pi more stable?
+   - Charge separation reduces repulsion
+   - Better resonance in phosphate ion
+   - Better hydration of products
+
+4. ATP coupling
+   - Spontaneous ATP hydrolysis can drive non-spontaneous reactions
+   - Combined ΔG must be negative for the coupled reaction to proceed
+
+5. ATP is constantly recycled
+   - Humans produce ~40 kg ATP per day
+   - Same ATP molecules recycled thousands of times
+   - ATP ↔ ADP + Pi is a cycle, not a one-way consumption
+
+PRACTICE QUESTION FOR MARIA
+---------------------------
+
+Question:
+A student claims that "ATP is a high-energy molecule because it stores a lot of energy in its phosphate bonds, which is released when the bonds break."
+
+Which of the following best corrects this misconception?
+
+A) ATP bonds are actually weak and break easily, releasing stored energy.
+B) Breaking any chemical bond requires energy input; ATP hydrolysis releases energy because the products are more thermodynamically stable.
+C) ATP has more electrons than ADP, which is why breaking it releases energy.
+D) The energy comes from the adenine base, not the phosphate groups.
+
+Correct Answer: B
+
+Explanation: Breaking bonds ALWAYS requires energy input (positive bond dissociation energy). ATP hydrolysis releases energy because ADP + Pi (the products) are in a lower free energy state than ATP (more stable). This is due to reduced electrostatic repulsion, better resonance stabilization, and improved solvation - NOT because energy was "stored in" the bond.
+
+SUMMARY FOR MARIA
+-----------------
+
+Remember these key points for MCAT:
+
+1. Breaking bonds = costs energy (always)
+2. Forming bonds = releases energy (always)
+3. Net ΔH = bonds broken - bonds formed
+4. ΔG determines spontaneity (negative = spontaneous)
+5. ATP releases energy because products are MORE STABLE
+6. "High-energy bond" means the MOLECULE is unstable, not that the bond stores energy
+7. Compressed spring analogy > battery analogy

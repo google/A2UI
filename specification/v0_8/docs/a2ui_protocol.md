@@ -2,7 +2,7 @@
 <!-- markdownlint-disable MD033 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
-    <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
+    <img src="../../../assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
     <h1>A2UI (Agent to UI) Protocol</h1>
   </div>
 </div>
@@ -12,7 +12,7 @@ A Specification for a JSONL-Based, Streaming UI Protocol
 Created: Sep 19, 2025
 Updated: Nov 12, 2025
 
-## Design Requirements
+## Design requirements
 
 The A2UI (Agent to UI) protocol should be a system where an LLM can stream a platform-agnostic, abstract UI definition to a client, which then renders it progressively using a native widget set. Every major design choice is traced back to the core challenges of LLM generation, perceived performance, and platform independence.
 
@@ -71,11 +71,11 @@ Client-to-server communication for user interactions is handled separately via a
 - `error`: Reports a client-side error.
   This keeps the primary data stream unidirectional.
 
-## Section 1: Foundational Architecture and Data Flow
+## Section 1: Foundational architecture and data flow
 
 This document specifies the architecture and data formats for the A2UI protocol. The design is guided by principles of strict separation of concerns, versioning, and progressive rendering.
 
-### 1.1. Core Philosophy: Decoupling and Contracts
+### 1.1. Core philosophy: decoupling and contracts
 
 The central philosophy of A2UI is the decoupling of three key elements:
 
@@ -83,7 +83,7 @@ The central philosophy of A2UI is the decoupling of three key elements:
 2.  **The Data Model (The State):** A server-provided JSON object containing the dynamic values that populate the UI, such as text, booleans, or lists. This is managed via `dataModelUpdate` messages.
 3.  **The Widget Registry (The "Catalog"):** A client-defined mapping of component types (e.g., "Row", "Text") to concrete, native widget implementations. This registry is **part of the client application**, not the protocol stream. The server must generate components that the target client's registry understands.
 
-### 1.2. The JSONL Stream: The Unit of Communication
+### 1.2. The JSONL stream: The unit of communication
 
 All UI descriptions are transmitted from the server to the client as a stream of JSON objects, formatted as JSON Lines (JSONL). Each line is a separate, compact JSON object representing a single message. This allows the client to parse and process each part of the UI definition as it arrives, enabling progressive rendering.
 
@@ -167,7 +167,7 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 A **Catalog** defines the contract between the server and the client for the UI that can be rendered. It contains a list of supported component types (e.g., `Row`, `Text`), their properties, and available styles. A catalog is defined by a **Catalog Definition Document**.
 
-There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json`.
+There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `https://a2ui.org/specification/v0_8/standard_catalog_definition.json`.
 
 Catalog IDs are simple string identifiers. While they can be anything, it is conventional to use a URI within a domain that you own, to simplify debugging, avoid confusion, and avoid name collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
 
@@ -192,7 +192,7 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
         "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
         "params": {
           "supportedCatalogIds": [
-            "https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json",
+            "https://a2ui.org/specification/v0_8/standard_catalog_definition.json",
             "https://my-company.com/a2ui/v0.8/my_custom_catalog.json"
           ],
           "acceptsInlineCatalogs": true
@@ -218,7 +218,7 @@ In **every** message sent to the server, the client includes an `a2uiClientCapab
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json",
+        "https://a2ui.org/specification/v0_8/standard_catalog_definition.json",
         "https://my-company.com/a2ui_catalogs/custom-reporting-catalog-1.2"
       ],
       "inlineCatalogs": [
@@ -249,7 +249,7 @@ The server receives the client's capabilities and chooses a catalog to use for a
 
 - `catalogId` (string, optional): The identifier of the chosen catalog. This ID must be one of the `supportedCatalogIds` or the `catalogId` from one of the `inlineCatalogs` provided by the client.
 
-If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json`).
+If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`https://a2ui.org/specification/v0_8/standard_catalog_definition.json`).
 
 **Example `beginRendering` Message:**
 ```json
@@ -272,14 +272,14 @@ In order to do the substitution, based on the standard `server_to_client_schema`
 
 ```py
 component_properties = custom_catalog_definition["components"]
-style_properties = custom_catalog_definition["components"]
+style_properties = custom_catalog_definition["styles"]
 resolved_schema = copy.deepcopy(server_to_client_schema)
 
 resolved_schema["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = component_properties
 resolved_schema["properties"]["beginRendering"]["properties"]["styles"]["properties"] = style_properties
 ```
 
-See `server_to_client_with_standard_catalog.json` for an example of a resolved 
+See `server_to_client_with_standard_catalog.json` for an example of a resolved
 schema which has the components substituted in.
 
 ### 2.2. The `surfaceUpdate` Message

@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Search for private index URL in uv.lock files
         run: |
           FORBIDDEN_URL="us-python.pkg.dev"

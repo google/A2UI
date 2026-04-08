@@ -1,36 +1,37 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/lit/0.8';
+import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
   selector: 'app-library',
   imports: [Surface],
   templateUrl: './library.html',
   styleUrl: './library.css',
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class LibraryComponent {
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
-  selectedBlock: { name: string; surface: v0_8.Types.Surface } | null = null;
+  selectedBlock: { name: string; surface: Types.Surface } | null = null;
   activeSection = '';
   showJsonId: string | null = null;
 
-  openDialog(block: { name: string; surface: v0_8.Types.Surface }) {
+  openDialog(block: { name: string; surface: Types.Surface }) {
     this.selectedBlock = block;
     this.dialog.nativeElement.showModal();
   }
@@ -79,7 +80,7 @@ export class LibraryComponent {
     this.showJsonId = this.showJsonId === name ? null : name;
   }
 
-  getJson(surface: v0_8.Types.Surface): string {
+  getJson(surface: Types.Surface): string {
     return JSON.stringify(
       surface,
       (key, value) => {
@@ -557,7 +558,7 @@ export class LibraryComponent {
     },
   ];
 
-  private createSingleComponentSurface(type: string, properties: any): v0_8.Types.Surface {
+  private createSingleComponentSurface(type: string, properties: any): Types.Surface {
     const rootId = 'root';
 
     return {

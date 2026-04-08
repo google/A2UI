@@ -1,33 +1,33 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { SurfaceID, Surface as SurfaceState } from "../types/types";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
+import * as Types from "@a2ui/web_core/types/types";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { Root } from "./root.js";
 import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-surface")
 export class Surface extends Root {
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  accessor surfaceId: Types.SurfaceID | null = null;
 
   @property()
-  accessor surface: SurfaceState | null = null;
+  accessor surface: Types.Surface | null = null;
 
   @property()
   accessor processor: A2uiMessageProcessor | null = null;
@@ -67,6 +67,10 @@ export class Surface extends Root {
       <img src=${this.surface.styles.logoUrl} />
     </div>`;
   }
+
+  @property()
+  accessor enableCustomElements = false;
+
 
   #renderSurface() {
     const styles: Record<string, string> = {};
@@ -121,6 +125,7 @@ export class Surface extends Root {
       .childComponents=${this.surface?.componentTree
         ? [this.surface.componentTree]
         : null}
+      .enableCustomElements=${this.enableCustomElements}
     ></a2ui-root>`;
   }
 
