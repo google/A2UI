@@ -42,16 +42,13 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import (
-    get_a2ui_agent_extension,
-    parse_response_to_parts,
-    stream_response_to_parts,
-)
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.a2a.extension import get_a2ui_agent_extension
+from a2ui.a2a.parts import parse_response_to_parts, stream_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +169,7 @@ class RestaurantAgent:
   async def stream(
       self, query, session_id, ui_version: Optional[str] = None
   ) -> AsyncIterable[dict[str, Any]]:
-    session_state = {"base_url": self.base_url}
+    session_state = {"base_url": self.base_url, "expression": "{expression}"}
 
     # Determine which runner to use based on whether the a2ui extension is active.
     if ui_version:
@@ -256,7 +253,7 @@ class RestaurantAgent:
                 yield p.text
 
       if selected_catalog:
-        from a2ui.core.parser.streaming import A2uiStreamParser
+        from a2ui.parser.streaming import A2uiStreamParser
 
         if session_id in self._parsers:
           self._parsers.move_to_end(session_id)

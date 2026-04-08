@@ -14,11 +14,11 @@
 
 import json
 
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
 from typing import Dict, Any
 
 ROLE_DESCRIPTION = (

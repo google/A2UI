@@ -57,7 +57,7 @@
           "id": "template-image",
           "component": "Image",
           "url": {
-            "path": "/imageUrl"
+            "path": "imageUrl"
           },
           "fit": "cover"
         },
@@ -74,14 +74,14 @@
           "component": "Text",
           "variant": "h3",
           "text": {
-            "path": "/name"
+            "path": "name"
           }
         },
         {
           "id": "template-title",
           "component": "Text",
           "text": {
-            "path": "/title"
+            "path": "title"
           }
         },
         {
@@ -99,10 +99,10 @@
               "name": "view_profile",
               "context": {
                 "contactName": {
-                  "path": "/name"
+                  "path": "name"
                 },
                 "department": {
-                  "path": "/department"
+                  "path": "department"
                 }
               }
             }
