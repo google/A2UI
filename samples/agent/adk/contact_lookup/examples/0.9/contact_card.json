@@ -100,7 +100,7 @@
         {
           "id": "calendar_icon",
           "component": "Icon",
-          "name": "calendar_today"
+          "name": "calendarToday"
         },
         {
           "id": "calendar_text_column",
@@ -138,7 +138,7 @@
         {
           "id": "location_icon",
           "component": "Icon",
-          "name": "location_on"
+          "name": "locationOn"
         },
         {
           "id": "location_text_column",
