@@ -2,15 +2,15 @@
 
 This page showcases all A2UI components with examples and usage patterns.
 
-!!! abstract "Schema Files"
-
-    === "v0.8"
-
-        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
-
-    === "v0.9"
-
-        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
+> NOTE: Schema Files
+>
+> === "v0.8"
+>
+>     [:material-code-json: Standard Catalog Definition (JSON Schema)](../../specification/v0_8/json/standard_catalog_definition.json)
+>
+> === "v0.9"
+>
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
 
 ---
 
@@ -604,9 +604,9 @@ Tabbed interface for organizing content into switchable panels.
 
 All components share:
 
-- `id` (required): Unique identifier within the surface
-- `accessibility`: Accessibility attributes (label, role)
-- `weight`: Flex-grow value when inside a Row or Column
+- `id` (required): Unique identifier within the surface.
+- `accessibility`: Accessibility attributes (label, role).
+- `weight`: Flex-grow value when inside a Row or Column.
 
 ## Version Differences Summary
 
@@ -636,15 +636,15 @@ npm start -- gallery
 
 ## Further Reading
 
-!!! abstract "Schema Files"
-
-    === "v0.8"
-
-        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
-
-    === "v0.9"
-
-        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
+> NOTE: Schema Files
+>
+> === "v0.8"
+>
+>     [:material-code-json: Standard Catalog Definition (JSON Schema)](../../specification/v0_8/json/standard_catalog_definition.json)
+>
+> === "v0.9"
+>
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
 
 - **[Defining Your Own Catalog](../guides/defining-your-own-catalog.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

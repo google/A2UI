@@ -19,14 +19,16 @@ A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
 
-The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from a server (Agent). Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from an agent. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the renderer processes each message.
 
-Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
+Communication occurs via a stream of JSON objects. The renderer parses each object as a distinct message and incrementally builds or updates the UI. The agent-to-renderer protocol defines four message types:
 
-- `createSurface`: Signals the client to create a new surface and begin rendering it.
+- `createSurface`: Signals the renderer to create a new surface and begin rendering it.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
+
+End of agent turn is signaled by [transport layer](https://github.com/google/A2UI/tree/main/docs/concepts/transports.md).
 
 ## Changes from previous versions
 

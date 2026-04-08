@@ -18,11 +18,11 @@ from pathlib import Path
 from typing import Dict, Any
 import pytest
 
-from a2ui.core.schema.constants import VERSION_0_9
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.catalog_provider import A2uiCatalogProvider
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.catalog_provider import A2uiCatalogProvider
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent.parent.parent  # a2ui root

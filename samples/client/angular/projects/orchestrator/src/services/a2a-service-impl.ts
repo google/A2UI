@@ -22,16 +22,23 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class A2aServiceImpl implements A2aService {
+  private contextId?: string;
 
   async sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
     const response = await fetch('/a2a', {
-      body: JSON.stringify({ parts: parts }),
+      body: JSON.stringify({ 
+        parts: parts,
+        contextId: this.contextId
+      }),
       method: 'POST',
       signal,
     });
 
     if (response.ok) {
       const data = await response.json();
+      if (data.contextId || data.result?.contextId) {
+        this.contextId = data.contextId || data.result?.contextId;
+      }
       return data;
     }
 

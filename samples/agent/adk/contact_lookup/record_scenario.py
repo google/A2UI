@@ -18,7 +18,7 @@ import logging
 import os
 import shutil
 from agent import ContactAgent
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.schema.constants import VERSION_0_8
 
 logging.basicConfig(level=logging.INFO)
 

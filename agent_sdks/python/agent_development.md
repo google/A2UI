@@ -27,8 +27,8 @@ The first step in any A2UI-enabled agent is initializing the
 `A2uiSchemaManager`.
 
 ```python
-from a2ui.core.schema.constants import VERSION_0_9
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
 
 # Define your catalogs (basic or bring your own) with optional examples
@@ -132,7 +132,7 @@ agent_executor = MyAgentExecutor(
 Before processing a request, negotiate which version of the A2UI extension to activate based on the client request and your agent's advertised capabilities.
 
 ```python
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
 
 # In your request handler:
 activated_version = try_activate_a2ui_extension(context, agent_card)
@@ -156,7 +156,7 @@ Use this approach if you wait for the LLM to finish its entire response before p
 Validate the LLM's JSON output before returning it. The SDK's `A2uiCatalog` validates the payload and attempts to fix simple errors (e.g., trailing commas).
 
 ```python
-from a2ui.core.parser.parser import parse_response
+from a2ui.parser.parser import parse_response
 
 # Parse the full response into parts
 response_parts = parse_response(full_text)
@@ -178,7 +178,7 @@ Wrap the validated payloads in an A2A `DataPart` with the correct MIME type (`ap
 The `parse_response_to_parts` helper is the most efficient way to split text, extract JSON, validate, and wrap into A2A `Part` objects in one go.
 
 ```python
-from a2ui.a2a import parse_response_to_parts
+from a2ui.a2a.parts import parse_response_to_parts
 
 yield {
     "is_task_complete": True,
@@ -199,8 +199,8 @@ Use this approach for sub-second UI updates. The `A2uiStreamParser` **automatica
 > ```
 
 ```python
-from a2ui.core.parser.streaming import A2uiStreamParser
-from a2ui.a2a import create_a2ui_part
+from a2ui.parser.streaming import A2uiStreamParser
+from a2ui.a2a.parts import create_a2ui_part
 
 parser = A2uiStreamParser(catalog=selected_catalog)
 

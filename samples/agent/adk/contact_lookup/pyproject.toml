@@ -26,7 +26,7 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "litellm",
     "jsonschema>=4.0.0",
-    "a2ui-agent-sdk>=0.1.1",
+    "a2ui-agent-sdk",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -42,3 +42,6 @@ allow-direct-references = true
 [[tool.uv.index]]
 url = "https://pypi.org/simple"
 default = true
+
+[tool.uv.sources]
+a2ui-agent-sdk = { path = "../../../../agent_sdks/python", editable = true }
