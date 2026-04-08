@@ -20,6 +20,7 @@ from a2a.types import AgentCard
 from google.adk.agents.invocation_context import new_invocation_context_id
 from google.adk.events.event_actions import EventActions
 
+from google.adk.agents import run_config
 from a2a.server.agent_execution import RequestContext
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
@@ -137,7 +138,6 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
   ):
     session = await super()._prepare_session(context, run_request, runner)
 
-    from google.adk.agents import run_config
     if not run_request.run_config:
       run_request.run_config = run_config.RunConfig()
     run_request.run_config.streaming_mode = run_config.StreamingMode.SSE
