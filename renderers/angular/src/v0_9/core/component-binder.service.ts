@@ -76,6 +76,39 @@ export class ComponentBinder {
           ? (newValue: any) => context.dataContext.set(value.path, newValue)
           : () => {}, // No-op for non-bound values
       };
+
+      if (key === 'checks') {
+        const checksArray = Array.isArray(value) ? value : [];
+        
+        const ruleResults = checksArray.map((rule: any) => {
+          const condition = rule.condition || rule;
+          const message = rule.message || 'Validation failed';
+          const conditionSig = context.dataContext.resolveSignal(condition);
+          return { conditionSig, message };
+        });
+
+        const isValidPreactSig = computed(() => {
+          return ruleResults.every((r: any) => !!r.conditionSig.value);
+        });
+
+        const validationErrorsPreactSig = computed(() => {
+          return ruleResults
+            .filter((r: any) => !r.conditionSig.value)
+            .map((r: any) => r.message);
+        });
+
+        bound['isValid'] = {
+          value: toAngularSignal(isValidPreactSig, this.destroyRef, this.ngZone),
+          raw: null,
+          onUpdate: () => {},
+        };
+
+        bound['validationErrors'] = {
+          value: toAngularSignal(validationErrorsPreactSig, this.destroyRef, this.ngZone),
+          raw: null,
+          onUpdate: () => {},
+        };
+      }
     }
 
     return bound;
