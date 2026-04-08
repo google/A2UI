@@ -51,7 +51,7 @@ export class DataContext {
    * @param path The absolute path in the DataModel that this context is scoped to (its "current working directory").
    */
   constructor(
-    private readonly surface: SurfaceModel<any>,
+    public readonly surface: SurfaceModel<any>,
     public readonly path: string,
   ) {
     console.log(`[DataContext] INIT path=${path}`);

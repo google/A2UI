@@ -56,13 +56,15 @@ from google.adk.utils import instructions_utils
 
 original_inject = instructions_utils.inject_session_state
 
+
 async def custom_inject_session_state(template: str, context: Any) -> str:
-    # Protect A2UI interpolation syntax from ADK
-    protected = template.replace("${", "__PROTECTED_BRACE__")
-    # Run original ADK injection
-    result = await original_inject(protected, context)
-    # Restore syntax for the model
-    return result.replace("__PROTECTED_BRACE__", "${")
+  # Protect A2UI interpolation syntax from ADK
+  protected = template.replace("${", "__PROTECTED_BRACE__")
+  # Run original ADK injection
+  result = await original_inject(protected, context)
+  # Restore syntax for the model
+  return result.replace("__PROTECTED_BRACE__", "${")
+
 
 # Apply the monkeypatch
 instructions_utils.inject_session_state = custom_inject_session_state
@@ -176,13 +178,15 @@ class RestaurantAgent:
     if schema_manager:
       instruction += (
           "\n\nMANDATORY: Every single response from you MUST start with a"
-          " `createSurface` message followed by an `updateComponents` message,"
-          " before any `updateDataModel` messages. The client requires them to"
-          " render the interface on every turn."
-          "\nCRITICAL: You MUST ALWAYS use an ARRAY for `items` in a list, do"
-          " NOT use an object with keys like `item1`."
-          "\nCRITICAL: When updating the list of restaurants, use `updateDataModel` with `path: \"/items\"` so that you do not overwrite the `title` property at the root."
-          "\nCRITICAL: You MUST output the entire `updateDataModel` message with all items at once at the end of your response. Do NOT output partial lists or stream items one by one."
+          " `createSurface` message followed by an `updateComponents` message, before"
+          " any `updateDataModel` messages. The client requires them to render the"
+          " interface on every turn.\nCRITICAL: You MUST ALWAYS use an ARRAY for"
+          " `items` in a list, do NOT use an object with keys like `item1`.\nCRITICAL:"
+          " When updating the list of restaurants, use `updateDataModel` with `path:"
+          ' "/items"` so that you do not overwrite the `title` property at the'
+          " root.\nCRITICAL: You MUST output the entire `updateDataModel` message with"
+          " all items at once at the end of your response. Do NOT output partial lists"
+          " or stream items one by one."
       )
 
     return LlmAgent(
