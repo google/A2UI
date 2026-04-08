@@ -15,11 +15,16 @@ site/
 
 # Python virtual environment
 .venv/
+coverage/
 
 # Generated spec assets in the agent SDK
 ## old agent SDK path
 a2a_agents/python/a2ui_agent/src/a2ui/assets/**/*.json
 ## new agent SDK path
 agent_sdks/python/src/a2ui/assets/**/*.json
-## Generated JS file from the strictly-typed `sandbox.ts`. 
-samples/client/angular/projects/orchestrator/public/sandbox_iframe/sandbox.js
+## Generated files for sandbox frame.
+samples/client/angular/projects/mcp_calculator/public/mcp_apps_inner_iframe/
+
+## Generated files for a2ui-in-mcpapps
+samples/agent/mcp/a2ui-in-mcpapps/server/apps/dist
+samples/agent/mcp/a2ui-in-mcpapps/server/apps/public

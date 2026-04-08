@@ -31,6 +31,8 @@ import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { DEMO_CATALOG } from '../a2ui-catalog/catalog';
 import { A2aServiceImpl } from '../services/a2a-service-impl';
 import { routes } from './app.routes';
+import { provideMarkdownRenderer } from '@a2ui/angular';
+import { renderMarkdown } from '@a2ui/markdown-it';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -39,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideCharts(withDefaultRegisterables()),
+    provideMarkdownRenderer(renderMarkdown),
     configureChatCanvasFeatures(
       usingA2aService(A2aServiceImpl),
       usingA2uiRenderers(DEMO_CATALOG),

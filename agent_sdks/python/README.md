@@ -3,12 +3,11 @@
 The `agent_sdks/python/src/a2ui` directory contains the Python implementation of
 the A2UI agent SDK.
 
-## Core Components (`src/a2ui/core`)
+## Core Components
 
-The `src/a2ui/core` directory contains the base protocol logic, version
-management, and schema operations.
+The following directories contain the base protocol logic, parsing, and schema operations directly under `src/a2ui/`:
 
-### Schema Management (`src/a2ui/core/schema`)
+### Schema Management (`src/a2ui/schema`)
 
 * **`manager.py`**: The `A2uiSchemaManager` handles loading specification
   schemas, managing catalogs, and generating system prompts for LLMs.
@@ -16,6 +15,11 @@ management, and schema operations.
   against JSON schemas and protocol rules.
 * **`catalog.py`**: Defines `A2uiCatalog` and `CatalogConfig` for handling
   component libraries.
+
+### Parser (`src/a2ui/parser`)
+
+* **`parser.py`**: Implementation of `parse_response` for synchronous parsing.
+* **`streaming.py`**: Incremental streaming parsers with automatic JSON healing and validation.
 * **`payload_fixer.py`**: Utilities to automatically correct common LLM output
   issues in A2UI payloads.
 
@@ -26,8 +30,8 @@ management, and schema operations.
 
 ## A2A (`src/a2ui/a2a`)
 
-* **`a2a.py`**: Utilities for creating A2A Parts with A2UI data and managing the
-  A2UI extension URI.
+* **`extension.py`**: Utilities for managing the A2UI extension URI and activation logic.
+* **`parts.py`**: Utilities for creating A2A Parts with A2UI data and helpers for response parsing.
 
 ## ADK Extensions (`src/a2ui/adk`)
 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..core.schema.constants import CATALOG_SCHEMA_KEY, VERSION_0_8, VERSION_0_9
+from ..schema.constants import CATALOG_SCHEMA_KEY, VERSION_0_8, VERSION_0_9
 
 BASIC_CATALOG_NAME = "basic"
 

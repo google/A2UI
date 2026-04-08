@@ -1,18 +1,48 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "license": "Apache-2.0",
+  "homepage": "https://a2ui.org/",
+  "repository": {
+    "directory": "renderers/angular",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "keywords": [
+    "a2ui",
+    "angular",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "scripts": {
-    "build": "ng build && node postprocess-build.mjs"
+    "generate-examples": "node scripts/generate-examples.mjs",
+    "build": "npm run generate-examples && ng build && node ../scripts/prepare-publish.mjs --source ./dist/package.json --skip-path-adjustment",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && npm publish dist/ --access public",
+    "demo": "npm run generate-examples && ng serve a2ui_explorer",
+    "test": "npm run generate-examples && ng test lib --browsers=ChromeHeadless",
+    "test:ci": "npm run generate-examples && ng test lib --watch=false --browsers=ChromeHeadless"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^3.25.76"
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0",
-    "@angular/platform-browser": "^21.2.0"
+    "@angular/platform-browser": "^21.2.0",
+    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/markdown-it": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@angular/build": "^21.2.0",

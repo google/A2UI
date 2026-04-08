@@ -14,10 +14,10 @@
 
 from typing import Any, Dict, Optional
 
-from ..core.schema.catalog import CatalogConfig
-from ..core.schema.catalog_provider import A2uiCatalogProvider
-from ..core.schema.utils import load_from_bundled_resource
-from ..core.schema.constants import BASE_SCHEMA_URL, CATALOG_ID_KEY, CATALOG_SCHEMA_KEY
+from ..schema.catalog import CatalogConfig
+from ..schema.catalog_provider import A2uiCatalogProvider
+from ..schema.utils import load_from_bundled_resource
+from ..schema.constants import BASE_SCHEMA_URL, CATALOG_ID_KEY, CATALOG_SCHEMA_KEY
 from .constants import BASIC_CATALOG_NAME, BASIC_CATALOG_PATHS
 
 

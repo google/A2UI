@@ -152,7 +152,7 @@ export function usingRenderers(...renderers: readonly RendererEntry[]): Renderer
 /**
  * Configures the Chat/Canvas to use A2UI Renderer.
  */
-export function usingA2uiRenderers(customCatalog?: Catalog, theme?: Theme): A2uiFeature {
+export function usingA2uiRenderers(customCatalog?: any, theme?: any): A2uiFeature {
   return {
     kind: ChatCanvasFeatureKind.A2UI_FEATURE,
     providers: [

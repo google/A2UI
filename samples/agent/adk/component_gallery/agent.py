@@ -16,12 +16,12 @@
 
 import logging
 from collections.abc import AsyncIterable
-from typing import Any
+from typing import Any, Optional
 import json
 
 from a2a.types import DataPart, Part, TextPart
-from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.a2a import create_a2ui_part, parse_response_to_parts
+from a2ui.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.a2a.parts import create_a2ui_part, parse_response_to_parts
 
 import asyncio
 import datetime
@@ -37,14 +37,18 @@ class ComponentGalleryAgent:
   def __init__(self, base_url: str):
     self.base_url = base_url
 
-  async def stream(self, query: str, session_id: str) -> AsyncIterable[dict[str, Any]]:
+  async def stream(
+      self, query: str, session_id: str, active_ui_version: Optional[str]
+  ) -> AsyncIterable[dict[str, Any]]:
     """Streams the gallery or responses to actions."""
 
-    logger.info(f"Stream called with query: {query}")
+    logger.info(
+        f"Stream called with query: {query} and active_ui_version: {active_ui_version}"
+    )
 
     # Initial Load or Reset
     if "WHO_ARE_YOU" in query or "START" in query:  # Simple trigger for initial load
-      gallery_json = get_gallery_json()
+      gallery_json = get_gallery_json(active_ui_version)
       yield {
           "is_task_complete": True,
           "parts": parse_response_to_parts(

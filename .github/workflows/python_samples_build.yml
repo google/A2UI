@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build python samples
+name: Python samples
 
 on:
   push:
@@ -50,6 +50,10 @@ jobs:
       - name: Check Formatting
         working-directory: samples/agent/adk
         run: uv run pyink --check .
+
+      - name: Validate Sample Examples
+        run: |
+          PYTHONPATH=agent_sdks/python/src uv run --project agent_sdks/python pytest -vv samples/agent/adk/tests/test_examples_validation.py
 
       - name: Build contact_lookup
         working-directory: samples/agent/adk/contact_lookup

@@ -6,6 +6,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 
 Version 0.10 differs from 0.9 in the following ways:
 
+- **Client-to-Server RPC**: Introduced `actionResponse` enabling synchronous responses to client-initiated actions. Added `actionId` for response correlation.
 - <TBD>
 
 ## 2. Changes
@@ -16,10 +17,12 @@ Version 0.10 differs from 0.9 in the following ways:
 
 ### 2.2. Server-to-Client Message List Schema
 
+- Added `ActionResponseMessage` to allow the server to respond to a specific action call using an `actionId`.
 - <TBD>
 
 ### 2.3. Client-to-Server Message List Schema
 
+- Added `actionId` to the `action` message properties, which the client generates if a response is expected (`wantResponse: true`).
 - <TBD>
 
 ### 2.4. Client Capabilities Schema
@@ -40,10 +43,13 @@ Version 0.10 differs from 0.9 in the following ways:
 
 ### 2.8. Server-to-Client Messages
 
+- Added `actionResponse` message structure to support synchronous responses with a `value` or `error`.
 - <TBD>
 
 ### 2.9. Client-to-Server Events
 
+- Updated `action` message to include `actionId`.
+- Updated `Action` type in `common_types.json` to include `wantResponse` and `responsePath` on event triggers.
 - <TBD>
 
 ## 3. Migration Guide

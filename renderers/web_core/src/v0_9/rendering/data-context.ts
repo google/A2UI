@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { signal, computed, Signal, effect } from "@preact/signals-core";
-import { z } from "zod";
-import { DataModel, DataSubscription } from "../state/data-model.js";
+import {signal, computed, Signal, effect} from '@preact/signals-core';
+import {z} from 'zod';
+import {DataModel, DataSubscription} from '../state/data-model.js';
 import type {
   DynamicValue,
   DataBinding,
   FunctionCall,
   Action,
-} from "../schema/common-types.js";
-import { A2uiExpressionError } from "../errors.js";
+} from '../schema/common-types.js';
+import {A2uiExpressionError} from '../errors.js';
+import {isSignal} from '../catalog/types.js';
 
-import { FunctionInvoker } from "../catalog/function_invoker.js";
-import { SurfaceModel } from "../state/surface-model.js";
+import {FunctionInvoker} from '../catalog/function_invoker.js';
+import {SurfaceModel} from '../state/surface-model.js';
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
@@ -83,18 +84,18 @@ export class DataContext {
    */
   resolveDynamicValue<V>(value: DynamicValue): V {
     // 1. Literal check (excluding arrays and objects)
-    if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
       return value as V;
     }
 
     // 2. Path Check: { path: "..." }
-    if ("path" in value) {
+    if ('path' in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
       return this.dataModel.get(absolutePath);
     }
 
     // 3. Function Call: { call: "...", args: ... }
-    if ("call" in value) {
+    if ('call' in value) {
       const call = value as FunctionCall;
       const args: Record<string, any> = {};
 
@@ -104,37 +105,17 @@ export class DataContext {
 
       const abortController = new AbortController();
 
-      try {
-        const result = this.functionInvoker(
-          call.call,
-          args,
-          this,
-          abortController.signal,
-        );
-        return (result instanceof Signal ? result.peek() : result) as V;
-      } catch (e: any) {
-        if (e?.name === "ZodError" || e instanceof z.ZodError) {
-          const err = new A2uiExpressionError(
-            `Validation failed for function '${call.call}': ${e.message}`,
-            call.call,
-            e.errors ?? e.issues,
-          );
-          this.surface.dispatchError({
-            code: "EXPRESSION_ERROR",
-            message: err.message,
-            expression: call.call,
-            details: err.details,
-          });
-        }
-        if (e instanceof A2uiExpressionError) {
-          this.surface.dispatchError({
-            code: "EXPRESSION_ERROR",
-            message: e.message,
-            expression: e.expression,
-            details: e.details,
-          });
-        }
+      const result = this.evaluateFunctionReactive<V>(
+        call.call,
+        args,
+        abortController.signal,
+      );
+
+      if (result === undefined) {
+        return undefined as any;
       }
+
+      return (isSignal(result) ? result.peek() : result) as V;
     }
 
     return value as V;
@@ -195,18 +176,18 @@ export class DataContext {
    */
   resolveSignal<V>(value: DynamicValue): Signal<V> {
     // 1. Literal
-    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return signal(value as V);
     }
 
     // 2. Path Check
-    if ("path" in value) {
+    if ('path' in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
       return this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
     }
 
     // 3. Function Call
-    if ("call" in value) {
+    if ('call' in value) {
       const call = value as FunctionCall;
       const argSignals: Record<string, Signal<any>> = {};
 
@@ -240,33 +221,32 @@ export class DataContext {
       });
 
       const stopper = effect(() => {
-        const args = argsSig.value;
-        if (abortController) abortController.abort();
-        if (innerUnsubscribe) {
-          innerUnsubscribe();
-          innerUnsubscribe = undefined;
-        }
-        abortController = new AbortController();
-
         try {
+          const args = argsSig.value;
+          if (abortController) abortController.abort();
+          if (innerUnsubscribe) {
+            innerUnsubscribe();
+            innerUnsubscribe = undefined;
+          }
+          abortController = new AbortController();
+
           const res = this.evaluateFunctionReactive<V>(
             call.call,
             args,
             abortController.signal,
           );
 
-          if (res instanceof Signal) {
+          if (isSignal(res)) {
             innerUnsubscribe = effect(() => {
               resultSig.value = res.value;
             });
           } else {
             resultSig.value = res;
           }
-        } catch (e) {
-          // In reactive mode, we might want to propagate errors through the signal
-          // or at least log them. For now, we'll let them bubble if it's the first run,
-          // or just store them if we had a better way.
-          throw e;
+        } catch (e: any) {
+          this.dispatchExpressionError(e, call.call);
+          // In reactive mode, we should not throw. Instead, reset the signal value.
+          resultSig.value = undefined;
         }
       });
 
@@ -299,7 +279,7 @@ export class DataContext {
    * DynamicValue types and prevents arbitrary nesting.
    */
   resolveAction(action: Action): any {
-    if ("event" in action) {
+    if ('event' in action) {
       const resolvedContext: Record<string, any> = {};
       if (action.event.context) {
         for (const [key, value] of Object.entries(action.event.context)) {
@@ -313,7 +293,7 @@ export class DataContext {
         },
       };
     }
-    if ("functionCall" in action) {
+    if ('functionCall' in action) {
       return this.resolveDynamicValue(action.functionCall);
     }
     return action;
@@ -327,28 +307,39 @@ export class DataContext {
     try {
       return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {
-      if (e?.name === "ZodError" || e instanceof z.ZodError) {
-        const err = new A2uiExpressionError(
-          `Validation failed for function '${name}': ${e.message}`,
-          name,
-          e.errors ?? e.issues,
-        );
-        this.surface.dispatchError({
-          code: "EXPRESSION_ERROR",
-          message: err.message,
-          expression: name,
-          details: err.details,
-        });
-      }
-      if (e instanceof A2uiExpressionError) {
-        this.surface.dispatchError({
-          code: "EXPRESSION_ERROR",
-          message: e.message,
-          expression: e.expression,
-          details: e.details,
-        });
-      }
+      this.dispatchExpressionError(e, name);
       return undefined as any;
+    }
+  }
+
+  private dispatchExpressionError(e: any, name: string): void {
+    if (e?.name === 'ZodError' || e instanceof z.ZodError) {
+      const err = new A2uiExpressionError(
+        `Validation failed for function '${name}': ${e.message}`,
+        name,
+        e.errors ?? e.issues,
+      );
+      this.surface.dispatchError({
+        code: 'EXPRESSION_ERROR',
+        message: err.message,
+        expression: name,
+        details: err.details,
+      });
+    } else if (e instanceof A2uiExpressionError) {
+      this.surface.dispatchError({
+        code: 'EXPRESSION_ERROR',
+        message: e.message,
+        expression: e.expression,
+        details: e.details,
+      });
+    } else {
+      this.surface.dispatchError({
+        code: 'EXPRESSION_ERROR',
+        message:
+          e.message ?? `An unexpected error occurred in function ${name}.`,
+        expression: name,
+        details: {stack: e.stack},
+      });
     }
   }
 
@@ -367,18 +358,18 @@ export class DataContext {
   }
 
   private resolvePath(path: string): string {
-    if (path.startsWith("/")) {
+    if (path.startsWith('/')) {
       return path;
     }
-    if (path === "" || path === ".") {
+    if (path === '' || path === '.') {
       return this.path;
     }
 
     let base = this.path;
-    if (base.endsWith("/") && base.length > 1) {
+    if (base.endsWith('/') && base.length > 1) {
       base = base.slice(0, -1);
     }
-    if (base === "/") base = "";
+    if (base === '/') base = '';
 
     return `${base}/${path}`;
   }

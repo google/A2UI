@@ -15,9 +15,9 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Component Catalogs
 
-A component catalog is any collection of components — standard ones, your custom components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
+A component catalog is any collection of components — the Basic Catalog, your own components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
 
-See [Custom Components](custom-components.md) for how to extend or replace the standard catalog.
+See [Defining Your Own Catalog](defining-your-own-catalog.md) for how to define a catalog that matches your design system.
 
 ## Shared Web Library
 
@@ -27,10 +27,9 @@ This means core protocol handling is consistent across web platforms — only th
 
 ## Web Components (Lit)
 
-> ⚠️ **Attention**
+> NOTE: Attention
 >
-> The Lit client library is not yet published to NPM. Check back in the
-> coming days.
+> The Lit client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
 npm install @a2ui/web-lib lit @lit-labs/signals
@@ -38,9 +37,9 @@ npm install @a2ui/web-lib lit @lit-labs/signals
 
 The Lit renderer uses:
 
-- **Message Processor**: Manages A2UI state and processes incoming messages
-- **`<a2ui-surface>` component**: Renders surfaces in your app
-- **Lit Signals**: Provides reactive state management for automatic UI updates
+- **Message Processor**: Manages A2UI state and processes incoming messages.
+- **`<a2ui-surface>` component**: Renders surfaces in your app.
+- **Lit Signals**: Provides reactive state management for automatic UI updates.
 
 TODO: Add verified setup example.
 
@@ -48,24 +47,49 @@ TODO: Add verified setup example.
 
 ## Angular
 
-> ⚠️ **Attention**
+> NOTE: Attention
 >
-> The Angular client library is not yet published to NPM. Check back in the
-> coming days.
+> The Angular client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
-npm install @a2ui/angular @a2ui/web-lib
+npm install @a2ui/angular @a2ui/web_core
 ```
 
 The Angular renderer provides:
 
-- **`provideA2UI()` function**: Configures A2UI in your app config
-- **`Surface` component**: Renders A2UI surfaces
-- **`MessageProcessor` service**: Handles incoming A2UI messages
+- **`A2uiRendererService`**: A service that manages the A2UI message processor and reactive model.
+- **`a2ui-v09-component-host` component**: A dynamic component host that renders A2UI components from a surface.
+- **`A2UI_RENDERER_CONFIG` token**: Used to configure the renderer with catalogs and action handlers.
 
-TODO: Add verified setup example.
+### Setup Example (v0.9)
 
-**See working example:** [Angular restaurant sample](https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant)
+A2UI uses versioned imports for its protocol-specific implementations. For v0.9, configure your application providers as follows:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { 
+  A2UI_RENDERER_CONFIG, 
+  A2uiRendererService, 
+  minimalCatalog 
+} from '@a2ui/angular/v0_9';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    {
+      provide: A2UI_RENDERER_CONFIG,
+      useValue: {
+        catalogs: [minimalCatalog],
+        actionHandler: (action) => {
+          console.log('Action dispatched:', action);
+        }
+      }
+    },
+    A2uiRendererService
+  ]
+};
+```
+
+**See working example:** [Angular v0.9 Explorer](https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer)
 
 ## React
 
@@ -124,10 +148,10 @@ TODO: Add action handling examples.
 
 Common errors to handle:
 
-- **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received
-- **Invalid Component ID**: Component IDs must be unique within a surface
-- **Invalid Data Path**: Check data model structure and JSON Pointer syntax
-- **Schema Validation Failed**: Verify message format matches A2UI specification
+- **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received.
+- **Invalid Component ID**: Component IDs must be unique within a surface.
+- **Invalid Data Path**: Check data model structure and JSON Pointer syntax.
+- **Schema Validation Failed**: Verify message format matches A2UI specification.
 
 TODO: Add error handling examples.
 
@@ -135,6 +159,6 @@ TODO: Add error handling examples.
 
 - **[Quickstart](../quickstart.md)**: Try the demo application
 - **[Theming & Styling](theming.md)**: Customize the look and feel
-- **[Custom Components](custom-components.md)**: Extend the component catalog
+- **[Defining Your Own Catalog](defining-your-own-catalog.md)**: Extend the component catalog
 - **[Agent Development](agent-development.md)**: Build agents that generate A2UI
 - **[Reference Documentation](../reference/messages.md)**: Deep dive into the protocol
