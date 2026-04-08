@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/client.ts","./src/main.tsx","./src/configs/index.ts","./src/configs/restaurant.ts","./src/configs/types.ts","./src/mock/index.ts","./src/mock/restaurantmessages.ts","./src/theme/default-theme.ts"],"version":"5.9.3"}

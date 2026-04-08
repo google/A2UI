@@ -80,6 +80,8 @@ export class DataModel {
       throw new A2uiDataError('Path cannot be null or undefined.');
     }
 
+    console.log(`[DataModel] set path=${path} value=`, value);
+
     if (path === '/' || path === '') {
       this.data = value;
       this.notifyAllSignals();
@@ -235,6 +237,7 @@ export class DataModel {
 
   private notifySignals(path: string): void {
     const normalizedPath = this.normalizePath(path);
+    console.log(`[DataModel] notifySignals path=${normalizedPath}`);
 
     batch(() => {
       this.updateSignal(normalizedPath);
