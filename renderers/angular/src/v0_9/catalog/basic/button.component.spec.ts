@@ -20,7 +20,6 @@ import { ButtonComponent } from './button.component';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
-import { preactSignal } from '../../core/utils';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;

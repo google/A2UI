@@ -222,12 +222,12 @@ body {
 
 /* Override Card styles for dark mode compatibility */
 .a2ui-card {
-  background-color: light-dark(white, #1e293b) !important;
-  color: light-dark(#1e293b, #f8fafc) !important;
-  border-color: light-dark(#eee, #334155) !important;
+  background-color: light-dark(white, #1e293b);
+  color: light-dark(#1e293b, #f8fafc);
+  border-color: light-dark(#eee, #334155);
 }
 
 /* Ensure text inside card is readable */
 .a2ui-card .a2ui-text {
-  color: inherit !important;
+  color: inherit;
 }
