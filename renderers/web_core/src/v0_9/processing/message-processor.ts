@@ -224,7 +224,7 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   /**
-   * Processes an list of messages or a messages wrapper.
+   * Processes a list of messages or a messages wrapper.
    *
    * @param messages The messages or messages wrapper to process.
    */
