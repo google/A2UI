@@ -31,9 +31,11 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<
       gap: var(--a2ui-spacing-xs, 0.25rem);
     }
     input {
-      background: var(--a2ui-datetimeinput-background, inherit);
-      border: var(--a2ui-datetimeinput-border, auto);
-      padding: var(--a2ui-datetimeinput-padding, inherit);
+      background-color: var(--a2ui-datetimeinput-background, var(--a2ui-color-input, #fff));
+      color: var(--a2ui-datetimeinput-color, var(--a2ui-color-on-input, #333));
+      border: var(--a2ui-datetimeinput-border, var(--a2ui-border));
+      border-radius: var(--a2ui-datetimeinput-border-radius, var(--a2ui-border-radius));
+      padding: var(--a2ui-datetimeinput-padding, var(--a2ui-spacing-s));
     }
   `;
 
