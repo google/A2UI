@@ -63,7 +63,7 @@ export class A2uiBasicButtonElement extends A2uiLitElement<typeof ButtonApi> {
       background: var(--a2ui-button-background, var(--a2ui-color-secondary, #ddd));
       box-shadow: var(--a2ui-button-box-shadow, none);
       font-weight: var(--a2ui-button-font-weight, normal);
-      color: var(--a2ui-color-on-secondary, #333);
+      color: var(--_a2ui-text-color);
       border: var(--_button-border);
       border-radius: var(--_button-border-radius);
       cursor: pointer;
@@ -74,7 +74,7 @@ export class A2uiBasicButtonElement extends A2uiLitElement<typeof ButtonApi> {
     .a2ui-button.a2ui-button-primary {
       --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
       background-color: var(--_color-primary);
-      color: var(--a2ui-color-on-primary, #fff);
+      color: var(--_a2ui-text-color);
     }
     .a2ui-button:hover {
       background-color: var(--a2ui-color-secondary-hover, #ddd);

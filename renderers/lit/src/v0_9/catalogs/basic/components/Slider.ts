@@ -39,9 +39,6 @@ export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
       background: var(--a2ui-slider-track-color, var(--a2ui-color-secondary, #e9ecef));
       margin: var(--a2ui-slider-track-margin, auto);
     }
-    input[type="range"]::-webkit-slider-thumb {
-      margin: var(--a2ui-slider-thumb-margin, auto);
-    }
   `;
 
   protected createController() {
