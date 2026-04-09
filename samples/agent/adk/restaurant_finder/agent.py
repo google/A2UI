@@ -54,6 +54,9 @@ logger = logging.getLogger(__name__)
 
 from google.adk.utils import instructions_utils
 
+# Monkey patch to work around ADK issue where it tries to interpolate A2UI
+# syntax (like ${...}) as session state.
+# Bug filed against ADK: https://github.com/google/adk-python/issues/5179
 original_inject = instructions_utils.inject_session_state
 
 
