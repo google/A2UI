@@ -224,9 +224,9 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   /**
-   * Processes an array of messages or a message array wrapper.
+   * Processes an list of messages or a messages wrapper.
    *
-   * @param messages The messages to process (array or wrapper object).
+   * @param messages The messages or messages wrapper to process.
    */
   processMessages(messages: A2uiMessage[] | A2uiMessageListWrapper): void {
     const messageList = Array.isArray(messages) ? messages : messages.messages;
