@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import { BoundProperty } from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
 import {
@@ -92,20 +92,24 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     }
   `,
 })
-export class YouTube extends DynamicComponent<Types.CustomNode> {
-  readonly videoId = input.required<Primitives.StringValue | null>();
+export class YouTube {
+  /** Reactive properties resolved from the A2UI ComponentModel. */
+  props = input<Record<string, BoundProperty>>({});
+  surfaceId = input.required<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>('/');
+
   protected readonly resolvedVideoId = computed(() =>
-    this.resolvePrimitive(this.videoId()),
+    this.props()['videoId']?.value() as string | null
   );
 
   readonly title = input<Primitives.StringValue | null>();
   protected readonly resolvedTitle = computed(() =>
-    this.resolvePrimitive(this.title() ?? null),
+    this.props()['title']?.value() as string | null
   );
 
-  readonly autoplay = input<Primitives.BooleanValue | null>();
   protected readonly resolvedAutoplay = computed(() =>
-    this.resolvePrimitive(this.autoplay() ?? null),
+    this.props()['autoplay']?.value() as boolean | null
   );
 
   private static readonly YOUTUBE_ID_REGEX = /^[a-zA-Z0-9_-]{11}$/;
@@ -126,6 +130,5 @@ export class YouTube extends DynamicComponent<Types.CustomNode> {
   });
 
   constructor(private sanitizer: DomSanitizer) {
-    super();
   }
 }

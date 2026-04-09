@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-import { Catalog } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import { BASIC_COMPONENTS, AngularCatalog, AngularComponentImplementation } from '@a2ui/angular';
+import { z } from 'zod';
+import { Chart } from './chart';
+import { GoogleMap } from './google-map';
 
-export const DEMO_CATALOG = {
-  Chart: {
-    type: () => import('./chart').then((r) => r.Chart),
-    bindings: ({ properties }) => [
-      inputBinding('type', () => ('type' in properties && properties['type']) || undefined),
-      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
-      inputBinding(
-        'chartData',
-        () => ('chartData' in properties && properties['chartData']) || undefined,
-      ),
-    ],
-  },
-  GoogleMap: {
-    type: () => import('./google-map').then((r) => r.GoogleMap),
-    bindings: ({ properties }) => [
-      inputBinding('zoom', () => ('zoom' in properties && properties['zoom']) || 8),
-      inputBinding('center', () => ('center' in properties && properties['center']) || undefined),
-      inputBinding('pins', () => ('pins' in properties && properties['pins']) || undefined),
-      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
-    ],
-  },
-} as Catalog;
+const customComponents: AngularComponentImplementation[] = [
+  { name: 'Chart', schema: z.object({}), component: Chart },
+  { name: 'GoogleMap', schema: z.object({}), component: GoogleMap },
+];
+
+/**
+ * The Angular catalog for RizzCharts components.
+ *
+ * This catalog combines the standard A2UI components with custom components
+ * specific to this project (Canvas, Chart, GoogleMap, YouTube). It is identified
+ * by a unique URI that matches the catalog definition in the agent.
+ */
+export const DEMO_CATALOG = new AngularCatalog(
+  'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
+  [...BASIC_COMPONENTS, ...customComponents],
+);

@@ -24,16 +24,15 @@ import {
   RENDERERS,
 } from '@a2a_chat_canvas/a2a-renderer/tokens';
 import { ArtifactResolver, PartResolver, RendererEntry } from '@a2a_chat_canvas/a2a-renderer/types';
-import { theme as a2uiTheme } from '@a2a_chat_canvas/a2ui-catalog/theme';
 import { A2A_SERVICE, A2aService } from '@a2a_chat_canvas/interfaces/a2a-service';
 import {
   MARKDOWN_RENDERER_SERVICE,
   MarkdownRendererService,
 } from '@a2a_chat_canvas/interfaces/markdown-renderer-service';
 import { SanitizerMarkdownRendererService } from '@a2a_chat_canvas/services/sanitizer-markdown-renderer-service';
-import { Catalog, Theme } from '@a2ui/angular';
 import { EnvironmentProviders, Provider, Type, makeEnvironmentProviders } from '@angular/core';
-import { DEFAULT_A2UI_CATALOG } from './a2ui-catalog/a2a-chat-canvas-catalog';
+import { A2UI_RENDERER_CONFIG, A2uiRendererService, BasicCatalog } from '@a2ui/angular';
+import { A2A_CHAT_CANVAS_CATALOG } from './a2ui-catalog/a2a-chat-canvas-catalog';
 
 const DEFAULT_RENDERERS: readonly RendererEntry[] = [
   A2UI_DATA_PART_RENDERER_ENTRY,
@@ -150,20 +149,26 @@ export function usingRenderers(...renderers: readonly RendererEntry[]): Renderer
 }
 
 /**
- * Configures the Chat/Canvas to use A2UI Renderer.
+ * Configures the Chat/Canvas to use the A2UI v0.9 Renderer.
+ *
+ * @param customCatalog Optional custom catalog to extend the basic components.
+ * @returns The A2UI feature configuration.
  */
-export function usingA2uiRenderers(customCatalog?: any, theme?: any): A2uiFeature {
+export function usingA2uiRenderers(customCatalog?: any): A2uiFeature {
+  const catalogs = [new BasicCatalog(), A2A_CHAT_CANVAS_CATALOG];
+  if (customCatalog) {
+    catalogs.push(customCatalog);
+  }
   return {
     kind: ChatCanvasFeatureKind.A2UI_FEATURE,
     providers: [
       {
-        provide: Catalog,
+        provide: A2UI_RENDERER_CONFIG,
         useValue: {
-          ...DEFAULT_A2UI_CATALOG,
-          ...(customCatalog ?? {}),
+          catalogs,
         },
       },
-      { provide: Theme, useValue: theme ?? a2uiTheme },
+      A2uiRendererService,
     ],
   };
 }

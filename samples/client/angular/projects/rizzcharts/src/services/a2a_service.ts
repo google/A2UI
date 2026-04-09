@@ -23,27 +23,28 @@ import { CatalogService } from './catalog_service';
 export class A2aService implements A2aServiceInterface {
   private contextId?: string;
 
-  constructor(private catalogService: CatalogService) { }
+  constructor(private catalogService: CatalogService) {}
 
   async sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
     const currentCatalogUris = this.catalogService.catalogUris;
-    console.log("Attaching supported A2UI catalogs to message: ", currentCatalogUris);
+    console.log('Attaching supported A2UI catalogs to message: ', currentCatalogUris);
     const response = await fetch('/a2a', {
       body: JSON.stringify({
-        'parts': parts,
-        'metadata': {
-          "a2uiClientCapabilities": {
-            "supportedCatalogIds": currentCatalogUris
-          }
+        parts: parts,
+        metadata: {
+          a2uiClientCapabilities: {
+            supportedCatalogIds: currentCatalogUris,
+          },
+          extensions: ['https://a2ui.org/a2a-extension/a2ui/v0.9'],
         },
-        'contextId': this.contextId
+        contextId: this.contextId,
       }),
       method: 'POST',
       signal,
     });
 
     if (response.ok) {
-      const json = await response.json() as SendMessageSuccessResponse & { contextId?: string };
+      const json = (await response.json()) as SendMessageSuccessResponse & { contextId?: string };
       if (json.contextId || json.result?.contextId) {
         this.contextId = json.contextId || json.result?.contextId;
       }
@@ -59,7 +60,7 @@ export class A2aService implements A2aServiceInterface {
     if (!response.ok) {
       throw new Error('Failed to fetch agent card');
     }
-    const card = await response.json() as AgentCard;
+    const card = (await response.json()) as AgentCard;
     // Override iconUrl to use local asset
     card.iconUrl = 'rizz-agent.png';
     return card;

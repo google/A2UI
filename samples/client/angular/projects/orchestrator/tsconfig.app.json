@@ -6,7 +6,15 @@
     "outDir": "../../out-tsc/app",
     "types": [
       "node"
-    ]
+    ],
+    "paths": {
+      "@a2ui/angular": [
+        "../lib/src/v0_9/public-api.ts"
+      ],
+      "@a2a_chat_canvas/*": [
+        "../a2a-chat-canvas/src/lib/*"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts"

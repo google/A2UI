@@ -21,7 +21,7 @@ import { type PartResolver } from '@a2a_chat_canvas/a2a-renderer/types';
  * A PartResolver for identifying A2UI data parts within an A2A message.
  *
  * This resolver checks if a given `Part` is of kind 'data' and specifically contains
- * an A2UI message, which is indicated by the presence of the 'beginRendering' property.
+ * an A2UI message, which is indicated by the presence of the 'createSurface' property.
  * If it's an A2UI data part, it returns the variant key 'a2ui_data_part',
  * which maps to the A2uiDataPart component for rendering.
  *
@@ -29,12 +29,12 @@ import { type PartResolver } from '@a2a_chat_canvas/a2a-renderer/types';
  * @returns The string 'a2ui_data_part' if the part is an A2UI data part, otherwise null.
  */
 export const A2UI_DATA_PART_RESOLVER: PartResolver = (part: Part): string | null => {
-  // Check if the part is a data part and contains the 'beginRendering' key, which signifies an A2UI message.
+  // Check if the part is a data part and contains the 'createSurface' key, which signifies an A2UI message.
   if (
     part.kind === 'data' &&
     part.data &&
     typeof part.data === 'object' &&
-    'beginRendering' in part.data
+    'createSurface' in part.data
   ) {
     return 'a2ui_data_part';
   }
