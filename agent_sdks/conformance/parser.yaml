@@ -3099,3 +3099,14 @@
                   - id: "root2"
                     component: "Card"
                     child: "c2"
+
+- name: test_invalid_json_error
+  description: Tests that completely invalid JSON inside A2UI tags raises an error.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
+  process_chunk:
+    - input: "<a2ui-json>invalid json</a2ui-json>"
+      expect_error: "Failed to parse JSON"
+
