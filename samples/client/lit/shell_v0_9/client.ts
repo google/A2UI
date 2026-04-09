@@ -59,9 +59,6 @@ export class A2UIClient {
     message: any | string
   ): Promise<any[]> {
     const client = await this.#getClient();
-
-    console.log("A2UIClient:send", message);
-
     let parts: Part[] = [];
 
     if (typeof message === 'string') {

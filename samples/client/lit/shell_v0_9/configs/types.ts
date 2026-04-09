@@ -32,8 +32,8 @@ export interface AppConfig {
   heroImageDark?: string;
   /** Placeholder text for the input field */
   placeholder: string;
-  /** Text to display while loading (optional). Can be a single string or an array of strings to rotate. */
-  loadingText?: string | string[];
+  /** Text to display while loading (optional). */
+  loadingText?: string[];
   /** Optional server URL for the agent (e.g., http://localhost:10003) */
   serverUrl?: string;
   /** Custom CSSStyleSheet overrides for components */

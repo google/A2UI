@@ -265,7 +265,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   #processor = new v0_9.MessageProcessor(
     [basicCatalog],
     async (action: v0_9.A2uiClientAction): Promise<any> => {
-      console.log("Action", action);
+      console.debug("Handling action", action);
 
       const context: Record<string, any> = { ...action.context };
 
@@ -385,14 +385,14 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   #startLoadingAnimation() {
     if (
-      Array.isArray(this.config.loadingText) &&
+      this.config.loadingText &&
       this.config.loadingText.length > 1
     ) {
       this.#loadingTextIndex = 0;
       this.#loadingInterval = window.setInterval(() => {
         this.#loadingTextIndex =
           (this.#loadingTextIndex + 1) %
-          (this.config.loadingText as string[]).length;
+          this.config.loadingText!.length;
       }, 2000);
     }
   }
@@ -426,14 +426,9 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   #maybeRenderData() {
     if (this.#requesting) {
-      let text = "Awaiting an answer...";
-      if (this.config.loadingText) {
-        if (Array.isArray(this.config.loadingText)) {
-          text = this.config.loadingText[this.#loadingTextIndex];
-        } else {
-          text = this.config.loadingText;
-        }
-      }
+      const text = this.config.loadingText
+        ? this.config.loadingText[this.#loadingTextIndex]
+        : "Awaiting an answer...";
 
       return html` <div class="pending">
         <div class="spinner"></div>
@@ -442,18 +437,16 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     }
 
     const surfaces = Array.from(this.#processor.model.surfacesMap.entries());
-    console.log("Surfaces", surfaces);
-
     if (surfaces.length === 0) {
       return nothing;
     }
+    console.debug("Rendering surfaces", surfaces);
 
     return html`<section id="surfaces">
       ${repeat(
         surfaces,
         ([surfaceId]) => surfaceId,
-        ([surfaceId, surface]) => {
-          console.log('Rendering', surfaceId);
+        ([_, surface]) => {
           return html`<a2ui-surface
               .surface=${surface}
             ></a2ui-surface>`;
@@ -464,8 +457,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   async #sendAndProcessMessage(request) {
     const messages = await this.#sendMessage(request);
-
-    console.log("Received", messages);
+    console.debug("Received messages", messages);
 
     this.#lastMessages = messages;
 
