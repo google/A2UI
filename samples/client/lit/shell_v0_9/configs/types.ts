@@ -36,6 +36,6 @@ export interface AppConfig {
   loadingText?: string | string[];
   /** Optional server URL for the agent (e.g., http://localhost:10003) */
   serverUrl?: string;
-  /** Theme overrides (CSS Variables) */
-  theme?: any;
+  /** Custom CSSStyleSheet overrides for components */
+  cssOverrides?: CSSStyleSheet;
 }

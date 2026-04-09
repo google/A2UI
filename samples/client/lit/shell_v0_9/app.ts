@@ -28,7 +28,7 @@ import { A2UIClient } from "./client.js";
 import { repeat } from "lit/directives/repeat.js";
 import * as v0_9 from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
-import { overridesSheet } from "./theme/v0_9-overrides.js";
+
 
 // App elements.
 import "./ui/ui.js";
@@ -55,8 +55,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   @state()
   accessor #requesting = false;
 
-  @state()
-  accessor #error: string | null = null;
 
   @state()
   accessor #lastMessages: any[] = [];
@@ -300,34 +298,24 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   );
   #a2uiClient = new A2UIClient();
 
-  #maybeRenderError() {
-    if (!this.#error) return nothing;
 
-    return html`<div class="error">${this.#error}</div>`;
-  }
 
   connectedCallback() {
     super.connectedCallback();
 
-    if (!document.adoptedStyleSheets.includes(overridesSheet)) {
-      document.adoptedStyleSheets = [...document.adoptedStyleSheets, overridesSheet];
-    }
-
     // Load config from URL
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const appKey = urlParams.get("app");
-    this.config = (appKey && configs[appKey]) || configs.contacts;
+    this.config = (appKey && configs[appKey]) || configs.restaurant;
 
-    // Apply the theme directly, which will use the Lit context.
-    // if (this.config.theme) {
-    //   this.theme = this.config.theme;
-    // }
-
-    window.document.title = this.config.title;
-    window.document.documentElement.style.setProperty(
-      "--background",
-      this.config.background,
-    );
+    // Set the CSS Overrides for the given appKey.
+    if (this.config.cssOverrides && !document.adoptedStyleSheets.includes(this.config.cssOverrides)) {
+      document.adoptedStyleSheets = [
+        ...document.adoptedStyleSheets,
+        this.config.cssOverrides,
+      ];
+    }
+    document.title = this.config.title;
 
     // Initialize client with configured URL
     this.#a2uiClient = new A2UIClient(this.config.serverUrl);
@@ -338,7 +326,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       this.#renderThemeToggle(),
       this.#maybeRenderForm(),
       this.#maybeRenderData(),
-      this.#maybeRenderError(),
     ];
   }
 
