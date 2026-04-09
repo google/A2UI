@@ -32,7 +32,7 @@ import { renderMarkdown } from "@a2ui/markdown-it";
 
 // Configurations
 import { A2UIClient } from "./client.js";
-import { configs, AppConfig } from "./configs/configs.js";
+import { restaurantConfig, AppConfig } from "./configs/configs.js";
 import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-shell")
@@ -47,7 +47,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: any[] = [];
 
   @state()
-  accessor config: AppConfig = configs.restaurant;
+  accessor config: AppConfig = restaurantConfig;
 
   @state()
   accessor #loadingTextIndex = 0;
@@ -288,11 +288,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    // Load config from URL
-    const urlParams = new URLSearchParams(location.search);
-    const appKey = urlParams.get("app");
-    this.config = (appKey && configs[appKey]) || configs.restaurant;
-
     // Set the CSS Overrides for the given appKey.
     if (this.config.cssOverrides && !document.adoptedStyleSheets.includes(this.config.cssOverrides)) {
       document.adoptedStyleSheets = [
@@ -339,7 +334,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     if (this.#requesting) return nothing;
     if (this.#lastMessages.length > 0) return nothing;
 
-    return html` <form
+    return html`<form
       @submit=${async (evt: Event) => {
         evt.preventDefault();
         if (!(evt.target instanceof HTMLFormElement)) {

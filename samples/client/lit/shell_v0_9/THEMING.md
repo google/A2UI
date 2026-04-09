@@ -24,9 +24,6 @@ that are used by the A2UI-provided renderers via global CSS custom properties on
 In this particular app:
 
 - Application themes are defined using `CSSStyleSheet` instances. See:
-  - [Contacts theme](theme/contacts-theme.ts)
   - [Restaurants theme](theme/restaurant-theme.ts)
 - These stylesheets override the default component CSS variables specified above,
   and change the look and feel of the generated UI.
-- The shell app changes what configuration is loaded through the URL `app`
-  query parameter: `?app=restaurant` (default) or `?app=contacts`.

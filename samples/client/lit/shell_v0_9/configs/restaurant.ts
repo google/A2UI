@@ -17,7 +17,7 @@
 import { AppConfig } from "./types.js";
 import { restaurantThemeSheet } from "../theme/restaurant-theme.js";
 
-export const config: AppConfig = {
+export const restaurantConfig: AppConfig = {
   key: "restaurant",
   title: "Restaurant Finder",
   heroImage: "/hero.png",
