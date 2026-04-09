@@ -23,13 +23,10 @@ import { ComponentBinder } from './component-binder.service';
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
   let mockDestroyRef: jasmine.SpyObj<DestroyRef>;
-  let onDestroyCallback: () => void;
 
   beforeEach(() => {
-    onDestroyCallback = () => {};
     mockDestroyRef = jasmine.createSpyObj('DestroyRef', ['onDestroy']);
     mockDestroyRef.onDestroy.and.callFake((callback: () => void) => {
-      onDestroyCallback = callback;
       return () => {}; // Return unregister function
     });
 
@@ -139,5 +136,40 @@ describe('ComponentBinder', () => {
     // Call onUpdate on literal, should not crash or call set
     bound['text'].onUpdate('new');
     expect(mockDataContext.set).not.toHaveBeenCalled();
+  });
+
+  it('should expand ChildList object templates', () => {
+    const mockComponentModel = {
+      properties: {
+        children: { componentId: 'item-comp', path: '/list/data' },
+      },
+    };
+
+    const mockListSig = preactSignal(['a', 'b']);
+    const mockDataContext = {
+      resolveSignal: jasmine.createSpy('resolveSignal').and.callFake((val: any) => {
+        if (val && val.path === '/list/data') return mockListSig;
+        return preactSignal(val);
+      }),
+      nested: jasmine.createSpy('nested').and.callFake((path: string) => ({
+        path,
+        nested: (sub: string) => ({ path: `${path}/${sub}` }),
+      })),
+      set: jasmine.createSpy('set'),
+    };
+
+    const mockContext = {
+      componentModel: mockComponentModel,
+      dataContext: mockDataContext,
+    } as unknown as ComponentContext;
+
+    const bound = binder.bind(mockContext);
+
+    expect(bound['children']).toBeDefined();
+    const children = bound['children'].value();
+    expect(Array.isArray(children)).toBe(true);
+    expect(children.length).toBe(2);
+    expect(children[0]).toEqual({ id: 'item-comp', basePath: '/list/data/0' });
+    expect(children[1]).toEqual({ id: 'item-comp', basePath: '/list/data/1' });
   });
 });

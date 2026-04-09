@@ -29,7 +29,10 @@ import { ComponentHostComponent } from './component-host.component';
   standalone: true,
   imports: [ComponentHostComponent],
   template: `
-    <a2ui-v09-component-host [surfaceId]="surfaceId()" [dataContextPath]="dataContextPath()">
+    <a2ui-v09-component-host
+      [componentKey]="{ id: 'root', basePath: dataContextPath() }"
+      [surfaceId]="surfaceId()"
+    >
     </a2ui-v09-component-host>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

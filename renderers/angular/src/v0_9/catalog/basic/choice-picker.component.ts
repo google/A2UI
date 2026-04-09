@@ -119,7 +119,6 @@ export class ChoicePickerComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-
   displayStyle = computed(() => this.props()['displayStyle']?.value());
   choices = computed(
     () => this.props()['choices']?.value() || this.props()['options']?.value() || [],

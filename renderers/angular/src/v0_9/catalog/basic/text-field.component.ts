@@ -37,8 +37,11 @@ import { BoundProperty } from '../../core/types';
         [value]="value()"
         (input)="handleInput($event)"
         [placeholder]="placeholder()"
+        [class.invalid]="props()['isValid']?.value() === false"
       />
-      <!-- Validation errors would go here in a more advanced version -->
+      @for (message of props()['validationErrors']?.value(); track message) {
+        <div class="a2ui-error-message">{{ message }}</div>
+      }
     </div>
   `,
   styles: [
@@ -59,6 +62,13 @@ import { BoundProperty } from '../../core/types';
         border: 1px solid #ccc;
         border-radius: 4px;
       }
+      input.invalid {
+        border-color: red;
+      }
+      .a2ui-error-message {
+        color: red;
+        font-size: 12px;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,12 +82,12 @@ export class TextFieldComponent {
    * - `label`: Optional label text to display above the input.
    * - `placeholder`: Hint text shown when the input is empty.
    * - `variant`: Input type variant ('default', 'obscured' (password), 'number').
+   * - `checks`: Optional validation rules.
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
   componentId = input<string>();
   dataContextPath = input<string>('/');
-
 
   label = computed(() => this.props()['label']?.value());
   value = computed(() => this.props()['value']?.value() || '');
