@@ -131,7 +131,6 @@ class A2uiStreamParser:
     self._in_top_level_list = False
     self._found_valid_json_in_block = False
 
-
   @property
   def _placeholder_component(self) -> Dict[str, Any]:
     """Returns the version-specific placeholder component.
@@ -306,7 +305,9 @@ class A2uiStreamParser:
           json_fragment = parts[0]
           self._process_json_chunk(json_fragment, messages)
           if not self._found_valid_json_in_block:
-            raise ValueError("Failed to parse JSON: No valid JSON object found in A2UI block.")
+            raise ValueError(
+                "Failed to parse JSON: No valid JSON object found in A2UI block."
+            )
 
           # End of block: reset JSON state but keep seen_components
           self._found_delimiter = False
@@ -516,7 +517,6 @@ class A2uiStreamParser:
                   if isinstance(obj, dict):
                     self._found_valid_json_in_block = True
                     logger.debug(
-
                         f"[Parsed Dict] Keys: {list(obj.keys())}, protocol check"
                         " follows..."
                     )
