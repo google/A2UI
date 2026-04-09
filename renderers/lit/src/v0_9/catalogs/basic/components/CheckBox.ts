@@ -45,7 +45,7 @@ export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
       width: var(--a2ui-checkbox-size, 1rem);
       height: var(--a2ui-checkbox-size, 1rem);
       background: var(--a2ui-checkbox-background, inherit);
-      border: var(--a2ui-checkbox-border, auto);
+      border: var(--a2ui-checkbox-border, var(--a2ui-border));
       border-radius: var(--a2ui-checkbox-border-radius, 4px);
     }
   `;
