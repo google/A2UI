@@ -15,10 +15,10 @@
 """Prompt builder for the rizzcharts agent."""
 
 # pylint: disable=g-importing-member, line-too-long
-from a2ui.core.schema.constants import VERSION_0_9
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.common_modifiers import remove_strict_validation
 from agent import ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 
 

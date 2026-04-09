@@ -12,43 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from a2a.server.agent_execution import RequestContext
-from a2a.types import DataPart, TextPart, Part
-from a2ui.a2a import *
-from a2ui.a2a import _select_newest_a2ui_extension
 from unittest.mock import MagicMock
-
-
-def test_a2ui_part_serialization():
-  a2ui_data = {"beginRendering": {"surfaceId": "test-surface", "root": "root-column"}}
-
-  part = create_a2ui_part(a2ui_data)
-
-  assert is_a2ui_part(part), "Should be identified as A2UI part"
-
-  data_part = get_a2ui_datapart(part)
-  assert data_part is not None, "Should contain DataPart"
-  assert a2ui_data == data_part.data, "Deserialized data should match original"
-
-
-def test_non_a2ui_data_part():
-  part = Part(
-      root=DataPart(
-          data={"foo": "bar"},
-          metadata={"mimeType": "application/json"},  # Not A2UI
-      )
-  )
-  assert not is_a2ui_part(part), "Should not be identified as A2UI part"
-  assert get_a2ui_datapart(part) is None, "Should not return A2UI DataPart"
-
-
-def test_non_a2ui_part():
-  text_part = TextPart(text="this is some text")
-  part = Part(root=text_part)
-
-  assert not is_a2ui_part(part), "Should not be identified as A2UI part"
-  assert get_a2ui_datapart(part) is None, "Should not return A2UI DataPart"
+from a2a.server.agent_execution import RequestContext
+from a2ui.a2a.extension import (
+    get_a2ui_agent_extension,
+    try_activate_a2ui_extension,
+    _select_newest_a2ui_extension,
+    A2UI_EXTENSION_BASE_URI,
+    AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY,
+    AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY,
+)
 
 
 def test_get_a2ui_agent_extension():

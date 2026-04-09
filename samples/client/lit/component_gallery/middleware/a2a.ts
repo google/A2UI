@@ -83,10 +83,14 @@ export const plugin = (): Plugin => {
                   originalBody
                 );
 
-                const clientEvent = JSON.parse(originalBody);
+                const requestData = JSON.parse(originalBody);
+                const contextId = requestData.contextId;
+                const clientEvent = requestData.event || requestData;
+
                 sendParams = {
                   message: {
                     messageId: uuidv4(),
+                    contextId,
                     role: "user",
                     parts: [
                       {
@@ -132,7 +136,11 @@ export const plugin = (): Plugin => {
                 if (result.kind === "task") {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
-                  res.end(JSON.stringify(result.status.message?.parts));
+                  const responseData = {
+                    parts: result.status.message?.parts || [],
+                    contextId: result.contextId
+                  };
+                  res.end(JSON.stringify(responseData));
                   return;
                 }
               }

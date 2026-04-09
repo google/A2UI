@@ -18,17 +18,17 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from a2a import types as a2a_types
-from a2ui.a2a import create_a2ui_part
+from a2ui.a2a.parts import create_a2ui_part
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events.event import Event
 
-from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import (
+from a2ui.adk.send_a2ui_to_client_toolset import (
     A2uiEventConverter,
     A2uiPartConverter,
     SendA2uiToClientToolset,
 )
-from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.catalog import A2uiCatalog
+from a2ui.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types as genai_types

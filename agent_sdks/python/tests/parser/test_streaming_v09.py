@@ -16,22 +16,22 @@ import json
 import copy
 from unittest.mock import MagicMock
 import pytest
-from a2ui.core.schema.constants import (
+from a2ui.schema.constants import (
     A2UI_OPEN_TAG,
     A2UI_CLOSE_TAG,
     VERSION_0_9,
     SURFACE_ID_KEY,
     CATALOG_COMPONENTS_KEY,
 )
-from a2ui.core.parser.constants import (
+from a2ui.parser.constants import (
     MSG_TYPE_CREATE_SURFACE,
     MSG_TYPE_UPDATE_COMPONENTS,
     MSG_TYPE_DELETE_SURFACE,
     MSG_TYPE_DATA_MODEL_UPDATE,
 )
-from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser
-from a2ui.core.parser.response_part import ResponsePart
+from a2ui.schema.catalog import A2uiCatalog
+from a2ui.parser.streaming import A2uiStreamParser
+from a2ui.parser.response_part import ResponsePart
 
 
 @pytest.fixture

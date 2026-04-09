@@ -27,12 +27,16 @@ How components connect to application state using JSON Pointer paths. Covers rea
 
 === "v0.8 (Stable)"
 
+    Version 0.8 uses the following message types:
+
     - **`surfaceUpdate`**: Define or update UI components
     - **`dataModelUpdate`**: Update application state
     - **`beginRendering`**: Signal the client to render
     - **`deleteSurface`**: Remove a UI surface
 
 === "v0.9 (Draft)"
+
+    Version 0.9 uses the following message types:
 
     - **`createSurface`**: Create a new surface and specify its catalog
     - **`updateComponents`**: Add or update UI components in a surface

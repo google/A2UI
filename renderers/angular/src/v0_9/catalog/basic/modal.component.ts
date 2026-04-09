@@ -32,9 +32,8 @@ import { BoundProperty } from '../../core/types';
       <div (click)="openModal()" class="a2ui-modal-trigger">
         @if (trigger()) {
           <a2ui-v09-component-host
-            [componentId]="trigger()!"
+            [componentKey]="trigger()!"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
           >
           </a2ui-v09-component-host>
         }
@@ -46,9 +45,8 @@ import { BoundProperty } from '../../core/types';
             <button class="a2ui-modal-close" (click)="closeModal()">&times;</button>
             @if (content()) {
               <a2ui-v09-component-host
-                [componentId]="content()!"
+                [componentKey]="content()!"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             }
@@ -122,6 +120,8 @@ export class ModalComponent {
 
   trigger = computed(() => this.props()['trigger']?.value());
   content = computed(() => this.props()['content']?.value());
+
+
 
   openModal() {
     this.isOpen.set(true);

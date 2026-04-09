@@ -21,8 +21,8 @@ import json
 import mcp.types as types
 from mcp.server.lowlevel import Server
 from starlette.requests import Request
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.schema.constants import VERSION_0_9
 from a2ui.basic_catalog.provider import BasicCatalog
 
 

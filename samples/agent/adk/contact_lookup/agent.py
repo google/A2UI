@@ -41,15 +41,14 @@ from a2a.types import (
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response, ResponsePart
+
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.parser.parser import parse_response, ResponsePart
+from a2ui.parser.streaming import A2uiStreamParser
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a import (
-    get_a2ui_agent_extension,
-    parse_response_to_parts,
-    stream_response_to_parts,
-)
+from a2ui.a2a.extension import get_a2ui_agent_extension
+from a2ui.a2a.parts import parse_response_to_parts, stream_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -260,8 +259,6 @@ class ContactAgent:
                 yield p.text
 
       if selected_catalog:
-        from a2ui.core.parser.streaming import A2uiStreamParser
-
         if session_id in self._parsers:
           self._parsers.move_to_end(session_id)
         else:

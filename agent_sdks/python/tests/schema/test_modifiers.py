@@ -14,9 +14,9 @@
 
 import pytest
 from unittest.mock import patch
-from a2ui.core.schema.constants import VERSION_0_8
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.constants import VERSION_0_8
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.schema.common_modifiers import remove_strict_validation
 
 
 def test_remove_strict_validation():
@@ -50,7 +50,7 @@ def test_manager_with_modifiers():
   # Mock load_from_bundled_resource to return a simple schema with strict validation
   mock_schema = {"type": "object", "additionalProperties": False}
   with patch(
-      "a2ui.core.schema.manager.load_from_bundled_resource",
+      "a2ui.schema.manager.load_from_bundled_resource",
       return_value=mock_schema,
   ):
     manager = A2uiSchemaManager(
@@ -70,7 +70,7 @@ def test_manager_no_modifiers():
   """Tests that A2uiSchemaManager works fine without modifiers."""
   mock_schema = {"type": "object", "additionalProperties": False}
   with patch(
-      "a2ui.core.schema.manager.load_from_bundled_resource",
+      "a2ui.schema.manager.load_from_bundled_resource",
       return_value=mock_schema,
   ):
     manager = A2uiSchemaManager(VERSION_0_8, schema_modifiers=None)

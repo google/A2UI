@@ -48,6 +48,31 @@ import { BoundProperty } from '../../core/types';
       .a2ui-image.rounded {
         border-radius: 8px;
       }
+      .a2ui-image.icon {
+        width: 24px;
+        height: 24px;
+      }
+      .a2ui-image.avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      .a2ui-image.smallFeature {
+        width: 100px;
+        height: 100px;
+      }
+      .a2ui-image.mediumFeature {
+        max-width: 300px;
+        height: auto;
+      }
+      .a2ui-image.largeFeature {
+        width: 100%;
+        max-height: 400px;
+      }
+      .a2ui-image.header {
+        width: 100%;
+        height: 200px;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +85,7 @@ export class ImageComponent {
    * - `url`: The absolute URL of the image.
    * - `description`: Accessibility text for the image.
    * - `fit`: Object-fit mode ('cover', 'contain', 'fill', 'none', 'scale-down').
-   * - `variant`: Style variant ('default', 'circle', 'rounded').
+   * - `variant`: Style variant ('default', 'circle', 'rounded', 'icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header').
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();

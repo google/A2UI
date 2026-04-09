@@ -38,11 +38,10 @@ import { getNormalizedPath } from '../../core/utils';
       style="display: flex; flex-direction: column; width: 100%; gap: 4px;"
     >
       @if (!isRepeating()) {
-        @for (childId of children(); track childId) {
+        @for (child of normalizedChildren(); track child.id) {
           <a2ui-v09-component-host
-            [componentId]="childId"
+            [componentKey]="child"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
           >
           </a2ui-v09-component-host>
         }
@@ -51,9 +50,8 @@ import { getNormalizedPath } from '../../core/utils';
       @if (isRepeating()) {
         @for (item of children(); track item; let i = $index) {
           <a2ui-v09-component-host
-            [componentId]="templateId()!"
+            [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="getNormalizedPath(i)"
           >
           </a2ui-v09-component-host>
         }
@@ -90,6 +88,16 @@ export class ColumnComponent {
 
   protected templateId = computed(() => {
     return this.props()['children']?.raw?.componentId;
+  });
+
+  protected normalizedChildren = computed(() => {
+    if (this.isRepeating()) return [];
+    return this.children().map(child => {
+      if (typeof child === 'object' && child !== null && 'id' in child) {
+        return child as { id: string; basePath: string };
+      }
+      return { id: child as string, basePath: this.dataContextPath() };
+    });
   });
 
   protected getNormalizedPath(index: number) {

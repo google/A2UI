@@ -16,10 +16,10 @@ import json
 import copy
 import pytest
 from unittest.mock import MagicMock
-from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
-from a2ui.core.schema.validator import (
+from a2ui.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.schema.validator import (
     _find_root_id as find_root_id,
     extract_component_ref_fields,
     analyze_topology,
@@ -39,6 +39,7 @@ class TestValidator:
             {"$ref": "#/$defs/CreateSurfaceMessage"},
             {"$ref": "#/$defs/UpdateComponentsMessage"},
             {"$ref": "#/$defs/UpdateDataModelMessage"},
+            {"$ref": "#/$defs/DeleteSurfaceMessage"},
         ],
         "$defs": {
             "CreateSurfaceMessage": {
@@ -99,6 +100,7 @@ class TestValidator:
                             "surfaceId": {
                                 "type": "string",
                             },
+                            "path": {"type": "string"},
                             "value": {"additionalProperties": True},
                         },
                         "required": ["surfaceId"],
@@ -106,6 +108,22 @@ class TestValidator:
                     },
                 },
                 "required": ["version", "updateDataModel"],
+                "additionalProperties": False,
+            },
+            "DeleteSurfaceMessage": {
+                "type": "object",
+                "properties": {
+                    "version": {"const": "v0.9"},
+                    "deleteSurface": {
+                        "type": "object",
+                        "properties": {
+                            "surfaceId": {"type": "string"},
+                        },
+                        "required": ["surfaceId"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["deleteSurface", "version"],
                 "additionalProperties": False,
             },
         },
@@ -469,6 +487,76 @@ class TestValidator:
     with pytest.raises(ValueError) as excinfo:
       catalog_0_9.validator.validate(invalid_message)
     assert "'catalogId' is a required property" in str(excinfo.value)
+
+  def test_pretty_error_messages(self, catalog_0_9):
+    payload = [
+        {
+            "version": "v0.9",
+            "createSurface": {
+                "surfaceId": "recipe-card",
+                "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+            },
+        },
+        {
+            "version": "v0.9",
+            "updateComponents": {
+                "surfaceId": "recipe-card",
+                "components": [
+                    {
+                        "id": "main-column",
+                        "component": "Column",
+                        "children": ["recipe-image"],
+                        "gap": "small",
+                    },
+                    {
+                        "id": "recipe-image",
+                        "component": "Image",
+                        "url": {"path": "/image"},
+                        "altText": {"path": "/title"},
+                        "fit": "cover",
+                    },
+                    {
+                        "id": "title",
+                        "component": "Text",
+                        "text": {"path": "/title"},
+                        "usageHint": "h3",
+                    },
+                    {
+                        "id": "rating-row",
+                        "component": "Row",
+                        "children": ["star-icon"],
+                    },
+                ],
+            },
+        },
+        {
+            "version": "v0.9",
+            "updateDataModel": {
+                "surfaceId": "recipe-card",
+                "value": {
+                    "image": (
+                        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop"
+                    )
+                },
+            },
+        },
+        {"version": "v0.9", "deleteSurface": {}},
+        {"unknownMessage": {}},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+      catalog_0_9.validator.validate(payload)
+
+    err_text = str(excinfo.value)
+    print(f"\nVALIDATOR_OUTPUT_START\n{err_text}\nVALIDATOR_OUTPUT_END")
+
+    assert "Unknown component: Row" in err_text
+    assert "'usageHint' was unexpected" in err_text
+    assert "'gap' was unexpected" in err_text
+    assert "'altText', 'fit' were unexpected" in err_text
+    assert "'surfaceId' is a required property" in err_text
+    assert "{'path': '/image'} is not of type 'string'" in err_text
+    assert "Unknown message type with keys ['unknownMessage']" in err_text
 
   def test_validator_0_8(self, catalog_0_8):
     # v0.8 uses monolithic bundling for validation
@@ -984,22 +1072,6 @@ class TestValidator:
           {
               "updateDataModel": {
                   "surfaceId": "surface1",
-                  "path": "invalid//path",
-                  "value": {"some": "data"},
-              }
-          },
-          {
-              "updateComponents": {
-                  "components": [{
-                      "id": "root",
-                      "component": "Text",
-                      "text": {"path": "invalid path with spaces"},
-                  }]
-              }
-          },
-          {
-              "updateDataModel": {
-                  "surfaceId": "surface1",
                   "path": "/invalid/escape/~2",
                   "value": {"some": "data"},
               }
@@ -1007,6 +1079,7 @@ class TestValidator:
       ],
   )
   def test_validate_invalid_paths(self, test_catalog, payload):
+
     # Use make_payload to ensure correct wrapping and 'version' field for v0.9
     if "updateComponents" in payload:
       p = self.make_payload(
@@ -1026,11 +1099,17 @@ class TestValidator:
 
     with pytest.raises(
         ValueError,
-        match=(
-            "(Invalid JSON Pointer syntax|is not valid under any of the given schemas)"
-        ),
+        match="(Invalid path syntax|is not valid under any of the given schemas)",
     ):
       test_catalog.validator.validate(p)
+
+  def test_validate_relative_paths(self, test_catalog):
+    """Tests that relative paths are allowed."""
+    components = [
+        {"id": "root", "component": "Text", "text": {"path": "relative/path"}}
+    ]
+    payload = self.make_payload(test_catalog, components=components)
+    test_catalog.validator.validate(payload)
 
   def test_validate_global_recursion_limit_exceeded(self, test_catalog):
     deep_data = {"level": 0}

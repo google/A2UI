@@ -18,7 +18,6 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ComponentHostComponent } from './component-host.component';
 import { A2uiRendererService } from './a2ui-renderer.service';
-import { AngularCatalog } from '../catalog/types';
 import { ComponentBinder } from './component-binder.service';
 import { ComponentContext } from '@a2ui/web_core/v0_9';
 import { Component, Input } from '@angular/core';
@@ -79,7 +78,7 @@ describe('ComponentHostComponent', () => {
 
     fixture = TestBed.createComponent(ComponentHostComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('componentId', 'comp1');
+    fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/' });
     fixture.componentRef.setInput('surfaceId', 'surf1');
   });
 
@@ -109,7 +108,7 @@ describe('ComponentHostComponent', () => {
     });
 
     it('should use provided dataContextPath for ComponentContext', () => {
-      fixture.componentRef.setInput('dataContextPath', '/nested/path');
+      fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/nested/path' });
       fixture.detectChanges();
 
       const bindArg = mockBinder.bind.calls.mostRecent().args[0];
@@ -170,7 +169,7 @@ describe('ComponentHostComponent', () => {
       expect(compiled.innerHTML).toContain('Child Component');
     });
     it('should pass dataContextPath to the rendered component', () => {
-      fixture.componentRef.setInput('dataContextPath', '/some/path');
+      fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/some/path' });
       fixture.detectChanges();
 
       const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));

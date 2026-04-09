@@ -2,12 +2,11 @@
 
 Community and third-party A2UI renderer implementations.
 
-!!! note
-    These renderers are maintained by their respective authors, not the A2UI team.
-    Check each project for compatibility, version support, and maintenance status.
+> NOTE
+> These renderers are maintained by their respective authors, not the A2UI team. Check each project for compatibility, version support, and maintenance status.
 
-!!! tip
-    Looking for the **official** A2UI React renderer? See [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react) — the core A2UI React renderer maintained by the A2UI team.
+> TIP
+> Looking for the **official** A2UI React renderer? See [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react) — the core A2UI React renderer maintained by the A2UI team.
 
 ## Community Renderers
 
@@ -25,9 +24,9 @@ Community and third-party A2UI renderer implementations.
 
 These projects are early-stage or experimental:
 
-- **[xpert-ai/a2ui-react](https://www.npmjs.com/package/@xpert-ai/a2ui-react)** (`@xpert-ai/a2ui-react`) — React renderer with ShadCN UI components (v0.0.1, published Jan 2026)
-- **[josh-english-2k18/a2ui-3d-renderer](https://github.com/josh-english-2k18/a2ui-3d-renderer)** — Experimental Three.js/WebGL 3D renderer for A2UI (~2 stars)
-- **[AINative-Studio/ai-kit-a2ui](https://github.com/AINative-Studio/ai-kit-a2ui)** — React + ShadCN renderer for the AIKit framework (~2 stars)
+- **[xpert-ai/a2ui-react](https://www.npmjs.com/package/@xpert-ai/a2ui-react)** (`@xpert-ai/a2ui-react`) — React renderer with ShadCN UI components (v0.0.1, published Jan 2026).
+- **[josh-english-2k18/a2ui-3d-renderer](https://github.com/josh-english-2k18/a2ui-3d-renderer)** — Experimental Three.js/WebGL 3D renderer for A2UI (~2 stars).
+- **[AINative-Studio/ai-kit-a2ui](https://github.com/AINative-Studio/ai-kit-a2ui)** — React + ShadCN renderer for the AIKit framework (~2 stars).
 
 ### Related Projects
 
@@ -49,9 +48,11 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 ## Submitting a Renderer
 
-Built an A2UI renderer? We'd love to list it here.
+If you have built an A2UI renderer, submit it to be listed here.
 
 ### How to submit
+
+To submit a renderer, follow these steps:
 
 1. **Fork** the [google/A2UI](https://github.com/google/A2UI) repository
 2. **Edit** this file (`docs/ecosystem/renderers.md`) — add a row to the Community Renderers table with your renderer's name, platform, npm package (if any), version support, and a link to the source
@@ -62,12 +63,12 @@ Need inspiration? Browse the **[community samples](https://github.com/google/A2U
 
 ### What makes a good community renderer?
 
-A listing is more likely to be accepted and used if it:
+A listing is more likely to be accepted and used if it meets the following criteria:
 
-- Has **published source code** (open-source preferred, MIT or Apache 2.0)
-- Clearly states **which A2UI spec version** it supports (v0.8, v0.9, or both)
-- Covers the **basic components** from the other A2UI renderers: text, buttons, inputs, basic layout components, etc
-- Includes a **README** with install instructions and a minimal usage example
-- Is **actively maintained** — flag it as archived if you're no longer supporting it
+- Has **published source code** (open-source preferred, MIT or Apache 2.0).
+- Clearly states **which A2UI spec version** it supports (v0.8, v0.9, or both).
+- Covers the **basic components** from the other A2UI renderers: text, buttons, inputs, basic layout components, etc.
+- Includes a **README** with install instructions and a minimal usage example.
+- Is **actively maintained** — flag it as archived if you're no longer supporting it.
 
 Community renderers don't need to be production-ready to be listed — experimental and early-stage projects are welcome in the Notable Mentions section.

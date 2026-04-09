@@ -13,11 +13,11 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 Key features:
 
-- ✅ Streaming JSONL message format
-- ✅ Four core message types (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface`)
-- ✅ Adjacency list component model
-- ✅ JSON Pointer-based data binding
-- ✅ Separation of structure and state
+- Streaming JSONL message format.
+- Four core message types (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface`).
+- Adjacency list component model.
+- JSON Pointer-based data binding.
+- Separation of structure and state.
 
 ### Renderers
 
@@ -57,7 +57,7 @@ Key features:
 | Integration | Status | Notes |
 |-------------|--------|-------|
 | **Any agent with A2A support** | ✅ Complete | Day-zero compatibility thanks to A2A protocol |
-| **ADK** | 📋 Planned | Still designing developer ergonomics, see [samples](https://github.com/google/A2UI/tree/main/samples/agent/adk) |
+| **ADK** | 📋 Planned | Still designing developer ergonomics, see [samples](../samples/agent/adk) |
 | **Genkit** | 💡 Proposed | Community interest |
 | **LangGraph** | 💡 Proposed | Community interest |
 | **CrewAI** | 💡 Proposed | Community interest |

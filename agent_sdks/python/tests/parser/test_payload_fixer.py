@@ -14,7 +14,7 @@
 
 import json
 import pytest
-from a2ui.core.parser.payload_fixer import (
+from a2ui.parser.payload_fixer import (
     _remove_trailing_commas,
     _parse,
     parse_and_fix,

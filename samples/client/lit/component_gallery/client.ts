@@ -34,6 +34,8 @@ import { componentRegistry } from "@a2ui/lit/ui";
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
+  #contextId?: string;
+
   get ready() {
     return this.#ready;
   }
@@ -50,17 +52,25 @@ export class A2UIClient {
     };
 
     const response = await fetch("/a2a", {
-      body: JSON.stringify(finalMessage),
+      body: JSON.stringify({
+        event: finalMessage,
+        contextId: this.#contextId
+      }),
       method: "POST",
     });
 
     if (response.ok) {
-      const data = (await response.json()) as A2AServerPayload;
+      const responseData = await response.json();
+      if (responseData.contextId) {
+        this.#contextId = responseData.contextId;
+      }
+      const parts = Array.isArray(responseData) ? responseData : (responseData.parts || []);
       const messages: v0_8.Types.ServerToClientMessage[] = [];
-      if ("error" in data) {
-        throw new Error(data.error);
+      if (responseData.error) {
+        throw new Error(responseData.error);
       } else {
-        for (const item of data) {
+        const items = Array.isArray(parts) ? parts : [parts];
+        for (const item of items) {
           if (item.kind === "text") continue;
           messages.push(item.data);
         }
