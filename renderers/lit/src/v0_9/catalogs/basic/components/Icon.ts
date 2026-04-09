@@ -36,28 +36,28 @@ export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
    *
    * - `--a2ui-icon-size`: Dimensions of the icon.
    * - `--a2ui-icon-color`: Color tint applied to the icon.
+   * - `--a2ui-icon-font-family`: Override the font family for icons. Defaults to Material Symbols Outlined.
+   * - `--a2ui-icon-font-variation-settings`: Complete override for font-variation-settings.
    */
   static styles = css`
+    :where(:host) {
+      --_icon-size: var(--a2ui-icon-size, var(--a2ui-font-size-xl, 24px));
+    }
     :host {
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
-    .material-icons {
-      font-family: "Material Icons", sans-serif;
+    .material-symbol {
+      font-family: var(--a2ui-icon-font-family, "Material Symbols Outlined", sans-serif);
+      font-size: var(--_icon-size);
       font-weight: normal;
       font-style: normal;
-      font-size: var(--a2ui-icon-size, var(--a2ui-font-size-xl, 24px));
       line-height: 1;
       letter-spacing: normal;
       text-transform: none;
-      display: inline-block;
-      white-space: nowrap;
-      word-wrap: normal;
-      direction: ltr;
-      -webkit-font-feature-settings: "liga";
-      -webkit-font-smoothing: antialiased;
       color: var(--a2ui-icon-color, inherit);
+      font-variation-settings: var(--a2ui-icon-font-variation-settings, "FILL" 1);
     }
   `;
 
@@ -83,7 +83,7 @@ export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
       typeof props.name === "string" ? props.name : (props.name as any)?.path;
     const name = rawName ? this.getIconName(rawName) : "";
 
-    return html`<span class=${classMap({ "material-icons": true, "a2ui-icon": true })}
+    return html`<span class=${classMap({ "material-symbol": true })}
       >${name}</span
     >`;
   }
