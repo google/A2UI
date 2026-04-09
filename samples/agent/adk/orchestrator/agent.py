@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import json
 import logging
 import os
@@ -91,11 +92,17 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
         data_model = message.get("metadata", {}).get("a2uiClientDataModel")
         if data_model and "surfaces" in data_model:
           if agent_card and agent_card.name:
+            current_surfaces = data_model["surfaces"]
+            surface_ids_to_check = list(current_surfaces.keys())
+            owner_agents = await asyncio.gather(*[
+                SubagentRouteManager.get_route_to_subagent_name(sid, context.state)
+                for sid in surface_ids_to_check
+            ])
+            
             filtered_surfaces = {}
-            for surface_id, surface_state in data_model["surfaces"].items():
-              owner_agent = await SubagentRouteManager.get_route_to_subagent_name(surface_id, context.state)
-              if owner_agent == agent_card.name:
-                filtered_surfaces[surface_id] = surface_state
+            for i, surface_id in enumerate(surface_ids_to_check):              
+              if owner_agents[i] == agent_card.name:
+                filtered_surfaces[surface_id] = current_surfaces[surface_id]
             
             message["metadata"]["a2uiClientDataModel"]["surfaces"] = filtered_surfaces
             logger.info(
