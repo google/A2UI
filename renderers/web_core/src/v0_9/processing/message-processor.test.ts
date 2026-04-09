@@ -643,9 +643,9 @@ describe('MessageProcessor', () => {
     }, /Surface not found for message: unknown-s/);
   });
 
-  describe('processMessageList', () => {
+  describe('processMessages wrapper', () => {
     it('processes a list of messages', () => {
-      processor.processMessageList({
+      processor.processMessages({
         messages: [
           {
             version: 'v0.9',
