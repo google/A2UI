@@ -17,6 +17,7 @@
 import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 import { ImageApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
@@ -75,17 +76,6 @@ export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
     injectBasicCatalogStyles();
   }
 
-  updated(changedProperties: PropertyValues) {
-    super.updated(changedProperties);
-    const props = this.controller.props;
-    if (props) {
-      const img = this.shadowRoot?.querySelector("img");
-      if (img) {
-        img.style.objectFit = props.fit || "fill";
-      }
-    }
-  }
-
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
@@ -95,10 +85,15 @@ export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
       [props.variant || ""]: !!props.variant,
     };
 
+    const styles = {
+      objectFit: props.fit || "fill",
+    };
+
     return html`<img
       src=${props.url}
       alt=${props.description || ""}
       class=${classMap(classes)}
+      style=${styleMap(styles)}
     />`;
   }
 }
