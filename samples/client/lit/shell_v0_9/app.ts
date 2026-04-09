@@ -25,13 +25,6 @@ import {
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { A2UIClient } from "./client.js";
-import {
-  SnackbarAction,
-  SnackbarMessage,
-  SnackbarUUID,
-  SnackType,
-} from "./types/types.js";
-import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 import * as v0_9 from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
@@ -306,11 +299,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     },
   );
   #a2uiClient = new A2UIClient();
-  #snackbar: Snackbar | undefined = undefined;
-  #pendingSnackbarMessages: Array<{
-    message: SnackbarMessage;
-    replaceAll: boolean;
-  }> = [];
 
   #maybeRenderError() {
     if (!this.#error) return nothing;
@@ -455,7 +443,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
       return response;
     } catch (err) {
-      this.snackbar(err as string, SnackType.ERROR);
+      console.error(err);
     } finally {
       this.#requesting = false;
       this.#stopLoadingAnimation();
@@ -518,47 +506,5 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     }
 
     this.#processor.processMessages(messages);
-  }
-
-  snackbar(
-    message: string | HTMLTemplateResult,
-    type: SnackType,
-    actions: SnackbarAction[] = [],
-    persistent = false,
-    id = globalThis.crypto.randomUUID(),
-    replaceAll = false,
-  ) {
-    if (!this.#snackbar) {
-      this.#pendingSnackbarMessages.push({
-        message: {
-          id,
-          message,
-          type,
-          persistent,
-          actions,
-        },
-        replaceAll,
-      });
-      return;
-    }
-
-    return this.#snackbar.show(
-      {
-        id,
-        message,
-        type,
-        persistent,
-        actions,
-      },
-      replaceAll,
-    );
-  }
-
-  unsnackbar(id?: SnackbarUUID) {
-    if (!this.#snackbar) {
-      return;
-    }
-
-    this.#snackbar.hide(id);
   }
 }
