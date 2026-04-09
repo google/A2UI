@@ -21,52 +21,39 @@ import {
   html,
   css,
   nothing,
-  HTMLTemplateResult,
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { A2UIClient } from "./client.js";
 import { repeat } from "lit/directives/repeat.js";
+
+// A2UI
 import * as v0_9 from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
-
-// App elements.
-import "./ui/ui.js";
-
-// Configurations
-import { AppConfig } from "./configs/types.js";
-import { config as restaurantConfig } from "./configs/restaurant.js";
-import { config as contactsConfig } from "./configs/contacts.js";
-import { styleMap } from "lit/directives/style-map.js";
 import { renderMarkdown } from "@a2ui/markdown-it";
 
-const configs: Record<string, AppConfig> = {
-  restaurant: restaurantConfig,
-  contacts: contactsConfig,
-};
+// Configurations
+import { A2UIClient } from "./client.js";
+import { configs, AppConfig } from "./configs/configs.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-shell")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  // accessor theme: any = uiTheme;
-
   @provide({ context: Context.markdown })
   accessor markdownRenderer: any = renderMarkdown;
 
   @state()
   accessor #requesting = false;
 
-
   @state()
   accessor #lastMessages: any[] = [];
 
   @state()
-  accessor config: AppConfig = configs.contacts;
+  accessor config: AppConfig = configs.restaurant;
 
   @state()
   accessor #loadingTextIndex = 0;
   #loadingInterval: number | undefined;
 
   static styles = [
-    // unsafeCSS(any),
     css`
       * {
         box-sizing: border-box;
@@ -274,6 +261,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     `,
   ];
 
+  // Create a Message Processor that uses the basic catalog.
   #processor = new v0_9.MessageProcessor(
     [basicCatalog],
     async (action: v0_9.A2uiClientAction): Promise<any> => {
@@ -296,8 +284,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     },
   );
   #a2uiClient = new A2UIClient();
-
-
 
   connectedCallback() {
     super.connectedCallback();
