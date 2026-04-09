@@ -29,7 +29,6 @@ import { repeat } from "lit/directives/repeat.js";
 import * as v0_9 from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
 
-
 // App elements.
 import "./ui/ui.js";
 
