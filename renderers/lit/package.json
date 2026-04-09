@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/lit",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A2UI Lit Library",
   "author": "Google",
   "license": "Apache-2.0",
@@ -101,6 +101,14 @@
     "jsdom": "^25.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
+  },
+  "peerDependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/markdown-it": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",

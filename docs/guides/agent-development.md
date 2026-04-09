@@ -13,7 +13,7 @@ Building an A2UI agent:
 
 ## Start with a simple agent
 
-We will use the ADK to build a simple agent.  We will start with text and eventually upgrade it to A2UI.
+This guide uses the ADK to build a simple agent, starting with text and upgrading it to A2UI.
 
 See step-by-step instructions at the [ADK quickstart](https://google.github.io/adk-docs/get-started/python/).
 
@@ -94,24 +94,23 @@ Select `my_agent` from the list, and ask questions about restaurants in New York
 
 Getting the LLM to generate A2UI messages requires some prompt engineering.  
 
-> ⚠️ **Attention**
->
-> This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
+IMPORTANT: Attention
+This area is under active design. The developer ergonomics are not yet finalized.
 
-For now, let's copy the `a2ui_schema.py` from the contact lookup example.  This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
+For now, copy the `a2ui_schema.py` from the contact lookup example. This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
 
 ```bash
 cp samples/agent/adk/contact_lookup/a2ui_schema.py my_agent/
 ```
 
-First lets add the new imports to the `agent.py` file:
+First, add the new imports to the `agent.py` file:
 
 ```python
 # The schema for any A2UI message.  This never changes.
 from .a2ui_schema import A2UI_SCHEMA
 ```
 
-Now we will modify the agent instructions to generate A2UI messages instead of plain text.  We will leave a placeholder for future UI examples.
+Now, modify the agent instructions to generate A2UI messages instead of plain text. Leave a placeholder for future UI examples.
 
 ```python
 
@@ -131,6 +130,7 @@ To generate the response, you MUST follow these rules:
 4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
 
 --- UI TEMPLATE RULES ---
+Follow these rules to select the appropriate UI template:
 -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.

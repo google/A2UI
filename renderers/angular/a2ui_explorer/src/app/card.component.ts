@@ -33,7 +33,7 @@ import { BoundProperty } from '@a2ui/angular/v0_9';
     >
       <a2ui-v09-component-host
         *ngIf="props['child']?.value()"
-        [componentId]="props['child'].value()"
+        [componentKey]="props['child'].value()"
         [surfaceId]="surfaceId"
       >
       </a2ui-v09-component-host>

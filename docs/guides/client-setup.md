@@ -27,10 +27,9 @@ This means core protocol handling is consistent across web platforms — only th
 
 ## Web Components (Lit)
 
-> ⚠️ **Attention**
+> NOTE: Attention
 >
-> The Lit client library is not yet published to NPM. Check back in the
-> coming days.
+> The Lit client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
 npm install @a2ui/web-lib lit @lit-labs/signals
@@ -38,9 +37,9 @@ npm install @a2ui/web-lib lit @lit-labs/signals
 
 The Lit renderer uses:
 
-- **Message Processor**: Manages A2UI state and processes incoming messages
-- **`<a2ui-surface>` component**: Renders surfaces in your app
-- **Lit Signals**: Provides reactive state management for automatic UI updates
+- **Message Processor**: Manages A2UI state and processes incoming messages.
+- **`<a2ui-surface>` component**: Renders surfaces in your app.
+- **Lit Signals**: Provides reactive state management for automatic UI updates.
 
 TODO: Add verified setup example.
 
@@ -48,10 +47,9 @@ TODO: Add verified setup example.
 
 ## Angular
 
-> ⚠️ **Attention**
+> NOTE: Attention
 >
-> The Angular client library is not yet published to NPM. Check back in the
-> coming days.
+> The Angular client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
 npm install @a2ui/angular @a2ui/web_core
@@ -150,10 +148,10 @@ TODO: Add action handling examples.
 
 Common errors to handle:
 
-- **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received
-- **Invalid Component ID**: Component IDs must be unique within a surface
-- **Invalid Data Path**: Check data model structure and JSON Pointer syntax
-- **Schema Validation Failed**: Verify message format matches A2UI specification
+- **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received.
+- **Invalid Component ID**: Component IDs must be unique within a surface.
+- **Invalid Data Path**: Check data model structure and JSON Pointer syntax.
+- **Schema Validation Failed**: Verify message format matches A2UI specification.
 
 TODO: Add error handling examples.
 

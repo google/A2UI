@@ -12,15 +12,9 @@
       "surfaceId": "contact-card",
       "components": [
         {
-          "id": "success_icon",
-          "component": "Icon",
-          "name": "check"
-        },
-        {
-          "id": "success_text",
-          "component": "Text",
-          "text": "Successfully Followed",
-          "variant": "h2"
+          "id": "root",
+          "component": "Card",
+          "child": "success_column"
         },
         {
           "id": "success_column",
@@ -32,9 +26,15 @@
           "align": "center"
         },
         {
-          "id": "root",
-          "component": "Card",
-          "child": "success_column"
+          "id": "success_icon",
+          "component": "Icon",
+          "name": "check"
+        },
+        {
+          "id": "success_text",
+          "component": "Text",
+          "text": "Successfully Followed",
+          "variant": "h2"
         }
       ]
     }

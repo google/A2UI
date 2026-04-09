@@ -20,8 +20,8 @@ from typing import Any, Optional
 import json
 
 from a2a.types import DataPart, Part, TextPart
-from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.a2a import create_a2ui_part, parse_response_to_parts
+from a2ui.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.a2a.parts import create_a2ui_part, parse_response_to_parts
 
 import asyncio
 import datetime

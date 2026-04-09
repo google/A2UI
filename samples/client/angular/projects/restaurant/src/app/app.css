@@ -225,3 +225,51 @@ form {
     rotate: 360deg;
   }
 }
+
+.streaming-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: light-dark(var(--n-95), var(--n-20));
+  border-radius: 8px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.5s ease-out;
+
+  & span {
+    font-size: 14px;
+    color: light-dark(var(--n-40), var(--n-70));
+    font-weight: 500;
+  }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: light-dark(var(--n-90), var(--n-30));
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 30%;
+    background-color: var(--p-60);
+    border-radius: 2px;
+    animation: loading-bar 2s infinite ease-in-out;
+  }
+}
+
+@keyframes loading-bar {
+  0% {
+    left: -30%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}

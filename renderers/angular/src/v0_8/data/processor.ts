@@ -90,7 +90,14 @@ export class MessageProcessor {
 
   getSurfaces(): ReadonlyMap<string, WebCore.Surface> {
     this.versionSignal(); // Track dependency
-    return this.baseProcessor.getSurfaces();
+    const allSurfaces = this.baseProcessor.getSurfaces();
+    const readySurfaces = new Map<string, WebCore.Surface>();
+    for (const [id, surface] of allSurfaces.entries()) {
+      if (surface.rootComponentId != null) {
+        readySurfaces.set(id, surface);
+      }
+    }
+    return readySurfaces;
   }
 
   clearSurfaces() {

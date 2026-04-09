@@ -53,7 +53,7 @@ app.post('/a2a', (req, res) => {
 
     const parts: Part[] = data['parts'];
     const metadata: Record<string, any> = data['metadata'];
-    const contextId: string | undefined = data['context_id'];
+    const contextId: string | undefined = data['contextId'];
 
     const sendParams: MessageSendParams = {
       message: {
