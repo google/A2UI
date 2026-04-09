@@ -87,6 +87,25 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
             f" {client_capabilities}"
         )
 
+        # Data Model Stripping to prevent data leakage
+        data_model = message.get("metadata", {}).get("a2uiClientDataModel")
+        if data_model and "surfaces" in data_model:
+          if agent_card and agent_card.name:
+            filtered_surfaces = {}
+            for surface_id, surface_state in data_model["surfaces"].items():
+              owner_agent = await SubagentRouteManager.get_route_to_subagent_name(surface_id, context.state)
+              if owner_agent == agent_card.name:
+                filtered_surfaces[surface_id] = surface_state
+            
+            message["metadata"]["a2uiClientDataModel"]["surfaces"] = filtered_surfaces
+            logger.info(
+                f"Stripped data model for {agent_card.name}. "
+                f"Kept surfaces: {list(filtered_surfaces.keys())}"
+            )
+          else:
+            message["metadata"]["a2uiClientDataModel"]["surfaces"] = {}
+            logger.warning("No agent card or name provided. Stripped all surfaces from data model.")
+
     return request_payload, http_kwargs
 
 
