@@ -137,6 +137,6 @@ export const A2uiClientMessageListWrapperSchema = z
     messages: A2uiClientMessageListSchema,
   })
   .strict()
-  .describe('An object wrapping a list of A2UI Client-to-Server messages.');
+  .describe('An object wrapping a list of client messages.');
 
 export type A2uiClientMessageListWrapper = z.infer<typeof A2uiClientMessageListWrapperSchema>;
