@@ -33,13 +33,17 @@ export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
   static styles = css`
     :host {
       display: block;
+      align-self: stretch;
     }
     .a2ui-divider.horizontal {
       height: 0;
       overflow: hidden;
       font-size: 0.1px;
       line-height: 0;
-      border-top: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      border-top: var(
+        --a2ui-divider-border,
+        var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
+      );
       margin: var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 0.5rem)) 0;
       flex: 1;
     }
@@ -70,7 +74,7 @@ export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
       horizontal: props.axis !== "vertical",
     };
 
-    return html`<div class=${classMap(classes)}>&mdash;</div>`;
+    return html`<div class=${classMap(classes)}></div>`;
   }
 }
 
