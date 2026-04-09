@@ -36,7 +36,14 @@ This script will:
 - Run `npx google-artifactregistry-auth` to authenticate.
 - Sort packages topologically (e.g., publishing `web_core` before `lit`).
 - Verify that if a renderer is being published, `web_core` is also included (use `--force` to skip).
+- Run pre-flight checks against existing `npmjs` versions and prompt for confirmation.
 - For each package: `npm install` -> `npm test` -> `npm run publish:package`.
+
+**Advanced Flags for publish_npm.mjs:**
+- `--force`: Skips the `web_core` inclusion warning.
+- `--yes`: Bypasses the manual user confirmation prompt (useful for CI).
+- `--dry-run`: Simulates the process, printing the commands it *would* execute without actually running them.
+- `--skip-tests`: Skips the `npm run test` phase before publishing.
 
 ### 3. Upload Manifest
 

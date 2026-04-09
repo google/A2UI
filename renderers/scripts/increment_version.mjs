@@ -18,10 +18,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { getPackageGraph, incrementVersion, runCommand } from './lib/workspace.mjs';
 
-const [targetName, targetVersion] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const skipSync = args.includes('--skip-sync');
+const filteredArgs = args.filter(a => a !== '--skip-sync');
+const [targetName, targetVersion] = filteredArgs;
 
 if (!targetName) {
-  console.error('Usage: increment_version <package-name> [new-version]');
+  console.error('Usage: increment_version <package-name> [new-version] [--skip-sync]');
   process.exit(1);
 }
 
@@ -51,12 +54,16 @@ writeFileSync(pkg.path, JSON.stringify(pkgJson, null, 2) + '\n');
 // 2. Find all internal dependents and sync them
 const dependents = Object.values(graph).filter(p => p.internalDependencies.includes(pkg.name));
 
-if (dependents.length > 0) {
+if (dependents.length > 0 && !skipSync) {
   console.log(`Updating ${dependents.length} dependents...`);
   for (const dep of dependents) {
+    if (dep.name === '@a2ui/custom-components-example') {
+      console.log(`- Skipping ${dep.name} (has broken external dependencies blocking npm install)`);
+      continue;
+    }
     console.log(`- Syncing ${dep.name} in ${dep.dir}`);
-    // Running npm install updates package-lock.json with the new version of the linked package
-    runCommand('npm', ['install', '--no-audit', '--no-fund'], { cwd: dep.dir });
+    // Update lockfiles normally, but ignore scripts to prevent postinstall esbuild errors
+    runCommand('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], { cwd: dep.dir });
   }
 }
 

@@ -15,97 +15,213 @@
  * limitations under the License.
  */
 
-import { getPackageGraph, runCommand } from './lib/workspace.mjs';
+import { getPackageGraph, runCommand as defaultRunCommand } from './lib/workspace.mjs';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import * as readline from 'node:readline';
 
-const args = process.argv.slice(2);
-let packagesToPublish = [];
-let force = false;
+export async function runPublish(args, customRunCommand, customExecSync, customReadline) {
+  const runCmd = customRunCommand || defaultRunCommand;
+  const exec = customExecSync || execSync;
 
-for (const arg of args) {
-  if (arg.startsWith('--packages=')) {
-    packagesToPublish = arg.split('=')[1].split(',');
-  } else if (arg === '--force') {
-    force = true;
+  let packagesToPublish = [];
+  let force = false;
+  let autoYes = false;
+  let dryRun = false;
+  let skipTests = false;
+
+  for (const arg of args) {
+    if (arg.startsWith('--packages=')) {
+      packagesToPublish = arg.split('=')[1].split(',');
+    } else if (arg === '--force') {
+      force = true;
+    } else if (arg === '--yes') {
+      autoYes = true;
+    } else if (arg === '--dry-run') {
+      dryRun = true;
+    } else if (arg === '--skip-tests') {
+      skipTests = true;
+    }
   }
-}
 
-if (packagesToPublish.length === 0) {
-  console.error('Usage: publish_npm --packages=pkg1,pkg2 [--force]');
-  process.exit(1);
-}
-
-const graph = getPackageGraph();
-
-// Resolve short names to full names
-const resolvedPackages = packagesToPublish.map(name => {
-  if (graph[name]) return name;
-  const pkg = Object.values(graph).find(p => p.name.endsWith('/' + name));
-  if (!pkg) {
-    console.error(`Package "${name}" not found in workspace.`);
+  if (packagesToPublish.length === 0) {
+    console.error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests]');
     process.exit(1);
   }
-  return pkg.name;
-});
 
-// Validation: web_core check
-const webCoreName = '@a2ui/web_core';
-const renderers = ['@a2ui/lit', '@a2ui/angular', '@a2ui/react'];
-const requestedRenderers = resolvedPackages.filter(p => renderers.includes(p));
+  const graph = getPackageGraph();
 
-if (requestedRenderers.length > 0 && !resolvedPackages.includes(webCoreName) && !force) {
-  console.warn('WARNING: You are publishing renderers but NOT @a2ui/web_core.');
-  console.warn('This can lead to broken versions if web_core has changed.');
-  console.warn('Use --force to override this check.');
-  process.exit(1);
-}
+  // Resolve short names to full names
+  const resolvedPackages = packagesToPublish.map(name => {
+    if (graph[name]) return name;
+    const pkg = Object.values(graph).find(p => p.name.endsWith('/' + name));
+    if (!pkg) {
+      console.error(`Package "${name}" not found in workspace.`);
+      process.exit(1);
+    }
+    return pkg.name;
+  });
 
-// Topological Sort
-function topologicalSort(pkgNames) {
-  const sorted = [];
-  const visited = new Set();
-  const temp = new Set();
+  // Validation: web_core check
+  const webCoreName = '@a2ui/web_core';
+  const renderers = ['@a2ui/lit', '@a2ui/angular', '@a2ui/react'];
+  const requestedRenderers = resolvedPackages.filter(p => renderers.includes(p));
 
-  function visit(name) {
-    if (temp.has(name)) throw new Error(`Circular dependency detected involving ${name}`);
-    if (visited.has(name)) return;
+  if (requestedRenderers.length > 0 && !resolvedPackages.includes(webCoreName) && !force) {
+    console.warn('WARNING: You are publishing renderers but NOT @a2ui/web_core.');
+    console.warn('This can lead to broken versions if web_core has changed.');
+    console.warn('Use --force to override this check.');
+    process.exit(1);
+  }
 
-    temp.add(name);
-    const pkg = graph[name];
-    if (pkg) {
-      for (const dep of pkg.internalDependencies) {
-        if (pkgNames.includes(dep)) {
-          visit(dep);
+  // Topological Sort
+  function topologicalSort(pkgNames) {
+    const sorted = [];
+    const visited = new Set();
+    const temp = new Set();
+
+    function visit(name) {
+      if (temp.has(name)) throw new Error(`Circular dependency detected involving ${name}`);
+      if (visited.has(name)) return;
+
+      temp.add(name);
+      const pkg = graph[name];
+      if (pkg) {
+        for (const dep of pkg.internalDependencies) {
+          if (pkgNames.includes(dep)) {
+            visit(dep);
+          }
         }
       }
+      temp.delete(name);
+      visited.add(name);
+      sorted.push(name);
     }
-    temp.delete(name);
-    visited.add(name);
-    sorted.push(name);
+
+    for (const name of pkgNames) {
+      visit(name);
+    }
+    return sorted;
   }
 
-  for (const name of pkgNames) {
-    visit(name);
+  const sortedPackages = topologicalSort(resolvedPackages);
+
+  function getVersionDiff(oldV, newV) {
+    if (oldV === newV) return 'SAME';
+    const [oCore, ...oPreArr] = oldV.split('-');
+    const [nCore, ...nPreArr] = newV.split('-');
+    const oPre = oPreArr.join('-');
+    const nPre = nPreArr.join('-');
+
+    const [oMaj, oMin, oPat] = oCore.split('.').map(Number);
+    const [nMaj, nMin, nPat] = nCore.split('.').map(Number);
+
+    if (nMaj > oMaj) return nPre ? 'PREMAJOR' : 'MAJOR';
+    if (nMaj === oMaj && nMin > oMin) return nPre ? 'PREMINOR' : 'MINOR';
+    if (nMaj === oMaj && nMin === oMin && nPat > oPat) return nPre ? 'PREPATCH' : 'PATCH';
+    if (oCore === nCore) {
+       if (oPre && !nPre) return 'GRADUATION (RELEASE)';
+       if (!oPre && nPre) return 'OLDER_OR_UNKNOWN';
+       return 'PRERELEASE';
+    }
+
+    return 'OLDER_OR_UNKNOWN';
   }
-  return sorted;
+
+  console.log('--- Pre-flight Version Checks ---');
+  for (const pkgName of sortedPackages) {
+    const pkg = graph[pkgName];
+    const localVersion = pkg.version;
+    let remoteVersion;
+
+    try {
+      remoteVersion = exec(`npm view ${pkgName} version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    } catch (e) {
+      remoteVersion = null;
+    }
+
+    if (!remoteVersion) {
+      console.log(`✅ [NEW PACKAGE] ${pkgName}: Will be published for the first time as ${localVersion}`);
+      continue;
+    }
+
+    if (remoteVersion === localVersion) {
+      console.error(`\n❌ ERROR: ${pkgName} version ${localVersion} is already published on npm!`);
+      console.error(`Please increment the version (e.g., using increment_version.mjs) before publishing.`);
+      process.exit(1);
+    }
+
+    const diff = getVersionDiff(remoteVersion, localVersion);
+    if (diff === 'OLDER_OR_UNKNOWN') {
+       console.error(`\n❌ ERROR: ${pkgName} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`);
+       process.exit(1);
+    }
+
+    console.log(`✅ [${diff}] ${pkgName}: ${remoteVersion} -> ${localVersion}`);
+  }
+  console.log('\nPre-flight checks passed.');
+
+  if (!autoYes) {
+    const askUser = async () => {
+      if (customReadline) return await customReadline();
+
+      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+      return await new Promise(resolve => {
+        rl.question('\nDo you want to proceed with publishing these versions? (yes/no): ', (ans) => {
+          rl.close();
+          resolve(ans);
+        });
+      });
+    };
+
+    const answer = await askUser();
+    if (answer.toLowerCase() !== 'yes' && answer.toLowerCase() !== 'y') {
+      console.log('Publishing cancelled by user.');
+      process.exit(0);
+    }
+  }
+
+  console.log('\n--- Authenticating with Google Artifact Registry ---');
+  if (dryRun) console.log('[DRY RUN] Would execute: npx google-artifactregistry-auth');
+  else runCmd('npx', ['google-artifactregistry-auth']);
+
+  console.log('\n--- Building and Testing all packages ---');
+  for (const pkgName of sortedPackages) {
+    const pkg = graph[pkgName];
+    console.log(`\n=== Preparing ${pkg.name} (${pkg.version}) ===`);
+
+    console.log(`- Running npm install in ${pkg.dir}`);
+    if (dryRun) console.log(`[DRY RUN] Would execute: npm install --no-save --ignore-scripts --no-audit --no-fund in ${pkg.dir}`);
+    else runCmd('npm', ['install', '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'], { cwd: pkg.dir });
+
+    if (skipTests) {
+      console.log(`- Skipping npm test for ${pkg.name}`);
+    } else {
+      const pkgJson = JSON.parse(readFileSync(join(pkg.dir, 'package.json'), 'utf8'));
+      const testScript = pkgJson.scripts && pkgJson.scripts['test:ci'] ? 'test:ci' : 'test';
+
+      console.log(`- Running npm run ${testScript} in ${pkg.dir}`);
+      if (dryRun) console.log(`[DRY RUN] Would execute: npm run ${testScript} in ${pkg.dir}`);
+      else runCmd('npm', ['run', testScript], { cwd: pkg.dir });
+    }
+  }
+
+  console.log('\n--- Proceeding to publish ---');
+
+  for (const pkgName of sortedPackages) {
+    const pkg = graph[pkgName];
+    console.log(`\n=== Publishing ${pkg.name} (${pkg.version}) ===`);
+
+    console.log(`- Running publish:package in ${pkg.dir}`);
+    if (dryRun) console.log(`[DRY RUN] Would execute: npm run publish:package in ${pkg.dir}`);
+    else runCmd('npm', ['run', 'publish:package'], { cwd: pkg.dir });
+  }
+
+  console.log('\nAll packages published successfully.');
 }
 
-const sortedPackages = topologicalSort(resolvedPackages);
-
-console.log('--- Authenticating with Google Artifact Registry ---');
-runCommand('npx', ['google-artifactregistry-auth']);
-
-for (const pkgName of sortedPackages) {
-  const pkg = graph[pkgName];
-  console.log(`\n=== Publishing ${pkg.name} (${pkg.version}) ===`);
-  
-  console.log(`- Running npm install in ${pkg.dir}`);
-  runCommand('npm', ['install', '--no-audit', '--no-fund'], { cwd: pkg.dir });
-  
-  console.log(`- Running npm test in ${pkg.dir}`);
-  runCommand('npm', ['test'], { cwd: pkg.dir });
-  
-  console.log(`- Running publish:package in ${pkg.dir}`);
-  runCommand('npm', ['run', 'publish:package'], { cwd: pkg.dir });
+import { fileURLToPath } from 'node:url';
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  runPublish(process.argv.slice(2));
 }
-
-console.log('\nAll packages published successfully.');

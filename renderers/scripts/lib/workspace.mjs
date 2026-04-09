@@ -54,6 +54,25 @@ export function getPackageGraph() {
   for (const path of packagePaths) {
     const pkg = JSON.parse(readFileSync(path, 'utf8'));
     const dir = dirname(path);
+    
+    // If we have a duplicate name, prioritize packages in 'renderers/' 
+    // or those that are not private (if one is private and other isn't)
+    if (packages[pkg.name]) {
+      const existing = packages[pkg.name];
+      const isNewInRenderers = dir.includes('/renderers/');
+      const isExistingInRenderers = existing.dir.includes('/renderers/');
+      
+      if (isExistingInRenderers && !isNewInRenderers) continue; // Keep existing
+      if (!isExistingInRenderers && isNewInRenderers) {
+        // Replace existing with the one in renderers/
+      } else {
+        // Both in renderers or both not in renderers, prefer the one with more scripts
+        const newScriptsCount = Object.keys(pkg.scripts || {}).length;
+        const existingScriptsCount = Object.keys(JSON.parse(readFileSync(existing.path, 'utf8')).scripts || {}).length;
+        if (newScriptsCount <= existingScriptsCount) continue;
+      }
+    }
+
     packages[pkg.name] = {
       name: pkg.name,
       version: pkg.version,
