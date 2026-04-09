@@ -63,9 +63,7 @@ app.post('/a2a', (req, res) => {
         kind: 'message',
         metadata: {
           a2uiClientCapabilities: {
-            supportedCatalogIds: [
-              'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
-            ],
+            supportedCatalogIds: ['https://a2ui.org/specification/v0_9/basic_catalog.json'],
           },
         },
       },
@@ -135,7 +133,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
-  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.8');
+  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.9');
   const newInit = { ...init, headers };
   return fetch(url, newInit);
 }
