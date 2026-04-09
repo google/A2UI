@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: test_validator_circular_reference
+- name: test_validator_circular_reference_v08
   description: Tests that circular references are detected.
   catalog:
     version: "0.8"
@@ -294,7 +294,6 @@
           anyOf:
           - type: object
           - type: array
-          - type: object
         DynamicNumber:
           anyOf:
           - type: number
@@ -1073,7 +1072,7 @@
           text:
             path: /invalid/escape/~2
     expect_error: (Invalid path syntax|is not valid under any of the given schemas)
-- name: test_validate_recursion_limit_exceeded_v08
+- name: test_validate_component_nesting_depth_limit_exceeded_v08
   description: Tests that global recursion limit is exceeded in v0.8.
   catalog:
     version: "0.8"

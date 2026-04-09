@@ -15,10 +15,8 @@
 import os
 import yaml
 import pytest
-import jsonschema
 from a2ui.schema.catalog import A2uiCatalog
 from a2ui.parser.streaming import A2uiStreamParser
-from a2ui.parser.response_part import ResponsePart
 from a2ui.schema.validator import A2uiValidator
 
 import json
@@ -73,10 +71,8 @@ def setup_catalog(catalog_config):
 def assert_parts_match(actual_parts, expected_parts):
   assert len(actual_parts) == len(expected_parts)
   for actual, expected in zip(actual_parts, expected_parts):
-    if "text" in expected:
-      assert actual.text == expected["text"]
-    if "a2ui" in expected:
-      assert actual.a2ui_json == expected["a2ui"]
+    assert actual.text == expected.get("text", "")
+    assert actual.a2ui_json == expected.get("a2ui")
 
 
 def get_conformance_cases(filename):
@@ -91,15 +87,7 @@ cases_parser = get_conformance_cases("parser.yaml")
     "name, test_case", cases_parser, ids=[c[0] for c in cases_parser]
 )
 def test_parser_conformance(name, test_case):
-  catalog_config = test_case.get("catalog")
-  if catalog_config is None:
-    constructor = test_case["constructor"]
-    version = constructor["version"]
-    catalog_config = {
-        "version": version,
-        "s2c_schema": f"simplified_s2c_v{version.replace('.', '')}.json",
-        "catalog_schema": constructor.get("catalog"),
-    }
+  catalog_config = test_case["catalog"]
   catalog = setup_catalog(catalog_config)
   parser = A2uiStreamParser(catalog=catalog)
 
@@ -123,19 +111,11 @@ cases_validator = get_conformance_cases("validator.yaml")
     "name, test_case", cases_validator, ids=[c[0] for c in cases_validator]
 )
 def test_validator_conformance(name, test_case):
-  catalog_config = test_case.get("catalog")
-  if catalog_config is None:
-    constructor = test_case["constructor"]
-    version = constructor["version"]
-    catalog_config = {
-        "version": version,
-        "s2c_schema": f"simplified_s2c_v{version.replace('.', '')}.json",
-        "catalog_schema": constructor.get("catalog"),
-    }
+  catalog_config = test_case["catalog"]
   catalog = setup_catalog(catalog_config)
-  validator = A2uiValidator(catalog=catalog)
 
   for case in test_case["validate"]:
+    validator = A2uiValidator(catalog=catalog)
     if "expect_error" in case:
       with pytest.raises(ValueError, match=case["expect_error"]):
         validator.validate(case["payload"])

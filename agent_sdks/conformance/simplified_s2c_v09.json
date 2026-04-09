@@ -40,7 +40,7 @@
             "components": {
               "type": "array",
               "minItems": 1,
-              "items": { "$ref": "catalog.json#/$defs/anyComponent" }
+              "items": { "$ref": "simplified_catalog_v09.json#/$defs/anyComponent" }
             }
           },
           "required": ["surfaceId", "components"],

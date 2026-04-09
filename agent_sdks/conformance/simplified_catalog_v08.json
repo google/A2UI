@@ -54,12 +54,12 @@
               "items": {
                 "type": "string"
               }
-            },
-            "required": [
-              "componentId",
-              "dataBinding"
-            ]
-          }
+            }
+          },
+          "required": [
+            "componentId",
+            "dataBinding"
+          ]
         }
       },
       "required": [
