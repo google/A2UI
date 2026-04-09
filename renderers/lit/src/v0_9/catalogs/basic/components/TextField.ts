@@ -48,7 +48,7 @@ export class A2uiBasicTextFieldElement extends A2uiLitElement<
     .a2ui-textfield {
       background-color: var(--a2ui-color-input, #fff);
       color: var(--a2ui-color-on-input, #333);
-      border: var(--a2ui-textfield-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+      border: var(--a2ui-textfield-border, var(--a2ui-border));
       border-radius: var(--a2ui-textfield-border-radius, var(--a2ui-border-radius, 0.25rem));
       padding: var(--a2ui-textfield-padding, var(--a2ui-spacing-s, 0.25rem));
       font-family: inherit;
