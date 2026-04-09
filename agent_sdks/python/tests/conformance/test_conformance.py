@@ -16,10 +16,10 @@ import os
 import yaml
 import pytest
 import jsonschema
-from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser
-from a2ui.core.parser.response_part import ResponsePart
-from a2ui.core.schema.validator import A2uiValidator
+from a2ui.schema.catalog import A2uiCatalog
+from a2ui.parser.streaming import A2uiStreamParser
+from a2ui.parser.response_part import ResponsePart
+from a2ui.schema.validator import A2uiValidator
 
 import json
 

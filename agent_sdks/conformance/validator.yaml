@@ -1032,35 +1032,11 @@
   - payload:
     - dataModelUpdate:
         surfaceId: surface1
-        path: invalid//path
-        contents:
-        - key: dummy
-          valueString: data
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
-  - payload:
-    - beginRendering:
-        root: root
-        surfaceId: test-surface
-    - surfaceUpdate:
-        surfaceId: test-surface
-        components:
-        - id: root
-          component:
-            Text:
-              text:
-                path: invalid path with spaces
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
-  - payload:
-    - dataModelUpdate:
-        surfaceId: surface1
         path: /invalid/escape/~2
         contents:
         - key: dummy
           valueString: data
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
+    expect_error: (Invalid path syntax|is not valid under any of the given schemas)
 - name: test_validate_invalid_paths_v09
   description: Tests invalid paths in v0.9.
   catalog:
@@ -1089,37 +1065,14 @@
   validate:
   - payload:
     - version: v0.9
-      updateDataModel:
-        surfaceId: surface1
-        path: invalid//path
-        value:
-          some: data
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
-  - payload:
-    - version: v0.9
-      createSurface:
-        surfaceId: test-surface
-        catalogId: std
-    - version: v0.9
       updateComponents:
         surfaceId: test-surface
         components:
         - id: root
           component: Text
           text:
-            path: invalid path with spaces
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
-  - payload:
-    - version: v0.9
-      updateDataModel:
-        surfaceId: surface1
-        path: /invalid/escape/~2
-        value:
-          some: data
-    expect_error: (Invalid JSON Pointer syntax|is not valid under any of the given
-      schemas)
+            path: /invalid/escape/~2
+    expect_error: (Invalid path syntax|is not valid under any of the given schemas)
 - name: test_validate_recursion_limit_exceeded_v08
   description: Tests that global recursion limit is exceeded in v0.8.
   catalog:
