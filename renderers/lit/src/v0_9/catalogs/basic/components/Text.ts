@@ -38,7 +38,7 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     :host {
       color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
     }
-    p, h1, h2, h3, h4, h5, h6 {
+    p, h1, h2, h3, h4, h5, h6, ol, ul, li, blockquote, pre {
       margin: var(--_a2ui-text-margin, 0);
     }
     h1, h2, h3, h4, h5 {
@@ -50,7 +50,7 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     h3 { font-size: var(--a2ui-font-size-l); }
     p, h4 { font-size: var(--a2ui-font-size-m); }
     h5 { font-size: var(--a2ui-font-size-s); }
-    p, .a2ui-caption {
+    p, ol, ul, li, blockquote, .a2ui-caption {
       line-height: var(--a2ui-line-height-body, 1.5);
     }
     .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) { font-size: var(--a2ui-font-size-xs); }
@@ -78,7 +78,7 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     if (!props) return nothing;
 
     // Use props.variant to convert props.text to markdown
-    let markdownText = props.text;
+    let markdownText = typeof props.text === "string" ? props.text : String(props.text ?? "");
     switch (props.variant) {
       case "h1":
         markdownText = `# ${markdownText}`;
