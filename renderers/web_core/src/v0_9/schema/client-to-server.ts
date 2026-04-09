@@ -127,13 +127,16 @@ export type A2uiClientMessage = z.infer<typeof A2uiClientMessageSchema>;
 export type A2uiClientDataModel = z.infer<typeof A2uiClientDataModelSchema>;
 
 export const A2uiClientMessageListSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    messages: z.array(A2uiClientMessageSchema).describe('A list of client messages.'),
-  })
-  .strict();
+  .array(A2uiClientMessageSchema)
+  .describe('A list of client messages.');
 
-export declare interface A2uiClientMessageList extends z.infer<typeof A2uiClientMessageListSchema> {
-  version: 'v0.9';
-  messages: A2uiClientMessage[];
-}
+export type A2uiClientMessageList = z.infer<typeof A2uiClientMessageListSchema>;
+
+export const A2uiClientMessageListWrapperSchema = z
+  .object({
+    messages: A2uiClientMessageListSchema,
+  })
+  .strict()
+  .describe('An object wrapping a list of A2UI Client-to-Server messages.');
+
+export type A2uiClientMessageListWrapper = z.infer<typeof A2uiClientMessageListWrapperSchema>;

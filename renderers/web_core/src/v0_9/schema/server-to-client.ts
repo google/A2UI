@@ -145,14 +145,17 @@ export type A2uiMessage =
   | DeleteSurfaceMessage;
 
 export const A2uiMessageListSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    messages: z.array(A2uiMessageSchema).describe('A list of messages.'),
-  })
-  .strict();
+  .array(A2uiMessageSchema)
+  .describe('A list of messages.');
 
-export declare interface A2uiMessageList extends z.infer<typeof A2uiMessageListSchema> {
-  version: 'v0.9';
-  messages: A2uiMessage[];
-}
+export type A2uiMessageList = z.infer<typeof A2uiMessageListSchema>;
+
+export const A2uiMessageListWrapperSchema = z
+  .object({
+    messages: A2uiMessageListSchema,
+  })
+  .strict()
+  .describe('An object wrapping a list of A2UI Server-to-Client messages.');
+
+export type A2uiMessageListWrapper = z.infer<typeof A2uiMessageListWrapperSchema>;
 

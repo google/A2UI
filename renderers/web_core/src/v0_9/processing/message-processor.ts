@@ -28,6 +28,7 @@ import {
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
   A2uiMessageList,
+  A2uiMessageListWrapper,
 } from '../schema/server-to-client.js';
 import {
   A2uiClientCapabilities,
@@ -223,23 +224,15 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   /**
-   * Processes a list of messages.
+   * Processes an array of messages or a message array wrapper.
    *
-   * @param messages The messages to process.
+   * @param messages The messages to process (array or wrapper object).
    */
-  processMessages(messages: A2uiMessage[]): void {
-    for (const message of messages) {
+  processMessages(messages: A2uiMessage[] | A2uiMessageListWrapper): void {
+    const messageList = Array.isArray(messages) ? messages : messages.messages;
+    for (const message of messageList) {
       this.processMessage(message);
     }
-  }
-
-  /**
-   * Processes an A2UI message list.
-   *
-   * @param messageList The message list to process.
-   */
-  processMessageList(messageList: A2uiMessageList): void {
-    this.processMessages(messageList.messages);
   }
 
   private processMessage(message: A2uiMessage): void {
