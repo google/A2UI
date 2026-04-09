@@ -42,7 +42,7 @@
             ]
           }
         },
-        "required": ["version", "s2c_schema"]
+        "required": ["version", "s2c_schema", "catalog_schema"]
       },
       "process_chunk": {
         "type": "array",
@@ -57,11 +57,17 @@
             "expect": {
               "type": "array",
               "description": "Expected output parts.",
-              "items": { "type": "object" }
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": { "type": "string" },
+                  "a2ui": { "type": "array", "items": { "type": "object" } }
+                }
+              }
             },
             "expect_error": {
               "type": "string",
-              "description": "Expected error message if this step should fail."
+              "description": "Expected error message (regex) if this step should fail."
             }
           },
           "required": ["input"],
@@ -86,7 +92,7 @@
             },
             "expect_error": {
               "type": "string",
-              "description": "Expected error message if validation should fail."
+              "description": "Expected error message (regex) if validation should fail."
             }
           },
           "required": ["payload"]

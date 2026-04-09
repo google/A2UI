@@ -138,6 +138,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: "Hello! "
       expect: [{text: "Hello! "}]
@@ -153,6 +154,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: "Talking <a2u"
       expect: [{text: "Talking "}]
@@ -699,6 +701,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: "<a2ui-json>["
       expect: []
@@ -741,6 +744,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: "<a2ui-json>["
       expect: []
@@ -934,6 +938,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "name", "valueString": "John"}, {"valueString": "incomplete"'
       expect:
@@ -949,6 +954,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "infoLink", "valueString": "[More Info](x)"}, {"key'
       expect:
@@ -994,6 +1000,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"}, {"key": "items", "valueMap": ['
       expect:
@@ -1023,6 +1030,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"},{"key": "items", "valueMap": [{"key": "item1", "valueMap": [{"key": "name", "valueString": "Food"}, {"key": "detail", "valueString": "Spicy"}, {}, {"key": "imageUrl'
       expect:
@@ -1046,6 +1054,7 @@
   catalog:
     version: "0.8"
     s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema: {catalogId: "test_catalog", components: {}}
   process_chunk:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"},{"key": "items", "valueMap": [{"key": "item2", "valueMap": [{"key": "name", "valueString": "Han Dynasty"}, {"key": "imageUrl", "valueString": "http://localhost:10002/static/mapotofu.jpeg"}, {}]}]} ]}] </a2ui-json>'
       expect:
