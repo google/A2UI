@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Renderer } from '@a2ui/angular';
+import { ComponentHostComponent } from '@a2ui/angular';
 import { InteractivityChecker } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
@@ -34,7 +34,7 @@ import { CanvasService } from '../../services/canvas-service';
   templateUrl: './canvas.html',
   styleUrl: './canvas.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Renderer],
+  imports: [ComponentHostComponent],
 })
 export class Canvas {
   /** Service for managing the canvas state. */
@@ -44,6 +44,22 @@ export class Canvas {
   protected readonly canvasContents = computed(() => this.canvasService.contents());
   /** The ID of the current A2UI surface being displayed. */
   protected readonly surfaceId = computed(() => this.canvasService.surfaceId());
+
+  /**
+   * Normalizes the component node representation to extract a string ID.
+   *
+   * Component nodes can be represented either as a string ID or as a full object
+   * containing an 'id' property. This method ensures we always get a string ID.
+   *
+   * @param child The component node, either as a string ID or an object.
+   * @returns The string ID of the component.
+   */
+  protected getComponentId(child: string | any): string {
+    if (typeof child === 'string') {
+      return child;
+    }
+    return child.id || '';
+  }
 
   private readonly rootElement = viewChild.required<ElementRef<HTMLElement>>('rootElement');
   private readonly interactivityChecker = inject(InteractivityChecker);

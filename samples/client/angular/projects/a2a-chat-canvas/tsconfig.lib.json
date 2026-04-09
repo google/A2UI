@@ -8,7 +8,12 @@
     "declarationMap": true,
     "inlineSources": true,
     "inlineSourceMap": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "@a2ui/angular": [
+        "../lib/src/v0_9/public-api.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts"

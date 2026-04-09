@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-import { DEFAULT_CATALOG } from '@a2ui/angular';
+import { BASIC_COMPONENTS, AngularCatalog, AngularComponentImplementation } from '@a2ui/angular';
+import { z } from 'zod';
+import { Canvas } from './canvas/canvas';
 
-export const DEFAULT_A2UI_CATALOG = {
-  ...DEFAULT_CATALOG,
-  Canvas: () => import('./canvas/canvas').then((r) => r.Canvas),
-};
+const customComponents: AngularComponentImplementation[] = [
+  { name: 'Canvas', schema: z.object({}), component: Canvas },
+];
+
+/**
+ * The Angular catalog for a2a-chat-canvas components.
+ */
+export const A2A_CHAT_CANVAS_CATALOG = new AngularCatalog(
+  'https://github.com/google/A2UI/blob/main/samples/client/angular/projects/a2a-chat-canvas/src/lib/a2ui-catalog/catalog_definition.json',
+  [...BASIC_COMPONENTS, ...customComponents],
+);

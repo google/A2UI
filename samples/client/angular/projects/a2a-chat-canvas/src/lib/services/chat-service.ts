@@ -21,7 +21,8 @@ import { UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-
 import { extractA2aPartsFromResponse } from '@a2a_chat_canvas/utils/a2a';
 import { extractA2uiDataParts } from '@a2a_chat_canvas/utils/a2ui';
 import { convertPartToUiMessageContent } from '@a2a_chat_canvas/utils/ui-message-utils';
-import { MessageProcessor, DispatchedEvent } from '@a2ui/angular';
+import { A2uiClientAction } from '@a2ui/web_core/v0_9';
+import { A2uiRendererService } from '@a2ui/angular';
 import { inject, Injectable, resource, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
 
@@ -36,7 +37,7 @@ export class ChatService {
   /** Service for interacting with the A2A (Agent-to-Agent) API. */
   private readonly a2aService = inject(A2A_SERVICE);
   /** Processor for handling A2UI messages and managing UI state. */
-  private readonly a2uiMessageProcessor = inject(MessageProcessor);
+  private readonly a2uiRenderer = inject(A2uiRendererService);
   /** Resolvers for converting A2A parts to UI message content. */
   private readonly partResolvers = inject(PART_RESOLVERS);
 
@@ -64,7 +65,7 @@ export class ChatService {
   /** Signal indicating whether an A2A stream is currently open. */
   readonly isA2aStreamOpen = signal(false);
   /** Signal holding the current A2UI surfaces managed by the A2UI MessageProcessor. */
-  readonly a2uiSurfaces = signal(new Map(this.a2uiMessageProcessor.getSurfaces()));
+  readonly a2uiSurfaces = signal(this.a2uiRenderer.surfaceGroup.surfacesMap);
 
   /**
    * Subscribes to events dispatched from the A2UI MessageProcessor.
@@ -73,16 +74,14 @@ export class ChatService {
    * events to their own state management or making different API calls.
    */
   constructor() {
-    this.a2uiMessageProcessor.events.subscribe(async (event: DispatchedEvent) => {
+    this.a2uiRenderer.surfaceGroup.onAction.subscribe(async (action: A2uiClientAction) => {
       try {
         // TODO: Replace this with a more robust event handling mechanism.
         // Send A2UI actions silently if requested from the action context
-        const isSilent = Boolean(event.message.userAction?.context?.['silent']);
-        await this.sendMessage(JSON.stringify(event.message), isSilent);
-        event.completion.next([]);
-        event.completion.complete();
+        const isSilent = Boolean(action.context?.['silent']);
+        await this.sendMessage(JSON.stringify({ version: 'v0.9', action }), isSilent);
       } catch (err) {
-        event.completion.error(err);
+        console.error('Failed to send action:', err);
       }
     });
   }
@@ -160,8 +159,8 @@ export class ChatService {
     }
 
     // Let A2UI Renderer process the A2UI data parts in agent response.
-    this.a2uiMessageProcessor.processMessages(extractA2uiDataParts(agentResponseParts));
-    this.a2uiSurfaces.set(new Map(this.a2uiMessageProcessor.getSurfaces()));
+    this.a2uiRenderer.processMessages(extractA2uiDataParts(agentResponseParts));
+    this.a2uiSurfaces.set(this.a2uiRenderer.surfaceGroup.surfacesMap);
   }
 
   /**
@@ -285,7 +284,7 @@ export class ChatService {
     const agentRole: UiAgent = {
       ...rootagentRole,
       subagentName: (subagentCard as AgentCard).name,
-    }
+    };
 
     return agentRole;
   }
