@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { MarkdownRenderer } from '../../core/markdown';
 
 /**
  * Angular implementation of the A2UI Text component (v0.9).
  *
- * Renders a span of text with configurable font weight and style.
+ * Renders text with support for simple Markdown.
  */
 @Component({
   selector: 'a2ui-v09-text',
   standalone: true,
-  imports: [],
   template: `
-    <span [style.font-weight]="weight()" [style.font-style]="style()">
-      {{ text() }}
+    <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()">
     </span>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,15 +38,42 @@ export class TextComponent {
    *
    * Expected properties:
    * - `text`: The string content to display.
-   * - `weight`: Font weight (e.g., 'bold', 'normal' or numeric string).
-   * - `style`: Font style (e.g., 'italic', 'normal').
+   * - `variant`: A hint for the base text style ('h1', 'h2', 'h3', 'h4', 'h5', 'caption', 'body').
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  weight = computed(() => this.props()['weight']?.value());
-  style = computed(() => this.props()['style']?.value());
-  text = computed(() => this.props()['text']?.value());
+  private markdownRenderer = inject(MarkdownRenderer);
+
+  variant = computed(() => this.props()['variant']?.value() || 'body');
+  text = computed(() => this.props()['text']?.value() || '');
+
+  resolvedText = signal<string>('');
+  private renderRequestId = 0;
+
+  constructor() {
+    effect(() => {
+      const text = this.text();
+      const variant = this.variant();
+      let value = text;
+
+      switch (variant) {
+        case 'h1': value = `# ${text}`; break;
+        case 'h2': value = `## ${text}`; break;
+        case 'h3': value = `### ${text}`; break;
+        case 'h4': value = `#### ${text}`; break;
+        case 'h5': value = `##### ${text}`; break;
+        case 'caption': value = `*${text}*`; break;
+      }
+
+      const requestId = ++this.renderRequestId;
+      this.markdownRenderer.render(value).then(rendered => {
+        if (requestId === this.renderRequestId) {
+          this.resolvedText.set(rendered);
+        }
+      });
+    });
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.9.1",
+  "version": "0.9.0",
   "description": "A2UI Core Library",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -104,7 +104,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test dist",
+      "command": "node --test dist/**/*.test.js",
       "dependencies": [
         "build"
       ]

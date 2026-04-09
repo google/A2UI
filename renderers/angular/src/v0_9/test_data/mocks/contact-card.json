@@ -13,12 +13,12 @@
       "components": [
         {
           "id": "root",
-          "component": "card",
+          "component": "Card",
           "child": "main-column"
         },
         {
           "id": "main-column",
-          "component": "column",
+          "component": "Column",
           "children": [
             "avatar-image",
             "name",
@@ -31,86 +31,86 @@
         },
         {
           "id": "avatar-image",
-          "component": "image",
+          "component": "Image",
           "url": { "path": "/avatar" },
           "fit": "cover"
         },
         {
           "id": "name",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/name" },
           "weight": 700
         },
         {
           "id": "title",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/title" }
         },
         {
           "id": "divider",
-          "component": "divider"
+          "component": "Divider"
         },
         {
           "id": "contact-info",
-          "component": "column",
+          "component": "Column",
           "children": ["phone-row", "email-row", "location-row"]
         },
         {
           "id": "phone-row",
-          "component": "row",
+          "component": "Row",
           "children": ["phone-icon", "phone-text"],
           "align": "center"
         },
         {
           "id": "phone-icon",
-          "component": "icon",
+          "component": "Icon",
           "name": "phone"
         },
         {
           "id": "phone-text",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/phone" }
         },
         {
           "id": "email-row",
-          "component": "row",
+          "component": "Row",
           "children": ["email-icon", "email-text"],
           "align": "center"
         },
         {
           "id": "email-icon",
-          "component": "icon",
+          "component": "Icon",
           "name": "mail"
         },
         {
           "id": "email-text",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/email" }
         },
         {
           "id": "location-row",
-          "component": "row",
+          "component": "Row",
           "children": ["location-icon", "location-text"],
           "align": "center"
         },
         {
           "id": "location-icon",
-          "component": "icon",
+          "component": "Icon",
           "name": "locationOn"
         },
         {
           "id": "location-text",
-          "component": "text",
+          "component": "Text",
           "text": { "path": "/location" }
         },
         {
           "id": "actions",
-          "component": "row",
+          "component": "Row",
           "children": ["call-btn", "message-btn"]
         },
         {
           "id": "call-btn",
-          "component": "button",
+          "component": "Button",
           "child": "call-btn-text",
           "action": {
             "functionCall": {
@@ -121,12 +121,12 @@
         },
         {
           "id": "call-btn-text",
-          "component": "text",
+          "component": "Text",
           "text": "Call"
         },
         {
           "id": "message-btn",
-          "component": "button",
+          "component": "Button",
           "child": "message-btn-text",
           "action": {
             "functionCall": {
@@ -137,7 +137,7 @@
         },
         {
           "id": "message-btn-text",
-          "component": "text",
+          "component": "Text",
           "text": "Message"
         }
       ]

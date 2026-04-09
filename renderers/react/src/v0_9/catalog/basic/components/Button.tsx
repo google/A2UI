@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
-export const Button = createReactComponent(ButtonApi, ({props, buildChild}) => {
+export const Button = createComponentImplementation(ButtonApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
     margin: LEAF_MARGIN,
     padding: '8px 16px',

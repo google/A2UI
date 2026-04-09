@@ -422,3 +422,176 @@ def test_with_pruning_messages_v08():
   assert "deleteSurface" in pruned_s2c["properties"]
   assert "surfaceUpdate" not in pruned_s2c["properties"]
   assert pruned_s2c["required"] == ["surfaceId"]
+
+
+def test_resolve_examples_path_handling():
+  from a2ui.schema.catalog import resolve_examples_path
+
+  assert resolve_examples_path(None) is None
+  assert resolve_examples_path("/absolute/examples") == "/absolute/examples"
+  assert resolve_examples_path("file:///absolute/examples") == "/absolute/examples"
+
+  with pytest.raises(ValueError, match="Unsupported examples URL scheme"):
+    resolve_examples_path("https://a2ui.org/examples")
+
+
+def test_catalog_config_from_path_schemes():
+  from a2ui.schema.catalog import CatalogConfig
+  # Test local path
+  config = CatalogConfig.from_path(
+      name="test_file", catalog_path="relative_path/to/catalog.json"
+  )
+  assert config.provider.path == "relative_path/to/catalog.json"
+
+  # Test file:// scheme
+  config = CatalogConfig.from_path(
+      name="test_file", catalog_path="file:///absolute_path/to/catalog.json"
+  )
+  assert config.provider.path == "/absolute_path/to/catalog.json"
+
+  # Test HTTP raises NotImplementedError
+  with pytest.raises(NotImplementedError, match="HTTP support is coming soon."):
+    CatalogConfig.from_path(
+        name="test_http", catalog_path="http://a2ui.org/catalog.json"
+    )
+
+  # Test unsupported scheme raises ValueError
+  with pytest.raises(ValueError, match="Unsupported catalog URL scheme"):
+    CatalogConfig.from_path(name="test_ftp", catalog_path="ftp://a2ui.org/catalog.json")
+
+
+def test_basic_catalog_get_config_examples_path():
+  from a2ui.basic_catalog.provider import BasicCatalog
+  from a2ui.schema.constants import VERSION_0_9
+
+  # Test get_config with file:// scheme examples path
+  config = BasicCatalog.get_config(
+      version=VERSION_0_9, examples_path="file:///absolute/examples"
+  )
+  assert config.examples_path == "/absolute/examples"
+
+
+def test_load_examples_with_glob(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+
+  sub_dir = example_dir / "nested"
+  sub_dir.mkdir()
+
+  (example_dir / "top.json").write_text('[{"beginRendering": {"surfaceId": "top"}}]')
+  (sub_dir / "deep.json").write_text('[{"beginRendering": {"surfaceId": "deep"}}]')
+  (example_dir / "ignored.txt").write_text("not json")
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={},
+  )
+
+  # Match only top-level using a specific glob
+  examples_top = catalog.load_examples(str(example_dir / "*.json"))
+  assert "---BEGIN top---" in examples_top
+  assert "---BEGIN deep---" not in examples_top
+
+  # Match recursively using globstar
+  examples_all = catalog.load_examples(str(example_dir / "**" / "*.json"))
+  assert "---BEGIN top---" in examples_all
+  assert "---BEGIN deep---" in examples_all
+
+
+def test_load_examples_with_glob_prefix_suffix(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+
+  (example_dir / "user_profile.json").write_text(
+      '[{"beginRendering": {"surfaceId": "user"}}]'
+  )
+  (example_dir / "user_settings.json").write_text(
+      '[{"beginRendering": {"surfaceId": "settings"}}]'
+  )
+  (example_dir / "admin_profile.json").write_text(
+      '[{"beginRendering": {"surfaceId": "admin"}}]'
+  )
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={},
+  )
+
+  # Filter by prefix: user_*.json
+  user_examples = catalog.load_examples(str(example_dir / "user_*.json"))
+  assert "---BEGIN user_profile---" in user_examples
+  assert "---BEGIN user_settings---" in user_examples
+  assert "---BEGIN admin_profile---" not in user_examples
+
+  # Filter by suffix: *_profile.json
+  profile_examples = catalog.load_examples(str(example_dir / "*_profile.json"))
+  assert "---BEGIN user_profile---" in profile_examples
+  assert "---BEGIN admin_profile---" in profile_examples
+  assert "---BEGIN user_settings---" not in profile_examples
+
+
+def test_load_examples_with_glob_advanced_cases(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+
+  # 1. Create standard files for character range matching
+  (example_dir / "step1.json").write_text('[{"beginRendering": {"surfaceId": "1"}}]')
+  (example_dir / "step2.json").write_text('[{"beginRendering": {"surfaceId": "2"}}]')
+  (example_dir / "step3.json").write_text('[{"beginRendering": {"surfaceId": "3"}}]')
+
+  # 2. Create a directory that ends in .json
+  fake_json_dir = example_dir / "directory.json"
+  fake_json_dir.mkdir()
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={},
+  )
+
+  # Test character range matching
+  range_examples = catalog.load_examples(str(example_dir / "step[1-2].json"))
+  assert "---BEGIN step1---" in range_examples
+  assert "---BEGIN step2---" in range_examples
+  assert "---BEGIN step3---" not in range_examples
+
+  # Test that directory matching *.json is skipped correctly
+  all_examples = catalog.load_examples(str(example_dir / "*.json"))
+  assert "---BEGIN step1---" in all_examples
+  assert "directory" not in all_examples
+
+  # Test zero matches returns empty string
+  assert catalog.load_examples(str(example_dir / "*.yaml")) == ""
+
+
+def test_load_examples_with_glob_negation(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+
+  (example_dir / "visible.json").write_text(
+      '[{"beginRendering": {"surfaceId": "visible"}}]'
+  )
+  (example_dir / "index.json").write_text(
+      '[{"beginRendering": {"surfaceId": "index"}}]'
+  )
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={},
+  )
+
+  # Test negation to exclude files starting with 'i' (like index.json)
+  negation_examples = catalog.load_examples(str(example_dir / "[!i]*.json"))
+  assert "---BEGIN visible---" in negation_examples
+  assert "---BEGIN index---" not in negation_examples

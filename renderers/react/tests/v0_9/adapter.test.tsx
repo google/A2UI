@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import { createReactComponent } from '../../src/v0_9/adapter';
+import { createComponentImplementation } from '../../src/v0_9/adapter';
 import { A2uiSurface } from '../../src/v0_9/A2uiSurface';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
 import { z } from 'zod';
@@ -39,7 +39,7 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent(
+    const TestComponent = createComponentImplementation(
       TestApiDef,
       ({ props, buildChild }) => {
         return <div>
@@ -74,7 +74,7 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent(
+    const TestComponent = createComponentImplementation(
       TestApiDef,
       ({ props }) => {
         return <div data-testid="msg">{props.text}</div>;
@@ -113,7 +113,7 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent(
+    const TestComponent = createComponentImplementation(
       TestApiDef,
       ({ props }) => {
         return <div>{props.text}</div>;
@@ -135,12 +135,12 @@ describe('adapter', () => {
     
     let parentRenderCount = 0;
 
-    const TestParent = createReactComponent(ParentApiDef, ({ props, buildChild }) => {
+    const TestParent = createComponentImplementation(ParentApiDef, ({ props, buildChild }) => {
       parentRenderCount++;
       return <div data-testid="parent">{props.child && buildChild(props.child)}</div>;
     });
 
-    const TestChild = createReactComponent(ChildApiDef, ({ props }) => (
+    const TestChild = createComponentImplementation(ChildApiDef, ({ props }) => (
       <span data-testid="resolved">{props.text}</span>
     ));
 

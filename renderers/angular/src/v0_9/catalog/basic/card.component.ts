@@ -31,9 +31,8 @@ import { BoundProperty } from '../../core/types';
     <div class="a2ui-card">
       @if (child()) {
         <a2ui-v09-component-host
-          [componentId]="child()!"
+          [componentKey]="child()!"
           [surfaceId]="surfaceId()"
-          [dataContextPath]="dataContextPath()"
         >
         </a2ui-v09-component-host>
       }
@@ -65,4 +64,6 @@ export class CardComponent {
   dataContextPath = input<string>('/');
 
   child = computed(() => this.props()['child']?.value());
+
+
 }

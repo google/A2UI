@@ -24,12 +24,13 @@
     "build": "npm run generate-examples && ng build && node ../scripts/prepare-publish.mjs --source ./dist/package.json --skip-path-adjustment",
     "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
     "publish:package": "npm run build && npm publish dist/ --access public",
-    "demo": "npm run generate-examples && ng serve a2ui_explorer",
+    "demo": "npm run generate-examples && NODE_PRESERVE_SYMLINKS=1 ng serve a2ui_explorer",
     "test": "npm run generate-examples && ng test lib --browsers=ChromeHeadless",
     "test:ci": "npm run generate-examples && ng test lib --watch=false --browsers=ChromeHeadless"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
+    "@preact/signals-core": "^1.13.0",
     "tslib": "^2.3.0",
     "zod": "^3.25.76"
   },
@@ -45,6 +46,7 @@
     }
   },
   "devDependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it",
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -84,5 +86,8 @@
         }
       }
     ]
+  },
+  "overrides": {
+    "@preact/signals-core": "^1.13.0"
   }
 }

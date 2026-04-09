@@ -14,11 +14,13 @@
 
 import collections
 import copy
+import glob
 import json
 import logging
 import os
 from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from urllib.parse import urlparse
 
 from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
 from .constants import (
@@ -27,6 +29,7 @@ from .constants import (
     CATALOG_COMPONENTS_KEY,
     CATALOG_ID_KEY,
     VERSION_0_8,
+    ENCODING,
 )
 
 
@@ -36,12 +39,12 @@ class CatalogConfig:
   Configuration for a catalog of components.
 
   A catalog consists of a provider that knows how to load the schema,
-  and optionally a path to examples.
+  and optionally a path or glob pattern to examples.
 
   Attributes:
     name: The name of the catalog.
     provider: The provider to use to load the catalog schema.
-    examples_path: The path to the examples directory.
+    examples_path: The path or glob pattern to the examples.
   """
 
   name: str
@@ -52,12 +55,30 @@ class CatalogConfig:
   def from_path(
       cls, name: str, catalog_path: str, examples_path: Optional[str] = None
   ) -> "CatalogConfig":
-    """Returns a CatalogConfig that loads from a file path."""
+    """Returns a CatalogConfig that loads from a local path or 'file://' URI."""
+    parsed = urlparse(catalog_path)
+    if not parsed.scheme or parsed.scheme == "file":
+      catalog_provider = FileSystemCatalogProvider(parsed.path)
+    elif parsed.scheme in ["http", "https"]:
+      raise NotImplementedError("HTTP support is coming soon.")
+    else:
+      raise ValueError(f"Unsupported catalog URL scheme: {catalog_path}")
+
     return cls(
         name=name,
-        provider=FileSystemCatalogProvider(catalog_path),
-        examples_path=examples_path,
+        provider=catalog_provider,
+        examples_path=resolve_examples_path(examples_path),
     )
+
+
+def resolve_examples_path(path: Optional[str]) -> Optional[str]:
+  if path:
+    parsed = urlparse(path)
+    if not parsed.scheme or parsed.scheme == "file":
+      return parsed.path
+    else:
+      raise ValueError(f"Unsupported examples URL scheme: {path}")
+  return None
 
 
 def _collect_refs(obj: Any) -> set[str]:
@@ -296,26 +317,41 @@ class A2uiCatalog:
     return "\n\n".join(all_schemas)
 
   def load_examples(self, path: Optional[str], validate: bool = False) -> str:
-    """Loads and validates examples from a directory."""
-    if not path or not os.path.isdir(path):
-      if path:
-        logging.warning(f"Example path {path} is not a directory")
+    """Loads and validates examples from a directory or a glob pattern."""
+    if not path:
       return ""
 
-    merged_examples = []
-    for filename in os.listdir(path):
-      if filename.endswith(".json"):
-        full_path = os.path.join(path, filename)
-        basename = os.path.splitext(filename)[0]
-        with open(full_path, "r", encoding="utf-8") as f:
-          content = f.read()
+    # If it's a directory, support backward compatibility by appending /*.json
+    if os.path.isdir(path):
+      pattern = os.path.join(path, "*.json")
+    else:
+      pattern = path
 
-        if validate:
-          self._validate_example(full_path, content)
+    # Use glob to find files
+    matched_files = glob.glob(pattern, recursive=True)
 
-        merged_examples.append(
-            f"---BEGIN {basename}---\n{content}\n---END {basename}---"
+    if not matched_files:
+      if not os.path.isdir(path) and not any(c in path for c in "*?[]"):
+        logging.warning(
+            f"Example path {path} is neither a directory nor a valid glob pattern"
         )
+      return ""
+
+    # Sort for determinism
+    matched_files.sort()
+
+    merged_examples = []
+    for full_path in matched_files:
+      if not os.path.isfile(full_path):
+        continue
+      basename = os.path.splitext(os.path.basename(full_path))[0]
+      with open(full_path, "r", encoding=ENCODING) as f:
+        content = f.read()
+
+      if validate:
+        self._validate_example(full_path, content)
+
+      merged_examples.append(f"---BEGIN {basename}---\n{content}\n---END {basename}---")
 
     if not merged_examples:
       return ""
