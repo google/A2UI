@@ -172,7 +172,7 @@ describe("Custom Catalogs Integration", () => {
     });
 
     // Validates that the minimal catalog surface spawned the classic a2ui-text node
-    assert.ok(el1.shadowRoot?.querySelector("a2ui-text"));
+    assert.ok(el1.shadowRoot?.querySelector("a2ui-basic-text"));
 
     // Validates that the custom catalog surface dynamically spawned the custom node tag `<a2ui-customwidget>`
     assert.ok(el2.shadowRoot?.querySelector("a2ui-customwidget"));

@@ -111,15 +111,17 @@ describe("A2uiSurface", () => {
       ]);
     });
 
+    await el.updateComplete;
+
     // Wait for the child element (a2ui-text) to finish updating as well
-    const childEl = el.shadowRoot?.querySelector("a2ui-text") as any;
+    const childEl = el.shadowRoot?.querySelector("a2ui-basic-text") as any;
     if (childEl && childEl.updateComplete) {
       await childEl.updateComplete;
     }
 
     const html = el.shadowRoot?.innerHTML;
     const childHtml = childEl?.shadowRoot?.innerHTML;
-    // Let's just assert that the loading text is gone
+
     assert.ok(
       !html?.includes("Loading surface"),
       "Loading text should be gone",
