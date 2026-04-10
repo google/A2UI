@@ -57,7 +57,48 @@ This generates a `manifest.json` with the current versions of all renderer packa
 
 ---
 
-## Manual Publishing Process
+## Manually publishing to NPM
 
-If you need to publish a single package manually:
+If you need to publish a package to npm directly, without exit gate:
+
+1. Create an `.npmrc` file in the directory of the package you are publishing:
+   ```sh
+   echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+   ```
+
+2. Export your token in your terminal:
+   ```sh
+   export NPM_TOKEN="npm_YourSecretTokenHere"
+   ```
+
+3. Run `npm run publish:package`.
+
+## About the `publish:package` command
+
+Because these are scoped packages (`@a2ui/`), they require the `--access public` flag to be published to the public registry. The `publish:package` script handles this automatically, as well as replacing the path dependencies with package dependencies.
+
+```sh
+npm run publish:package
+```
+
+*Note: This command runs the build, prepares the `dist/` directory, and then executes `npm publish dist/ --access public`.*
+
+---
+
+### How It Works
+
+**What happens during `npm run publish:package`?**
+Before publishing, the script runs the necessary `build` command which processes the code. Then, a preparation script (usually `prepare-publish.mjs`) runs, which:
+1. Copies `package.json`, `README.md`, and `LICENSE` to the `dist/` folder.
+2. If it's a renderer, it reads the `version` from `@a2ui/web_core` and updates the `file:` dependency in the `dist/package.json` to the actual core version (e.g., `^0.9.0`).
+3. Adjusts exports and paths (removing the `./dist/` prefix) so they are correct when consumed from the package root.
+4. Removes any build scripts (`prepublishOnly`, `scripts`, `wireit`) so they don't interfere with the publish process.
+
+The `npm publish dist/` command then uploads only the contents of the `dist/` directory to the npm registry.
+
+**What exactly gets published?**
+Only the `dist/` directory, `src/` directory (for sourcemaps), `package.json`, `README.md`, and `LICENSE` are included in the published package. This is strictly controlled by the `"files"` array in the original `package.json`.
+
+**What about the License?**
+The package is automatically published under the `Apache-2.0` open-source license, as defined in `package.json`.
 

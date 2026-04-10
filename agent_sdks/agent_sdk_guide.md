@@ -245,7 +245,7 @@ Implement `CatalogConfig` (and its `Provider`), `A2uiCatalog`, and an `Inference
 Implement `generateSystemPrompt`. Verify that it outputs valid Markdown with embedded JSON schemas and examples.
 
 ### Step 3: Parsing & Validation
-Implement `parseResponse` and validation. Hook up a standard JSON Schema validator for your language. Write unit tests to check if it rejects bad JSON and accepts good JSON.
+Implement `parseResponse` and validation. Hook up a standard JSON Schema validator for your language. Use the centralized YAML conformance suite in `agent_sdks/conformance/` to verify that your implementation handles streaming and validation edge cases identically to the reference implementation.
 
 ### Step 4: Transport (A2A)
 Create the helper utilities to wrap JSON in transport Parts (if needed for your ecosystem).
@@ -268,3 +268,11 @@ The A2UI Agent SDK is a multi-language ecosystem. While features may be implemen
 2.  **File Sync Issues**: The author or reviewer of the feature **must file issues** for the equivalent feature requests in all other supported languages to ensure they are tracked.
 3.  **Cross-Referencing**: Link these new issues back to the original Pull Request or issue for context and reference.
 4.  **Consistency Over Clones**: While implementations should be idiomatic to the target language, they must follow the same architectural patterns (Inference Strategies, Validators, Streaming Parsers) and protocol standards defined in this guide.
+
+---
+
+## 12. Conformance Testing
+
+To ensure behavioral parity across all SDK implementations (Python, Kotlin, etc.), the project maintains a language-agnostic conformance suite.
+
+For detailed information on the suite structure and how to use it in your SDK implementation, see the [Conformance Testing README](conformance/README.md).

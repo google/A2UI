@@ -17,6 +17,8 @@
 import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
+import { fileURLToPath } from 'node:url';
+
 // This script prepares a package for publishing.
 // Arguments:
 //   --source <path>: Path to the source package.json (defaults to ./package.json)
@@ -35,9 +37,10 @@ for (let i = 0; i < args.length; i++) {
 }
 
 const packageDir = process.cwd();
+const scriptDir = fileURLToPath(new URL('.', import.meta.url));
 const resolvedSourcePkg = resolve(packageDir, sourcePkgPath);
 const resolvedDistDir = resolve(packageDir, distDir);
-const rootDir = resolve(packageDir, '../../');
+const rootDir = resolve(scriptDir, '../../');
 
 if (!existsSync(resolvedDistDir)) {
   mkdirSync(resolvedDistDir, { recursive: true });
@@ -52,6 +55,9 @@ const pkg = JSON.parse(readFileSync(resolvedSourcePkg, 'utf8'));
 // 2. Update @a2ui/web_core dependency
 if (pkg.dependencies && pkg.dependencies['@a2ui/web_core']) {
   pkg.dependencies['@a2ui/web_core'] = '^' + coreVersion;
+}
+if (pkg.peerDependencies && pkg.peerDependencies['@a2ui/web_core']) {
+  pkg.peerDependencies['@a2ui/web_core'] = '^' + coreVersion;
 }
 
 // 3. Adjust paths
