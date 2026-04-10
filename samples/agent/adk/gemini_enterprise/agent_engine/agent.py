@@ -176,7 +176,7 @@ class ContactAgent:
 
   async def fetch_response(
       self, query, session_id, ui_version: Optional[str] = None
-  ) -> List[Part]:
+  ) -> list[Part]:
     """Fetches the response from the agent."""
 
     session_state = {"base_url": self.base_url}
