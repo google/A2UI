@@ -81,7 +81,7 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
     { icon: SquarePlus, label: "Create", href: "/" },
     { icon: Play, label: "Theater", subtitle: "A2UI Playground", href: "/theater" },
     { icon: LayoutGrid, label: "Gallery", href: "/gallery" },
-    { icon: Box, label: "Components", href: "/components" },
+    { icon: Box, label: "Basic Components", href: "/components" },
     { icon: Shapes, label: "Icons", href: "/icons" },
     {
       icon: BookOpen,

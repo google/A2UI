@@ -66,6 +66,7 @@
 }
 
 :root {
+  --a2ui-primary-color: #d93025;
   --a2ui-card-bg: #ffffff;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
