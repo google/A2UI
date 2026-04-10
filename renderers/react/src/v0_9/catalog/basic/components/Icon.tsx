@@ -20,8 +20,9 @@ import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
-  const iconName =
+  const rawName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
+  const iconName = rawName?.replace(/[A-Z]/g, (c) => '_' + c.toLowerCase());
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     fontSize: '24px',
