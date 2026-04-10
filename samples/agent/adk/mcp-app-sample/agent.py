@@ -41,13 +41,13 @@ MCP_APP_HTML = """
     <script type="importmap">
     {
       "imports": {
-        "@modelcontextprotocol/sdk/types.js": "http://127.0.0.1:5173/@fs/Users/mandard/work/agents/a2ui/samples/client/lit/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js",
-        "@modelcontextprotocol/sdk/shared/protocol.js": "http://127.0.0.1:5173/@fs/Users/mandard/work/agents/a2ui/samples/client/lit/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js"
+        "@modelcontextprotocol/sdk/types.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js",
+        "@modelcontextprotocol/sdk/shared/protocol.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js"
       }
     }
     </script>
     <script type="module">
-        import { App as AppBridge } from 'http://127.0.0.1:5173/@fs/Users/mandard/work/agents/a2ui/samples/client/lit/node_modules/@modelcontextprotocol/ext-apps/dist/src/app-with-deps.js';
+        import { App as AppBridge } from '../../lit/node_modules/@modelcontextprotocol/ext-apps/dist/src/app-with-deps.js';
 
         const bridge = new AppBridge({ name: "mcp-app-sample", version: "1.0.0" });
 

@@ -15,14 +15,13 @@
  */
 
 import { html, css } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
+import { property, query, state } from "lit/decorators.js";
 import { Root } from "@a2ui/lit/ui";
 import { v0_8 } from "@a2ui/lit";
 import { AppBridge, PostMessageTransport } from "@modelcontextprotocol/ext-apps/app-bridge";
 import type { McpUiSandboxProxyReadyNotification } from "@modelcontextprotocol/ext-apps/app-bridge";
 import { SANDBOX_IFRAME_PATH } from "../shared-constants.js";
 
-@customElement("a2ui-mcp-apps-component")
 export class McpApp extends Root {
   static override styles = [
     ...Root.styles,
@@ -152,10 +151,6 @@ export class McpApp extends Root {
     this.bridge.onloggingmessage = (params) => {
       console.log(`[MCP Sandbox ${params.level}]:`, params.data);
     };
-
-    window.addEventListener("message", (event) => {
-      console.log("[McpApp Global Listener] Received message:", event.data, "from origin:", event.origin, "isFromIframe:", event.source === this.iframe?.contentWindow);
-    });
 
     // 1. Listen for the Outer Iframe to declare itself ready.
     const readyNotification: McpUiSandboxProxyReadyNotification["method"] = "ui/notifications/sandbox-proxy-ready";

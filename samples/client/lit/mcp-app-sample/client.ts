@@ -61,8 +61,17 @@ export class A2UIClient {
       return messages;
     }
 
-    const error = (await response.json()) as { error: string };
-    throw new Error(error.error);
+    const text = await response.text();
+    let errorMsg = text;
+    try {
+      const errorObj = JSON.parse(text);
+      if (errorObj && typeof errorObj === 'object' && 'error' in errorObj) {
+        errorMsg = errorObj.error;
+      }
+    } catch (e) {
+      // Not JSON, use raw text
+    }
+    throw new Error(errorMsg);
   }
 }
 
