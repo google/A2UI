@@ -30,10 +30,12 @@ export class A2uiBasicTextFieldElement extends BasicCatalogA2uiLitElement<
    * CSS variables:
    *
    * - `--a2ui-textfield-border`: The styling for the text field border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
-   * - `--a2ui-textfield-border-radius`: The border radius of the text field. Defaults to `--a2ui-border-radius`.
-   * - `--a2ui-textfield-padding`: The padding of the text field. Defaults to `--a2ui-spacing-s`.
+   * - `--a2ui-textfield-border-radius`: The border radius of the text field. Defaults to `--a2ui-spacing-m`.
+   * - `--a2ui-textfield-padding`: The padding of the text field. Defaults to `--a2ui-spacing-m`.
    * - `--a2ui-textfield-color-border-focus`: The border color on focus. Defaults to `--a2ui-color-primary`.
    * - `--a2ui-textfield-color-error`: The color for both invalid border and error text. Defaults to red.
+   * - `--a2ui-textfield-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
+   * - `--a2ui-textfield-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
    *
    * It also inherits global input variables:
    * - `--a2ui-color-input`: Background color.
@@ -49,8 +51,8 @@ export class A2uiBasicTextFieldElement extends BasicCatalogA2uiLitElement<
       background-color: var(--a2ui-color-input, #fff);
       color: var(--a2ui-color-on-input, #333);
       border: var(--a2ui-textfield-border, var(--a2ui-border));
-      border-radius: var(--a2ui-textfield-border-radius, var(--a2ui-border-radius, 0.25rem));
-      padding: var(--a2ui-textfield-padding, var(--a2ui-spacing-s, 0.25rem));
+      border-radius: var(--a2ui-textfield-border-radius, var(--a2ui-spacing-m));
+      padding: var(--a2ui-textfield-padding, var(--a2ui-spacing-m));
       font-family: inherit;
     }
     .a2ui-textfield:focus {
@@ -59,6 +61,10 @@ export class A2uiBasicTextFieldElement extends BasicCatalogA2uiLitElement<
     }
     .a2ui-textfield.invalid {
       border-color: var(--a2ui-textfield-color-error, red);
+    }
+    label {
+      font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-weight: var(--a2ui-textfield-label-font-weight, var(--a2ui-label-font-weight, bold));
     }
     .error {
       color: var(--a2ui-textfield-color-error, red);

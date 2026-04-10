@@ -24,6 +24,13 @@ import { A2uiController } from "@a2ui/lit/v0_9";
 export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
   typeof DateTimeInputApi
 > {
+  /**
+   * The styles of the datetime input can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-datetimeinput-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
+   * - `--a2ui-datetimeinput-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
+   */
   static styles = css`
     :host {
       display: flex;
@@ -36,6 +43,10 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
       border: var(--a2ui-datetimeinput-border, var(--a2ui-border));
       border-radius: var(--a2ui-datetimeinput-border-radius, var(--a2ui-border-radius));
       padding: var(--a2ui-datetimeinput-padding, var(--a2ui-spacing-s));
+    }
+    label {
+      font-size: var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-weight: var(--a2ui-datetimeinput-label-font-weight, var(--a2ui-label-font-weight, bold));
     }
   `;
 

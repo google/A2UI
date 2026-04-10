@@ -24,6 +24,15 @@ import { A2uiController } from "@a2ui/lit/v0_9";
 export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
   typeof ChoicePickerApi
 > {
+  /**
+   * The styles of the choice picker can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-choicepicker-label-color`: Color of all labels.
+   * - `--a2ui-choicepicker-label-font-size`: Font size of all labels. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s` for the main label.
+   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the main label. Defaults to `--a2ui-label-font-weight` then `bold`.
+   * - `--a2ui-choicepicker-gap`: Spacing between options.
+   */
   static styles = css`
     :host {
       display: flex;
@@ -39,6 +48,10 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
     label {
       color: var(--a2ui-choicepicker-label-color, inherit);
       font-size: var(--a2ui-choicepicker-label-font-size, inherit);
+    }
+    :host > label {
+      font-size: var(--a2ui-choicepicker-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-weight: var(--a2ui-choicepicker-label-font-weight, var(--a2ui-label-font-weight, bold));
     }
   `;
 

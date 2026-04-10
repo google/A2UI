@@ -39,8 +39,13 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof Bu
    * - `--a2ui-button-border`: The styling for the button border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
    * - `--a2ui-button-border-radius`: The border radius of the button. Defaults to `--a2ui-border-radius`.
    * - `--a2ui-button-padding`: The padding of the button. Defaults to `--a2ui-spacing-m`.
+   * - `--a2ui-button-margin`: The outer margin of the button. Defaults to `--a2ui-spacing-m`.
    */
   static styles = css`
+    :host {
+      display: inline-block;
+      margin: var(--a2ui-button-margin, var(--a2ui-spacing-m));
+    }
     :where(:host) {
       --_color-primary: var(--a2ui-color-primary, #17e);
       --_button-border-radius: var(
@@ -60,7 +65,7 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof Bu
       --_a2ui-text-margin: 0;
       --_a2ui-text-color: var(--a2ui-color-on-secondary, #333);
       padding: var(--_button-padding);
-      background: var(--a2ui-button-background, var(--a2ui-color-secondary, #ddd));
+      background: var(--a2ui-button-background, var(--a2ui-color-surface, #fff));
       box-shadow: var(--a2ui-button-box-shadow, none);
       font-weight: var(--a2ui-button-font-weight, normal);
       color: var(--_a2ui-text-color);

@@ -31,11 +31,13 @@ export class A2uiBasicTextElement extends BasicCatalogA2uiLitElement<typeof Text
    * CSS variables:
    *
    * - `--a2ui-text-color-text`: The color of the text. Defaults to `--a2ui-color-on-background`.
+   * - `--a2ui-text-caption-color`: The color for caption text. Defaults to `light-dark(#666, #aaa)`.
    *
    * It also supports `--_a2ui-text-color` override from parent components (like Button).
    */
   static styles = css`
     :host {
+      display: inline-block;
       color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
     }
     p, h1, h2, h3, h4, h5, h6, ol, ul, li, blockquote, pre {
@@ -53,7 +55,10 @@ export class A2uiBasicTextElement extends BasicCatalogA2uiLitElement<typeof Text
     p, ol, ul, li, blockquote, .a2ui-caption {
       line-height: var(--a2ui-line-height-body, 1.5);
     }
-    .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) { font-size: var(--a2ui-font-size-xs); }
+    .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) {
+      font-size: var(--a2ui-font-size-xs);
+      color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
+    }
     a {
       color: var(--a2ui-text-a-color, inherit);
       font-weight: var(--a2ui-text-a-font-weight, inherit);
