@@ -46,8 +46,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   }
 
   if (packagesToPublish.length === 0) {
-    console.error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests]');
-    process.exit(1);
+    throw new Error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests]');
   }
 
   const graph = getPackageGraph();
@@ -57,8 +56,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     if (graph[name]) return name;
     const pkg = Object.values(graph).find(p => p.name.endsWith('/' + name));
     if (!pkg) {
-      console.error(`Package "${name}" not found in workspace.`);
-      process.exit(1);
+      throw new Error(`Package "${name}" not found in workspace.`);
     }
     return pkg.name;
   });
@@ -72,7 +70,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     console.warn('WARNING: You are publishing renderers but NOT @a2ui/web_core.');
     console.warn('This can lead to broken versions if web_core has changed.');
     console.warn('Use --force to override this check.');
-    process.exit(1);
+    throw new Error('Safety check failed: web_core missing from publish list.');
   }
 
   // Topological Sort
@@ -149,13 +147,13 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     if (remoteVersion === localVersion) {
       console.error(`\n❌ ERROR: ${pkgName} version ${localVersion} is already published on npm!`);
       console.error(`Please increment the version (e.g., using increment_version.mjs) before publishing.`);
-      process.exit(1);
+      throw new Error(`Version ${localVersion} already published.`);
     }
 
     const diff = getVersionDiff(remoteVersion, localVersion);
     if (diff === 'OLDER_OR_UNKNOWN') {
        console.error(`\n❌ ERROR: ${pkgName} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`);
-       process.exit(1);
+       throw new Error(`Invalid version progression for ${pkgName}.`);
     }
 
     console.log(`✅ [${diff}] ${pkgName}: ${remoteVersion} -> ${localVersion}`);
@@ -178,7 +176,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     const answer = await askUser();
     if (answer.toLowerCase() !== 'yes' && answer.toLowerCase() !== 'y') {
       console.log('Publishing cancelled by user.');
-      process.exit(0);
+      return;
     }
   }
 
@@ -223,5 +221,8 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
 
 import { fileURLToPath } from 'node:url';
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  runPublish(process.argv.slice(2));
+  runPublish(process.argv.slice(2)).catch(err => {
+    console.error(err.message || err);
+    process.exit(1);
+  });
 }

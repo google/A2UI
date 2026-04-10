@@ -62,11 +62,8 @@ export function getPackageGraph() {
       const isNewInRenderers = dir.includes('/renderers/');
       const isExistingInRenderers = existing.dir.includes('/renderers/');
       
-      if (isExistingInRenderers && !isNewInRenderers) continue; // Keep existing
-      if (!isExistingInRenderers && isNewInRenderers) {
-        // Replace existing with the one in renderers/
-      } else {
-        // Both in renderers or both not in renderers, prefer the one with more scripts
+      if (isExistingInRenderers && !isNewInRenderers) continue;
+      if (isExistingInRenderers === isNewInRenderers) {
         const newScriptsCount = Object.keys(pkg.scripts || {}).length;
         const existingScriptsCount = Object.keys(JSON.parse(readFileSync(existing.path, 'utf8')).scripts || {}).length;
         if (newScriptsCount <= existingScriptsCount) continue;

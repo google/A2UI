@@ -60,4 +60,4 @@ This generates a `manifest.json` with the current versions of all renderer packa
 ## Manual Publishing Process
 
 If you need to publish a single package manually:
-ally:
+

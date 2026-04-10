@@ -21,23 +21,29 @@ describe('publish_npm script integration test', () => {
       return '';
     }
 
-    // Run the script with --dry-run, --yes, --skip-tests
+    // Run the script with --yes, --skip-tests (no --dry-run so we can record commands)
     // We target web_core and lit. lit depends on web_core, so web_core MUST be processed first.
     await runPublish(
-      ['--packages=lit,web_core', '--dry-run', '--yes', '--skip-tests'],
+      ['--packages=lit,web_core', '--yes', '--skip-tests'],
       mockRunCommand,
       mockExecSync,
       null // readline not needed with --yes
     );
 
-    // The script should not have thrown. Now let's verify what it intended to do.
+    // Verify topological order in preparation phase
+    const webCoreInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('web_core'));
+    const litInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('lit'));
     
-    // Using dry-run skips actual execution, so mockRunCommand is NOT called for actual shell commands.
-    // We should modify runPublish to call runCmd even in dry-run, but pass a flag, OR
-    // just test that it didn't throw and exited cleanly.
-    // Given how the script prints "[DRY RUN] Would execute: ...", our mockRunCommand is not receiving those.
-    
-    // Instead of asserting on executedCommands (which is empty in dryRun), we just assert it ran successfully without throwing.
-    assert.ok(true);
+    assert.ok(webCoreInstallIndex > -1, 'Should install web_core');
+    assert.ok(litInstallIndex > -1, 'Should install lit');
+    assert.ok(webCoreInstallIndex < litInstallIndex, 'web_core must be prepared before lit (topological sort)');
+
+    // Verify topological order in publish phase
+    const webCorePublishIndex = executedCommands.findIndex(cmd => cmd.includes('publish:package') && cmd.includes('web_core'));
+    const litPublishIndex = executedCommands.findIndex(cmd => cmd.includes('publish:package') && cmd.includes('lit'));
+
+    assert.ok(webCorePublishIndex > -1, 'Should publish web_core');
+    assert.ok(litPublishIndex > -1, 'Should publish lit');
+    assert.ok(webCorePublishIndex < litPublishIndex, 'web_core must be published before lit');
   });
 });
