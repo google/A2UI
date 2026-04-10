@@ -65,7 +65,6 @@ export class A2uiBasicRowElement extends BasicCatalogA2uiLitElement<typeof RowAp
     super.updated(changedProperties);
     const props = this.controller.props;
     if (props) {
-      this.style.flex = props.weight !== undefined ? String(props.weight) : "initial";
       this.style.justifyContent = JUSTIFY_MAP[props.justify ?? ""] ?? "flex-start";
       this.style.alignItems = ALIGN_MAP[props.align ?? ""] ?? "stretch";
     }
