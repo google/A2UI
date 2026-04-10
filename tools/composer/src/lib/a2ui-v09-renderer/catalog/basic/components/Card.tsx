@@ -28,7 +28,6 @@ export const Card = createReactComponent(CardApi, ({props, buildChild}) => {
     ...getBaseContainerStyle(),
     backgroundColor: CARD_BG,
     boxShadow: hovered ? CARD_SHADOW_HOVER : CARD_SHADOW,
-    width: '100%',
     overflow: 'hidden',
     transition: 'box-shadow 0.2s, transform 0.2s',
     transform: hovered ? 'translateY(-1px)' : 'none',
