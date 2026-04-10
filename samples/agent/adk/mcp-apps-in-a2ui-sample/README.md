@@ -6,7 +6,7 @@ This sample demonstrates how to integrate an **MCP (Model Context Protocol) App*
 
 The sample consists of:
 1.  **Agent** (`agent.py`): A Python FastAPI server that acts as the agent. It serves the UI manifest containing the `McpApp` component and handles tool calls forwarded by the client.
-2.  **Client** (`samples/client/lit/mcp-app-sample`): A Lit-based client application that renders the A2UI interface and the `McpApp` component.
+2.  **Client** (`samples/client/lit/mcp-apps-in-a2ui-sample`): A Lit-based client application that renders the A2UI interface and the `McpApp` component.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ Communication between the host and the app is handled via the `@modelcontextprot
 Navigate to the client sample directory and start the Vite server:
 
 ```bash
-cd ../../../client/lit/mcp-app-sample
+cd ../../../client/lit/mcp-apps-in-a2ui-sample
 npm run dev
 ```
 
@@ -40,7 +40,7 @@ This will start the server at `http://localhost:5173`.
 In a separate terminal, navigate to this directory and start the agent:
 
 ```bash
-cd samples/agent/adk/mcp-app-sample
+cd samples/agent/adk/mcp-apps-in-a2ui-sample
 uv run agent.py
 ```
 

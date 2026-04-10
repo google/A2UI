@@ -1,5 +1,5 @@
 {
-  "name": "@a2ui/mcp-app-sample",
+  "name": "@a2ui/mcp-apps-in-a2ui-sample",
   "private": true,
   "version": "0.1.0",
   "description": "A2UI MCP App Sample",
@@ -53,7 +53,7 @@
     }
   },
   "repository": {
-    "directory": "samples/client/lit/mcp-app-sample",
+    "directory": "samples/client/lit/mcp-apps-in-a2ui-sample",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },

@@ -1,4 +1,4 @@
-# MCP App Sample
+# MCP Apps in A2UI Sample
 
 This sample demonstrates how a sandboxed MCP (Model Context Protocol) application running in an iframe can communicate with the A2UI Agent. It showcases a 2-way communication flow where the UI in the iframe can trigger actions that are handled by the backend agent.
 
@@ -24,7 +24,7 @@ This sample follows the pattern established in the `custom-components-example` (
 ### 1. Run the Agent
 Navigate to the agent sample directory and run the agent:
 ```bash
-cd samples/agent/adk/mcp-app-sample
+cd samples/agent/adk/mcp-apps-in-a2ui-sample
 uv run agent.py
 ```
 The agent will start on `http://localhost:8000`.
@@ -32,7 +32,7 @@ The agent will start on `http://localhost:8000`.
 ### 2. Run the Client
 Navigate to the client sample directory and start the dev server:
 ```bash
-cd samples/client/lit/mcp-app-sample
+cd samples/client/lit/mcp-apps-in-a2ui-sample
 npm run dev
 ```
 The client will start (typically on `http://localhost:5173/`). Open this URL in your browser to interact with the sample.

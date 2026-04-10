@@ -13,7 +13,7 @@
 # limitations under the License.
 
 [project]
-name = "a2ui-mcp-app-sample"
+name = "a2ui-mcp-apps-in-a2ui-sample"
 version = "0.1.0"
 description = "Sample MCP App with 2-Way Communication"
 readme = "README.md"

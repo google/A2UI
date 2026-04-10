@@ -26,15 +26,28 @@ export default defineConfig({
     {
       name: 'serve-sandbox',
       configureServer(server) {
-        server.middlewares.use((req, _res, next) => {
+        server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith(`/${SANDBOX_BASE_PATH}`)) {
             let urlPath = req.url.slice(1);
             if (urlPath.endsWith('.js') && !urlPath.endsWith('app-bridge.js') && !urlPath.endsWith('app-with-deps.js')) {
               urlPath = urlPath.slice(0, -3) + '.ts';
             }
             req.url = '/@fs' + resolve(__dirname, '../../' + urlPath);
+            next();
+          } else if (req.url?.startsWith('/lit/node_modules/')) {
+            const filePath = resolve(__dirname, '../node_modules/' + req.url.slice(18));
+            console.log('[Vite Middleware] Serving file directly:', filePath);
+            if (fs.existsSync(filePath)) {
+              res.setHeader('Content-Type', 'application/javascript');
+              res.end(fs.readFileSync(filePath));
+            } else {
+              console.error('[Vite Middleware] File not found:', filePath);
+              res.statusCode = 404;
+              res.end('Not Found');
+            }
+          } else {
+            next();
           }
-          next();
         });
       }
     }
@@ -45,7 +58,8 @@ export default defineConfig({
   resolve: {
     dedupe: ['lit'],
     alias: {
-      "sandbox.js": "../../shared/mcp_apps_inner_iframe/sandbox.ts"
+      "sandbox.js": "../../shared/mcp_apps_inner_iframe/sandbox.ts",
+      "/lit/node_modules": resolve(__dirname, '../node_modules')
     }
   },
   server: {

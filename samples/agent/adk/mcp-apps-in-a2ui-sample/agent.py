@@ -63,7 +63,7 @@ MCP_APP_HTML = """
     <script type="module">
         import { App as AppBridge } from '../../lit/node_modules/@modelcontextprotocol/ext-apps/dist/src/app-with-deps.js';
 
-        const bridge = new AppBridge({ name: "mcp-app-sample", version: "1.0.0" });
+        const bridge = new AppBridge({ name: "mcp-apps-in-a2ui-sample", version: "1.0.0" });
 
         async function init() {
             const statusEl = document.getElementById('status');
