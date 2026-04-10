@@ -15,20 +15,20 @@
  */
 
 import { ComponentApi } from "@a2ui/web_core/v0_9";
-import { A2uiLitElement } from "../a2ui-lit-element.js";
+import { A2uiLitElement } from "../../a2ui-lit-element.js";
 import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
 
 /**
- * A base class for A2UI basic and minimal catalog components.
- * 
- * Handles basic catalog style injection and common layout properties like `weight`.
+ * A base class for A2UI basic catalog components.
+ *
+ * Handles some common features of all basic catalog A2ui elements, like
+ * injecting the basic CSS styles if needed, and setting the flex property
+ * if set by the framework.
  */
 export abstract class BasicCatalogA2uiLitElement<
-  Api extends ComponentApi
+  Api extends ComponentApi,
 > extends A2uiLitElement<Api> {
-
   connectedCallback() {
-    console.log("BasicCatalogA2uiLitElement.connectedCallback");
     super.connectedCallback();
     injectBasicCatalogStyles();
   }
@@ -37,7 +37,6 @@ export abstract class BasicCatalogA2uiLitElement<
     super.updated(changedProperties);
     const props = this.controller?.props as any;
     if (props && props.weight !== undefined) {
-      console.log("BasicCatalogA2uiLitElement.updated weight: ", props.weight);
       this.style.flex = String(props.weight);
     }
   }
