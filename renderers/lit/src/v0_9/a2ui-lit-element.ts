@@ -121,12 +121,4 @@ export abstract class A2uiLitElement<
       this.controller = this.createController();
     }
   }
-
-  updated(changedProperties: Map<PropertyKey, unknown>) {
-    super.updated(changedProperties);
-    const props = this.controller?.props as any;
-    if (props && props.weight !== undefined) {
-      this.style.flex = String(props.weight);
-    }
-  }
 }
