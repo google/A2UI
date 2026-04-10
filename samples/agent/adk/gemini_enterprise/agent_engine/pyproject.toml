@@ -25,4 +25,4 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-a2ui-agent-sdk = { path = "../../../../agent_sdks/python", editable = true }
+a2ui-agent-sdk = { path = "../../../../../agent_sdks/python", editable = true }
