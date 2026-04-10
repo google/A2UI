@@ -18,7 +18,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { provide } from "@lit/context";
 import { customElement, state } from "lit/decorators.js";
 import { MessageProcessor } from "@a2ui/web_core/v0_9";
-import { minimalCatalog, basicCatalog, Context } from "@a2ui/lit/v0_9";
+import { basicCatalog, Context } from "@a2ui/lit/v0_9";
 import { renderMarkdown } from "@a2ui/markdown-it";
 // Try avoiding direct deep import if A2uiMessage is not exported at the top level, using any for now as this is just a type for the array of messages
 interface DemoItem {
@@ -27,7 +27,6 @@ interface DemoItem {
   filename: string;
   description: string;
   messages: any[];
-  isBasic?: boolean;
 }
 
 @customElement("local-gallery")
@@ -42,7 +41,7 @@ export class LocalGallery extends LitElement {
   private accessor markdownRenderer = renderMarkdown;
 
   private processor = new MessageProcessor(
-    [minimalCatalog, basicCatalog],
+    [basicCatalog],
     (action: any) => {
       this.log(`Action dispatched: ${action.surfaceId}`, action);
     },
@@ -249,12 +248,7 @@ export class LocalGallery extends LitElement {
   async loadExamples() {
     try {
       const items: DemoItem[] = [];
-      await this.fetchExamplesFrom(
-        "./specs/v0_9/minimal/examples",
-        items,
-        false,
-      );
-      await this.fetchExamplesFrom("./specs/v0_9/basic/examples", items, true);
+      await this.fetchExamplesFrom("./specs/v0_9/basic/examples", items);
 
       this.demoItems = items;
       if (items.length > 0) {
@@ -265,7 +259,7 @@ export class LocalGallery extends LitElement {
     }
   }
 
-  async fetchExamplesFrom(dir: string, items: DemoItem[], isBasic: boolean) {
+  async fetchExamplesFrom(dir: string, items: DemoItem[]) {
     try {
       const indexResp = await fetch(`${dir}/index.json`);
       if (!indexResp.ok) throw new Error(`Could not load manifest from ${dir}`);
@@ -287,7 +281,7 @@ export class LocalGallery extends LitElement {
               version: "v0.9",
               createSurface: {
                 surfaceId,
-                catalogId: isBasic ? basicCatalog.id : minimalCatalog.id,
+                catalogId: basicCatalog.id,
               },
             });
           }
@@ -302,7 +296,6 @@ export class LocalGallery extends LitElement {
             filename: filename,
             description: data.description || `Source: ${filename}`,
             messages: messages,
-            isBasic,
           });
         } catch (err) {
           console.error(`Error loading ${filename}:`, err);
