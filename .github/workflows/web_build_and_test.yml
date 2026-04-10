@@ -49,6 +49,7 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run test
   lint:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
