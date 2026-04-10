@@ -230,8 +230,6 @@ class A2uiStreamParserV09(A2uiStreamParser):
     }
     if self.surface_id:
       payload[SURFACE_ID_KEY] = self.surface_id
-    if self.root_id:
-      payload['root'] = self.root_id
     return {'version': 'v0.9', MSG_TYPE_UPDATE_COMPONENTS: payload}
 
   @property

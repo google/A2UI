@@ -125,3 +125,18 @@ export type A2uiClientAction = z.infer<typeof A2uiClientActionSchema>;
 export type A2uiClientError = z.infer<typeof A2uiClientErrorSchema>;
 export type A2uiClientMessage = z.infer<typeof A2uiClientMessageSchema>;
 export type A2uiClientDataModel = z.infer<typeof A2uiClientDataModelSchema>;
+
+export const A2uiClientMessageListSchema = z
+  .array(A2uiClientMessageSchema)
+  .describe('A list of client messages.');
+
+export type A2uiClientMessageList = z.infer<typeof A2uiClientMessageListSchema>;
+
+export const A2uiClientMessageListWrapperSchema = z
+  .object({
+    messages: A2uiClientMessageListSchema,
+  })
+  .strict()
+  .describe('An object wrapping a list of client messages.');
+
+export type A2uiClientMessageListWrapper = z.infer<typeof A2uiClientMessageListWrapperSchema>;
