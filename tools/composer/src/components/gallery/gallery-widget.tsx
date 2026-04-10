@@ -46,11 +46,13 @@ export function GalleryWidget({ widget, height = 200, onClick }: GalleryWidgetPr
           className="pointer-events-none flex-1 flex items-center justify-center"
           style={{ '--a2ui-card-bg': 'transparent' } as React.CSSProperties}
         >
-          <A2UIViewer
-            root={widget.root}
-            components={widget.components}
-            data={previewData}
-          />
+          <div className="w-full min-w-0">
+            <A2UIViewer
+              root={widget.root}
+              components={widget.components}
+              data={previewData}
+            />
+          </div>
         </div>
       </div>
     </div>

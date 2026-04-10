@@ -31,14 +31,16 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
   const activeTab = tabs[selectedIndex];
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: LEAF_MARGIN}}>
+    <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: 0, overflow: 'hidden'}}>
       <div style={{display: 'flex', borderBottom: '1px solid #ccc', marginBottom: '8px'}}>
         {tabs.map((tab: _Tab, i: number) => (
           <button
             key={i}
             onClick={() => setSelectedIndex(i)}
             style={{
-              padding: '8px 16px',
+              flex: '1 1 0',
+              minWidth: 0,
+              padding: '8px 8px',
               border: 'none',
               background: 'none',
               borderBottom:
@@ -46,6 +48,9 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
               fontWeight: selectedIndex === i ? 'bold' : 'normal',
               cursor: 'pointer',
               color: selectedIndex === i ? 'var(--a2ui-primary-color, #007bff)' : 'inherit',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {tab.title}
