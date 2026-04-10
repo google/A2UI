@@ -20,7 +20,7 @@ import { Catalog } from '../rendering/catalog';
 import { DEFAULT_CATALOG } from '../catalog';
 import { Theme } from '../rendering/theming';
 import { MessageProcessor } from '../data/processor';
-import { MarkdownRenderer, DefaultMarkdownRenderer } from '../data/markdown';
+import { MarkdownRenderer } from '../data/markdown';
 import { Component } from '@angular/core';
 
 @Component({
@@ -49,7 +49,12 @@ describe('Row Component Integration (Real Renderer)', () => {
       providers: [
         { provide: MessageProcessor, useValue: processor },
         { provide: Catalog, useValue: DEFAULT_CATALOG },
-        { provide: MarkdownRenderer, useClass: DefaultMarkdownRenderer },
+        {
+          provide: MarkdownRenderer,
+          useValue: {
+            render: (val: string) => Promise.resolve(val),
+          },
+        },
         Theme,
       ],
     }).compileComponents();

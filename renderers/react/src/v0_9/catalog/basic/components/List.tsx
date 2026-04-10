@@ -15,12 +15,12 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 import {mapAlign} from '../utils';
 
-export const List = createReactComponent(ListApi, ({props, buildChild, context}) => {
+export const List = createComponentImplementation(ListApi, ({props, buildChild, context}) => {
   const isHorizontal = props.direction === 'horizontal';
   const style: React.CSSProperties = {
     display: 'flex',

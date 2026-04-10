@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
-export const Icon = createReactComponent(IconApi, ({props}) => {
+export const Icon = createComponentImplementation(IconApi, ({props}) => {
   const iconName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
   const style: React.CSSProperties = {

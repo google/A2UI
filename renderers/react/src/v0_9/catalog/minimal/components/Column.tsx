@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 import {ChildList} from './ChildList';
@@ -68,7 +68,7 @@ export const ColumnApiDef = {
   schema: ColumnSchema,
 };
 
-export const Column = createReactComponent(ColumnApiDef, ({props, buildChild}) => {
+export const Column = createComponentImplementation(ColumnApiDef, ({props, buildChild}) => {
   return (
     <div
       style={{

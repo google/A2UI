@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  input,
+  computed,
+  ChangeDetectionStrategy,
+  inject,
+} from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { ComponentContext, DataContext } from '@a2ui/web_core/v0_9';
+import { DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BoundProperty } from '../../core/types';
 
@@ -35,12 +41,12 @@ import { BoundProperty } from '../../core/types';
       [type]="variant() === 'primary' ? 'submit' : 'button'"
       [class]="'a2ui-button ' + variant()"
       (click)="handleClick()"
+      [disabled]="props()['isValid']?.value() === false"
     >
       @if (child()) {
         <a2ui-v09-component-host
-          [componentId]="child()!"
+          [componentKey]="child()!"
           [surfaceId]="surfaceId()"
-          [dataContextPath]="dataContextPath()"
         >
         </a2ui-v09-component-host>
       }
@@ -65,6 +71,12 @@ import { BoundProperty } from '../../core/types';
         padding: 0;
         color: #007bff;
       }
+      .a2ui-button:disabled {
+        background-color: #e9ecef;
+        color: #6c757d;
+        border-color: #ced4da;
+        cursor: not-allowed;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,6 +89,7 @@ export class ButtonComponent {
    * - `child`: The ID of the component to render inside the button.
    * - `variant`: Button style variant ('default', 'primary', 'borderless').
    * - `action`: The A2UI action to dispatch on click.
+   * - `checks`: Optional validation rules.
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
@@ -88,6 +101,8 @@ export class ButtonComponent {
   variant = computed(() => this.props()['variant']?.value() ?? 'default');
   child = computed(() => this.props()['child']?.value());
   action = computed(() => this.props()['action']?.value());
+
+
 
   handleClick() {
     const action = this.action();

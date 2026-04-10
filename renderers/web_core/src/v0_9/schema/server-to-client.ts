@@ -143,3 +143,19 @@ export type A2uiMessage =
   | UpdateComponentsMessage
   | UpdateDataModelMessage
   | DeleteSurfaceMessage;
+
+export const A2uiMessageListSchema = z
+  .array(A2uiMessageSchema)
+  .describe('A list of messages.');
+
+export type A2uiMessageList = z.infer<typeof A2uiMessageListSchema>;
+
+export const A2uiMessageListWrapperSchema = z
+  .object({
+    messages: A2uiMessageListSchema,
+  })
+  .strict()
+  .describe('An object wrapping a list of messages.');
+
+export type A2uiMessageListWrapper = z.infer<typeof A2uiMessageListWrapperSchema>;
+

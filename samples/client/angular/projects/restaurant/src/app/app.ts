@@ -54,8 +54,8 @@ export class App {
     if (body) {
       this.startLoadingAnimation();
       const message = body as Types.A2UIClientEventMessage;
-      await this.client.makeRequest(message);
       this.hasData.set(true);
+      await this.client.makeRequest(message);
       this.stopLoadingAnimation();
     }
   }

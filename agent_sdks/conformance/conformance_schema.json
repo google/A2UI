@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.org/agent_sdks/conformance/conformance_schema.json",
+  "title": "A2UI Conformance Test Suite Schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Unique name of the test case."
+      },
+      "description": {
+        "type": "string",
+        "description": "Optional description of what the test verifies."
+      },
+      "catalog": {
+        "type": "object",
+        "description": "Catalog configuration for the test.",
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": ["0.8", "0.9"],
+            "description": "Protocol version."
+          },
+          "s2c_schema": {
+            "oneOf": [
+              { "type": "string", "description": "Path to simplified schema file." },
+              { "type": "object", "description": "Inlined schema object." }
+            ]
+          },
+          "catalog_schema": {
+            "oneOf": [
+              { "type": "string", "description": "Path to catalog file." },
+              { "type": "object", "description": "Inlined catalog object." }
+            ]
+          },
+          "common_types_schema": {
+            "oneOf": [
+              { "type": "string", "description": "Path to common types schema file." },
+              { "type": "object", "description": "Inlined common types schema object." }
+            ]
+          }
+        },
+        "required": ["version", "s2c_schema", "catalog_schema"]
+      },
+      "process_chunk": {
+        "type": "array",
+        "description": "Steps for parser tests.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string",
+              "description": "Chunk of data to feed to process_chunk."
+            },
+            "expect": {
+              "type": "array",
+              "description": "Expected output parts.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": { "type": "string" },
+                  "a2ui": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            },
+            "expect_error": {
+              "type": "string",
+              "description": "Expected error message (regex) if this step should fail."
+            }
+          },
+          "required": ["input"],
+          "oneOf": [
+            { "required": ["expect"] },
+            { "required": ["expect_error"] }
+          ]
+        }
+      },
+      "validate": {
+        "type": "array",
+        "description": "Steps for validator tests.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "oneOf": [
+                { "type": "object" },
+                { "type": "array", "items": { "type": "object" } }
+              ],
+              "description": "Payload to validate (single message or list of messages)."
+            },
+            "expect_error": {
+              "type": "string",
+              "description": "Expected error message (regex) if validation should fail."
+            }
+          },
+          "required": ["payload"]
+        }
+      }
+    },
+    "required": ["name", "catalog"],
+    "oneOf": [
+      { "required": ["process_chunk"] },
+      { "required": ["validate"] }
+    ]
+  }
+}

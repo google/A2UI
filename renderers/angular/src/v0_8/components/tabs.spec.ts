@@ -19,9 +19,7 @@ import { Tabs } from './tabs';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 @Directive({
