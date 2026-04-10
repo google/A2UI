@@ -44,7 +44,7 @@ const customCatalog = new Catalog<LitComponentApi>("custom-catalog-v1", [
  *   disparate catalogs running concurrently within the same environment across different surfaces.
  */
 describe("Custom Catalogs Integration", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
 
   before(async () => {
     setupTestDom();
@@ -52,8 +52,7 @@ describe("Custom Catalogs Integration", () => {
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context.
     await import("../surface/a2ui-surface.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
   });
 
   after(teardownTestDom);
@@ -99,7 +98,7 @@ describe("Custom Catalogs Integration", () => {
   it("should handle multiple catalogs concurrently across different surfaces", async () => {
     // MessageProcessor instantiated with MULTIPLE catalogs
     const processor = new MessageProcessor<LitComponentApi>([
-      minimalCatalog,
+      basicCatalog,
       customCatalog,
     ]);
 
@@ -110,7 +109,7 @@ describe("Custom Catalogs Integration", () => {
         version: "v0.9",
         createSurface: {
           surfaceId: "minimal-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
       {

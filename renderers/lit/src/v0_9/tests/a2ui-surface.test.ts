@@ -27,7 +27,7 @@ import { MessageProcessor } from "@a2ui/web_core/v0_9";
  * - Renders the actual root component once it becomes available in the data model.
  */
 describe("A2uiSurface", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
 
   before(async () => {
     setupTestDom();
@@ -35,8 +35,7 @@ describe("A2uiSurface", () => {
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context and crashing.
     await import("../surface/a2ui-surface.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
   });
   after(teardownTestDom);
 
@@ -44,14 +43,14 @@ describe("A2uiSurface", () => {
   let surfaceModel: any;
 
   beforeEach(() => {
-    processor = new MessageProcessor([minimalCatalog]);
+    processor = new MessageProcessor([basicCatalog]);
     // Initialize the test surface
     processor.processMessages([
       {
         version: "v0.9",
         createSurface: {
           surfaceId: "test-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
     ]);

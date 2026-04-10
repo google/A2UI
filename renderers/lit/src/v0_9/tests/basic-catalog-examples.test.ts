@@ -21,20 +21,20 @@ import {
   GenericBinder,
   ComponentContext,
 } from "@a2ui/web_core/v0_9";
-import { minimalCatalog } from "../catalogs/minimal/index.js";
+import { basicCatalog } from "../catalogs/basic/index.js";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import fs from "fs";
 import path from "path";
 
 /**
  * These tests verify that:
- * - The minimal catalog is correctly defined and can be used to process
+ * - The basic catalog is correctly defined and can be used to process
  *   the examples from web_core.
  */
-describe("v0.9 Minimal Catalog Examples", () => {
+describe("v0.9 Basic Catalog Examples", () => {
   const examplesDir = path.resolve(
     process.cwd(),
-    "../../specification/v0_9/json/catalogs/minimal/examples",
+    "../../specification/v0_9/json/catalogs/basic/examples",
   );
 
   const files = fs.readdirSync(examplesDir).filter((f) => f.endsWith(".json"));
@@ -54,12 +54,12 @@ describe("v0.9 Minimal Catalog Examples", () => {
           version: "v0.9",
           createSurface: {
             surfaceId,
-            catalogId: minimalCatalog.id,
+            catalogId: basicCatalog.id,
           },
         });
       }
 
-      const processor = new MessageProcessor([minimalCatalog]);
+      const processor = new MessageProcessor([basicCatalog]);
 
       processor.processMessages(messages);
 
