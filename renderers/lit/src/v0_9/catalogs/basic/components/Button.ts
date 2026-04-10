@@ -18,7 +18,7 @@ import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
 import { A2uiController } from "@a2ui/lit/v0_9";
 
 /**
