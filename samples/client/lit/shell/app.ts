@@ -35,6 +35,10 @@ import { A2UIClient } from "./client.js";
 import { restaurantConfig, AppConfig } from "./configs/configs.js";
 import { styleMap } from "lit/directives/style-map.js";
 
+const configs: Record<string, AppConfig> = {
+  restaurant: restaurantConfig,
+};
+
 @customElement("a2ui-shell")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   @provide({ context: Context.markdown })
@@ -287,6 +291,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
+
+    // Load config from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const appKey = urlParams.get("app");
+    this.config = (appKey && configs[appKey]) || restaurantConfig;
 
     // Set the CSS Overrides for the given appKey.
     if (this.config.cssOverrides && !document.adoptedStyleSheets.includes(this.config.cssOverrides)) {
