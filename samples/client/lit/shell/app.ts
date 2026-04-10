@@ -22,7 +22,15 @@ import {
   css,
   nothing,
 } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state, query } from "lit/decorators.js";
+import { theme as uiTheme } from "./theme/default-theme.js";
+import {
+  SnackbarAction,
+  SnackbarMessage,
+  SnackbarUUID,
+  SnackType,
+} from "./types/types.js";
+import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 
 // A2UI
@@ -288,6 +296,19 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     },
   );
   #a2uiClient = new A2UIClient();
+  @query("ui-snackbar")
+  accessor #snackbar!: Snackbar;
+
+  #pendingSnackbarMessages: Array<{
+    message: SnackbarMessage;
+    replaceAll: boolean;
+  }> = [];
+
+  #maybeRenderError() {
+    if (!this.#error) return nothing;
+
+    return html`<div class="error">${this.#error}</div>`;
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -295,6 +316,12 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
     const appKey = urlParams.get("app");
+    if (appKey && !configs[appKey]) {
+      this.snackbar(
+        `App "${appKey}" is not available. Falling back to Restaurant Finder.`,
+        SnackType.WARNING
+      );
+    }
     this.config = (appKey && configs[appKey]) || restaurantConfig;
 
     // Set the CSS Overrides for the given appKey.
@@ -310,11 +337,22 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     this.#a2uiClient = new A2UIClient(this.config.serverUrl);
   }
 
+  protected firstUpdated() {
+    if (this.#pendingSnackbarMessages.length > 0) {
+      for (const { message, replaceAll } of this.#pendingSnackbarMessages) {
+        this.#snackbar.show(message, replaceAll);
+      }
+      this.#pendingSnackbarMessages = [];
+    }
+  }
+
   render() {
     return [
       this.#renderThemeToggle(),
       this.#maybeRenderForm(),
       this.#maybeRenderData(),
+      this.#maybeRenderError(),
+      html`<ui-snackbar></ui-snackbar>`,
     ];
   }
 
