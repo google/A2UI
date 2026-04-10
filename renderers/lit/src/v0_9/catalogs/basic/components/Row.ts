@@ -18,8 +18,8 @@ import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 const JUSTIFY_MAP: Record<string, string> = {
   start: "flex-start",
@@ -39,7 +39,7 @@ const ALIGN_MAP: Record<string, string> = {
 };
 
 @customElement("a2ui-basic-row")
-export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
+export class A2uiBasicRowElement extends BasicCatalogA2uiLitElement<typeof RowApi> {
   /**
    * The styles of the row can be customized by redefining the following
    * CSS variables:
@@ -59,11 +59,6 @@ export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
 
   protected createController() {
     return new A2uiController(this, RowApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   updated(changedProperties: PropertyValues) {

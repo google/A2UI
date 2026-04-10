@@ -18,11 +18,11 @@ import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { DividerApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
 
 @customElement("a2ui-divider")
-export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
+export class A2uiDividerElement extends BasicCatalogA2uiLitElement<typeof DividerApi> {
   /**
    * The styles of the divider can be customized by redefining the following
    * CSS variables:
@@ -59,10 +59,7 @@ export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
     return new A2uiController(this, DividerApi);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
-  }
+
 
   render() {
     const props = this.controller.props;

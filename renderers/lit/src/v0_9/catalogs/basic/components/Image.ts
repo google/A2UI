@@ -19,11 +19,11 @@ import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { ImageApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-image")
-export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
+export class A2uiImageElement extends BasicCatalogA2uiLitElement<typeof ImageApi> {
   /**
    * The styles of the image can be customized by redefining the following
    * CSS variables:
@@ -69,11 +69,6 @@ export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
 
   protected createController() {
     return new A2uiController(this, ImageApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   render() {

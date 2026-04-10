@@ -18,11 +18,11 @@ import { html, nothing, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-tabs")
-export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
+export class A2uiLitTabs extends BasicCatalogA2uiLitElement<typeof TabsApi> {
   /**
    * The styles of the tabs can be customized by redefining the following
    * CSS variables:
@@ -64,11 +64,6 @@ export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
 
   protected createController() {
     return new A2uiController(this, TabsApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   @state() accessor activeIndex = 0;

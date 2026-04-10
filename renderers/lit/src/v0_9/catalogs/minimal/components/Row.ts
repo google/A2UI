@@ -19,8 +19,8 @@ import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 function mapJustify(justify: string | undefined): string {
   switch (justify) {
@@ -59,7 +59,7 @@ function mapAlign(align: string | undefined): string {
 }
 
 @customElement("a2ui-row")
-export class A2uiRowElement extends A2uiLitElement<typeof RowApi> {
+export class A2uiRowElement extends BasicCatalogA2uiLitElement<typeof RowApi> {
   /**
    * The styles of the row can be customized by redefining the following
    * CSS variables:
@@ -79,11 +79,6 @@ export class A2uiRowElement extends A2uiLitElement<typeof RowApi> {
 
   protected createController() {
     return new A2uiController(this, RowApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   updated(changedProperties: PropertyValues) {

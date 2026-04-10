@@ -17,11 +17,11 @@
 import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { VideoApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-video")
-export class A2uiVideoElement extends A2uiLitElement<typeof VideoApi> {
+export class A2uiVideoElement extends BasicCatalogA2uiLitElement<typeof VideoApi> {
   /**
    * The styles of the video can be customized by redefining the following
    * CSS variables:
@@ -43,11 +43,6 @@ export class A2uiVideoElement extends A2uiLitElement<typeof VideoApi> {
 
   protected createController() {
     return new A2uiController(this, VideoApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   render() {

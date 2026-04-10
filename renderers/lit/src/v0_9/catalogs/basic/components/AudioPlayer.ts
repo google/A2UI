@@ -17,11 +17,11 @@
 import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { AudioPlayerApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-audioplayer")
-export class A2uiAudioPlayerElement extends A2uiLitElement<
+export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<
   typeof AudioPlayerApi
 > {
   static styles = css`
@@ -37,11 +37,6 @@ export class A2uiAudioPlayerElement extends A2uiLitElement<
 
   protected createController() {
     return new A2uiController(this, AudioPlayerApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   render() {

@@ -18,11 +18,11 @@ import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-list")
-export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
+export class A2uiListElement extends BasicCatalogA2uiLitElement<typeof ListApi> {
   static styles = css`
     :host {
       display: flex;
@@ -34,11 +34,6 @@ export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
 
   protected createController() {
     return new A2uiController(this, ListApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   updated(changedProperties: PropertyValues) {

@@ -17,8 +17,8 @@
 import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { IconApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 import { classMap } from "lit/directives/class-map.js";
 
@@ -30,7 +30,7 @@ const ICON_MAP: Record<string, string> = {
 };
 
 @customElement("a2ui-icon")
-export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
+export class A2uiIconElement extends BasicCatalogA2uiLitElement<typeof IconApi> {
   /**
    * The icon component can be customized with the following CSS variables:
    *
@@ -68,11 +68,6 @@ export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
 
   protected createController() {
     return new A2uiController(this, IconApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   render() {

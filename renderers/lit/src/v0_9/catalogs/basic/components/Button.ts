@@ -18,14 +18,14 @@ import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import { BasicCatalogA2uiLitElement } from "../../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 /**
  * A button component that can be used to trigger an action.
  */
 @customElement("a2ui-basic-button")
-export class A2uiBasicButtonElement extends A2uiLitElement<typeof ButtonApi> {
+export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof ButtonApi> {
   /**
    * The styles of the button can be customized by redefining the following
    * CSS variables:
@@ -91,11 +91,6 @@ export class A2uiBasicButtonElement extends A2uiLitElement<typeof ButtonApi> {
 
   protected createController() {
     return new A2uiController(this, ButtonApi);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    injectBasicCatalogStyles();
   }
 
   render() {
