@@ -74,6 +74,15 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
   const [widgets, setWidgets] = useState<Widget[]>(cachedWidgets ?? []);
   const [loading, setLoading] = useState(cachedWidgets === null);
   const [migrationNotice, setMigrationNotice] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Auto-dismiss save error after 5 seconds
+  useEffect(() => {
+    if (saveError) {
+      const timer = setTimeout(() => setSaveError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveError]);
 
   useEffect(() => {
     initializeStore(setWidgets, setLoading).then(wiped => {
@@ -82,7 +91,12 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addWidget = useCallback(async (widget: Widget) => {
-    await saveWidget(widget);
+    try {
+      await saveWidget(widget);
+    } catch (err) {
+      console.error('Failed to save widget:', err);
+      setSaveError('Failed to save widget. Please try again.');
+    }
     setWidgets(prev => {
       const updated = [...prev, widget];
       cachedWidgets = updated;
@@ -104,12 +118,20 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
       return prev;
     });
     if (widgetToSave) {
-      await saveWidget(widgetToSave).catch(err => console.error('Failed to persist widget:', err));
+      await saveWidget(widgetToSave).catch(err => {
+        console.error('Failed to persist widget:', err);
+        setSaveError('Failed to save changes. Please try again.');
+      });
     }
   }, []);
 
   const removeWidget = useCallback(async (id: string) => {
-    await deleteWidget(id);
+    try {
+      await deleteWidget(id);
+    } catch (err) {
+      console.error('Failed to delete widget:', err);
+      setSaveError('Failed to delete widget. Please try again.');
+    }
     setWidgets(prev => {
       const updated = prev.filter(w => w.id !== id);
       cachedWidgets = updated;
@@ -118,7 +140,12 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeAllWidgets = useCallback(async () => {
-    await clearAllWidgets();
+    try {
+      await clearAllWidgets();
+    } catch (err) {
+      console.error('Failed to clear widgets:', err);
+      setSaveError('Failed to clear widgets. Please try again.');
+    }
     cachedWidgets = [];
     setWidgets([]);
   }, []);
@@ -132,6 +159,21 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
   return (
     <WidgetsContext.Provider value={{ widgets, loading, migrationNotice, dismissMigrationNotice, addWidget, updateWidget, removeWidget, removeAllWidgets, getWidget }}>
       {children}
+      {saveError && (
+        <div
+          role="alert"
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg"
+        >
+          <span>{saveError}</span>
+          <button
+            onClick={() => setSaveError(null)}
+            className="ml-2 font-bold hover:opacity-80"
+            aria-label="Dismiss"
+          >
+            &times;
+          </button>
+        </div>
+      )}
     </WidgetsContext.Provider>
   );
 }
