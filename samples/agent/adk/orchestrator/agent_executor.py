@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 class OrchestratorAgentExecutor(A2aAgentExecutor):
-  """Contact AgentExecutor Example."""
+  """Orchestrator AgentExecutor."""
 
   def __init__(self, agent: LlmAgent, agent_card: AgentCard):
     self._agent_card = agent_card
