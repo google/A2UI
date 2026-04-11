@@ -97,15 +97,15 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
 
   switch (props.variant) {
     case 'h1':
-      return <h1 style={style}>{content}</h1>;
+      return <h1 style={{...style, fontSize: '2em', fontWeight: 'bold'}}>{content}</h1>;
     case 'h2':
-      return <h2 style={style}>{content}</h2>;
+      return <h2 style={{...style, fontSize: '1.5em', fontWeight: 'bold'}}>{content}</h2>;
     case 'h3':
-      return <h3 style={style}>{content}</h3>;
+      return <h3 style={{...style, fontSize: '1.17em', fontWeight: 'bold'}}>{content}</h3>;
     case 'h4':
-      return <h4 style={style}>{content}</h4>;
+      return <h4 style={{...style, fontSize: '1em', fontWeight: 'bold'}}>{content}</h4>;
     case 'h5':
-      return <h5 style={style}>{content}</h5>;
+      return <h5 style={{...style, fontSize: '0.83em', fontWeight: 'bold'}}>{content}</h5>;
     case 'caption':
       return <span style={{...style, color: '#666', textAlign: 'left'}}>{content}</span>;
     case 'body':

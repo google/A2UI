@@ -27,17 +27,17 @@
           {
             "id": "header",
             "component": "Text",
-            "text": "# Invitation Builder",
+            "text": "Invitation Builder",
             "variant": "h1"
           },
           {
             "id": "main-content",
-            "component": "Row",
+            "component": "Column",
             "children": [
               "editor-col",
               "preview-col"
             ],
-            "align": "start"
+            "align": "stretch"
           },
           {
             "id": "editor-col",

@@ -61,6 +61,11 @@ const HEIGHTS = {
   'credit-card': 280, 'step-counter': 320, 'recipe-card': 300,
   'contact-card': 400, 'podcast-episode': 300, 'stats-card': 240,
   'countdown-timer': 260, 'movie-card': 380, 'financial-data-grid': 220,
+  'live-invitation-builder': 700,
+};
+
+// Gallery card scale overrides (for wide content that needs shrinking)
+const SCALES = {
 };
 const DEFAULT_HEIGHT = 340;
 
@@ -99,12 +104,13 @@ function generateFile(examplesDir, parser) {
     const raw = JSON.parse(readFileSync(join(examplesDir, file), 'utf-8'));
     const parsed = parser(raw, slug);
     const height = HEIGHTS[slug] || DEFAULT_HEIGHT;
-    widgets.push({ slug, parsed, height });
+    const scale = SCALES[slug];
+    widgets.push({ slug, parsed, height, scale });
   }
 
   const json = (obj) => JSON.stringify(obj, null, 2).replace(/\n/g, '\n  ');
 
-  const entries = widgets.map(({ slug, parsed, height }) => {
+  const entries = widgets.map(({ slug, parsed, height, scale }) => {
     const constName = slug.toUpperCase().replace(/-/g, '_');
     return `
 const ${constName} = {
@@ -117,7 +123,7 @@ const ${constName} = {
     components: ${json(parsed.components)},
     dataStates: [{ name: 'default', data: ${json(parsed.data)} }],
   },
-  height: ${height},
+  height: ${height},${scale ? `\n  scale: ${scale},` : ''}
 };`;
   });
 
@@ -132,7 +138,7 @@ const ${constName} = {
 
 import type { Widget } from '@/types/widget';
 
-type GalleryEntry = { widget: Widget; height: number };
+type GalleryEntry = { widget: Widget; height: number; scale?: number };
 ${entries.join('\n')}
 
 export const V09_GALLERY_WIDGETS: GalleryEntry[] = [

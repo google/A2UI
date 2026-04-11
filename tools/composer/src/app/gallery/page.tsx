@@ -60,6 +60,7 @@ export default function GalleryPage() {
             <GalleryWidget
               widget={item.widget}
               height={item.height}
+              scale={item.scale}
               onClick={() => setSelectedWidget(item.widget)}
             />
           </div>
