@@ -64,7 +64,7 @@
       "service": true
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js dist/src/v0_9/tests/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js dist/src/v0_9/tests/*.test.js dist/src/v0_9/tests/**/*.test.js",
       "dependencies": [
         "build"
       ]
