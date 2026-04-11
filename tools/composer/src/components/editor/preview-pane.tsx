@@ -20,7 +20,7 @@ import { useState, Component, type ReactNode } from 'react';
 import { Moon, Sun, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { A2UIViewer } from '@/lib/a2ui';
-import type { A2UIComponent, SpecVersion } from '@/types/widget';
+import type { A2UIComponent } from '@/types/widget';
 
 /**
  * Error boundary for the A2UI preview.
@@ -69,10 +69,9 @@ interface PreviewPaneProps {
   root: string;
   components: A2UIComponent[];
   data: Record<string, unknown>;
-  specVersion?: SpecVersion;
 }
 
-export function PreviewPane({ root, components, data, specVersion }: PreviewPaneProps) {
+export function PreviewPane({ root, components, data }: PreviewPaneProps) {
   const [isDark, setIsDark] = useState(false);
 
   // Reset key changes when components change, clearing the error boundary
@@ -100,7 +99,6 @@ export function PreviewPane({ root, components, data, specVersion }: PreviewPane
             root={root}
             components={components}
             data={data}
-            specVersion={specVersion}
             onAction={(action) => console.log('Widget action:', action)}
           />
         </PreviewErrorBoundary>

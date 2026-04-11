@@ -28,7 +28,9 @@ export const Image = createComponentImplementation(ImageApi, ({props}) => {
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     objectFit: mapFit(props.fit),
-    width: '100%',
+    // Subtract left + right LEAF_MARGIN (8px each) so the image doesn't overflow its parent.
+    width: `calc(100% - ${2 * 8}px)`,
+    minWidth: 0,
     height: 'auto',
     display: 'block',
   };
@@ -47,6 +49,7 @@ export const Image = createComponentImplementation(ImageApi, ({props}) => {
   } else if (props.variant === 'header') {
     style.height = '200px';
     style.objectFit = 'cover';
+    style.borderRadius = '8px';
   }
 
   return <img src={props.url} alt={props.description || ''} style={style} />;

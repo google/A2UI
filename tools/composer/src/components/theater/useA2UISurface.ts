@@ -15,68 +15,79 @@
  */
 
 import { useMemo } from 'react';
-import { transpileToV0_8 } from '@/lib/transcoder';
-import type { A2UIComponent } from '@/types/widget';
+
+export interface V09Component {
+  id: string;
+  component: string;
+  [key: string]: unknown;
+}
 
 export interface A2UISurfaceState {
   root: string;
-  components: A2UIComponent[];
-  data: Record<string, any>;
+  components: V09Component[];
+  data: Record<string, unknown>;
+  theme: Record<string, unknown>;
 }
 
 /**
- * Transform a stream of A2UI messages (v0.8 or v0.9) into
- * the props format that A2UIViewer expects.
+ * Transform a stream of v0.9 A2UI messages into
+ * the v0.9 component format that V09Viewer expects.
  */
-export function useA2UISurface(messages: any[]): A2UISurfaceState {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- A2UI messages are untyped JSONL
+export function useA2UISurface(messages: Record<string, any>[]): A2UISurfaceState {
   return useMemo(() => {
     let root = "root";
-    const componentsMap = new Map<string, A2UIComponent>();
-    let data: Record<string, any> = {};
+    const componentsMap = new Map<string, V09Component>();
+    let data: Record<string, unknown> = {};
+    let theme: Record<string, unknown> = {};
 
     for (const msg of messages) {
       if (!msg) continue;
-      
-      // Transpile v0.9 -> v0.8 (v0.8 passes through unchanged)
-      const v0_8msg = transpileToV0_8(msg);
 
-      // Handle beginRendering (v0.8)
-      if (v0_8msg.beginRendering) {
-        root = v0_8msg.beginRendering.root || "root";
+      // --- v0.9 messages ---
+      if (msg.createSurface) {
+        // v0.9 spec: root is always the component with id "root", not a message property
+        root = "root";
+        if (msg.createSurface.theme && typeof msg.createSurface.theme === 'object') {
+          theme = { ...msg.createSurface.theme };
+        }
       }
-
-      // Handle surfaceUpdate (v0.8) — components already in { id, component: { Type: props } } format
-      if (v0_8msg.surfaceUpdate) {
-        const newComponents = v0_8msg.surfaceUpdate.components || [];
-        for (const comp of newComponents) {
-          if (comp.id && comp.component) {
-            componentsMap.set(comp.id, {
-              id: comp.id,
-              component: comp.component
-            });
+      if (msg.updateComponents) {
+        for (const comp of msg.updateComponents.components || []) {
+          if (comp.id) {
+            componentsMap.set(comp.id, comp);
           }
         }
       }
+      if (msg.updateDataModel) {
+        const op = msg.updateDataModel.op || 'replace';
+        const path = msg.updateDataModel.path || '/';
+        const value = msg.updateDataModel.value ?? msg.updateDataModel.contents;
 
-      // Handle dataModelUpdate (v0.8)
-      if (v0_8msg.dataModelUpdate) {
-        const contents = v0_8msg.dataModelUpdate.contents;
-        if (contents) {
-          // contents can be an array of ValueMap objects or a plain object
-          if (Array.isArray(contents)) {
-            for (const item of contents) {
-              if (item.key !== undefined) {
-                // ValueMap format: { key, valueString?, valueNumber?, valueBoolean?, valueMap? }
-                data[item.key] = extractValueMapValue(item);
-              } else {
-                // Plain object
-                data = { ...data, ...item };
-              }
+        if (op === 'remove') {
+          if (path === '/') {
+            data = {};
+          } else {
+            const segments = path.replace(/^\//, '').split('/');
+            deleteAtPath(data, segments);
+          }
+        } else if (value !== undefined) {
+          if (path === '/') {
+            if (typeof value === 'object' && !Array.isArray(value)) {
+              const valObj = value as Record<string, unknown>;
+              data = op === 'replace' ? { ...valObj } : { ...data, ...valObj };
             }
-          } else if (typeof contents === 'object') {
-            data = { ...data, ...contents };
+          } else {
+            const segments = path.replace(/^\//, '').split('/');
+            setAtPath(data, segments, value);
           }
         }
+      }
+      if (msg.deleteSurface) {
+        // Clear all state when surface is deleted
+        componentsMap.clear();
+        data = {};
+        root = "root";
       }
     }
 
@@ -84,24 +95,38 @@ export function useA2UISurface(messages: any[]): A2UISurfaceState {
       root,
       components: Array.from(componentsMap.values()),
       data,
+      theme,
     };
   }, [messages]);
 }
 
 /**
- * Extract a JavaScript value from a ValueMap entry.
+ * Set a value at a JSON Pointer path within an object.
  */
-function extractValueMapValue(item: any): any {
-  if (item.valueString !== undefined) return item.valueString;
-  if (item.valueNumber !== undefined) return item.valueNumber;
-  if (item.valueBoolean !== undefined) return item.valueBoolean;
-  if (item.valueMap !== undefined) {
-    // Recursive: array of ValueMap -> object
-    const obj: Record<string, any> = {};
-    for (const child of item.valueMap) {
-      obj[child.key] = extractValueMapValue(child);
+function setAtPath(obj: Record<string, unknown>, segments: string[], value: unknown): void {
+  let current: Record<string, unknown> = obj;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const key = segments[i]!;
+    if (current[key] === undefined || typeof current[key] !== 'object') {
+      const nextKey = segments[i + 1];
+      current[key] = /^\d+$/.test(nextKey ?? '') ? [] : {};
     }
-    return obj;
+    current = current[key] as Record<string, unknown>;
   }
-  return null;
+  current[segments[segments.length - 1]!] = value;
+}
+
+/**
+ * Delete a value at a JSON Pointer path within an object.
+ */
+function deleteAtPath(obj: Record<string, unknown>, segments: string[]): void {
+  let current: Record<string, unknown> = obj;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const key = segments[i]!;
+    if (current[key] === undefined || typeof current[key] !== 'object') {
+      return;
+    }
+    current = current[key] as Record<string, unknown>;
+  }
+  delete current[segments[segments.length - 1]!];
 }

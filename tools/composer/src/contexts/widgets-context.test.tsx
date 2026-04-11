@@ -24,13 +24,15 @@ vi.mock('@/lib/storage', () => ({
   getWidgets: vi.fn(),
   saveWidget: vi.fn(),
   deleteWidget: vi.fn(),
+  clearAllWidgets: vi.fn(),
+  didMigrationWipe: vi.fn().mockReturnValue(false),
 }));
 
 describe('WidgetsContext', () => {
   const mockWidget: Widget = {
     id: '1',
     name: 'Test Widget',
-    specVersion: '0.8',
+
     createdAt: new Date(),
     updatedAt: new Date(),
     root: 'root',
@@ -56,7 +58,7 @@ describe('WidgetsContext', () => {
           {widgets.map(w => (
             <div key={w.id} data-testid={`widget-${w.id}`}>{w.name}</div>
           ))}
-          <button onClick={() => addWidget({ id: '2', name: 'New', specVersion: '0.8', createdAt: new Date(), updatedAt: new Date(), root: 'root', components: [], dataStates: [] })}>Add</button>
+          <button onClick={() => addWidget({ id: '2', name: 'New', createdAt: new Date(), updatedAt: new Date(), root: 'root', components: [], dataStates: [] })}>Add</button>
           <button onClick={() => updateWidget('1', { name: 'Updated' })}>Update</button>
           <button onClick={() => removeWidget('1')}>Remove</button>
         </div>

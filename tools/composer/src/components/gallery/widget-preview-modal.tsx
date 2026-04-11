@@ -85,7 +85,6 @@ export function WidgetPreviewModal({ widget, onClose, onOpenInEditor }: WidgetPr
               root={widget.root}
               components={widget.components}
               data={previewData}
-              specVersion={widget.specVersion}
             />
           </div>
         </div>

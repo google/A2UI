@@ -27,31 +27,11 @@ import {
 import { z } from "zod";
 import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
-import { useSpecVersion } from "@/contexts/spec-version-context";
 import type { Widget } from "@/types/widget";
 import type { A2UIComponent } from "@/types/widget";
 import { parseRobustJSON } from "@/lib/json-parser";
 
-const DEFAULT_COMPONENTS_V08: A2UIComponent[] = [
-  {
-    id: "root",
-    component: {
-      Card: {
-        child: "content",
-      },
-    },
-  },
-  {
-    id: "content",
-    component: {
-      Text: {
-        text: { path: "/title" },
-      },
-    },
-  },
-];
-
-const DEFAULT_COMPONENTS_V09: A2UIComponent[] = [
+const DEFAULT_COMPONENTS: A2UIComponent[] = [
   {
     id: "root",
     component: "Card",
@@ -69,12 +49,8 @@ const DEFAULT_DATA = { title: "Hello World" };
 export function CreateWidget() {
   const router = useRouter();
   const { addWidget } = useWidgets();
-  const { specVersion } = useSpecVersion();
-  const agentId = specVersion === '0.9' ? 'v09' : 'v08';
-  const { agent } = useAgent({ agentId });
+  const { agent } = useAgent({ agentId: 'v09' });
   const { copilotkit } = useCopilotKit();
-
-  const defaultComponents = specVersion === '0.9' ? DEFAULT_COMPONENTS_V09 : DEFAULT_COMPONENTS_V08;
 
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -231,9 +207,8 @@ export function CreateWidget() {
         name: generatedName.current ?? "Untitled widget",
         createdAt: new Date(),
         updatedAt: new Date(),
-        specVersion,
         root: "root",
-        components: generatedComponents.current ?? defaultComponents,
+        components: generatedComponents.current ?? DEFAULT_COMPONENTS,
         dataStates: [
           {
             name: "default",
@@ -271,9 +246,8 @@ export function CreateWidget() {
       name: "Untitled widget",
       createdAt: new Date(),
       updatedAt: new Date(),
-      specVersion,
       root: "root",
-      components: defaultComponents,
+      components: DEFAULT_COMPONENTS,
       dataStates: [
         {
           name: "default",

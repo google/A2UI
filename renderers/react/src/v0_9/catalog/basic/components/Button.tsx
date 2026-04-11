@@ -36,6 +36,7 @@ export const Button = createComponentImplementation(ButtonApi, ({props, buildChi
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'flex-start',
     boxSizing: 'border-box',
   };
 

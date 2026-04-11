@@ -252,7 +252,6 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
               root={widget.root}
               components={components}
               data={activeData}
-              specVersion={widget.specVersion}
             />
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -261,7 +260,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
       {/* Right: Chat column - styled like left sidebar */}
       <div className="w-[400px] shrink-0 border-2 border-white bg-white rounded-lg overflow-hidden">
         <CopilotChat
-          agentId={widget.specVersion === '0.9' ? 'v09' : 'v08'}
+          agentId="v09"
           threadId={widget.id}
           className="h-full"
           disclaimer={() => (

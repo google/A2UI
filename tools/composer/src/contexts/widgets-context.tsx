@@ -18,7 +18,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Widget } from '@/types/widget';
-import { getWidgets, saveWidget, deleteWidget } from '@/lib/storage';
+import { getWidgets, saveWidget, deleteWidget, clearAllWidgets, didMigrationWipe } from '@/lib/storage';
 
 // Module-level cache - persists outside React tree
 let cachedWidgets: Widget[] | null = null;
@@ -27,12 +27,12 @@ let initPromise: Promise<void> | null = null;
 async function initializeStore(
   setWidgets: (w: Widget[]) => void,
   setLoading: (l: boolean) => void
-) {
+): Promise<boolean> {
   // If already cached, use immediately
   if (cachedWidgets !== null) {
     setWidgets(cachedWidgets);
     setLoading(false);
-    return;
+    return false;
   }
 
   // If fetch in progress, wait for it
@@ -42,7 +42,7 @@ async function initializeStore(
       setWidgets(cachedWidgets);
       setLoading(false);
     }
-    return;
+    return false;
   }
 
   // First time - fetch and cache
@@ -52,14 +52,18 @@ async function initializeStore(
   await initPromise;
   setWidgets(cachedWidgets!);
   setLoading(false);
+  return didMigrationWipe();
 }
 
 interface WidgetsContextType {
   widgets: Widget[];
   loading: boolean;
+  migrationNotice: boolean;
+  dismissMigrationNotice: () => void;
   addWidget: (widget: Widget) => Promise<void>;
   updateWidget: (id: string, updates: Partial<Widget>) => Promise<void>;
   removeWidget: (id: string) => Promise<void>;
+  removeAllWidgets: () => Promise<void>;
   getWidget: (id: string) => Widget | undefined;
 }
 
@@ -69,9 +73,12 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
   // Initialize from cache if available
   const [widgets, setWidgets] = useState<Widget[]>(cachedWidgets ?? []);
   const [loading, setLoading] = useState(cachedWidgets === null);
+  const [migrationNotice, setMigrationNotice] = useState(false);
 
   useEffect(() => {
-    initializeStore(setWidgets, setLoading);
+    initializeStore(setWidgets, setLoading).then(wiped => {
+      if (wiped) setMigrationNotice(true);
+    });
   }, []);
 
   const addWidget = useCallback(async (widget: Widget) => {
@@ -106,12 +113,20 @@ export function WidgetsProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const removeAllWidgets = useCallback(async () => {
+    await clearAllWidgets();
+    cachedWidgets = [];
+    setWidgets([]);
+  }, []);
+
   const getWidget = useCallback((id: string) => {
     return widgets.find(w => w.id === id);
   }, [widgets]);
 
+  const dismissMigrationNotice = useCallback(() => setMigrationNotice(false), []);
+
   return (
-    <WidgetsContext.Provider value={{ widgets, loading, addWidget, updateWidget, removeWidget, getWidget }}>
+    <WidgetsContext.Provider value={{ widgets, loading, migrationNotice, dismissMigrationNotice, addWidget, updateWidget, removeWidget, removeAllWidgets, getWidget }}>
       {children}
     </WidgetsContext.Provider>
   );

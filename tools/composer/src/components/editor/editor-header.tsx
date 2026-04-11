@@ -53,7 +53,7 @@ export function EditorHeader({ widget }: EditorHeaderProps) {
       <div className="flex items-center gap-3">
         <h1 className="text-sm font-medium">{widget.name}</h1>
         <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-          v{widget.specVersion}
+          v0.9
         </span>
       </div>
       <div className="flex items-center gap-2">

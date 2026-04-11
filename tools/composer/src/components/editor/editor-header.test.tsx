@@ -24,7 +24,6 @@ describe('EditorHeader', () => {
   const mockWidget: Widget = {
     id: 'test-id',
     name: 'Test Widget',
-    specVersion: '0.8',
     createdAt: new Date(),
     updatedAt: new Date(),
     root: 'root',

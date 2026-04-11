@@ -15,10 +15,10 @@
  */
 
 /**
- * Syncs gallery widget data from the canonical spec examples.
+ * Syncs gallery widget data from the canonical v0.9 spec examples.
  *
- * Reads JSON examples from specification/v0_8 and v0_9 catalogs and
- * generates TypeScript files that the gallery page imports.
+ * Reads JSON examples from specification/v0_9 catalogs and generates a
+ * TypeScript file that the gallery page imports.
  *
  * Run: node scripts/sync-gallery.mjs
  * Runs automatically via prebuild/predev hooks in package.json.
@@ -30,9 +30,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../../..'); // monorepo root
-const V08_EXAMPLES = join(ROOT, 'specification/v0_8/json/catalogs/basic/examples');
 const V09_EXAMPLES = join(ROOT, 'specification/v0_9/json/catalogs/basic/examples');
-const V08_OUT = join(__dirname, '../src/data/gallery/v08/generated.ts');
 const V09_OUT = join(__dirname, '../src/data/gallery/v09/generated.ts');
 
 const LICENSE = `/**
@@ -60,91 +58,20 @@ const HEIGHTS = {
   'coffee-order': 420, 'sports-player': 380, 'account-balance': 280,
   'workout-summary': 320, 'event-detail': 320, 'track-list': 380,
   'software-purchase': 380, 'restaurant-card': 340, 'shipping-status': 380,
-  'credit-card': 280, 'step-counter': 320, 'recipe-card': 380,
+  'credit-card': 280, 'step-counter': 320, 'recipe-card': 300,
   'contact-card': 400, 'podcast-episode': 300, 'stats-card': 240,
-  'countdown-timer': 260, 'movie-card': 380,
+  'countdown-timer': 260, 'movie-card': 380, 'financial-data-grid': 280,
+  'live-invitation-builder': 700,
+};
+
+// Gallery card scale overrides (for wide content that needs shrinking)
+const SCALES = {
+  'financial-data-grid': 0.85,
 };
 const DEFAULT_HEIGHT = 340;
 
 function slugToName(slug) {
   return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-/**
- * Convert a single v0.8 value entry to a JS value.
- */
-function convertValue(v) {
-  if ('valueString' in v) return v.valueString;
-  if ('valueNumber' in v) return v.valueNumber;
-  if ('valueBoolean' in v) return v.valueBoolean;
-  if ('valueMap' in v) return valueMapToObject(v.valueMap);
-  if ('valueArray' in v) return v.valueArray.map(convertValue);
-  return null;
-}
-
-/**
- * Convert v0.8 ValueMap[] to plain JS object.
- */
-function valueMapToObject(contents) {
-  const result = {};
-  for (const item of contents) {
-    result[item.key] = convertValue(item);
-  }
-  return result;
-}
-
-/**
- * Sanitize v0.8 components to fix values the renderer doesn't support.
- */
-const V08_TEXTFIELD_TYPES = new Set(['shortText', 'number', 'date', 'longText']);
-const V08_ALIGNMENTS = new Set(['start', 'center', 'end', 'stretch']);
-
-function sanitizeV08Components(components) {
-  return components.map(comp => {
-    const copy = JSON.parse(JSON.stringify(comp));
-    const inner = copy.component;
-    if (!inner) return copy;
-
-    for (const [type, props] of Object.entries(inner)) {
-      // Fix unsupported textFieldType values
-      if (type === 'TextField' && props.textFieldType && !V08_TEXTFIELD_TYPES.has(props.textFieldType)) {
-        props.textFieldType = 'shortText';
-      }
-      // Fix unsupported alignment values
-      if ((type === 'Row' || type === 'Column') && props.alignment && !V08_ALIGNMENTS.has(props.alignment)) {
-        props.alignment = 'center';
-      }
-      // Ensure action is an object, not a string
-      if (type === 'Button' && typeof props.action === 'string') {
-        props.action = { name: props.action };
-      }
-    }
-    return copy;
-  });
-}
-
-/**
- * Extract widget data from v0.8 messages (bare array).
- */
-function parseV08(messages, slug) {
-  let components = [];
-  let data = {};
-  let root = 'root';
-
-  for (const msg of messages) {
-    if (msg.surfaceUpdate) components = sanitizeV08Components(msg.surfaceUpdate.components);
-    if (msg.dataModelUpdate?.contents) data = valueMapToObject(msg.dataModelUpdate.contents);
-    if (msg.beginRendering?.root) root = msg.beginRendering.root;
-  }
-
-  return {
-    id: `gallery-${slug}`,
-    name: slugToName(slug),
-    specVersion: '0.8',
-    root,
-    components,
-    data,
-  };
 }
 
 /**
@@ -163,14 +90,13 @@ function parseV09(example, slug) {
     id: `gallery-v09-${slug}`,
     name: example.name || slugToName(slug),
     description: example.description || '',
-    specVersion: '0.9',
     root: 'root',
     components,
     data,
   };
 }
 
-function generateFile(examplesDir, version, parser) {
+function generateFile(examplesDir, parser) {
   const files = readdirSync(examplesDir).filter(f => f.endsWith('.json')).sort();
   const widgets = [];
 
@@ -179,12 +105,13 @@ function generateFile(examplesDir, version, parser) {
     const raw = JSON.parse(readFileSync(join(examplesDir, file), 'utf-8'));
     const parsed = parser(raw, slug);
     const height = HEIGHTS[slug] || DEFAULT_HEIGHT;
-    widgets.push({ slug, parsed, height });
+    const scale = SCALES[slug];
+    widgets.push({ slug, parsed, height, scale });
   }
 
   const json = (obj) => JSON.stringify(obj, null, 2).replace(/\n/g, '\n  ');
 
-  const entries = widgets.map(({ slug, parsed, height }) => {
+  const entries = widgets.map(({ slug, parsed, height, scale }) => {
     const constName = slug.toUpperCase().replace(/-/g, '_');
     return `
 const ${constName} = {
@@ -193,16 +120,14 @@ const ${constName} = {
     name: ${JSON.stringify(parsed.name)},${parsed.description ? `\n    description: ${JSON.stringify(parsed.description)},` : ''}
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
-    specVersion: '${parsed.specVersion}' as const,
     root: '${parsed.root}',
     components: ${json(parsed.components)},
     dataStates: [{ name: 'default', data: ${json(parsed.data)} }],
   },
-  height: ${height},
+  height: ${height},${scale ? `\n  scale: ${scale},` : ''}
 };`;
   });
 
-  const arrayName = version === '0.8' ? 'V08_GALLERY_WIDGETS' : 'V09_GALLERY_WIDGETS';
   const arrayEntries = widgets.map(({ slug }) =>
     `  ${slug.toUpperCase().replace(/-/g, '_')},`
   ).join('\n');
@@ -210,24 +135,20 @@ const ${constName} = {
   return `${LICENSE}
 
 // AUTO-GENERATED by scripts/sync-gallery.mjs — do not edit manually.
-// Source: specification/${version === '0.8' ? 'v0_8' : 'v0_9'}/json/catalogs/basic/examples/
+// Source: specification/v0_9/json/catalogs/basic/examples/
 
 import type { Widget } from '@/types/widget';
 
-type GalleryEntry = { widget: Widget; height: number };
+type GalleryEntry = { widget: Widget; height: number; scale?: number };
 ${entries.join('\n')}
 
-export const ${arrayName}: GalleryEntry[] = [
+export const V09_GALLERY_WIDGETS: GalleryEntry[] = [
 ${arrayEntries}
 ];
 `;
 }
 
-// Generate both versions
-const v08 = generateFile(V08_EXAMPLES, '0.8', parseV08);
-writeFileSync(V08_OUT, v08);
-console.log(`[sync-gallery] v0.8: wrote ${V08_OUT}`);
-
-const v09 = generateFile(V09_EXAMPLES, '0.9', parseV09);
+// Generate v0.9 gallery
+const v09 = generateFile(V09_EXAMPLES, parseV09);
 writeFileSync(V09_OUT, v09);
 console.log(`[sync-gallery] v0.9: wrote ${V09_OUT}`);

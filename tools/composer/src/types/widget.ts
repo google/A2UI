@@ -15,11 +15,11 @@
  */
 
 /**
- * Version-agnostic component type.
+ * Component type for v0.9 A2UI spec.
  *
  * Components are stored as opaque objects — the editor displays them as JSON
- * and the adapter interprets them based on specVersion. Only two places need
- * to understand the internal structure: the renderer adapter and the AI prompt.
+ * and the renderer adapter interprets them. Only the adapter and AI prompt
+ * need to understand the internal structure.
  */
 export type A2UIComponent = Record<string, unknown> & { id: string };
 
@@ -28,15 +28,12 @@ export interface DataState {
   data: Record<string, unknown>;
 }
 
-export type SpecVersion = '0.8' | '0.9';
-
 export interface Widget {
   id: string;
   name: string;
   description?: string;
   createdAt: Date;
   updatedAt: Date;
-  specVersion: SpecVersion;
   root: string;
   components: A2UIComponent[];
   dataStates: DataState[];

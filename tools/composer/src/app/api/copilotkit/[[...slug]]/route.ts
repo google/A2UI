@@ -22,7 +22,6 @@ import {
 } from "@copilotkit/runtime/v2";
 export const dynamic = "force-dynamic";
 import { handle } from "hono/vercel";
-import { A2UI_V08_PROMPT } from "../a2ui-prompt-v08";
 import { A2UI_V09_PROMPT } from "../a2ui-prompt-v09";
 
 const determineModel = () => {
@@ -52,12 +51,6 @@ const determineModel = () => {
 
 const model = determineModel();
 
-const agentV08 = new BuiltInAgent({
-  model,
-  prompt: A2UI_V08_PROMPT,
-  temperature: 0.7,
-});
-
 const agentV09 = new BuiltInAgent({
   model,
   prompt: A2UI_V09_PROMPT,
@@ -66,8 +59,7 @@ const agentV09 = new BuiltInAgent({
 
 const copilotRuntime = new CopilotRuntime({
   agents: {
-    default: agentV08,
-    v08: agentV08,
+    default: agentV09,
     v09: agentV09,
   },
   runner: new InMemoryAgentRunner(),

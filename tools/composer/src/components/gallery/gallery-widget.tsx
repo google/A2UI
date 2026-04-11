@@ -22,10 +22,11 @@ import { A2UIViewer } from '@/lib/a2ui';
 interface GalleryWidgetProps {
   widget: Widget;
   height?: number;
+  scale?: number;
   onClick?: () => void;
 }
 
-export function GalleryWidget({ widget, height = 200, onClick }: GalleryWidgetProps) {
+export function GalleryWidget({ widget, height = 200, scale, onClick }: GalleryWidgetProps) {
   // Get the first data state's data for preview
   const previewData = widget.dataStates?.[0]?.data ?? {};
 
@@ -46,12 +47,20 @@ export function GalleryWidget({ widget, height = 200, onClick }: GalleryWidgetPr
           className="pointer-events-none flex-1 flex items-center justify-center"
           style={{ '--a2ui-card-bg': 'transparent' } as React.CSSProperties}
         >
-          <A2UIViewer
-            root={widget.root}
-            components={widget.components}
-            data={previewData}
-            specVersion={widget.specVersion}
-          />
+          <div
+            className="w-full min-w-0"
+            style={scale ? {
+              width: `${100 / scale}%`,
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+            } : undefined}
+          >
+            <A2UIViewer
+              root={widget.root}
+              components={widget.components}
+              data={previewData}
+            />
+          </div>
         </div>
       </div>
     </div>

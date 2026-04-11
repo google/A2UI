@@ -61,7 +61,6 @@ describe('WidgetEditor', () => {
   const mockWidget: Widget = {
     id: '1',
     name: 'Test Widget',
-    specVersion: '0.8',
     root: 'root',
     components: [],
     dataStates: [{ name: 'default', data: {} }],

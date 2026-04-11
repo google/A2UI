@@ -25,7 +25,7 @@
  */
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { A2uiSurface, basicCatalog } from '@a2ui/react/v0_9';
 import { MessageProcessor } from '@a2ui/web_core/v0_9';
 
@@ -42,6 +42,7 @@ export interface V09ViewerProps {
   root: string;
   components: V09Component[];
   data?: Record<string, unknown>;
+  theme?: Record<string, unknown>;
   onAction?: (action: unknown) => void;
 }
 
@@ -49,12 +50,17 @@ export function V09Viewer({
   root,
   components,
   data = {},
+  theme,
   onAction,
 }: V09ViewerProps) {
+  const onActionRef = useRef(onAction);
+  onActionRef.current = onAction;
+
   const surface = useMemo(() => {
+    const actionHandler = (action: unknown) => onActionRef.current?.(action);
     const processor = new MessageProcessor(
       [basicCatalog],
-      onAction ? (action: unknown) => onAction(action) : undefined,
+      actionHandler,
     );
 
     // Build v0.9 messages from the widget data.
@@ -67,6 +73,7 @@ export function V09Viewer({
         createSurface: {
           surfaceId: SURFACE_ID,
           catalogId: CATALOG_ID,
+          ...(theme ? { theme } : {}),
         },
       },
       {
@@ -90,6 +97,7 @@ export function V09Viewer({
         version: 'v0.9',
         updateDataModel: {
           surfaceId: SURFACE_ID,
+          op: 'replace',
           path: '/',
           value: data,
         },
@@ -99,7 +107,8 @@ export function V09Viewer({
     processor.processMessages(messages);
 
     return processor.model.getSurface(SURFACE_ID);
-  }, [root, components, data, onAction]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- onAction stabilized via ref
+  }, [root, components, data, theme]);
 
   if (!surface) {
     return <div style={{ color: 'gray', padding: '8px' }}>No surface created</div>;

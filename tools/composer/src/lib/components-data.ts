@@ -49,37 +49,32 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
     components: [
       {
         name: 'Row',
-        description: 'Horizontal flex container that arranges children in a row with configurable alignment and distribution.',
+        description: 'Horizontal flex container that arranges children in a row with configurable alignment and justification.',
         usage: `{
   "id": "row-1",
-  "component": {
-    "Row": {
-      "alignment": "center",
-      "distribution": "spaceBetween",
-      "children": {
-        "explicitList": ["child-1", "child-2"]
-      }
-    }
-  }
+  "component": "Row",
+  "align": "center",
+  "justify": "spaceBetween",
+  "children": ["child-1", "child-2"]
 }`,
         props: [
           {
             name: 'children',
-            description: 'Child components to render inside the row. Can be an explicit list of component IDs or a template for dynamic rendering.',
-            type: 'ComponentArrayReference',
+            description: 'Array of child component IDs to render inside the row.',
+            type: 'string[]',
           },
           {
-            name: 'alignment',
+            name: 'align',
             description: 'Vertical alignment of children within the row.',
             type: 'enum',
             values: ['start', 'center', 'end', 'stretch'],
             default: 'stretch',
           },
           {
-            name: 'distribution',
+            name: 'justify',
             description: 'Horizontal distribution of children along the row.',
             type: 'enum',
-            values: ['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly'],
+            values: ['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly', 'stretch'],
             default: 'start',
           },
         ],
@@ -88,62 +83,60 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'row-1',
-              component: {
-                Row: {
-                  alignment: 'center',
-                  distribution: 'spaceBetween',
-                  children: { explicitList: ['text-1', 'text-2', 'text-3'] },
-                },
-              },
-            },
+              component: 'Row',
+              align: 'center',
+              justify: 'spaceBetween',
+              children: ['text-1', 'text-2', 'text-3'],
+            } as A2UIComponent,
             {
               id: 'text-1',
-              component: { Text: { text: { literalString: 'Left' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Left',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'text-2',
-              component: { Text: { text: { literalString: 'Center' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Center',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'text-3',
-              component: { Text: { text: { literalString: 'Right' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Right',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
       {
         name: 'Column',
-        description: 'Vertical flex container that arranges children in a column with configurable alignment and distribution.',
+        description: 'Vertical flex container that arranges children in a column with configurable alignment and justification.',
         usage: `{
   "id": "column-1",
-  "component": {
-    "Column": {
-      "alignment": "stretch",
-      "distribution": "start",
-      "children": {
-        "explicitList": ["header", "content", "footer"]
-      }
-    }
-  }
+  "component": "Column",
+  "align": "stretch",
+  "justify": "start",
+  "children": ["header", "content", "footer"]
 }`,
         props: [
           {
             name: 'children',
-            description: 'Child components to render inside the column. Can be an explicit list of component IDs or a template for dynamic rendering.',
-            type: 'ComponentArrayReference',
+            description: 'Array of child component IDs to render inside the column.',
+            type: 'string[]',
           },
           {
-            name: 'alignment',
+            name: 'align',
             description: 'Horizontal alignment of children within the column.',
             type: 'enum',
             values: ['start', 'center', 'end', 'stretch'],
             default: 'stretch',
           },
           {
-            name: 'distribution',
+            name: 'justify',
             description: 'Vertical distribution of children along the column.',
             type: 'enum',
-            values: ['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly'],
+            values: ['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly', 'stretch'],
             default: 'start',
           },
         ],
@@ -152,26 +145,29 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'column-1',
-              component: {
-                Column: {
-                  alignment: 'center',
-                  distribution: 'start',
-                  children: { explicitList: ['text-1', 'text-2', 'text-3'] },
-                },
-              },
-            },
+              component: 'Column',
+              align: 'center',
+              justify: 'start',
+              children: ['text-1', 'text-2', 'text-3'],
+            } as A2UIComponent,
             {
               id: 'text-1',
-              component: { Text: { text: { literalString: 'Header' }, usageHint: 'h3' } },
-            },
+              component: 'Text',
+              text: 'Header',
+              variant: 'h3',
+            } as A2UIComponent,
             {
               id: 'text-2',
-              component: { Text: { text: { literalString: 'Content goes here' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Content goes here',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'text-3',
-              component: { Text: { text: { literalString: 'Footer' }, usageHint: 'caption' } },
-            },
+              component: 'Text',
+              text: 'Footer',
+              variant: 'caption',
+            } as A2UIComponent,
           ],
         },
       },
@@ -180,23 +176,20 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Container for rendering lists of items, supporting both vertical and horizontal layouts.',
         usage: `{
   "id": "list-1",
-  "component": {
-    "List": {
-      "direction": "vertical",
-      "children": {
-        "template": {
-          "componentId": "list-item",
-          "dataBinding": "/items"
-        }
-      }
+  "component": "List",
+  "direction": "vertical",
+  "children": {
+    "template": {
+      "componentId": "list-item",
+      "dataBinding": "/items"
     }
   }
 }`,
         props: [
           {
             name: 'children',
-            description: 'Child components or template for list items. Use template with dataBinding to render items from data.',
-            type: 'ComponentArrayReference',
+            description: 'Child component IDs or template for list items. Use template with dataBinding to render items from data.',
+            type: 'string[] | template',
           },
           {
             name: 'direction',
@@ -205,31 +198,41 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             values: ['vertical', 'horizontal'],
             default: 'vertical',
           },
+          {
+            name: 'align',
+            description: 'Cross-axis alignment of list items.',
+            type: 'enum',
+            values: ['start', 'center', 'end', 'stretch'],
+            default: 'stretch',
+          },
         ],
         preview: {
           root: 'list-1',
           components: [
             {
               id: 'list-1',
-              component: {
-                List: {
-                  direction: 'vertical',
-                  children: { explicitList: ['item-1', 'item-2', 'item-3'] },
-                },
-              },
-            },
+              component: 'List',
+              direction: 'vertical',
+              children: ['item-1', 'item-2', 'item-3'],
+            } as A2UIComponent,
             {
               id: 'item-1',
-              component: { Text: { text: { literalString: '• First item' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: '\u2022 First item',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'item-2',
-              component: { Text: { text: { literalString: '• Second item' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: '\u2022 Second item',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'item-3',
-              component: { Text: { text: { literalString: '• Third item' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: '\u2022 Third item',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
@@ -238,11 +241,8 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'A styled container that provides card-like appearance with elevation and padding.',
         usage: `{
   "id": "card-1",
-  "component": {
-    "Card": {
-      "child": "card-content"
-    }
-  }
+  "component": "Card",
+  "child": "card-content"
 }`,
         props: [
           {
@@ -256,28 +256,26 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'card-1',
-              component: {
-                Card: {
-                  child: 'card-content',
-                },
-              },
-            },
+              component: 'Card',
+              child: 'card-content',
+            } as A2UIComponent,
             {
               id: 'card-content',
-              component: {
-                Column: {
-                  children: { explicitList: ['card-title', 'card-body'] },
-                },
-              },
-            },
+              component: 'Column',
+              children: ['card-title', 'card-body'],
+            } as A2UIComponent,
             {
               id: 'card-title',
-              component: { Text: { text: { literalString: 'Card Title' }, usageHint: 'h4' } },
-            },
+              component: 'Text',
+              text: 'Card Title',
+              variant: 'h4',
+            } as A2UIComponent,
             {
               id: 'card-body',
-              component: { Text: { text: { literalString: 'This is the card content with some descriptive text.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'This is the card content with some descriptive text.',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
@@ -288,25 +286,22 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
     components: [
       {
         name: 'Text',
-        description: 'Display text content with semantic styling hints. Supports markdown rendering and data binding.',
+        description: 'Display text content with semantic styling variants. Supports markdown rendering and data binding.',
         usage: `{
   "id": "text-1",
-  "component": {
-    "Text": {
-      "text": { "literalString": "Hello, World!" },
-      "usageHint": "body"
-    }
-  }
+  "component": "Text",
+  "text": "Hello, World!",
+  "variant": "body"
 }`,
         props: [
           {
             name: 'text',
-            description: 'The text content to display. Can be a literal string or a path binding to data.',
-            type: 'StringValue',
+            description: 'The text content to display. Can be a plain string or a path binding to data.',
+            type: 'string | { path: string }',
           },
           {
-            name: 'usageHint',
-            description: 'Semantic hint for text styling. Determines font size, weight, and other typographic properties.',
+            name: 'variant',
+            description: 'Semantic variant for text styling. Determines font size, weight, and other typographic properties.',
             type: 'enum',
             values: ['h1', 'h2', 'h3', 'h4', 'h5', 'caption', 'body'],
           },
@@ -316,57 +311,61 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'text-container',
-              component: {
-                Column: {
-                  children: { explicitList: ['text-h1', 'text-h2', 'text-h3', 'text-body', 'text-caption'] },
-                },
-              },
-            },
+              component: 'Column',
+              children: ['text-h1', 'text-h2', 'text-h3', 'text-body', 'text-caption'],
+            } as A2UIComponent,
             {
               id: 'text-h1',
-              component: { Text: { text: { literalString: 'Heading 1' }, usageHint: 'h1' } },
-            },
+              component: 'Text',
+              text: 'Heading 1',
+              variant: 'h1',
+            } as A2UIComponent,
             {
               id: 'text-h2',
-              component: { Text: { text: { literalString: 'Heading 2' }, usageHint: 'h2' } },
-            },
+              component: 'Text',
+              text: 'Heading 2',
+              variant: 'h2',
+            } as A2UIComponent,
             {
               id: 'text-h3',
-              component: { Text: { text: { literalString: 'Heading 3' }, usageHint: 'h3' } },
-            },
+              component: 'Text',
+              text: 'Heading 3',
+              variant: 'h3',
+            } as A2UIComponent,
             {
               id: 'text-body',
-              component: { Text: { text: { literalString: 'Body text for paragraphs and content.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Body text for paragraphs and content.',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'text-caption',
-              component: { Text: { text: { literalString: 'Caption text for labels and hints' }, usageHint: 'caption' } },
-            },
+              component: 'Text',
+              text: 'Caption text for labels and hints',
+              variant: 'caption',
+            } as A2UIComponent,
           ],
         },
       },
       {
         name: 'Image',
-        description: 'Display images with configurable sizing hints and object-fit behavior.',
+        description: 'Display images with configurable sizing variants and object-fit behavior.',
         usage: `{
   "id": "image-1",
-  "component": {
-    "Image": {
-      "url": { "literalString": "https://example.com/photo.jpg" },
-      "usageHint": "mediumFeature",
-      "fit": "cover"
-    }
-  }
+  "component": "Image",
+  "url": "https://example.com/photo.jpg",
+  "variant": "mediumFeature",
+  "fit": "cover"
 }`,
         props: [
           {
             name: 'url',
-            description: 'The image URL. Can be a literal string or a path binding to data.',
-            type: 'StringValue',
+            description: 'The image URL. Can be a plain string or a path binding to data.',
+            type: 'string | { path: string }',
           },
           {
-            name: 'usageHint',
-            description: 'Semantic hint for image sizing. Affects the rendered dimensions.',
+            name: 'variant',
+            description: 'Semantic variant for image sizing. Affects the rendered dimensions.',
             type: 'enum',
             values: ['icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header'],
           },
@@ -374,7 +373,7 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             name: 'fit',
             description: 'CSS object-fit value controlling how the image fills its container.',
             type: 'enum',
-            values: ['contain', 'cover', 'fill', 'none', 'scale-down'],
+            values: ['contain', 'cover', 'fill', 'none', 'scaleDown'],
             default: 'fill',
           },
         ],
@@ -383,14 +382,11 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'image-1',
-              component: {
-                Image: {
-                  url: { literalString: 'https://picsum.photos/200/150' },
-                  usageHint: 'mediumFeature',
-                  fit: 'cover',
-                },
-              },
-            },
+              component: 'Image',
+              url: 'https://picsum.photos/200/150',
+              variant: 'mediumFeature',
+              fit: 'cover',
+            } as A2UIComponent,
           ],
         },
       },
@@ -399,17 +395,14 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Display Material Icons by name. Icons are rendered using the Google Icon font.',
         usage: `{
   "id": "icon-1",
-  "component": {
-    "Icon": {
-      "name": { "literalString": "check_circle" }
-    }
-  }
+  "component": "Icon",
+  "name": "check_circle"
 }`,
         props: [
           {
             name: 'name',
             description: 'The Material Icon name (e.g., "check_circle", "home", "settings"). Uses snake_case naming.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
           },
         ],
         preview: {
@@ -417,34 +410,36 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'icon-row',
-              component: {
-                Row: {
-                  distribution: 'start',
-                  alignment: 'center',
-                  children: { explicitList: ['icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5'] },
-                },
-              },
-            },
+              component: 'Row',
+              justify: 'start',
+              align: 'center',
+              children: ['icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5'],
+            } as A2UIComponent,
             {
               id: 'icon-1',
-              component: { Icon: { name: { literalString: 'home' } } },
-            },
+              component: 'Icon',
+              name: 'home',
+            } as A2UIComponent,
             {
               id: 'icon-2',
-              component: { Icon: { name: { literalString: 'settings' } } },
-            },
+              component: 'Icon',
+              name: 'settings',
+            } as A2UIComponent,
             {
               id: 'icon-3',
-              component: { Icon: { name: { literalString: 'check_circle' } } },
-            },
+              component: 'Icon',
+              name: 'check_circle',
+            } as A2UIComponent,
             {
               id: 'icon-4',
-              component: { Icon: { name: { literalString: 'favorite' } } },
-            },
+              component: 'Icon',
+              name: 'favorite',
+            } as A2UIComponent,
             {
               id: 'icon-5',
-              component: { Icon: { name: { literalString: 'star' } } },
-            },
+              component: 'Icon',
+              name: 'star',
+            } as A2UIComponent,
           ],
         },
       },
@@ -453,17 +448,14 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Embed video content with native HTML5 video player controls.',
         usage: `{
   "id": "video-1",
-  "component": {
-    "Video": {
-      "url": { "literalString": "https://example.com/video.mp4" }
-    }
-  }
+  "component": "Video",
+  "url": "https://example.com/video.mp4"
 }`,
         props: [
           {
             name: 'url',
-            description: 'The video URL. Can be a literal string or a path binding to data.',
-            type: 'StringValue',
+            description: 'The video URL. Can be a plain string or a path binding to data.',
+            type: 'string | { path: string }',
           },
         ],
         preview: {
@@ -471,12 +463,9 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'video-1',
-              component: {
-                Video: {
-                  url: { literalString: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-                },
-              },
-            },
+              component: 'Video',
+              url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            } as A2UIComponent,
           ],
         },
       },
@@ -485,23 +474,20 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Embed audio content with native HTML5 audio player controls.',
         usage: `{
   "id": "audio-1",
-  "component": {
-    "AudioPlayer": {
-      "url": { "literalString": "https://example.com/audio.mp3" },
-      "description": { "literalString": "Episode 1: Introduction" }
-    }
-  }
+  "component": "AudioPlayer",
+  "url": "https://example.com/audio.mp3",
+  "description": "Episode 1: Introduction"
 }`,
         props: [
           {
             name: 'url',
-            description: 'The audio URL. Can be a literal string or a path binding to data.',
-            type: 'StringValue',
+            description: 'The audio URL. Can be a plain string or a path binding to data.',
+            type: 'string | { path: string }',
           },
           {
             name: 'description',
             description: 'Optional label or title for the audio content.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
           },
         ],
         preview: {
@@ -509,20 +495,14 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'audio-card',
-              component: {
-                Card: {
-                  child: 'audio-1',
-                },
-              },
-            },
+              component: 'Card',
+              child: 'audio-1',
+            } as A2UIComponent,
             {
               id: 'audio-1',
-              component: {
-                AudioPlayer: {
-                  url: { literalString: 'https://www.w3schools.com/html/horse.mp3' },
-                },
-              },
-            },
+              component: 'AudioPlayer',
+              url: 'https://www.w3schools.com/html/horse.mp3',
+            } as A2UIComponent,
           ],
         },
       },
@@ -533,33 +513,31 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
     components: [
       {
         name: 'TextField',
-        description: 'Text input field with label, validation, and multiple input types.',
+        description: 'Text input field with label, validation, and multiple input variants.',
         usage: `{
   "id": "textfield-1",
-  "component": {
-    "TextField": {
-      "text": { "path": "/user/name" },
-      "label": { "literalString": "Your name" },
-      "type": "shortText"
-    }
-  }
+  "component": "TextField",
+  "value": { "path": "/user/name" },
+  "label": "Your name",
+  "variant": "shortText"
 }`,
         props: [
           {
-            name: 'text',
+            name: 'value',
             description: 'The current input value. Typically bound to a data path for two-way binding.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
           },
           {
             name: 'label',
             description: 'Placeholder or label text displayed in the field.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
           },
           {
-            name: 'type',
-            description: 'The type of input field, affecting keyboard and validation behavior.',
+            name: 'variant',
+            description: 'The variant of input field, affecting keyboard and validation behavior.',
             type: 'enum',
-            values: ['shortText', 'number', 'date', 'longText'],
+            values: ['shortText', 'longText', 'number', 'obscured'],
+            default: 'shortText',
           },
           {
             name: 'validationRegexp',
@@ -572,14 +550,11 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'textfield-1',
-              component: {
-                TextField: {
-                  text: { path: '/name' },
-                  label: { literalString: 'Enter your name' },
-                  type: 'shortText',
-                },
-              },
-            },
+              component: 'TextField',
+              value: { path: '/name' },
+              label: 'Enter your name',
+              variant: 'shortText',
+            } as A2UIComponent,
           ],
           data: { name: '' },
         },
@@ -589,23 +564,20 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Boolean toggle input with an associated label.',
         usage: `{
   "id": "checkbox-1",
-  "component": {
-    "CheckBox": {
-      "label": { "literalString": "I agree to the terms" },
-      "value": { "path": "/form/agreed" }
-    }
-  }
+  "component": "CheckBox",
+  "label": "I agree to the terms",
+  "value": { "path": "/form/agreed" }
 }`,
         props: [
           {
             name: 'label',
             description: 'Text label displayed next to the checkbox.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
           },
           {
             name: 'value',
             description: 'The checked state. Typically bound to a data path for two-way binding.',
-            type: 'BooleanValue',
+            type: 'boolean | { path: string }',
           },
         ],
         preview: {
@@ -613,13 +585,10 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'checkbox-1',
-              component: {
-                CheckBox: {
-                  label: { literalString: 'I agree to the terms and conditions' },
-                  value: { path: '/agreed' },
-                },
-              },
-            },
+              component: 'CheckBox',
+              label: 'I agree to the terms and conditions',
+              value: { path: '/agreed' },
+            } as A2UIComponent,
           ],
           data: { agreed: false },
         },
@@ -629,27 +598,30 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Numeric range input with configurable min/max values.',
         usage: `{
   "id": "slider-1",
-  "component": {
-    "Slider": {
-      "value": { "path": "/settings/volume" },
-      "minValue": 0,
-      "maxValue": 100
-    }
-  }
+  "component": "Slider",
+  "value": { "path": "/settings/volume" },
+  "min": 0,
+  "max": 100
 }`,
         props: [
           {
             name: 'value',
             description: 'The current slider value. Typically bound to a data path for two-way binding.',
-            type: 'NumberValue',
+            type: 'number | { path: string }',
           },
           {
-            name: 'minValue',
+            name: 'label',
+            description: 'The label for the slider.',
+            type: 'string',
+          },
+          {
+            name: 'min',
             description: 'Minimum allowed value.',
             type: 'number',
+            default: '0',
           },
           {
-            name: 'maxValue',
+            name: 'max',
             description: 'Maximum allowed value.',
             type: 'number',
           },
@@ -659,14 +631,11 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'slider-1',
-              component: {
-                Slider: {
-                  value: { path: '/volume' },
-                  minValue: 0,
-                  maxValue: 100,
-                },
-              },
-            },
+              component: 'Slider',
+              value: { path: '/volume' },
+              min: 0,
+              max: 100,
+            } as A2UIComponent,
           ],
           data: { volume: 50 },
         },
@@ -676,20 +645,22 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Date and/or time picker with configurable format output.',
         usage: `{
   "id": "datetime-1",
-  "component": {
-    "DateTimeInput": {
-      "value": { "path": "/event/startDate" },
-      "enableDate": true,
-      "enableTime": true,
-      "outputFormat": "YYYY-MM-DD HH:mm"
-    }
-  }
+  "component": "DateTimeInput",
+  "value": { "path": "/event/startDate" },
+  "enableDate": true,
+  "enableTime": true,
+  "outputFormat": "YYYY-MM-DD HH:mm"
 }`,
         props: [
           {
             name: 'value',
             description: 'The current date/time value in ISO format. Typically bound to a data path.',
-            type: 'StringValue',
+            type: 'string | { path: string }',
+          },
+          {
+            name: 'label',
+            description: 'The text label for the input field.',
+            type: 'string',
           },
           {
             name: 'enableDate',
@@ -708,51 +679,75 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             description: 'Format string for the output value (e.g., "YYYY-MM-DD").',
             type: 'string',
           },
+          {
+            name: 'min',
+            description: 'Minimum allowed date/time value (ISO 8601 format).',
+            type: 'string',
+          },
+          {
+            name: 'max',
+            description: 'Maximum allowed date/time value (ISO 8601 format).',
+            type: 'string',
+          },
         ],
         preview: {
           root: 'datetime-1',
           components: [
             {
               id: 'datetime-1',
-              component: {
-                DateTimeInput: {
-                  value: { path: '/date' },
-                  enableDate: true,
-                  enableTime: false,
-                },
-              },
-            },
+              component: 'DateTimeInput',
+              value: { path: '/date' },
+              enableDate: true,
+              enableTime: false,
+            } as A2UIComponent,
           ],
           data: { date: '2025-01-15' },
         },
       },
       {
-        name: 'MultipleChoice',
-        description: 'Dropdown or select input for choosing from predefined options.',
+        name: 'ChoicePicker',
+        description: 'Selection input for choosing from predefined options. Supports single and multiple selection via radio buttons or checkboxes.',
         usage: `{
-  "id": "select-1",
-  "component": {
-    "MultipleChoice": {
-      "selections": { "path": "/form/country" },
-      "options": [
-        { "label": { "literalString": "United States" }, "value": "US" },
-        { "label": { "literalString": "Canada" }, "value": "CA" },
-        { "label": { "literalString": "Mexico" }, "value": "MX" }
-      ],
-      "maxAllowedSelections": 1
-    }
-  }
+  "id": "choice-1",
+  "component": "ChoicePicker",
+  "options": { "path": "/form/country" },
+  "variant": "mutuallyExclusive",
+  "choices": [
+    { "label": "United States", "value": "US" },
+    { "label": "Canada", "value": "CA" },
+    { "label": "Mexico", "value": "MX" }
+  ],
+  "maxAllowedSelections": 1
 }`,
         props: [
           {
-            name: 'selections',
+            name: 'options',
             description: 'Currently selected value(s). Bound to a data path for two-way binding.',
-            type: 'StringArrayValue',
+            type: 'string[] | { path: string }',
           },
           {
-            name: 'options',
-            description: 'Array of available options with label and value.',
+            name: 'choices',
+            description: 'Array of available choices with label and value.',
             type: 'array',
+          },
+          {
+            name: 'variant',
+            description: 'Visual variant for the choice picker.',
+            type: 'enum',
+            values: ['multipleSelection', 'mutuallyExclusive'],
+          },
+          {
+            name: 'displayStyle',
+            description: 'Visual display style for the choices.',
+            type: 'enum',
+            values: ['checkbox', 'chips'],
+            default: 'checkbox',
+          },
+          {
+            name: 'filterable',
+            description: 'Whether choices can be filtered by typing.',
+            type: 'boolean',
+            default: 'false',
           },
           {
             name: 'maxAllowedSelections',
@@ -760,26 +755,7 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             type: 'number',
           },
         ],
-        preview: {
-          root: 'select-1',
-          components: [
-            {
-              id: 'select-1',
-              component: {
-                MultipleChoice: {
-                  selections: { path: '/country' },
-                  options: [
-                    { label: { literalString: 'United States' }, value: 'US' },
-                    { label: { literalString: 'Canada' }, value: 'CA' },
-                    { label: { literalString: 'Mexico' }, value: 'MX' },
-                  ],
-                  maxAllowedSelections: 1,
-                },
-              },
-            },
-          ],
-          data: { country: ['US'] },
-        },
+        // No preview — ChoicePicker requires live data binding for options.
       },
     ],
   },
@@ -791,15 +767,15 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Interactive button that triggers an action when clicked. Contains a child component for its content.',
         usage: `{
   "id": "button-1",
-  "component": {
-    "Button": {
-      "child": "button-label",
-      "action": {
-        "name": "submit",
-        "context": [
-          { "key": "formId", "value": { "literalString": "contact-form" } }
-        ]
-      }
+  "component": "Button",
+  "child": "button-label",
+  "variant": "primary",
+  "action": {
+    "event": {
+      "name": "submit",
+      "context": [
+        { "key": "formId", "value": "contact-form" }
+      ]
     }
   }
 }`,
@@ -810,8 +786,14 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             type: 'string',
           },
           {
+            name: 'variant',
+            description: 'Visual variant for the button.',
+            type: 'enum',
+            values: ['default', 'primary', 'borderless'],
+          },
+          {
             name: 'action',
-            description: 'Action configuration dispatched when the button is clicked.',
+            description: 'Action configuration dispatched when the button is clicked. Contains an event object with name and optional context.',
             type: 'Action',
           },
         ],
@@ -820,53 +802,48 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'button-row',
-              component: {
-                Row: {
-                  distribution: 'start',
-                  alignment: 'center',
-                  children: { explicitList: ['button-1', 'button-2'] },
-                },
-              },
-            },
+              component: 'Row',
+              justify: 'start',
+              align: 'center',
+              children: ['button-1', 'button-2'],
+            } as A2UIComponent,
             {
               id: 'button-1',
-              component: {
-                Button: {
-                  child: 'button-label-1',
-                  action: { name: 'primary-action' },
-                },
-              },
-            },
+              component: 'Button',
+              child: 'button-label-1',
+              variant: 'primary',
+              action: { event: { name: 'primary-action' } },
+            } as A2UIComponent,
             {
               id: 'button-label-1',
-              component: { Text: { text: { literalString: 'Submit' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Submit',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'button-2',
-              component: {
-                Button: {
-                  child: 'button-label-2',
-                  action: { name: 'secondary-action' },
-                },
-              },
-            },
+              component: 'Button',
+              child: 'button-label-2',
+              variant: 'borderless',
+              action: { event: { name: 'secondary-action' } },
+            } as A2UIComponent,
             {
               id: 'button-label-2',
-              component: {
-                Row: {
-                  alignment: 'center',
-                  children: { explicitList: ['btn-icon', 'btn-text'] },
-                },
-              },
-            },
+              component: 'Row',
+              align: 'center',
+              children: ['btn-icon', 'btn-text'],
+            } as A2UIComponent,
             {
               id: 'btn-icon',
-              component: { Icon: { name: { literalString: 'add' } } },
-            },
+              component: 'Icon',
+              name: 'add',
+            } as A2UIComponent,
             {
               id: 'btn-text',
-              component: { Text: { text: { literalString: 'Add Item' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Add Item',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
@@ -875,20 +852,17 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Tab navigation component with multiple panels. Each tab has a title and associated content.',
         usage: `{
   "id": "tabs-1",
-  "component": {
-    "Tabs": {
-      "tabItems": [
-        { "title": { "literalString": "Overview" }, "child": "tab-overview" },
-        { "title": { "literalString": "Details" }, "child": "tab-details" },
-        { "title": { "literalString": "Reviews" }, "child": "tab-reviews" }
-      ]
-    }
-  }
+  "component": "Tabs",
+  "tabs": [
+    { "title": "Overview", "child": "tab-overview" },
+    { "title": "Details", "child": "tab-details" },
+    { "title": "Reviews", "child": "tab-reviews" }
+  ]
 }`,
         props: [
           {
-            name: 'tabItems',
-            description: 'Array of tab configurations, each with a title and child component ID.',
+            name: 'tabs',
+            description: 'Array of tab configurations, each with a title string and child component ID.',
             type: 'array',
           },
         ],
@@ -897,28 +871,31 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'tabs-1',
-              component: {
-                Tabs: {
-                  tabItems: [
-                    { title: { literalString: 'Overview' }, child: 'tab-1' },
-                    { title: { literalString: 'Details' }, child: 'tab-2' },
-                    { title: { literalString: 'Reviews' }, child: 'tab-3' },
-                  ],
-                },
-              },
-            },
+              component: 'Tabs',
+              tabs: [
+                { title: 'Overview', child: 'tab-1' },
+                { title: 'Details', child: 'tab-2' },
+                { title: 'Reviews', child: 'tab-3' },
+              ],
+            } as A2UIComponent,
             {
               id: 'tab-1',
-              component: { Text: { text: { literalString: 'This is the overview content.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'This is the overview content.',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'tab-2',
-              component: { Text: { text: { literalString: 'Here are the details.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Here are the details.',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'tab-3',
-              component: { Text: { text: { literalString: 'User reviews go here.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'User reviews go here.',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
@@ -927,21 +904,18 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Dialog/popup component with a trigger element and content panel.',
         usage: `{
   "id": "modal-1",
-  "component": {
-    "Modal": {
-      "entryPointChild": "open-modal-button",
-      "contentChild": "modal-content"
-    }
-  }
+  "component": "Modal",
+  "trigger": "open-modal-button",
+  "content": "modal-content"
 }`,
         props: [
           {
-            name: 'entryPointChild',
+            name: 'trigger',
             description: 'Component ID of the element that triggers the modal (typically a Button).',
             type: 'string',
           },
           {
-            name: 'contentChild',
+            name: 'content',
             description: 'Component ID of the content to display inside the modal.',
             type: 'string',
           },
@@ -951,42 +925,40 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
           components: [
             {
               id: 'modal-1',
-              component: {
-                Modal: {
-                  entryPointChild: 'modal-trigger',
-                  contentChild: 'modal-content',
-                },
-              },
-            },
+              component: 'Modal',
+              trigger: 'modal-trigger',
+              content: 'modal-content',
+            } as A2UIComponent,
             {
               id: 'modal-trigger',
-              component: {
-                Button: {
-                  child: 'modal-trigger-text',
-                  action: { name: 'open-modal' },
-                },
-              },
-            },
+              component: 'Button',
+              child: 'modal-trigger-text',
+              variant: 'primary',
+              action: { event: { name: 'open-modal' } },
+            } as A2UIComponent,
             {
               id: 'modal-trigger-text',
-              component: { Text: { text: { literalString: 'Open Modal' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Open Modal',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'modal-content',
-              component: {
-                Column: {
-                  children: { explicitList: ['modal-title', 'modal-body'] },
-                },
-              },
-            },
+              component: 'Column',
+              children: ['modal-title', 'modal-body'],
+            } as A2UIComponent,
             {
               id: 'modal-title',
-              component: { Text: { text: { literalString: 'Modal Title' }, usageHint: 'h3' } },
-            },
+              component: 'Text',
+              text: 'Modal Title',
+              variant: 'h3',
+            } as A2UIComponent,
             {
               id: 'modal-body',
-              component: { Text: { text: { literalString: 'This is the modal content. Click outside or the X to close.' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'This is the modal content. Click outside or the X to close.',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },
@@ -1000,12 +972,8 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
         description: 'Visual separator line between content sections.',
         usage: `{
   "id": "divider-1",
-  "component": {
-    "Divider": {
-      "axis": "horizontal",
-      "thickness": 1
-    }
-  }
+  "component": "Divider",
+  "axis": "horizontal"
 }`,
         props: [
           {
@@ -1014,45 +982,32 @@ export const COMPONENTS_DATA: ComponentCategory[] = [
             type: 'enum',
             values: ['horizontal', 'vertical'],
           },
-          {
-            name: 'color',
-            description: 'Color of the divider (hex code or semantic name).',
-            type: 'string',
-          },
-          {
-            name: 'thickness',
-            description: 'Thickness of the divider line in pixels.',
-            type: 'number',
-          },
         ],
         preview: {
           root: 'divider-demo',
           components: [
             {
               id: 'divider-demo',
-              component: {
-                Column: {
-                  children: { explicitList: ['text-above', 'divider-1', 'text-below'] },
-                },
-              },
-            },
+              component: 'Column',
+              children: ['text-above', 'divider-1', 'text-below'],
+            } as A2UIComponent,
             {
               id: 'text-above',
-              component: { Text: { text: { literalString: 'Content above' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Content above',
+              variant: 'body',
+            } as A2UIComponent,
             {
               id: 'divider-1',
-              component: {
-                Divider: {
-                  axis: 'horizontal',
-                  thickness: 1,
-                },
-              },
-            },
+              component: 'Divider',
+              axis: 'horizontal',
+            } as A2UIComponent,
             {
               id: 'text-below',
-              component: { Text: { text: { literalString: 'Content below' }, usageHint: 'body' } },
-            },
+              component: 'Text',
+              text: 'Content below',
+              variant: 'body',
+            } as A2UIComponent,
           ],
         },
       },

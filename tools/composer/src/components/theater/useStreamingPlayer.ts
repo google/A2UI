@@ -24,6 +24,7 @@ export interface StreamChunk {
   /** The raw JSONL line (compact JSON, as it goes over the wire) */
   wire: string;
   /** The parsed message object */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped JSONL
   message: any;
   /** Whether this is a client event (↑) or server event (↓) */
   isClient: boolean;
@@ -41,6 +42,7 @@ export interface LifecycleEvent {
 }
 
 /** Convert scenario messages into stream chunks (real JSONL lines) */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped JSONL messages
 function toStreamChunks(messages: any[]): StreamChunk[] {
   return messages.map((msg, i) => {
     const wire = JSON.stringify(msg);
@@ -48,44 +50,35 @@ function toStreamChunks(messages: any[]): StreamChunk[] {
       index: i,
       wire,
       message: msg,
-      isClient: !!msg.action || !!msg.clientEvent,
+      isClient: !!(msg.action || msg.error),
       bytes: new TextEncoder().encode(wire).length,
     };
   });
 }
 
-/** Generate lifecycle events from messages */
+/** Generate lifecycle events from v0.9 messages */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped JSONL messages
 function toLifecycleEvents(messages: any[]): LifecycleEvent[] {
   const events: LifecycleEvent[] = [];
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
-    if (msg.beginRendering) {
-      events.push({ chunkIndex: i, summary: `Surface "${msg.beginRendering.surfaceId || 'default'}" created`, type: 'surface' });
-    }
     if (msg.createSurface) {
       events.push({ chunkIndex: i, summary: `Surface "${msg.createSurface.surfaceId}" created`, type: 'surface' });
-    }
-    if (msg.surfaceUpdate) {
-      const count = msg.surfaceUpdate.components?.length || 0;
-      const types = msg.surfaceUpdate.components
-        ?.map((c: any) => c.component ? Object.keys(c.component)[0] : c.type || '?')
-        .filter((v: string, j: number, a: string[]) => a.indexOf(v) === j);
-      events.push({ chunkIndex: i, summary: `${count} components registered: ${types?.join(', ')}`, type: 'components' });
     }
     if (msg.updateComponents) {
       const count = msg.updateComponents.components?.length || 0;
       events.push({ chunkIndex: i, summary: `${count} components updated`, type: 'components' });
     }
-    if (msg.dataModelUpdate) {
-      const keys = msg.dataModelUpdate.contents?.map((c: any) => c.key).filter(Boolean) || [];
-      events.push({ chunkIndex: i, summary: `Data model: ${keys.join(', ')}`, type: 'data' });
-    }
     if (msg.updateDataModel) {
-      const keys = msg.updateDataModel.contents?.map((c: any) => c.key).filter(Boolean) || [];
-      events.push({ chunkIndex: i, summary: `Data model: ${keys.join(', ')}`, type: 'data' });
+      const udm = msg.updateDataModel;
+      const keys = udm.value && typeof udm.value === 'object'
+        ? Object.keys(udm.value)
+        : [];
+      const path = udm.path || '/';
+      events.push({ chunkIndex: i, summary: `Data model ${path}: ${keys.join(', ')}`, type: 'data' });
     }
-    if (msg.clientEvent || msg.action) {
-      const name = msg.clientEvent?.name || msg.action?.name || 'action';
+    if (msg.action) {
+      const name = msg.action?.event?.name || msg.action?.name || 'action';
       events.push({ chunkIndex: i, summary: `User action: ${name}`, type: 'action' });
     }
     if (msg.deleteSurface) {
@@ -95,6 +88,7 @@ function toLifecycleEvents(messages: any[]): LifecycleEvent[] {
   return events;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped JSONL scenario data
 export function useStreamingPlayer(messages: any[], baseIntervalMs = 800) {
   const chunks = useMemo(() => toStreamChunks(messages), [messages]);
   const lifecycleEvents = useMemo(() => toLifecycleEvents(messages), [messages]);
@@ -107,6 +101,7 @@ export function useStreamingPlayer(messages: any[], baseIntervalMs = 800) {
   const totalChunks = chunks.length;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset playback when scenario changes
     setProgress(0);
     setPlaybackState('stopped');
   }, [messages]);

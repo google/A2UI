@@ -17,7 +17,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
+import {
   Play, Pause, SkipBack, Settings,
   ChevronDown, Activity, Code2,
   Zap, LayoutTemplate, Monitor, Database
@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { scenarios, ScenarioId } from '@/data/theater';
 
-const RENDERERS = ['Lit (Web Components)', 'React', 'Angular'] as const;
+const RENDERERS = ['React Renderer', 'Lit (Web Components) — coming soon', 'Angular — coming soon'] as const;
 type RendererType = typeof RENDERERS[number];
 type LeftTab = 'events' | 'data' | 'config';
 
@@ -57,19 +57,53 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
+/** Lightweight JSON syntax coloring — returns React elements with Tailwind color classes */
+function colorizeJson(json: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  // Match JSON tokens: strings, numbers, booleans, null, and structural chars
+  const tokenRe = /("(?:[^"\\]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|(\btrue\b|\bfalse\b)|(\bnull\b)|([{}[\],])/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = tokenRe.exec(json)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(json.slice(lastIndex, match.index));
+    }
+    if (match[1] && match[2]) {
+      // Key
+      parts.push(<span key={key++} className="text-blue-400">{match[1]}</span>);
+      parts.push(<span key={key++} className="text-foreground/50">{match[2]}</span>);
+    } else if (match[1]) {
+      // String value
+      parts.push(<span key={key++} className="text-green-400">{match[1]}</span>);
+    } else if (match[3]) {
+      // Number
+      parts.push(<span key={key++} className="text-amber-400">{match[3]}</span>);
+    } else if (match[4]) {
+      // Boolean
+      parts.push(<span key={key++} className="text-purple-400">{match[4]}</span>);
+    } else if (match[5]) {
+      // Null
+      parts.push(<span key={key++} className="text-red-400">{match[5]}</span>);
+    } else if (match[6]) {
+      // Structural chars
+      parts.push(<span key={key++} className="text-foreground/40">{match[6]}</span>);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < json.length) {
+    parts.push(json.slice(lastIndex));
+  }
+  return parts;
+}
+
 export default function TheaterPage() {
-  const [mounted, setMounted] = useState(false);
   const [leftTab, setLeftTab] = useState<LeftTab>('data');
+  const [jsonMode, setJsonMode] = useState<'pretty' | 'wire'>('pretty');
+  const [expandedChunks, setExpandedChunks] = useState<Set<number>>(new Set());
   const [mobileView, setMobileView] = useState<'left' | 'renderer'>('renderer');
   const [renderer, setRenderer] = useState<RendererType>(RENDERERS[0]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>(() => {
-    const url = readURL();
-    return (url.scenario && url.scenario in scenarios) ? url.scenario as ScenarioId : 'restaurant-booking';
-  });
+  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('restaurant-finder');
 
   const {
     playbackState,
@@ -86,14 +120,19 @@ export default function TheaterPage() {
     stop,
     seek,
     setSpeed,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON scenario data is untyped
   } = useStreamingPlayer((scenarios[selectedScenario] as any) || [], 1200);
 
   const surfaceState = useA2UISurface(activeMessages);
 
   useEffect(() => {
     const url = readURL();
-    if (url.renderer && RENDERERS.includes(url.renderer as RendererType)) setRenderer(url.renderer as RendererType);
+    if (url.renderer && RENDERERS.includes(url.renderer as RendererType))
+      setRenderer(url.renderer as RendererType);
+    if (url.scenario && url.scenario in scenarios)
+      setSelectedScenario(url.scenario as ScenarioId);
     if (url.step !== undefined) seek(url.step);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on mount
   }, []);
 
   useEffect(() => {
@@ -102,8 +141,13 @@ export default function TheaterPage() {
 
   const handleScenarioChange = useCallback((id: ScenarioId) => {
     setSelectedScenario(id);
+    setExpandedChunks(new Set());
     stop();
   }, [stop]);
+
+  const handleTheaterAction = useCallback((_action: unknown) => {
+    // Theater actions are display-only — no side effects needed
+  }, []);
 
   const dataEndRef = useRef<HTMLDivElement>(null);
   const eventsEndRef = useRef<HTMLDivElement>(null);
@@ -123,7 +167,7 @@ export default function TheaterPage() {
       switch (e.key) {
         case ' ':
           e.preventDefault();
-          playbackState === 'playing' ? pause() : play();
+          if (playbackState === 'playing') { pause(); } else { play(); }
           break;
         case 'ArrowRight':
           e.preventDefault();
@@ -138,10 +182,6 @@ export default function TheaterPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [playbackState, progress, totalChunks, play, pause, seek]);
-
-  if (!mounted) {
-    return <div className="flex h-screen items-center justify-center bg-background text-foreground font-sans">Loading...</div>;
-  }
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
@@ -263,16 +303,31 @@ export default function TheaterPage() {
               ) : leftTab === 'data' ? (
                 /* DATA TAB — real JSONL chunks as they arrive over the wire */
                 <div className="flex flex-col gap-2 pb-8">
-                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
-                    <Database className="h-3 w-3 text-amber-500" /> JSONL Stream
-                  </h2>
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                      <Database className="h-3 w-3 text-amber-500" /> JSONL Stream
+                    </h2>
+                    <div className="flex items-center gap-0.5 rounded-md bg-muted/50 p-0.5 border border-border/50">
+                      <button
+                        className={`text-[9px] font-medium px-2 py-0.5 rounded transition-all ${jsonMode === 'pretty' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        onClick={() => setJsonMode('pretty')}
+                      >Pretty</button>
+                      <button
+                        className={`text-[9px] font-medium px-2 py-0.5 rounded transition-all ${jsonMode === 'wire' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        onClick={() => setJsonMode('wire')}
+                      >Wire</button>
+                    </div>
+                  </div>
                   {receivedChunks.length === 0 && (
                     <p className="text-xs text-muted-foreground italic">Press play to stream JSONL chunks...</p>
                   )}
-                  {receivedChunks.map((chunk, i) => (
+                  {receivedChunks.map((chunk, i) => {
+                    const isExpanded = expandedChunks.has(chunk.index);
+                    const prettyJson = jsonMode === 'pretty' ? JSON.stringify(chunk.message, null, 2) : null;
+                    const needsCollapse = prettyJson != null && prettyJson.split('\n').length > 18;
+                    return (
                     <div key={i}
-                      onClick={() => seek(chunk.index + 1)}
-                      className={`rounded-lg border overflow-hidden cursor-pointer transition-all ${
+                      className={`rounded-lg border overflow-hidden transition-all ${
                         chunk.index === progress - 1
                           ? chunk.isClient
                             ? 'border-purple-500/50 ring-1 ring-purple-500/20 scale-[1.01]'
@@ -283,9 +338,9 @@ export default function TheaterPage() {
                       }`}
                     >
                       {/* Chunk header */}
-                      <div className={`flex items-center justify-between px-3 py-1.5 ${
+                      <div className={`flex items-center justify-between px-3 py-1.5 cursor-pointer ${
                         chunk.isClient ? 'bg-purple-500/10' : 'bg-muted/30'
-                      }`}>
+                      }`} onClick={() => seek(chunk.index + 1)}>
                         <div className="flex items-center gap-2">
                           <span className="text-[9px] font-bold tabular-nums bg-muted/50 rounded px-1.5 py-0.5">
                             #{chunk.index + 1}
@@ -296,12 +351,32 @@ export default function TheaterPage() {
                         </div>
                         <span className="text-[9px] text-muted-foreground font-mono">{formatBytes(chunk.bytes)}</span>
                       </div>
-                      {/* Wire content — single JSONL line */}
-                      <div className="px-3 py-2 font-mono text-[10px] leading-relaxed overflow-x-auto custom-scrollbar-sm bg-card/50">
-                        <code className="text-foreground/80 break-all">{chunk.wire}</code>
+                      {/* Content — wire (compact) or pretty (formatted + colorized) */}
+                      <div className={`px-3 py-2 font-mono text-[10px] leading-relaxed bg-card/50 ${
+                        jsonMode === 'wire' ? 'overflow-x-auto custom-scrollbar-sm' : 'overflow-y-auto custom-scrollbar-sm'
+                      }`} style={jsonMode === 'pretty' && needsCollapse && !isExpanded ? { maxHeight: '300px' } : undefined}>
+                        {jsonMode === 'wire' ? (
+                          <code className="text-foreground/80 break-all">{chunk.wire}</code>
+                        ) : (
+                          <pre className="whitespace-pre-wrap text-foreground/80 m-0">{colorizeJson(prettyJson!)}</pre>
+                        )}
                       </div>
+                      {/* Expand/collapse for large pretty-printed chunks */}
+                      {jsonMode === 'pretty' && needsCollapse && (
+                        <button
+                          className="w-full text-[9px] text-muted-foreground hover:text-foreground py-1 bg-muted/20 border-t border-border/30 transition-colors"
+                          onClick={() => setExpandedChunks(prev => {
+                            const next = new Set(prev);
+                            if (next.has(chunk.index)) next.delete(chunk.index); else next.add(chunk.index);
+                            return next;
+                          })}
+                        >
+                          {isExpanded ? '▲ Collapse' : '▼ Expand full JSON'}
+                        </button>
+                      )}
                     </div>
-                  ))}
+                    );
+                  })}
                   {/* Streaming cursor */}
                   {playbackState === 'playing' && progress < totalChunks && (
                     <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground">
@@ -344,7 +419,7 @@ export default function TheaterPage() {
                         onChange={(e) => setRenderer(e.target.value as RendererType)}
                         className="w-full text-sm p-2 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                       >
-                        {RENDERERS.map(r => <option key={r} value={r}>{r}</option>)}
+                        {RENDERERS.map(r => <option key={r} value={r} disabled={r.includes('coming soon')}>{r}</option>)}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
@@ -390,13 +465,14 @@ export default function TheaterPage() {
                     <span className="text-[10px] text-muted-foreground font-mono">{selectedScenario}</span>
                   </div>
                   <div className="p-4 bg-dot-pattern">
-                    {surfaceState.components.length > 0 ? (
+                    {activeMessages.length > 0 ? (
                       <div className="w-full flex items-start justify-center">
                         <A2UIViewer
                           root={surfaceState.root}
                           components={surfaceState.components}
                           data={surfaceState.data}
-                          onAction={(action) => console.log('Theater Action:', action)}
+                          theme={surfaceState.theme}
+                          onAction={handleTheaterAction}
                         />
                       </div>
                     ) : (

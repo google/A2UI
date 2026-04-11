@@ -28,6 +28,8 @@ export const Column = createComponentImplementation(ColumnApi, ({props, buildChi
         justifyContent: mapJustify(props.justify),
         alignItems: mapAlign(props.align),
         width: '100%',
+        // Override flex default min-width:auto so children can shrink below content size.
+        minWidth: 0,
         margin: 0,
         padding: 0,
       }}

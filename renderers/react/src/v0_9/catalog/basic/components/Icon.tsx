@@ -19,9 +19,19 @@ import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
+/** Explicit map for icon names that don't follow camelCase → snake_case. */
+const ICON_MAP: Record<string, string> = {
+  favoriteOff: 'favorite_border',
+  play: 'play_arrow',
+  rewind: 'fast_rewind',
+  starOff: 'star_border',
+};
+
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
-  const iconName =
+  const rawName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
+  const iconName =
+    ICON_MAP[rawName ?? ''] ?? rawName?.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     fontSize: '24px',
