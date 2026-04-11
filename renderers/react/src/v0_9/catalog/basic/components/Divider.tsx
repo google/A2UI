@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {DividerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, withWeight} from '../utils';
 
 export const Divider = createComponentImplementation(DividerApi, ({props}) => {
   const isVertical = props.axis === 'vertical';
@@ -35,5 +35,5 @@ export const Divider = createComponentImplementation(DividerApi, ({props}) => {
     style.height = '1px';
   }
 
-  return <div style={style} />;
+  return withWeight(<div style={style} />, props.weight);
 });

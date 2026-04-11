@@ -9,6 +9,7 @@
 - **Fix**: Card adds `overflow: hidden` to contain child content.
 - **Fix**: Column adds `minWidth: 0` so flex children can shrink below content size.
 - **Fix**: Weight wrapper adds `minHeight: 0` for vertical flex layouts.
+- **Refactor**: Moved `weight` flex wrapper from shared adapter into individual basic catalog components.
 
 ## 0.8.1
 

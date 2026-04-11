@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, withWeight} from '../utils';
 
 /** Explicit map for icon names that don't follow camelCase → snake_case. */
 const ICON_MAP: Record<string, string> = {
@@ -42,9 +42,10 @@ export const Icon = createComponentImplementation(IconApi, ({props}) => {
     justifyContent: 'center',
   };
 
-  return (
+  return withWeight(
     <span className="material-symbols-outlined" style={style}>
       {iconName}
-    </span>
+    </span>,
+    props.weight,
   );
 });

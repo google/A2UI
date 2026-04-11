@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {CheckBoxApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, withWeight} from '../utils';
 
 export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => 
 
   const hasError = props.validationErrors && props.validationErrors.length > 0;
 
-  return (
+  return withWeight(
     <div style={{display: 'flex', flexDirection: 'column', margin: LEAF_MARGIN}}>
       <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
         <input
@@ -52,6 +52,7 @@ export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => 
           {props.validationErrors?.[0]}
         </span>
       )}
-    </div>
+    </div>,
+    props.weight,
   );
 });

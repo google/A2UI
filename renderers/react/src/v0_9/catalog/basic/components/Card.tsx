@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseContainerStyle} from '../utils';
+import {getBaseContainerStyle, withWeight} from '../utils';
 
 export const Card = createComponentImplementation(CardApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
@@ -27,5 +27,8 @@ export const Card = createComponentImplementation(CardApi, ({props, buildChild})
     overflow: 'hidden',
   };
 
-  return <div style={style}>{props.child ? buildChild(props.child) : null}</div>;
+  return withWeight(
+    <div style={style}>{props.child ? buildChild(props.child) : null}</div>,
+    props.weight,
+  );
 });

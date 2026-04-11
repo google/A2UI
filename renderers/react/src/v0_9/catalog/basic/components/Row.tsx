@@ -17,10 +17,10 @@
 import {createComponentImplementation} from '../../../adapter';
 import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
-import {mapJustify, mapAlign} from '../utils';
+import {mapJustify, mapAlign, withWeight} from '../utils';
 
 export const Row = createComponentImplementation(RowApi, ({props, buildChild, context}) => {
-  return (
+  return withWeight(
     <div
       style={{
         display: 'flex',
@@ -33,6 +33,7 @@ export const Row = createComponentImplementation(RowApi, ({props, buildChild, co
       }}
     >
       <ChildList childList={props.children} buildChild={buildChild} context={context} />
-    </div>
+    </div>,
+    props.weight,
   );
 });

@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextFieldApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
+import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS, withWeight} from '../utils';
 
 export const TextField = createComponentImplementation(TextFieldApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -43,7 +43,7 @@ export const TextField = createComponentImplementation(TextFieldApi, ({props}) =
 
   const hasError = props.validationErrors && props.validationErrors.length > 0;
 
-  return (
+  return withWeight(
     <div
       style={{
         display: 'flex',
@@ -77,6 +77,7 @@ export const TextField = createComponentImplementation(TextFieldApi, ({props}) =
       {hasError && (
         <span style={{fontSize: '12px', color: 'red'}}>{props.validationErrors![0]}</span>
       )}
-    </div>
+    </div>,
+    props.weight,
   );
 });

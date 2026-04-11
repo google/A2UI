@@ -76,3 +76,12 @@ export const getBaseContainerStyle = (): React.CSSProperties => ({
   borderRadius: STANDARD_RADIUS,
   boxSizing: 'border-box',
 });
+
+/**
+ * Wraps an element in a flex-grow container when the basic catalog `weight`
+ * property is set. This is a catalog-level concern (not framework-level).
+ */
+export function withWeight(element: React.ReactElement, weight?: number): React.ReactElement {
+  if (weight == null) return element;
+  return <div style={{flex: weight, minWidth: 0, minHeight: 0}}>{element}</div>;
+}

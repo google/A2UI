@@ -18,7 +18,7 @@ import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
-import {mapAlign} from '../utils';
+import {mapAlign, withWeight} from '../utils';
 
 export const List = createComponentImplementation(ListApi, ({props, buildChild, context}) => {
   const isHorizontal = props.direction === 'horizontal';
@@ -33,9 +33,10 @@ export const List = createComponentImplementation(ListApi, ({props, buildChild, 
     padding: 0,
   };
 
-  return (
+  return withWeight(
     <div style={style}>
       <ChildList childList={props.children} buildChild={buildChild} context={context} />
-    </div>
+    </div>,
+    props.weight,
   );
 });

@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {DateTimeInputApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
+import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS, withWeight} from '../utils';
 
 export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
     boxSizing: 'border-box',
   };
 
-  return (
+  return withWeight(
     <div
       style={{
         display: 'flex',
@@ -63,6 +63,7 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
         min={typeof props.min === 'string' ? props.min : undefined}
         max={typeof props.max === 'string' ? props.max : undefined}
       />
-    </div>
+    </div>,
+    props.weight,
   );
 });

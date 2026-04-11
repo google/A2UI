@@ -17,11 +17,12 @@
 import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {withWeight} from '../utils';
 
 export const Modal = createComponentImplementation(ModalApi, ({props, buildChild}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
+  return withWeight(
     <>
       <div onClick={() => setIsOpen(true)} style={{display: 'inline-block'}}>
         {props.trigger ? buildChild(props.trigger) : null}
@@ -73,6 +74,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
           </div>
         </div>
       )}
-    </>
+    </>,
+    props.weight,
   );
 });

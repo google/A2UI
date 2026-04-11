@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {SliderApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, withWeight} from '../utils';
 
 export const Slider = createComponentImplementation(SliderApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ export const Slider = createComponentImplementation(SliderApi, ({props}) => {
 
   const uniqueId = React.useId();
 
-  return (
+  return withWeight(
     <div
       style={{
         display: 'flex',
@@ -53,6 +53,7 @@ export const Slider = createComponentImplementation(SliderApi, ({props}) => {
         onChange={onChange}
         style={{width: '100%', cursor: 'pointer'}}
       />
-    </div>
+    </div>,
+    props.weight,
   );
 });

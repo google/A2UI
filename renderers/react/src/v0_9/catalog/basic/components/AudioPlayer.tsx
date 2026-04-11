@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {AudioPlayerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, withWeight} from '../utils';
 
 export const AudioPlayer = createComponentImplementation(AudioPlayerApi, ({props}) => {
   const style: React.CSSProperties = {
@@ -25,12 +25,13 @@ export const AudioPlayer = createComponentImplementation(AudioPlayerApi, ({props
     width: '100%',
   };
 
-  return (
+  return withWeight(
     <div style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '100%'}}>
       {props.description && (
         <span style={{fontSize: '12px', color: '#666'}}>{props.description}</span>
       )}
       <audio src={props.url} controls style={style} />
-    </div>
+    </div>,
+    props.weight,
   );
 });

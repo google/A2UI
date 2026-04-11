@@ -17,6 +17,7 @@
 import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {withWeight} from '../utils';
 
 
 // The type of a tab is deeply nested into the TabsApi schema, and
@@ -30,7 +31,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
   const tabs = props.tabs || [];
   const activeTab = tabs[selectedIndex];
 
-  return (
+  return withWeight(
     <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: 0, overflow: 'hidden'}}>
       <div style={{display: 'flex', borderBottom: '1px solid #ccc', marginBottom: '8px'}}>
         {tabs.map((tab: _Tab, i: number) => (
@@ -58,6 +59,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
         ))}
       </div>
       <div style={{flex: 1}}>{activeTab ? buildChild(activeTab.child) : null}</div>
-    </div>
+    </div>,
+    props.weight,
   );
 });

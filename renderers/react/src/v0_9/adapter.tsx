@@ -89,16 +89,9 @@ export function createComponentImplementation<Api extends ComponentApi>(
       return () => binding.dispose();
     }, [binding]);
 
-    const rendered = (
+    return (
       <MemoizedRender props={props || ({} as Props)} buildChild={buildChild} context={context} />
     );
-
-    // Apply the common `weight` property as flex-grow when present.
-    const weight = (props as Record<string, unknown>)?.weight;
-    if (weight != null) {
-      return <div style={{flex: weight as number, minWidth: 0, minHeight: 0}}>{rendered}</div>;
-    }
-    return rendered;
   };
 
   return {

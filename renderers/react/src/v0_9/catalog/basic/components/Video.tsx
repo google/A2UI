@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, withWeight} from '../utils';
 
 export const Video = createComponentImplementation(VideoApi, ({props}) => {
   const style: React.CSSProperties = {
@@ -26,5 +26,5 @@ export const Video = createComponentImplementation(VideoApi, ({props}) => {
     aspectRatio: '16/9',
   };
 
-  return <video src={props.url} controls style={style} />;
+  return withWeight(<video src={props.url} controls style={style} />, props.weight);
 });

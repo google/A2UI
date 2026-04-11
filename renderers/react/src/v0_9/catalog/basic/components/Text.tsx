@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, withWeight} from '../utils';
 
 /**
  * Converts inline markdown (bold, italic, links) to HTML.
@@ -81,11 +81,12 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
   const hasMarkdown = BLOCK_MARKDOWN_RE.test(text);
 
   if (hasMarkdown && (!props.variant || props.variant === 'body')) {
-    return (
+    return withWeight(
       <div
         style={{...style, display: 'block'}}
         dangerouslySetInnerHTML={{__html: parseSimpleMarkdown(text)}}
-      />
+      />,
+      props.weight,
     );
   }
 
@@ -95,21 +96,23 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
     text
   );
 
+  let result: JSX.Element;
   switch (props.variant) {
     case 'h1':
-      return <h1 style={{...style, fontSize: '2em', fontWeight: 'bold'}}>{content}</h1>;
+      result = <h1 style={{...style, fontSize: '2em', fontWeight: 'bold'}}>{content}</h1>; break;
     case 'h2':
-      return <h2 style={{...style, fontSize: '1.5em', fontWeight: 'bold'}}>{content}</h2>;
+      result = <h2 style={{...style, fontSize: '1.5em', fontWeight: 'bold'}}>{content}</h2>; break;
     case 'h3':
-      return <h3 style={{...style, fontSize: '1.17em', fontWeight: 'bold'}}>{content}</h3>;
+      result = <h3 style={{...style, fontSize: '1.17em', fontWeight: 'bold'}}>{content}</h3>; break;
     case 'h4':
-      return <h4 style={{...style, fontSize: '1em', fontWeight: 'bold'}}>{content}</h4>;
+      result = <h4 style={{...style, fontSize: '1em', fontWeight: 'bold'}}>{content}</h4>; break;
     case 'h5':
-      return <h5 style={{...style, fontSize: '0.83em', fontWeight: 'bold'}}>{content}</h5>;
+      result = <h5 style={{...style, fontSize: '0.83em', fontWeight: 'bold'}}>{content}</h5>; break;
     case 'caption':
-      return <span style={{...style, color: '#666', textAlign: 'left'}}>{content}</span>;
+      result = <span style={{...style, color: '#666', textAlign: 'left'}}>{content}</span>; break;
     case 'body':
     default:
-      return <span style={style}>{content}</span>;
+      result = <span style={style}>{content}</span>; break;
   }
+  return withWeight(result, props.weight);
 });
