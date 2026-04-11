@@ -37,7 +37,11 @@ export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<typeof Check
    */
   static styles = css`
     :host {
-      display: inline-block;
+      display: block;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
       margin: var(--a2ui-checkbox-margin, var(--a2ui-spacing-m));
     }
     label.a2ui-checkbox {
@@ -61,6 +65,11 @@ export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<typeof Check
     input.invalid {
       outline: 1px solid var(--a2ui-checkbox-color-error, red);
     }
+    .error {
+      color: var(--a2ui-checkbox-color-error, red);
+      font-size: var(--a2ui-font-size-xs, 0.75rem);
+      margin-top: 4px;
+    }
   `;
 
   protected createController() {
@@ -76,16 +85,21 @@ export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<typeof Check
     const inputClasses = { invalid: isInvalid };
 
     return html`
-      <label class=${classMap(labelClasses)}>
-        <input
-          type="checkbox"
-          class=${classMap(inputClasses)}
-          .checked=${props.value || false}
-          @change=${(e: Event) =>
-            props.setValue?.((e.target as HTMLInputElement).checked)}
-        />
-        ${props.label}
-      </label>
+      <div class="container">
+        <label class=${classMap(labelClasses)}>
+          <input
+            type="checkbox"
+            class=${classMap(inputClasses)}
+            .checked=${props.value || false}
+            @change=${(e: Event) =>
+              props.setValue?.((e.target as HTMLInputElement).checked)}
+          />
+          ${props.label}
+        </label>
+        ${isInvalid && props.validationErrors?.length
+          ? html`<div class="error">${props.validationErrors[0]}</div>`
+          : nothing}
+      </div>
     `;
   }
 }
