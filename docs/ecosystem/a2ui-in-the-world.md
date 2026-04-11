@@ -12,9 +12,9 @@ A2UI is being adopted by teams at Google and partner organizations to build the 
 
 The Opal team at Google has been a **core contributor to A2UI** from the beginning. They use A2UI to power the dynamic, generative UI system that makes Opal's AI mini-apps possible.
 
-- **Rapid prototyping**: Build and test new UI patterns quickly
-- **User-generated apps**: Anyone can create apps with custom UIs
-- **Dynamic interfaces**: UIs adapt to each use case automatically
+- **Rapid prototyping**: Build and test new UI patterns quickly.
+- **User-generated apps**: Anyone can create apps with custom UIs.
+- **Dynamic interfaces**: UIs adapt to each use case automatically.
 
 > "A2UI is foundational to our work. It gives us the flexibility to let the AI drive the user experience in novel ways, without being constrained by a fixed front-end. Its declarative nature and focus on security allow us to experiment quickly and safely."
 >
@@ -32,10 +32,10 @@ Gemini Enterprise enables businesses to build powerful, custom AI agents tailore
 
 A2UI is being integrated to allow enterprise agents to render **rich, interactive UIs** within business applications—going beyond simple text responses to guide employees through complex workflows.
 
-- **Data entry forms**: AI-generated forms for structured data collection
-- **Approval dashboards**: Dynamic UIs for review and approval processes
-- **Workflow automation**: Step-by-step interfaces for complex tasks
-- **Custom enterprise UIs**: Tailored interfaces for industry-specific needs
+- **Data entry forms**: AI-generated forms for structured data collection.
+- **Approval dashboards**: Dynamic UIs for review and approval processes.
+- **Workflow automation**: Step-by-step interfaces for complex tasks.
+- **Custom enterprise UIs**: Tailored interfaces for industry-specific needs.
 
 > "Our customers need their agents to do more than just answer questions; they need them to guide employees through complex workflows. A2UI will allow developers building on Gemini Enterprise to have their agents generate the dynamic, custom UIs needed for any task, from data entry forms to approval dashboards, dramatically accelerating workflow automation."
 >
@@ -53,10 +53,10 @@ The [Flutter GenUI SDK](https://docs.flutter.dev/ai/genui) brings dynamic, AI-ge
 
 GenUI SDK uses **A2UI as the underlying protocol** for communication between server-side agents and Flutter applications. When you use GenUI, you're using A2UI under the covers.
 
-- **Cross-platform support**: Same agent works on iOS, Android, web, desktop
-- **Native performance**: Flutter widgets rendered natively on each platform
-- **Brand consistency**: UIs match your app's design system
-- **Server-driven UI**: Agents control what's shown without app updates
+- **Cross-platform support**: Same agent works on iOS, Android, web, desktop.
+- **Native performance**: Flutter widgets rendered natively on each platform.
+- **Brand consistency**: UIs match your app's design system.
+- **Server-driven UI**: Agents control what's shown without app updates.
 
 > "Our developers choose Flutter because it lets them quickly create expressive, brand-rich, custom design systems that feel great on every platform. A2UI was a great fit for Flutter's GenUI SDK because it ensures that every user, on every platform, gets a high quality native feeling experience."
 >
@@ -78,9 +78,9 @@ The [Agent Development Kit](https://google.github.io/adk-docs/) (ADK) is Google'
 
 ADK integrated the A2UI v0.8 standard catalog to automatically render spec-compliant agent parts as native UI components directly in the chat. ADK also handles A2UI↔A2A message conversion, so agents built with ADK can send rich UI to any A2UI-capable client.
 
-- **Built-in rendering**: ADK Web renders A2UI components natively in the dev UI
-- **A2A integration**: A2UI messages are converted between A2A DataPart metadata and ADK events
-- **Agent SDK**: The [A2UI Python agent SDK](https://github.com/google/A2UI/tree/main/agent_sdks/python) provides an ADK extension for generating A2UI from agents
+- **Built-in rendering**: ADK Web renders A2UI components natively in the dev UI.
+- **A2A integration**: A2UI messages are converted between A2A DataPart metadata and ADK events.
+- **Agent SDK**: The [A2UI Python agent SDK](https://github.com/google/A2UI/tree/main/agent_sdks/python) provides an ADK extension for generating A2UI from agents.
 
 **Try it:**
 - [ADK Documentation](https://google.github.io/adk-docs/)
@@ -99,10 +99,10 @@ ADK integrated the A2UI v0.8 standard catalog to automatically render spec-compl
 
 AG UI excels at creating high-bandwidth connections between custom frontends and their dedicated agents. By adding A2UI support, developers get the best of both worlds:
 
-- **State synchronization**: AG UI handles app state and chat history
-- **A2UI rendering**: Render dynamic UIs from third-party agents
-- **Multi-agent support**: Coordinate UIs from multiple agents
-- **React integration**: Seamless integration with React applications
+- **State synchronization**: AG UI handles app state and chat history.
+- **A2UI rendering**: Render dynamic UIs from third-party agents.
+- **Multi-agent support**: Coordinate UIs from multiple agents.
+- **React integration**: Seamless integration with React applications.
 
 > "AG UI excels at creating a high-bandwidth connection between a custom-built front-end and its dedicated agent. By adding support for A2UI, we're giving developers the best of both worlds. They can now build rich, state-synced applications that can also render dynamic UIs from third-party agents via A2UI. It's a perfect match for a multi-agent world."
 >
@@ -115,16 +115,42 @@ AG UI excels at creating high-bandwidth connections between custom frontends and
 
 ---
 
+### AG2: Multi-Agent Framework with Native A2UI
+
+[AG2](https://ag2.ai/) is a popular multi-agent framework, offering advanced orchestration of agents. Its [A2UIAgent](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent) is a reference agent with native A2UI support, enabling AG2 agents to generate rich, interactive UI served over both A2A and AG-UI.
+
+**How AG2 uses A2UI:**
+
+A2UIAgent extends AG2's ConversableAgent with built-in A2UI capabilities — prompt engineering, schema validation with retry, and action handling — so developers can add generative UI to their agents without custom rendering code.
+
+- **Validated output**: Built-in schema validation and retry ensures reliable A2UI generation.
+- **Dual transport**: Serves the same UI over A2A (JSON-RPC) and AG-UI (SSE).
+- **Cross-platform**: One agent serves web, desktop, and mobile clients.
+- **Custom catalogs**: Extend the component catalog with domain-specific components.
+
+> "A2UIAgent brings the A2UI protocol to AG2, enabling agent expression with dynamic, rich, and interactive UIs. Reliable, client-agnostic rendering means our developers spend less time on integration and more time building great experiences."
+>
+> **— Mark Sze**, Founding Engineer, AG2
+
+**Learn more:**
+
+- [A2UIAgent Documentation](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent)
+- [Technical Deep Dive](https://docs.ag2.ai/latest/docs/blog/2026/03/20/AG2-A2UI/) — Building A2UI agents with AG2
+- [A2UIAgent + Flutter Example](https://github.com/ag2ai/build-with-ag2/tree/main/a2ui/flutter) — A2UIAgent served over A2A to a Flutter GenUI client
+- [AG2](https://ag2.ai/)
+
+---
+
 ### Google's AI-Powered Products
 
 As Google adopts AI across the company, A2UI provides a **standardized way for AI agents to exchange user interfaces**, not just text.
 
 **Internal agent adoption:**
 
-- **Multi-agent workflows**: Multiple agents contribute to the same surface
-- **Remote agent support**: Agents running on different services can provide UI
-- **Standardization**: Common protocol across teams reduces integration overhead
-- **External exposure**: Internal agents can be easily exposed externally (e.g., Gemini Enterprise)
+- **Multi-agent workflows**: Multiple agents contribute to the same surface.
+- **Remote agent support**: Agents running on different services can provide UI.
+- **Standardization**: Common protocol across teams reduces integration overhead.
+- **External exposure**: Internal agents can be easily exposed externally (e.g., Gemini Enterprise).
 
 > "Much like A2A lets any agent talk to another agent regardless of platform, A2UI standardizes the user interface layer and supports remote agent use cases through an orchestrator. This has been incredibly powerful for internal teams, allowing them to rapidly develop agents where rich user interfaces are the norm, not the exception. As Google pushes further into generative UI, A2UI provides a perfect platform for server-driven UI that renders on any client."
 >
@@ -166,10 +192,12 @@ Have you built something with A2UI? [Share it with the community!](community.md)
 
 ## Next Steps
 
-- [Quickstart Guide](../quickstart.md) - Try the demo
-- [Agent Development](../guides/agent-development.md) - Build an agent
-- [Client Setup](../guides/client-setup.md) - Integrate a renderer
-- [Community](community.md) - Join the community
+For more information, see the following resources:
+
+- [Quickstart Guide](../quickstart.md) - Try the demo.
+- [Agent Development](../guides/agent-development.md) - Build an agent.
+- [Client Setup](../guides/client-setup.md) - Integrate a renderer.
+- [Community](community.md) - Join the community.
 
 ---
 

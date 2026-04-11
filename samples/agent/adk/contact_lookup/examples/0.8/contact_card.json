@@ -10,6 +10,32 @@
       "surfaceId": "contact-card",
       "components": [
         {
+          "id": "main_card",
+          "component": {
+            "Card": {
+              "child": "main_column"
+            }
+          }
+        },
+        {
+          "id": "main_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "profile_image",
+                  "description_column",
+                  "div",
+                  "info_rows_column",
+                  "action_buttons_row",
+                  "link_text_wrapper"
+                ]
+              },
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
           "id": "profile_image",
           "component": {
             "Image": {
@@ -18,6 +44,21 @@
               },
               "usageHint": "avatar",
               "fit": "cover"
+            }
+          }
+        },
+        {
+          "id": "description_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "user_heading",
+                  "description_text_1",
+                  "description_text_2"
+                ]
+              },
+              "alignment": "center"
             }
           }
         },
@@ -54,17 +95,40 @@
           }
         },
         {
-          "id": "description_column",
+          "id": "div",
+          "component": {
+            "Divider": {}
+          }
+        },
+        {
+          "id": "info_rows_column",
+          "weight": 1,
           "component": {
             "Column": {
               "children": {
                 "explicitList": [
-                  "user_heading",
-                  "description_text_1",
-                  "description_text_2"
+                  "info_row_1",
+                  "info_row_2",
+                  "info_row_3",
+                  "info_row_4"
                 ]
               },
-              "alignment": "center"
+              "alignment": "stretch"
+            }
+          }
+        },
+        {
+          "id": "info_row_1",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "calendar_icon",
+                  "calendar_text_column"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "start"
             }
           }
         },
@@ -73,8 +137,23 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "calendar_today"
+                "literalString": "calendarToday"
               }
+            }
+          }
+        },
+        {
+          "id": "calendar_text_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "calendar_primary_text",
+                  "calendar_secondary_text"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "start"
             }
           }
         },
@@ -100,28 +179,13 @@
           }
         },
         {
-          "id": "calendar_text_column",
-          "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "calendar_primary_text",
-                  "calendar_secondary_text"
-                ]
-              },
-              "distribution": "start",
-              "alignment": "start"
-            }
-          }
-        },
-        {
-          "id": "info_row_1",
+          "id": "info_row_2",
           "component": {
             "Row": {
               "children": {
                 "explicitList": [
-                  "calendar_icon",
-                  "calendar_text_column"
+                  "location_icon",
+                  "location_text_column"
                 ]
               },
               "distribution": "start",
@@ -134,8 +198,23 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "location_on"
+                "literalString": "locationOn"
               }
+            }
+          }
+        },
+        {
+          "id": "location_text_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "location_primary_text",
+                  "location_secondary_text"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "start"
             }
           }
         },
@@ -161,28 +240,13 @@
           }
         },
         {
-          "id": "location_text_column",
-          "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "location_primary_text",
-                  "location_secondary_text"
-                ]
-              },
-              "distribution": "start",
-              "alignment": "start"
-            }
-          }
-        },
-        {
-          "id": "info_row_2",
+          "id": "info_row_3",
           "component": {
             "Row": {
               "children": {
                 "explicitList": [
-                  "location_icon",
-                  "location_text_column"
+                  "mail_icon",
+                  "mail_text_column"
                 ]
               },
               "distribution": "start",
@@ -197,6 +261,21 @@
               "name": {
                 "literalString": "mail"
               }
+            }
+          }
+        },
+        {
+          "id": "mail_text_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "mail_primary_text",
+                  "mail_secondary_text"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "start"
             }
           }
         },
@@ -222,39 +301,18 @@
           }
         },
         {
-          "id": "mail_text_column",
-          "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "mail_primary_text",
-                  "mail_secondary_text"
-                ]
-              },
-              "distribution": "start",
-              "alignment": "start"
-            }
-          }
-        },
-        {
-          "id": "info_row_3",
+          "id": "info_row_4",
           "component": {
             "Row": {
               "children": {
                 "explicitList": [
-                  "mail_icon",
-                  "mail_text_column"
+                  "call_icon",
+                  "call_text_column"
                 ]
               },
               "distribution": "start",
               "alignment": "start"
             }
-          }
-        },
-        {
-          "id": "div",
-          "component": {
-            "Divider": {}
           }
         },
         {
@@ -264,6 +322,21 @@
               "name": {
                 "literalString": "call"
               }
+            }
+          }
+        },
+        {
+          "id": "call_text_column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "call_primary_text",
+                  "call_secondary_text"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "start"
             }
           }
         },
@@ -289,59 +362,17 @@
           }
         },
         {
-          "id": "call_text_column",
-          "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "call_primary_text",
-                  "call_secondary_text"
-                ]
-              },
-              "distribution": "start",
-              "alignment": "start"
-            }
-          }
-        },
-        {
-          "id": "info_row_4",
+          "id": "action_buttons_row",
           "component": {
             "Row": {
               "children": {
                 "explicitList": [
-                  "call_icon",
-                  "call_text_column"
+                  "button_1",
+                  "button_2"
                 ]
               },
-              "distribution": "start",
-              "alignment": "start"
-            }
-          }
-        },
-        {
-          "id": "info_rows_column",
-          "weight": 1,
-          "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "info_row_1",
-                  "info_row_2",
-                  "info_row_3",
-                  "info_row_4"
-                ]
-              },
-              "alignment": "stretch"
-            }
-          }
-        },
-        {
-          "id": "button_1_text",
-          "component": {
-            "Text": {
-              "text": {
-                "literalString": "Follow"
-              }
+              "distribution": "center",
+              "alignment": "center"
             }
           }
         },
@@ -358,11 +389,11 @@
           }
         },
         {
-          "id": "button_2_text",
+          "id": "button_1_text",
           "component": {
             "Text": {
               "text": {
-                "literalString": "Message"
+                "literalString": "Follow"
               }
             }
           }
@@ -380,26 +411,11 @@
           }
         },
         {
-          "id": "action_buttons_row",
-          "component": {
-            "Row": {
-              "children": {
-                "explicitList": [
-                  "button_1",
-                  "button_2"
-                ]
-              },
-              "distribution": "center",
-              "alignment": "center"
-            }
-          }
-        },
-        {
-          "id": "link_text",
+          "id": "button_2_text",
           "component": {
             "Text": {
               "text": {
-                "literalString": "[View Full Profile](/profile)"
+                "literalString": "Message"
               }
             }
           }
@@ -419,28 +435,12 @@
           }
         },
         {
-          "id": "main_column",
+          "id": "link_text",
           "component": {
-            "Column": {
-              "children": {
-                "explicitList": [
-                  "profile_image",
-                  "description_column",
-                  "div",
-                  "info_rows_column",
-                  "action_buttons_row",
-                  "link_text_wrapper"
-                ]
-              },
-              "alignment": "stretch"
-            }
-          }
-        },
-        {
-          "id": "main_card",
-          "component": {
-            "Card": {
-              "child": "main_column"
+            "Text": {
+              "text": {
+                "literalString": "[View Full Profile](/profile)"
+              }
             }
           }
         }

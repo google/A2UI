@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
@@ -27,7 +27,7 @@ function toSnakeCase(str: string): string {
   return str.replace(/([A-Z])/g, '_$1').toLowerCase();
 }
 
-export const Icon = createReactComponent(IconApi, ({props}) => {
+export const Icon = createComponentImplementation(IconApi, ({props}) => {
   const rawName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
   const iconName = rawName ? toSnakeCase(rawName) : undefined;

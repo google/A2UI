@@ -16,7 +16,7 @@
 
 import json
 from typing import Optional
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
 
 
 def get_gallery_json(version: Optional[str]) -> str:

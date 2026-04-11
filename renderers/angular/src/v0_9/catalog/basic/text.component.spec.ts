@@ -18,40 +18,128 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextComponent } from './text.component';
 import { By } from '@angular/platform-browser';
 import { signal } from '@angular/core';
+import { MarkdownRenderer } from '../../core/markdown';
 
 describe('TextComponent', () => {
   let component: TextComponent;
   let fixture: ComponentFixture<TextComponent>;
+  let mockMarkdownRenderer: jasmine.SpyObj<MarkdownRenderer>;
 
   beforeEach(async () => {
+    mockMarkdownRenderer = jasmine.createSpyObj('MarkdownRenderer', ['render']);
+    mockMarkdownRenderer.render.and.callFake((text: string) => Promise.resolve(`<p>${text}</p>`));
+
     await TestBed.configureTestingModule({
       imports: [TextComponent],
+      providers: [
+        { provide: MarkdownRenderer, useValue: mockMarkdownRenderer },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('props', {
-      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
-      weight: { value: signal('bold'), raw: 'bold', onUpdate: () => {} },
-      style: { value: signal('italic'), raw: 'italic', onUpdate: () => {} },
-    });
   });
 
   it('should create', () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
+    });
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  it('should render the text', () => {
+  it('should render the markdown text', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
+    });
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     const span = fixture.debugElement.query(By.css('span'));
-    expect(span.nativeElement.textContent.trim()).toBe('Hello World');
+    expect(span.nativeElement.innerHTML.trim()).toBe('<p>Hello World</p>');
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('Hello World');
   });
 
-  it('should apply font-weight and font-style', () => {
+  it('should handle variant h1', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
+      variant: { value: signal('h1'), raw: 'h1', onUpdate: () => {} },
+    });
     fixture.detectChanges();
-    const span = fixture.debugElement.query(By.css('span'));
-    expect(span.styles['font-weight']).toBe('bold');
-    expect(span.styles['font-style']).toBe('italic');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('# Heading');
+  });
+
+  it('should handle variant caption', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Caption'), raw: 'Caption', onUpdate: () => {} },
+      variant: { value: signal('caption'), raw: 'caption', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('*Caption*');
+  });
+
+  it('should handle variant h2', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
+      variant: { value: signal('h2'), raw: 'h2', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('## Heading');
+  });
+
+  it('should handle variant h3', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
+      variant: { value: signal('h3'), raw: 'h3', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('### Heading');
+  });
+
+  it('should handle variant h4', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
+      variant: { value: signal('h4'), raw: 'h4', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('#### Heading');
+  });
+
+  it('should handle variant h5', async () => {
+    fixture.componentRef.setInput('props', {
+      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
+      variant: { value: signal('h5'), raw: 'h5', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('##### Heading');
+  });
+
+  it('should handle missing text property', async () => {
+    fixture.componentRef.setInput('props', {});
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('');
   });
 });
+

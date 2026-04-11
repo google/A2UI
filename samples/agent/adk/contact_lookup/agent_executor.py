@@ -32,7 +32,8 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from agent import ContactAgent
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
+from a2ui.a2a.parts import create_a2ui_part
 
 logger = logging.getLogger(__name__)
 
@@ -127,26 +128,24 @@ class ContactAgentExecutor(AgentExecutor):
     async for item in self._agent.stream(query, task.context_id, active_ui_version):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
-        await updater.update_status(
-            TaskState.working,
-            new_agent_text_message(item["updates"], task.context_id, task.id),
-        )
+        message = None
+        if "parts" in item:
+          message = new_agent_parts_message(item["parts"], task.context_id, task.id)
+        elif "updates" in item:
+          message = new_agent_text_message(item["updates"], task.context_id, task.id)
+
+        if message:
+          await updater.update_status(TaskState.working, message)
         continue
 
-      final_state = TaskState.input_required  # Default
+      final_state = TaskState.input_required
       if action in ["send_email", "send_message", "view_full_profile"]:
         final_state = TaskState.completed
 
       final_parts = item["parts"]
 
       logger.info("--- FINAL PARTS TO BE SENT ---")
-      for i, part in enumerate(final_parts):
-        logger.info(f"  - Part {i}: Type = {type(part.root)}")
-        if isinstance(part.root, TextPart):
-          logger.info(f"    - Text: {part.root.text[:200]}...")
-        elif isinstance(part.root, DataPart):
-          logger.info(f"    - Data: {str(part.root.data)[:200]}...")
-      logger.info("-----------------------------")
+      self._log_parts(final_parts)
 
       await updater.update_status(
           final_state,
@@ -159,3 +158,13 @@ class ContactAgentExecutor(AgentExecutor):
       self, request: RequestContext, event_queue: EventQueue
   ) -> Task | None:
     raise ServerError(error=UnsupportedOperationError())
+
+  def _log_parts(self, parts: list[Part]):
+    logger.info("--- PARTS TO BE SENT ---")
+    for i, part in enumerate(parts):
+      logger.info(f"  - Part {i}: Type = {type(part.root)}")
+      if isinstance(part.root, TextPart):
+        logger.info(f"    - Text: {part.root.text[:200]}...")
+      elif isinstance(part.root, DataPart):
+        logger.info(f"    - Data: {str(part.root.data)[:200]}...")
+    logger.info("-----------------------------")

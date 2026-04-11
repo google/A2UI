@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.core.schema.constants import VERSION_0_9
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
     "You are a helpful restaurant finding assistant. Your final output MUST be a a2ui"

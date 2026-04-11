@@ -52,10 +52,12 @@ app.post('/a2a', (req, res) => {
     console.log('[a2a-middleware] Received data:', data);
 
     const parts: Part[] = data['parts'];
+    const contextId: string | undefined = data['contextId'];
 
     const sendParams: MessageSendParams = {
       message: {
         messageId: uuidv4(),
+        contextId,
         role: 'user',
         parts,
         kind: 'message',
