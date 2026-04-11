@@ -236,6 +236,51 @@ describe('Simple Components', () => {
       expect(icon.textContent.trim()).toBe('search');
     });
 
+    it('should convert camelCase icon names to snake_case', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('shoppingCart'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('shopping_cart');
+    });
+
+    it('should map "play" to "play_arrow"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('play'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('play_arrow');
+    });
+
+    it('should map "rewind" to "fast_rewind"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('rewind'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('fast_rewind');
+    });
+
+    it('should map "favoriteOff" to "favorite_border"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('favoriteOff'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('favorite_border');
+    });
+
+    it('should map "starOff" to "star_border"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('starOff'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('star_border');
+    });
+
     it('should render path icon', () => {
       fixture.componentRef.setInput('props', {
         name: createBoundProperty({ path: 'M10 10...' }),

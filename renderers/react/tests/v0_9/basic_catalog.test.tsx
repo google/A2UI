@@ -109,6 +109,21 @@ describe('Basic Catalog Components', () => {
       expect(view.container.textContent).toContain('settings');
       expect(view.container.querySelector('.material-symbols-outlined')).not.toBeNull();
     });
+
+    it('converts camelCase icon names to snake_case', () => {
+      const { view } = renderA2uiComponent(Icon, 'ic1', { name: 'shoppingCart' });
+      expect(view.container.textContent).toContain('shopping_cart');
+    });
+
+    it.each([
+      ['play', 'play_arrow'],
+      ['rewind', 'fast_rewind'],
+      ['favoriteOff', 'favorite_border'],
+      ['starOff', 'star_border'],
+    ])('maps "%s" to "%s"', (specName, materialName) => {
+      const { view } = renderA2uiComponent(Icon, 'ic1', { name: specName });
+      expect(view.container.textContent).toContain(materialName);
+    });
   });
 
   describe('Video', () => {
