@@ -17,6 +17,13 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 
+const ICON_NAME_OVERRIDES: Record<string, string> = {
+  play: 'play_arrow',
+  rewind: 'fast_rewind',
+  favoriteOff: 'favorite_border',
+  starOff: 'star_border',
+};
+
 /**
  * Angular implementation of the A2UI Icon component (v0.9).
  *
@@ -94,6 +101,7 @@ export class IconComponent {
   iconName = computed(() => {
     const name = this.iconNameRaw();
     if (typeof name !== 'string') return '';
+    if (ICON_NAME_OVERRIDES[name]) return ICON_NAME_OVERRIDES[name];
     // Convert camelCase to snake_case for Material Icons
     return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
   });

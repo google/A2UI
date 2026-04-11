@@ -19,6 +19,18 @@ import { customElement } from "lit/decorators.js";
 import { IconApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
+const ICON_NAME_OVERRIDES: Record<string, string> = {
+  "play": "play_arrow",
+  "rewind": "fast_rewind",
+  "favoriteOff": "favorite_border",
+  "starOff": "star_border",
+};
+
+function toMaterialSymbol(name: string): string {
+  if (ICON_NAME_OVERRIDES[name]) return ICON_NAME_OVERRIDES[name];
+  return name.replace(/([A-Z])/g, "_$1").toLowerCase();
+}
+
 @customElement("a2ui-icon")
 export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
   protected createController() {
@@ -31,8 +43,9 @@ export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
 
     const name =
       typeof props.name === "string" ? props.name : (props.name as any)?.path;
+    const iconName = name ? toMaterialSymbol(name) : name;
     return html`<span class="material-symbols-outlined a2ui-icon"
-      >${name}</span
+      >${iconName}</span
     >`;
   }
 }
