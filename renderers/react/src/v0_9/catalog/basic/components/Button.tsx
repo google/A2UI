@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR} from '../utils';
 
 export const Button = createComponentImplementation(ButtonApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
@@ -27,7 +27,7 @@ export const Button = createComponentImplementation(ButtonApi, ({props, buildChi
     border: props.variant === 'borderless' ? 'none' : '1px solid #ccc',
     backgroundColor:
       props.variant === 'primary'
-        ? 'var(--a2ui-primary-color, #007bff)'
+        ? PRIMARY_COLOR
         : props.variant === 'borderless'
           ? 'transparent'
           : '#fff',

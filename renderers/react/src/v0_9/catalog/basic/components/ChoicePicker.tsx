@@ -17,7 +17,7 @@
 import React, {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ChoicePickerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
 // The type of an option is deeply nested into the ChoicePickerApi schema, and
 // it seems z.infer is not inferring it correctly (?). We use `any` for now.
@@ -87,9 +87,9 @@ export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({pro
                   padding: '4px 12px',
                   borderRadius: '16px',
                   border: isSelected
-                    ? '1px solid var(--a2ui-primary-color, #007bff)'
+                    ? `1px solid ${PRIMARY_COLOR}`
                     : STANDARD_BORDER,
-                  backgroundColor: isSelected ? 'var(--a2ui-primary-color, #007bff)' : '#fff',
+                  backgroundColor: isSelected ? PRIMARY_COLOR : '#fff',
                   color: isSelected ? '#fff' : 'inherit',
                   cursor: 'pointer',
                   fontSize: '12px',

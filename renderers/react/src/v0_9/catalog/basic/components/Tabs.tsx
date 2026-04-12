@@ -17,7 +17,7 @@
 import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR} from '../utils';
 
 // The type of a tab is deeply nested into the TabsApi schema, and
 // it seems z.infer is not inferring it correctly (?). We use `any` for now.
@@ -42,10 +42,10 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
               border: 'none',
               background: 'none',
               borderBottom:
-                selectedIndex === i ? '2px solid var(--a2ui-primary-color, #007bff)' : 'none',
+                selectedIndex === i ? `2px solid ${PRIMARY_COLOR}` : 'none',
               fontWeight: selectedIndex === i ? 'bold' : 'normal',
               cursor: 'pointer',
-              color: selectedIndex === i ? 'var(--a2ui-primary-color, #007bff)' : 'inherit',
+              color: selectedIndex === i ? PRIMARY_COLOR : 'inherit',
             }}
           >
             {tab.title}

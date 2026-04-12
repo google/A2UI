@@ -127,6 +127,18 @@ DeferredChild.displayName = 'DeferredChild';
 export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({
   surface,
 }) => {
+  const themeStyle = useMemo(() => {
+    const style: Record<string, string> = {};
+    if (surface.theme?.primaryColor) {
+      style['--a2ui-primary-color'] = surface.theme.primaryColor;
+    }
+    return style;
+  }, [surface.theme]);
+
   // The root component always has ID 'root' and base path '/'
-  return <DeferredChild surface={surface} id="root" basePath="/" />;
+  return (
+    <div style={themeStyle as React.CSSProperties}>
+      <DeferredChild surface={surface} id="root" basePath="/" />
+    </div>
+  );
 };
