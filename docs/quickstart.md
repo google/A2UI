@@ -48,9 +48,10 @@ cd samples/client/lit
 
 ## Step 4: Install and Run
 
-Run the one-command demo launcher:
+Run the restaurant demo launcher:
 
 ```bash
+npm install
 npm run demo:restaurant
 ```
 
@@ -200,7 +201,7 @@ The repository includes several other demos:
 See all available A2UI components:
 
 ```bash
-npm start -- gallery
+npm run demo:gallery09
 ```
 
 This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.
@@ -221,6 +222,17 @@ Now that you've seen A2UI in action, you're ready to:
 - **[Set Up Your Own Client](guides/client-setup.md)**: Integrate A2UI into your own app
 - **[Build an Agent](guides/agent-development.md)**: Create agents that generate A2UI responses
 - **[Explore the Protocol](reference/messages.md)**: Dive into the technical specification
+
+## Customizing Agent URLs
+
+By default, the samples expect agents to be running on specific ports (e.g., `10002` for Restaurant Finder, `10003` for Contact Lookup). If you need to run agents on different ports (for example, to support restricted port forwarding in remote environments), you can configure the URLs using environment variables before building or running the client:
+
+```bash
+export VITE_RESTAURANT_AGENT_URL="http://localhost:8000"
+export VITE_CONTACTS_AGENT_URL="http://localhost:8001"
+```
+
+These variables are picked up by Vite during development or build time.
 
 ## Troubleshooting
 
