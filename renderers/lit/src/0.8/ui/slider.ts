@@ -87,7 +87,7 @@ export class Slider extends Root {
       class=${classMap(this.theme.components.Slider.container)}
     >
       ${this.label
-        ? html`<label class=${classMap(this.theme.components.Slider.label)} for="data">
+        ? html`<label class=${classMap(this.theme.components.Slider.label)} for="${this.id}-input">
             ${extractStringValue(
               this.label,
               this.component,
@@ -109,8 +109,8 @@ export class Slider extends Root {
 
           this.#setBoundValue(evt.target.value);
         }}
-        id="data"
-        name="data"
+        id="${this.id}-input"
+        name=${this.id}
         .value=${value}
         type="range"
         min=${this.minValue ?? "0"}

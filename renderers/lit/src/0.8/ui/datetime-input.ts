@@ -87,7 +87,7 @@ export class DateTimeInput extends Root {
       class=${classMap(this.theme.components.DateTimeInput.container)}
     >
       <label
-        for="data"
+        for="${this.id}-input"
         class=${classMap(this.theme.components.DateTimeInput.label)}
         >${this.#getPlaceholderText()}</label
       >
@@ -104,8 +104,8 @@ export class DateTimeInput extends Root {
 
           this.#setBoundValue(evt.target.value);
         }}
-        id="data"
-        name="data"
+        id="${this.id}-input"
+        name=${this.id}
         .value=${this.#formatInputValue(value)}
         .placeholder=${this.#getPlaceholderText()}
         .type=${this.#getInputType()}

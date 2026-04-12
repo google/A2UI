@@ -96,11 +96,12 @@ export class Checkbox extends Root {
 
           this.#setBoundValue(evt.target.checked);
         }}
-        id="data"
+        id="${this.id}-input"
+        name=${this.id}
         type="checkbox"
         .checked=${value}
       />
-      <label class=${classMap(this.theme.components.CheckBox.label)} for="data"
+      <label class=${classMap(this.theme.components.CheckBox.label)} for="${this.id}-input"
         >${extractStringValue(
           this.label,
           this.component,

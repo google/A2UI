@@ -101,7 +101,7 @@ export class TextField extends Root {
       ${label && label !== ""
         ? html`<label
             class=${classMap(this.theme.components.TextField.label)}
-            for="data"
+            for="${this.id}-input"
             >${label}</label
           >`
         : nothing}
@@ -126,8 +126,8 @@ export class TextField extends Root {
 
           this.#setBoundValue(evt.target.value);
         }}
-        name="data"
-        id="data"
+        name=${this.id}
+        id="${this.id}-input"
         .value=${value}
         .placeholder=${"Please enter a value"}
         pattern=${this.validationRegexp || nothing}
