@@ -293,6 +293,11 @@ export const componentSpecificStyles: string = `
   border: 1px solid #ccc;
   width: 100%;
 }
+:where(.a2ui-surface .a2ui-datetime-input) input,
+:where(.a2ui-surface .a2ui-datetime-input) input::-webkit-datetime-edit,
+:where(.a2ui-surface .a2ui-datetime-input) input::-webkit-datetime-edit-fields-wrapper {
+  color: #333;
+}
 
 .a2ui-surface *,
 .a2ui-surface *::before,

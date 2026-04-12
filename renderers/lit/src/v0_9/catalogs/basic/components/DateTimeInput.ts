@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { DateTimeInputApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
@@ -26,6 +26,14 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<
   protected createController() {
     return new A2uiController(this, DateTimeInputApi);
   }
+
+  static styles = css`
+    input,
+    input::-webkit-datetime-edit,
+    input::-webkit-datetime-edit-fields-wrapper {
+      color: #333;
+    }
+  `;
 
   render() {
     const props = this.controller.props;

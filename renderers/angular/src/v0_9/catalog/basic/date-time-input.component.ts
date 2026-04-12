@@ -78,6 +78,11 @@ import { BoundProperty } from '../../core/types';
         font-family: inherit;
         flex: 1;
       }
+      .a2ui-date-time-input,
+      .a2ui-date-time-input::-webkit-datetime-edit,
+      .a2ui-date-time-input::-webkit-datetime-edit-fields-wrapper {
+        color: #333;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

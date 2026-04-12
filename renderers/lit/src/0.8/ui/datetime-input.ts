@@ -58,6 +58,12 @@ export class DateTimeInput extends Root {
         border: 1px solid #ccc;
         width: 100%;
       }
+
+      input,
+      input::-webkit-datetime-edit,
+      input::-webkit-datetime-edit-fields-wrapper {
+        color: #333;
+      }
     `,
   ];
 
