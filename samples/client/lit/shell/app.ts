@@ -410,6 +410,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
+      this.#error = null;
       this.#startLoadingAnimation();
       const response = this.#a2uiClient.send(message);
       await response;
@@ -418,7 +419,12 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
       return response;
     } catch (err) {
-      this.snackbar(err as string, SnackType.ERROR);
+      if (err instanceof Error) {
+        this.#error = err.message;
+      } else {
+        this.#error = String(err);
+      }
+      this.snackbar(this.#error, SnackType.ERROR);
     } finally {
       this.#requesting = false;
       this.#stopLoadingAnimation();
