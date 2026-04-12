@@ -21,7 +21,7 @@ See [Defining Your Own Catalog](defining-your-own-catalog.md) for how to define 
 
 ## Shared Web Library
 
-All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web-lib`**. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.
+All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web_core`**. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.
 
 This means core protocol handling is consistent across web platforms — only the component rendering differs.
 
@@ -32,7 +32,7 @@ This means core protocol handling is consistent across web platforms — only th
 > The Lit client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
-npm install @a2ui/web-lib lit @lit-labs/signals
+npm install @a2ui/web_core lit @lit-labs/signals
 ```
 
 The Lit renderer uses:
@@ -94,7 +94,7 @@ export const appConfig: ApplicationConfig = {
 ## React
 
 ```bash
-npm install @a2ui/react @a2ui/web-lib
+npm install @a2ui/react @a2ui/web_core
 ```
 
 The React renderer provides:
