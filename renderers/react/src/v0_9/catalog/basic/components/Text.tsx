@@ -53,9 +53,9 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
 
   if (renderedHtml === null) {
     return (
-      <span className={`a2ui-text ${props.variant || 'body'} no-markdown-renderer`} style={style}>
+      <div className={`a2ui-text ${props.variant || 'body'} no-markdown-renderer`} style={style}>
         {markdownText}
-      </span>
+      </div>
     );
   }
 
@@ -63,14 +63,14 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
     return (
       <span
         className="a2ui-caption"
-        style={{...style, color: '#666', textAlign: 'left'}}
+        style={{...style, color: '#666', textAlign: 'left', display: 'inline-block'}}
         dangerouslySetInnerHTML={{__html: renderedHtml}}
       />
     );
   }
 
   return (
-    <span
+    <div
       className={`a2ui-text ${props.variant || 'body'}`}
       style={style}
       dangerouslySetInnerHTML={{__html: renderedHtml}}

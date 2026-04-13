@@ -48,7 +48,7 @@ export function useMarkdown(text: string, options?: MarkdownRendererOptions) {
     return () => {
       active = false;
     };
-  }, [text, renderer, options]);
+  }, [text, renderer, JSON.stringify(options)]);
 
   return html;
 }

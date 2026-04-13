@@ -205,13 +205,14 @@ export default function App() {
                     padding: '1rem',
                     borderRadius: '8px',
                     background: '#fff',
-                    }}
-                    >
-                    <MarkdownContext.Provider value={renderMarkdown}>
+                  }}
+                >
+                  <MarkdownContext.Provider value={renderMarkdown}>
                     <A2uiSurface surface={surface} />
-                    </MarkdownContext.Provider>
-                    </div>
-                    </div>            );
+                  </MarkdownContext.Provider>
+                </div>
+              </div>
+            );
           })}
         </div>
 
