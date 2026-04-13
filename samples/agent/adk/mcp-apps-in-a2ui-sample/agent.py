@@ -35,7 +35,7 @@ app.add_middleware(
 # Read HTML from file
 html_path = os.path.join(os.path.dirname(__file__), "mcp_app.html")
 with open(html_path, "r") as f:
-    MCP_APP_HTML = f.read()
+  MCP_APP_HTML = f.read()
 
 
 @app.post("/a2a")
