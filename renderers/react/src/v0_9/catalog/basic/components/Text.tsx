@@ -18,29 +18,62 @@ import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
+import {useMarkdown} from '../hooks/useMarkdown';
 
 export const Text = createComponentImplementation(TextApi, ({props}) => {
   const text = props.text ?? '';
+  let markdownText = text;
+
+  switch (props.variant) {
+    case 'h1':
+      markdownText = `# ${text}`;
+      break;
+    case 'h2':
+      markdownText = `## ${text}`;
+      break;
+    case 'h3':
+      markdownText = `### ${text}`;
+      break;
+    case 'h4':
+      markdownText = `#### ${text}`;
+      break;
+    case 'h5':
+      markdownText = `##### ${text}`;
+      break;
+    case 'caption':
+      markdownText = `*${text}*`;
+      break;
+  }
+
+  const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     display: 'inline-block',
   };
 
-  switch (props.variant) {
-    case 'h1':
-      return <h1 style={style}>{text}</h1>;
-    case 'h2':
-      return <h2 style={style}>{text}</h2>;
-    case 'h3':
-      return <h3 style={style}>{text}</h3>;
-    case 'h4':
-      return <h4 style={style}>{text}</h4>;
-    case 'h5':
-      return <h5 style={style}>{text}</h5>;
-    case 'caption':
-      return <caption style={{...style, color: '#666', textAlign: 'left'}}>{text}</caption>;
-    case 'body':
-    default:
-      return <span style={style}>{text}</span>;
+  if (renderedHtml === null) {
+    return (
+      <span className={`a2ui-text ${props.variant || 'body'} no-markdown-renderer`} style={style}>
+        {markdownText}
+      </span>
+    );
   }
+
+  if (props.variant === 'caption') {
+    return (
+      <span
+        className="a2ui-caption"
+        style={{...style, color: '#666', textAlign: 'left'}}
+        dangerouslySetInnerHTML={{__html: renderedHtml}}
+      />
+    );
+  }
+
+  return (
+    <span
+      className={`a2ui-text ${props.variant || 'body'}`}
+      style={style}
+      dangerouslySetInnerHTML={{__html: renderedHtml}}
+    />
+  );
 });
