@@ -51,8 +51,6 @@ dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web:3.2.4")
 
-    implementation("org.slf4j:slf4j-simple:2.0.12")
-
     // Dotenv
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
 }
@@ -66,6 +64,3 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-configurations.all {
-    exclude(group = "org.slf4j", module = "slf4j-simple")
-}
