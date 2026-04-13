@@ -20,6 +20,7 @@ import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as readline from 'node:readline';
+import { fileURLToPath } from 'node:url';
 
 export async function runPublish(args, customRunCommand, customExecSync, customReadline) {
   const runCmd = customRunCommand || defaultRunCommand;
@@ -219,7 +220,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   console.log('\nAll packages published successfully.');
 }
 
-import { fileURLToPath } from 'node:url';
+// Only run the publish script if this file is executed directly.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   runPublish(process.argv.slice(2)).catch(err => {
     console.error(err.message || err);

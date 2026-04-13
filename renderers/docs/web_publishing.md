@@ -4,18 +4,18 @@ This guide is for project maintainers. It details the publishing process to the 
 
 ## Automated Release Workflow (Recommended)
 
-The following scripts in `renderers/scripts/` automate the versioning, building, testing, and publishing of packages.
+The following scripts in `renderers/scripts/` automate the versioning, building, testing, and publishing of packages. These should generally be run from the `main` branch after a PR has been merged.
 
-### 1. Increment Versions
+### 1. Increment Versions (Local)
 
-To increment a package version and automatically sync all internal dependents (updating their `package-lock.json` files):
+To increment a package version and automatically sync all internal dependents (updating their `package-lock.json` files). This should be done in a PR:
 
 ```sh
 # Automatically increment patch version (e.g. 0.9.5 -> 0.9.6)
-renderers/scripts/increment_version web_core
+renderers/scripts/increment_version.mjs web_core
 
 # Set a specific version (e.g. including pre-releases)
-renderers/scripts/increment_version lit 0.9.2-beta.1
+renderers/scripts/increment_version.mjs lit 0.9.2-beta.1
 ```
 
 This script will:
@@ -25,7 +25,7 @@ This script will:
 
 ### 2. Publish to Staging (Artifact Registry)
 
-Once versions are updated, use the `publish_npm` script to build, test, and upload the packages to Google's internal Artifact Registry.
+Once versions are updated and merged into `main`, use the `publish_npm` script to build, test, and upload the packages to Google's internal Artifact Registry.
 
 ```sh
 # Publish multiple packages (they will be sorted automatically by dependency)
@@ -50,28 +50,21 @@ This script will:
 Finally, trigger the public release to npmjs.com by uploading a manifest file:
 
 ```sh
-renderers/scripts/upload_manifest
+./renderers/scripts/upload_manifest.mjs
 ```
 
 This generates a `manifest.json` with the current versions of all renderer packages and uploads it to GCS to trigger the internal release infrastructure.
-
 ---
 
-## Manually publishing to NPM
+## Internal Release Process
 
-If you need to publish a package to npm directly, without exit gate:
+The internal release infrastructure monitors the GCS bucket for new manifests. Once a manifest is uploaded, it triggers a series of checks and then publishes the specified versions to the public npm registry.
 
-1. Create an `.npmrc` file in the directory of the package you are publishing:
+1. Ensure your local `.npmrc` in the package directory is correctly configured if you are debugging, but the automated scripts handle authentication via `google-artifactregistry-auth`.
+2. If you need to manually overwrite or create an `.npmrc` for local testing:
    ```sh
    echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
    ```
-
-2. Export your token in your terminal:
-   ```sh
-   export NPM_TOKEN="npm_YourSecretTokenHere"
-   ```
-
-3. Run `npm run publish:package`.
 
 ## About the `publish:package` command
 

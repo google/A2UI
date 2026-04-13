@@ -40,9 +40,12 @@ writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 console.log('--- Generated manifest.json ---');
 console.log(JSON.stringify(manifest, null, 2));
 
-const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19); // YYYY-MM-DDTHH-mm-ss
 // Find the version of a representative package for the manifest name
-const mainVersion = graph['@a2ui/web_core']?.version || 'unknown';
+const mainVersion = graph['@a2ui/web_core']?.version;
+if (!mainVersion) {
+  throw new Error('Could not find @a2ui/web_core in workspace. Ensure you are running from the correct directory.');
+}
 const manifestFileName = `manifest-${mainVersion}-${timestamp}.json`;
 
 console.log(`--- Uploading manifest to GCS: ${GCS_URI}/${manifestFileName} ---`);
