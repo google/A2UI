@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { useState, useEffect } from 'react';
-import { useMarkdownRenderer } from '../context/MarkdownContext';
-import type { MarkdownRendererOptions } from '@a2ui/web_core/types/types';
+import {useState, useEffect} from 'react';
+import {useMarkdownRenderer} from '../context/MarkdownContext';
+import type {MarkdownRendererOptions} from '@a2ui/web_core/types/types';
 
 let warningLogged = false;
 
 export function useMarkdown(text: string, options?: MarkdownRendererOptions) {
   const renderer = useMarkdownRenderer();
   const [html, setHtml] = useState<string | null>(null);
+
+  const optionsKey = JSON.stringify(options);
 
   useEffect(() => {
     if (!renderer) {
@@ -39,16 +41,22 @@ export function useMarkdown(text: string, options?: MarkdownRendererOptions) {
     }
 
     let active = true;
-    renderer(text, options).then((result) => {
-      if (active) {
-        setHtml(result);
-      }
-    });
+    const parsedOptions = optionsKey ? JSON.parse(optionsKey) : undefined;
+
+    renderer(text, parsedOptions)
+      .then((result) => {
+        if (active) {
+          setHtml(result);
+        }
+      })
+      .catch((err) => {
+        console.error('[useMarkdown] Render failed:', err);
+      });
 
     return () => {
       active = false;
     };
-  }, [text, renderer, JSON.stringify(options)]);
+  }, [text, renderer, optionsKey]);
 
   return html;
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { createContext, useContext } from 'react';
-import type { MarkdownRenderer } from '@a2ui/web_core/types/types';
+import {createContext, useContext} from 'react';
+import type {MarkdownRenderer} from '@a2ui/web_core/types/types';
 
 export const MarkdownContext = createContext<MarkdownRenderer | undefined>(undefined);
 
