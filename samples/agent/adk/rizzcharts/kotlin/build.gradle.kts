@@ -15,7 +15,7 @@
  */
 
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.1.10"
     application
     id("com.ncorti.ktfmt.gradle") version "0.19.0"
 }
@@ -49,11 +49,11 @@ dependencies {
     implementation("com.google.genai:google-genai:1.43.0")
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-core:3.4.1")
-    implementation("io.ktor:ktor-server-netty:3.4.1")
-    implementation("io.ktor:ktor-server-cors:3.4.1")
-    implementation("io.ktor:ktor-server-content-negotiation:3.4.1")
-    implementation("io.ktor:ktor-serialization-jackson:3.4.1")
+    implementation("io.ktor:ktor-server-core:3.0.0")
+    implementation("io.ktor:ktor-server-netty:3.0.0")
+    implementation("io.ktor:ktor-server-cors:3.0.0")
+    implementation("io.ktor:ktor-server-content-negotiation:3.0.0")
+    implementation("io.ktor:ktor-serialization-jackson:3.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 
     // Dotenv
