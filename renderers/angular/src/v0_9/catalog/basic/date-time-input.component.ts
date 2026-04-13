@@ -59,22 +59,22 @@ import { BoundProperty } from '../../core/types';
       .a2ui-date-time-container {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: var(--a2ui-spacing-xs, 4px);
         width: 100%;
       }
       .a2ui-date-time-label {
-        font-size: 14px;
-        color: #666;
+        font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
       }
       .a2ui-date-time-inputs {
         display: flex;
-        gap: 8px;
+        gap: var(--a2ui-spacing-s, 8px);
         width: 100%;
       }
       .a2ui-date-time-input {
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+        padding: var(--a2ui-textfield-padding, 8px);
+        border-radius: var(--a2ui-textfield-border-radius, 4px);
+        border: var(--a2ui-textfield-border, 1px solid var(--a2ui-color-border, #ccc));
         font-family: inherit;
         flex: 1;
       }

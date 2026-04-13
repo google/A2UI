@@ -41,9 +41,9 @@ import { BoundProperty } from '../../core/types';
     `
       .a2ui-icon {
         display: inline-block;
-        width: 24px;
-        height: 24px;
-        font-size: 24px;
+        width: var(--a2ui-icon-size, 24px);
+        height: var(--a2ui-icon-size, 24px);
+        font-size: var(--a2ui-icon-size, 24px);
         font-family: 'Material Icons';
         line-height: 1;
         text-transform: none;

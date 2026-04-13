@@ -43,17 +43,17 @@ import { BoundProperty } from '../../core/types';
       .a2ui-check-box-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--a2ui-checkbox-gap, var(--a2ui-spacing-s, 0.5rem));
         cursor: pointer;
         padding: 4px 0;
       }
       .a2ui-check-box-input {
-        width: 18px;
-        height: 18px;
+        width: var(--a2ui-checkbox-size, 1rem);
+        height: var(--a2ui-checkbox-size, 1rem);
         cursor: pointer;
       }
       .a2ui-check-box-text {
-        font-size: 16px;
+        font-size: var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px)));
       }
     `,
   ],

@@ -43,12 +43,15 @@ import { BoundProperty } from '../../core/types';
       .a2ui-audio-player {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--a2ui-spacing-xs, 0.25rem);
+        background: var(--a2ui-audioplayer-background, transparent);
+        border-radius: var(--a2ui-audioplayer-border-radius, 0);
+        padding: var(--a2ui-audioplayer-padding, 0);
         width: 100%;
       }
       .a2ui-audio-description {
-        font-size: 14px;
-        color: #666;
+        font-size: var(--a2ui-font-size-s, 0.875rem);
+        color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
       }
       .a2ui-audio {
         width: 100%;

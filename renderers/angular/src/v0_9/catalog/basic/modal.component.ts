@@ -76,15 +76,15 @@ import { BoundProperty } from '../../core/types';
         z-index: 1000;
       }
       .a2ui-modal-content {
-        background: white;
-        padding: 32px;
-        border-radius: 8px;
+        background: var(--a2ui-modal-background, var(--a2ui-color-surface, white));
+        padding: var(--a2ui-modal-padding, var(--a2ui-spacing-xl, 32px));
+        border-radius: var(--a2ui-modal-border-radius, var(--a2ui-border-radius, 8px));
         position: relative;
         min-width: 300px;
         max-width: 80%;
         max-height: 80%;
         overflow-y: auto;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--a2ui-modal-box-shadow, 0 10px 25px rgba(0, 0, 0, 0.2));
       }
       .a2ui-modal-close {
         position: absolute;
@@ -94,10 +94,10 @@ import { BoundProperty } from '../../core/types';
         background: none;
         font-size: 24px;
         cursor: pointer;
-        color: #999;
+        color: var(--a2ui-text-caption-color, #999);
       }
       .a2ui-modal-close:hover {
-        color: #333;
+        color: var(--a2ui-text-color, #333);
       }
     `,
   ],

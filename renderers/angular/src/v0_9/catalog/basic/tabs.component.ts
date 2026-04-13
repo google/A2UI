@@ -61,25 +61,25 @@ import { BoundProperty } from '../../core/types';
       }
       .a2ui-tab-bar {
         display: flex;
-        border-bottom: 2px solid #eee;
-        gap: 16px;
+        border-bottom: 2px solid var(--a2ui-color-border, #eee);
+        gap: var(--a2ui-spacing-m, 16px);
       }
       .a2ui-tab-button {
-        padding: 8px 16px;
+        padding: var(--a2ui-spacing-s, 8px) var(--a2ui-spacing-m, 16px);
         border: none;
         background: none;
         cursor: pointer;
         font-weight: 500;
-        color: #666;
+        color: var(--a2ui-text-caption-color, #666);
         border-bottom: 2px solid transparent;
         margin-bottom: -2px;
       }
       .a2ui-tab-button.active {
-        color: #007bff;
-        border-bottom: 2px solid #007bff;
+        color: var(--a2ui-color-primary, #007bff);
+        border-bottom: 2px solid var(--a2ui-color-primary, #007bff);
       }
       .a2ui-tab-content {
-        padding: 16px 0;
+        padding: var(--a2ui-spacing-m, 16px) 0;
       }
     `,
   ],

@@ -49,12 +49,12 @@ import { BoundProperty } from '../../core/types';
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: var(--a2ui-spacing-xs, 4px);
       }
       .a2ui-slider-header {
         display: flex;
         justify-content: space-between;
-        font-size: 14px;
+        font-size: var(--a2ui-font-size-s, 14px);
       }
       .a2ui-slider {
         width: 100%;

@@ -46,28 +46,23 @@ import { BoundProperty } from '../../core/types';
   `,
   styles: [
     `
-      :host {
-        display: block;
-        flex: 1;
-        width: 100%;
-      }
       .a2ui-text-field-container {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        margin: 4px;
+        gap: var(--a2ui-spacing-xs, 4px);
+        margin: var(--a2ui-spacing-xs, 4px);
       }
       input {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        padding: var(--a2ui-textfield-padding, 8px);
+        border: var(--a2ui-textfield-border, 1px solid var(--a2ui-color-border, #ccc));
+        border-radius: var(--a2ui-textfield-border-radius, 4px);
       }
       input.invalid {
-        border-color: red;
+        border-color: var(--a2ui-color-error, red);
       }
       .a2ui-error-message {
-        color: red;
-        font-size: 12px;
+        color: var(--a2ui-color-error, red);
+        font-size: var(--a2ui-font-size-xs, 12px);
       }
     `,
   ],

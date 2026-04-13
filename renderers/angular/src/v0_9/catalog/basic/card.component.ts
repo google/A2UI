@@ -41,11 +41,11 @@ import { BoundProperty } from '../../core/types';
   styles: [
     `
       .a2ui-card {
-        padding: 16px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        background-color: white;
-        border: 1px solid #eee;
+        padding: var(--a2ui-card-padding, var(--a2ui-spacing-m, 16px));
+        border-radius: var(--a2ui-card-border-radius, var(--a2ui-border-radius, 8px));
+        box-shadow: var(--a2ui-card-box-shadow, 0 2px 4px rgba(0,0,0,0.1));
+        background-color: var(--a2ui-card-background, var(--a2ui-color-surface, #fff));
+        border: var(--a2ui-card-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
       }
     `,
   ],

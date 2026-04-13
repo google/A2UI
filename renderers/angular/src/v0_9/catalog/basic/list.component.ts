@@ -75,16 +75,16 @@ import { BoundProperty } from '../../core/types';
     `
       .a2ui-list {
         display: flex;
-        padding-inline-start: 24px;
+        padding-inline-start: var(--a2ui-list-padding-start, var(--a2ui-spacing-l, 24px));
         margin: 0;
       }
       .a2ui-list.vertical {
         flex-direction: column;
-        gap: 8px;
+        gap: var(--a2ui-list-gap-vertical, var(--a2ui-spacing-s, 8px));
       }
       .a2ui-list.horizontal {
         flex-direction: row;
-        gap: 16px;
+        gap: var(--a2ui-list-gap-horizontal, var(--a2ui-spacing-m, 16px));
         list-style-position: inside;
       }
       .a2ui-list-item-none {

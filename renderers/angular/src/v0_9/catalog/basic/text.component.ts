@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect, ViewEncapsulation } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 import { MarkdownRenderer } from '../../core/markdown';
 
@@ -30,6 +30,25 @@ import { MarkdownRenderer } from '../../core/markdown';
     <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()">
     </span>
   `,
+  encapsulation: ViewEncapsulation.None,
+  styles: [
+    `
+      .a2ui-text p,
+      .a2ui-text h1,
+      .a2ui-text h2,
+      .a2ui-text h3,
+      .a2ui-text h4,
+      .a2ui-text h5,
+      .a2ui-text h6,
+      .a2ui-text ol,
+      .a2ui-text ul,
+      .a2ui-text li,
+      .a2ui-text blockquote,
+      .a2ui-text pre {
+        margin: var(--_a2ui-text-margin, 0);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextComponent {

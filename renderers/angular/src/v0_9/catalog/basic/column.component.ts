@@ -20,6 +20,23 @@ import { BoundProperty } from '../../core/types';
 
 import { getNormalizedPath } from '../../core/utils';
 
+const JUSTIFY_MAP: Record<string, string> = {
+  start: "flex-start",
+  center: "center",
+  end: "flex-end",
+  spaceBetween: "space-between",
+  spaceAround: "space-around",
+  spaceEvenly: "space-evenly",
+  stretch: "stretch",
+};
+
+const ALIGN_MAP: Record<string, string> = {
+  start: "flex-start",
+  center: "center",
+  end: "flex-end",
+  stretch: "stretch",
+};
+
 /**
  * Angular implementation of the A2UI Column component (v0.9).
  *
@@ -30,18 +47,21 @@ import { getNormalizedPath } from '../../core/utils';
   selector: 'a2ui-v09-column',
   standalone: true,
   imports: [ComponentHostComponent],
+  host: {
+    '[style.display]': '"flex"',
+    '[style.flex-direction]': '"column"',
+    '[style.width]': '"100%"',
+    '[style.gap]': '"var(--a2ui-column-gap, var(--a2ui-spacing-m, 16px))"',
+    '[style.justify-content]': 'justify()',
+    '[style.align-items]': 'align()'
+  },
   template: `
-    <div
-      class="a2ui-column"
-      [style.justify-content]="justify()"
-      [style.align-items]="align()"
-      style="display: flex; flex-direction: column; width: 100%; gap: 4px;"
-    >
       @if (!isRepeating()) {
         @for (child of normalizedChildren(); track child.id) {
           <a2ui-v09-component-host
             [componentKey]="child"
             [surfaceId]="surfaceId()"
+            style="display: flex;"
           >
           </a2ui-v09-component-host>
         }
@@ -52,11 +72,11 @@ import { getNormalizedPath } from '../../core/utils';
           <a2ui-v09-component-host
             [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
             [surfaceId]="surfaceId()"
+            style="display: flex;"
           >
           </a2ui-v09-component-host>
         }
       }
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -74,8 +94,14 @@ export class ColumnComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  protected justify = computed(() => this.props()['justify']?.value());
-  protected align = computed(() => this.props()['align']?.value());
+  protected justify = computed(() => {
+    const val = this.props()['justify']?.value();
+    return JUSTIFY_MAP[val] || val || 'flex-start';
+  });
+  protected align = computed(() => {
+    const val = this.props()['align']?.value();
+    return ALIGN_MAP[val] || val || 'stretch';
+  });
 
   protected children = computed(() => {
     const raw = this.props()['children']?.value() || [];

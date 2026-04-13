@@ -46,15 +46,15 @@ import { BoundProperty } from '../../core/types';
         aspect-ratio: 1 / 1;
       }
       .a2ui-image.rounded {
-        border-radius: 8px;
+        border-radius: var(--a2ui-image-border-radius, var(--a2ui-border-radius, 8px));
       }
       .a2ui-image.icon {
-        width: 24px;
-        height: 24px;
+        width: var(--a2ui-icon-size, 24px);
+        height: var(--a2ui-icon-size, 24px);
       }
       .a2ui-image.avatar {
-        width: 40px;
-        height: 40px;
+        width: var(--a2ui-avatar-size, 40px);
+        height: var(--a2ui-avatar-size, 40px);
         border-radius: 50%;
       }
       .a2ui-image.smallFeature {

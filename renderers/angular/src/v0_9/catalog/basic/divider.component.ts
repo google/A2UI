@@ -37,16 +37,16 @@ import { BoundProperty } from '../../core/types';
     `
       .a2ui-divider {
         border: 0;
-        border-top: 1px solid #eee;
-        margin: 16px 0;
+        border-top: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+        margin: var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 16px)) 0;
         width: 100%;
       }
       .a2ui-divider.vertical {
-        width: 1px;
+        width: var(--a2ui-border-width, 1px);
         height: 100%;
-        margin: 0 16px;
+        margin: 0 var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 16px));
         border-top: 0;
-        border-left: 1px solid #eee;
+        border-left: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
       }
     `,
   ],
