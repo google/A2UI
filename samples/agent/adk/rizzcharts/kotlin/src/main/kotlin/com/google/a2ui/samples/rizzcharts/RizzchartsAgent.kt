@@ -47,9 +47,9 @@ class RizzchartsAgent(
             UI_DESCRIPTION,
             null,
             emptyList(),
-            false,
-            false,
-            false,
+            includeSchema = true,
+            includeExamples = true,
+            validateExamples = true,
           )
         )
       )
