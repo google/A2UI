@@ -137,7 +137,7 @@ The Generic Binder is a framework-agnostic engine that transforms raw JSON paylo
 - **Automatic Resolution**: Properties typed as `DynamicString`, `DynamicNumber`, and `DynamicBoolean` are automatically resolved to their current values (strings, numbers, booleans).
 - **Two-Way Binding**: If a schema uses a dynamic type (like `DynamicString`), the binder automatically injects a setter. For a property `username`, it adds `props.setUsername(val: string)`, which updates the underlying data model.
 - **Action Context**: `Action` properties are resolved into ready-to-call functions. When called, they automatically resolve their deep context bindings (e.g., gathering form data from the model) before notifying the server.
-- **Reactive Validation**: If your schema includes `checks`, the binder reactively evaluate the rules and injects `props.isValid` and `props.validationErrors` based on the results of the logic functions.
+- **Reactive Validation**: If your schema includes `checks`, the binder reactively evaluates the rules and injects `props.isValid` and `props.validationErrors` based on the results of the logic functions.
 
 ## Binderless Components
 
@@ -151,11 +151,11 @@ export const RawInspector = createBinderlessComponentImplementation(
   ({ context }) => {
     // Access the raw, unresolved component model and the data model directly
     const rawData = context.componentModel.properties;
-    const surfaceId = context.componentModel.id;
+    const componentId = context.componentModel.id;
     
     return (
       <details>
-        <summary>Raw Component State (ID: {surfaceId})</summary>
+        <summary>Raw Component State (ID: {componentId})</summary>
         <pre>{JSON.stringify(rawData, null, 2)}</pre>
       </details>
     );
@@ -257,3 +257,4 @@ In v0.9, this is handled by the **Generic Binder** before the component even ren
 All operational data received from an external agent—including its messages and UI definitions—should be handled as untrusted input. Malicious agents could attempt to spoof legitimate interfaces to deceive users (phishing), inject malicious scripts via property values (XSS), or generate excessive layout complexity to degrade client performance (DoS). If your application supports optional embedded content (such as iframes or web views), additional care must be taken to prevent exposure to malicious external sites.
 
 **Developer Responsibility**: Failure to properly validate data and strictly sandbox rendered content can introduce severe vulnerabilities. Developers are responsible for implementing appropriate security measures—such as input sanitization, Content Security Policies (CSP), and secure credential handling—to protect their systems and users.
+
