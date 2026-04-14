@@ -637,10 +637,10 @@
 <nav aria-label="Samples" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#1-contact-multi-surface-sample-lit-adk-agent">
+<a class="md-nav__link" href="#1-mcp-app-standalone-sample-lit-adk-agent">
 <span class="md-ellipsis">
       
-        1. Contact Multi-Surface Sample (Lit &amp; ADK Agent)
+        1. MCP App Standalone Sample (Lit &amp; ADK Agent)
       
     </span>
 </a>
@@ -1097,10 +1097,10 @@
 <nav aria-label="Samples" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#1-contact-multi-surface-sample-lit-adk-agent">
+<a class="md-nav__link" href="#1-mcp-app-standalone-sample-lit-adk-agent">
 <span class="md-ellipsis">
       
-        1. Contact Multi-Surface Sample (Lit &amp; ADK Agent)
+        1. MCP App Standalone Sample (Lit &amp; ADK Agent)
       
     </span>
 </a>
@@ -1255,22 +1255,22 @@
 -   <strong>Node.js (npm)</strong> (version 18 or higher recommended)</p>
 <h2 id="samples">Samples<a class="headerlink" href="#samples" title="Permanent link">¶</a></h2>
 <p>There are two primary samples demonstrating MCP Apps integration:</p>
-<h3 id="1-contact-multi-surface-sample-lit-adk-agent">1. Contact Multi-Surface Sample (Lit &amp; ADK Agent)<a class="headerlink" href="#1-contact-multi-surface-sample-lit-adk-agent" title="Permanent link">¶</a></h3>
+<h3 id="1-mcp-app-standalone-sample-lit-adk-agent">1. MCP App Standalone Sample (Lit &amp; ADK Agent)<a class="headerlink" href="#1-mcp-app-standalone-sample-lit-adk-agent" title="Permanent link">¶</a></h3>
 <p>This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.</p>
 <ul>
 <li><strong>A2A Agent Server</strong>:<ul>
-<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_multiple_surfaces/"><code>samples/agent/adk/contact_multiple_surfaces/</code></a></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/"><code>samples/agent/adk/mcp-apps-in-a2ui-sample/</code></a></li>
 <li>Command: <code>uv run .</code> (requires <code>GEMINI_API_KEY</code> in <code>.env</code>)</li>
 </ul>
 </li>
 <li><strong>Lit Client App</strong>:<ul>
-<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/lit/contact/"><code>samples/client/lit/contact/</code></a></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/"><code>samples/client/lit/mcp-apps-in-a2ui-sample/</code></a></li>
 <li>Command: <code>npm run dev</code> (requires building the Lit renderer first)</li>
 <li>URL: <code>http://localhost:5173/</code></li>
 </ul>
 </li>
 </ul>
-<p><strong>What to expect</strong>: A contact page where actions prompt an app interface on specific interactions.</p>
+<p><strong>What to expect</strong>: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.</p>
 <h3 id="2-mcp-apps-calculator-pong-angular">2. MCP Apps (Calculator + Pong) (Angular)<a class="headerlink" href="#2-mcp-apps-calculator-pong-angular" title="Permanent link">¶</a></h3>
 <p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.</p>
 <ul>
