@@ -78,9 +78,7 @@ export class A2uiIconElement extends BasicCatalogA2uiLitElement<typeof IconApi> 
       typeof props.name === "string" ? props.name : (props.name as any)?.path;
     const name = rawName ? this.getIconName(rawName) : "";
 
-    return html`<span class=${classMap({ "material-symbol": true })}
-      >${name}</span
-    >`;
+    return html`<span class="material-symbol">${name}</span>`;
   }
 }
 

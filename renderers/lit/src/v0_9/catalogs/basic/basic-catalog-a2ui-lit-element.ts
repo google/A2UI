@@ -38,6 +38,8 @@ export abstract class BasicCatalogA2uiLitElement<
     const props = this.controller?.props as any;
     if (props && props.weight !== undefined) {
       this.style.flex = String(props.weight);
+    } else {
+      this.style.removeProperty('flex');
     }
   }
 }

@@ -40,12 +40,13 @@ export class A2uiDividerElement extends BasicCatalogA2uiLitElement<typeof Divide
       overflow: hidden;
       font-size: 0.1px;
       line-height: 0;
+      border: 0;
       border-top: var(
         --a2ui-divider-border,
         var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
       );
       margin: var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 0.5rem)) 0;
-      flex: 1;
+      width: 100%;
     }
     .a2ui-divider.vertical {
       width: var(--a2ui-border-width, 1px);
@@ -59,8 +60,6 @@ export class A2uiDividerElement extends BasicCatalogA2uiLitElement<typeof Divide
     return new A2uiController(this, DividerApi);
   }
 
-
-
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
@@ -71,7 +70,9 @@ export class A2uiDividerElement extends BasicCatalogA2uiLitElement<typeof Divide
       horizontal: props.axis !== "vertical",
     };
 
-    return html`<div class=${classMap(classes)}></div>`;
+    return props.axis === "vertical"
+      ? html`<div class=${classMap(classes)}></div>`
+      : html`<hr class=${classMap(classes)} />`;
   }
 }
 

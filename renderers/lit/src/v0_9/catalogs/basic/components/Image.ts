@@ -31,9 +31,9 @@ export class A2uiImageElement extends BasicCatalogA2uiLitElement<typeof ImageApi
    * - `--a2ui-image-border-radius`: Controls the rounded corners of the image. Defaults to `0`.
    * - `--a2ui-image-icon-size`: Controls the size of the `icon` variant. Defaults to `24px`.
    * - `--a2ui-image-avatar-size`: Controls the size of the `avatar` variant. Defaults to `40px`.
-   * - `--a2ui-image-small-feature-width`: Controls the max-width of the `smallFeature` variant. Defaults to `100px`.
-   * - `--a2ui-image-large-feature-height`: Controls the max-height of the `largeFeature` variant. Defaults to `400px`.
-   * - `--a2ui-image-header-height`: Controls the height of the `header` variant. Defaults to `200px`.
+   * - `--a2ui-image-small-feature-size`: Controls the max-width of the `smallFeature` variant. Defaults to `100px`.
+   * - `--a2ui-image-large-feature-size`: Controls the max-height of the `largeFeature` variant. Defaults to `400px`.
+   * - `--a2ui-image-header-size`: Controls the height of the `header` variant. Defaults to `200px`.
    */
   static styles = css`
     img {
