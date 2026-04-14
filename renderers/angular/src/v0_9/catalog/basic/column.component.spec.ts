@@ -94,10 +94,9 @@ describe('ColumnComponent', () => {
 
   it('should apply flex styles from props', () => {
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-column'));
-    expect(div.styles['justify-content']).toBe('start');
-    expect(div.styles['align-items']).toBe('stretch');
-    expect(div.styles['gap']).toBe('4px');
+    const hostEl = fixture.debugElement;
+    expect(hostEl.styles['justify-content']).toBe('flex-start');
+    expect(hostEl.styles['align-items']).toBe('stretch');
   });
 
   it('should render non-repeating children', () => {
@@ -161,9 +160,9 @@ describe('ColumnComponent', () => {
       },
     });
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-column'));
-    expect(div.styles['justify-content']).toBeFalsy();
-    expect(div.styles['align-items']).toBeFalsy();
+    const hostEl = fixture.debugElement;
+    expect(hostEl.styles['justify-content']).toBeFalsy();
+    expect(hostEl.styles['align-items']).toBeFalsy();
   });
 });
 

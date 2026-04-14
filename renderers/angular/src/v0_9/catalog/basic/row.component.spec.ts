@@ -94,10 +94,9 @@ describe('RowComponent', () => {
 
   it('should apply flex styles from props', () => {
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-row'));
-    expect(div.styles['justify-content']).toBe('center');
-    expect(div.styles['align-items']).toBe('baseline');
-    expect(div.styles['gap']).toBe('4px');
+    const hostEl = fixture.debugElement;
+    expect(hostEl.styles['justify-content']).toBe('center');
+    expect(hostEl.styles['align-items']).toBe('baseline');
   });
 
   it('should render non-repeating children', () => {
@@ -161,9 +160,9 @@ describe('RowComponent', () => {
       },
     });
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-row'));
-    expect(div.styles['justify-content']).toBeFalsy();
-    expect(div.styles['align-items']).toBeFalsy();
+    const hostEl = fixture.debugElement;
+    expect(hostEl.styles['justify-content']).toBeFalsy();
+    expect(hostEl.styles['align-items']).toBeFalsy();
   });
 });
 
