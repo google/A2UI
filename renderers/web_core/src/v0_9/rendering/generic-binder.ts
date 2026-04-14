@@ -138,20 +138,20 @@ type DynamicTypes = DataBinding | FunctionCall;
 type ResolvedChildNode = { id: string; basePath?: string };
 
 type IsAction<T> = [NonNullable<T>] extends [Action] ? true : false;
-type IsChildList<T> = [NonNullable<T>] extends [ChildList] ? true : false;
+type IsChildList<T> = (<G>() => G extends ChildList ? 1 : 2) extends (<G>() => G extends NonNullable<T> ? 1 : 2) ? true : false;
 
 /**
  * Maps raw Zod inferred types to their resolved runtime equivalents.
  * For example, an `Action` object becomes a callable `() => void` function.
  */
 export type ResolveA2uiProp<T> = IsAction<T> extends true
-  ? (() => void) | Extract<T, undefined>
+  ? (() => void) | Extract<T, undefined | null>
   : IsChildList<T> extends true
-    ? ResolvedChildNode[] | Extract<T, undefined>
+    ? ResolvedChildNode[] | Extract<T, undefined | null>
     : Exclude<NonNullable<T>, DynamicTypes> extends Array<infer U>
-      ? Array<ResolveA2uiProp<U>> | Extract<T, undefined>
+      ? Array<ResolveA2uiProp<U>> | Extract<T, undefined | null>
       : Exclude<NonNullable<T>, DynamicTypes> extends object
-        ? ResolveA2uiProps<Exclude<NonNullable<T>, DynamicTypes>> | Extract<T, undefined>
+        ? ResolveA2uiProps<Exclude<NonNullable<T>, DynamicTypes>> | Extract<T, undefined | null>
         : Exclude<T, DynamicTypes>;
 
 /**
@@ -171,10 +171,10 @@ export type GenerateSetters<T> = {
 export type ResolveA2uiProps<T> = T extends object
   ? {
       [K in keyof T]: ResolveA2uiProp<T[K]>;
-    } & GenerateSetters<T> & {
+    } & GenerateSetters<T> & (T extends {checks: any} ? {
       isValid?: boolean;
       validationErrors?: string[];
-    }
+    } : {})
   : T;
 
 /**
