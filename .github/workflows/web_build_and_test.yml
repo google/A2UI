@@ -45,10 +45,15 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run build
 
+      - name: Lint web_core
+        working-directory: ./renderers/web_core
+        run: npm run lint
+
       - name: Test web_core
         working-directory: ./renderers/web_core
         run: npm run test
-  lint:
+  test-scripts:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
@@ -57,14 +62,5 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install web_core dependencies
-        working-directory: ./renderers/web_core
-        run: npm i
-
-      - name: Build web_core
-        working-directory: ./renderers/web_core
-        run: npm run build
-
-      - name: Lint web_core
-        working-directory: ./renderers/web_core
-        run: npm run lint
+      - name: Run publish script integration test
+        run: node --test renderers/scripts/publish_npm.test.mjs
