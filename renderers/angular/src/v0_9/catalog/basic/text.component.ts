@@ -17,6 +17,7 @@
 import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect, ViewEncapsulation } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 import { MarkdownRenderer } from '../../core/markdown';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Text component (v0.9).
@@ -51,7 +52,7 @@ import { MarkdownRenderer } from '../../core/markdown';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent {
+export class TextComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -73,6 +74,7 @@ export class TextComponent {
   private renderRequestId = 0;
 
   constructor() {
+    super();
     effect(() => {
       const text = this.text();
       const variant = this.variant();

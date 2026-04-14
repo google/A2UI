@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-import { provideEnvironmentInitializer } from '@angular/core';
 import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
- * Provides the basic catalog styles for A2UI components.
+ * Base class for A2UI basic catalog components in Angular.
  *
- * This provider uses `provideEnvironmentInitializer` to ensure that the styles
- * are injected into the document when the application starts.
+ * Automatically injects the basic catalog styles when the component is instantiated.
  */
-export function provideBasicCatalogStyles() {
-  return provideEnvironmentInitializer(() => {
+export abstract class BasicCatalogComponent {
+  constructor() {
     injectBasicCatalogStyles();
-  });
+  }
 }

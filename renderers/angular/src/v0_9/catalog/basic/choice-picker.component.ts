@@ -16,6 +16,7 @@
 
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
@@ -104,7 +105,7 @@ import { BoundProperty } from '../../core/types';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChoicePickerComponent {
+export class ChoicePickerComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *

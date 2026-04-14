@@ -16,8 +16,7 @@
 
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideMarkdownRenderer } from '../../../src/v0_9/core/markdown';
-import { provideBasicCatalogStyles } from '../../../src/v0_9/core/styles';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners(), provideMarkdownRenderer(), provideBasicCatalogStyles()],
+  providers: [provideBrowserGlobalErrorListeners(), provideMarkdownRenderer()],
 };

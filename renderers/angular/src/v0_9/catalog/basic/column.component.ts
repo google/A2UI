@@ -19,6 +19,7 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
 
 import { getNormalizedPath } from '../../core/utils';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 const JUSTIFY_MAP: Record<string, string> = {
   start: "flex-start",
@@ -80,7 +81,7 @@ const ALIGN_MAP: Record<string, string> = {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColumnComponent {
+export class ColumnComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
