@@ -146,12 +146,70 @@ This sample verifies the sandbox with a Lit-based client and an ADK-based A2A ag
     -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 -   **Lit Client App**:
     -   Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
-    -   Command: `npm run dev` (requires building the Lit renderer first)
+    -   Command: `npm install && npm run dev` (requires building the Lit renderer first)
     -   URL: `http://localhost:5173/`
 
 **What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
 
 ### 2. MCP Apps (Calculator + Pong) (Angular)
+
+#### Step 3: Open in Browser
+
+Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
+
+**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
+
+---
+
+### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
+
+This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
+
+#### Step 1: Start the MCP Server (Calculator)
+
+```bash
+cd samples/agent/mcp/mcp-apps-calculator/
+uv run .
+```
+=======
+```bash
+cd samples/client/lit/mcp-apps-in-a2ui-sample
+npm install
+npm run dev
+```
+
+The client starts at `http://localhost:5173/`.
+
+#### Step 2: Start the Agent
+
+In a separate terminal, navigate to the agent directory and start the agent:
+
+```bash
+cd samples/agent/adk/mcp-apps-in-a2ui-sample
+uv run agent.py
+```
+
+The agent will run on `http://localhost:8000`.
+
+#### Step 3: Open in Browser
+
+Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
+
+**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
+
+---
+
+### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
+
+This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
+
+#### Step 1: Start the MCP Server (Calculator)
+
+```bash
+cd samples/agent/mcp/mcp-apps-calculator/
+uv run .
+```
+>>>>>>> e3c17f1f (docs: add npm install step to MCP guide)
 
 The MCP server starts on `http://localhost:8000` using SSE transport.
 
