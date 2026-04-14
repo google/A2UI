@@ -35,7 +35,7 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
    * - `--a2ui-choicepicker-gap`: Spacing between options.
    * - `--a2ui-choicepicker-filter-padding`: Padding for the filter input. Defaults to `--a2ui-spacing-xs` and `--a2ui-spacing-s` (4px 8px).
    * - `--a2ui-choicepicker-chip-padding`: Padding for chips. Defaults to `--a2ui-spacing-s` and `--a2ui-spacing-m` (4px 8px).
-   * - `--a2ui-choicepicker-chip-border-radius`: Border radius for chips. Defaults to `50%`.
+   * - `--a2ui-choicepicker-chip-border-radius`: Border radius for chips. Defaults to `999px`.
    */
   static styles = css`
     :host {
@@ -134,6 +134,7 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
               type="text"
               class="filter-input"
               placeholder="Filter options..."
+              aria-label="Filter options"
               .value=${this.filter}
               @input=${(e: Event) => (this.filter = (e.target as HTMLInputElement).value)}
             />
@@ -148,6 +149,7 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
                     chip: true,
                     selected: selected.includes(opt.value),
                   })}
+                  aria-pressed=${selected.includes(opt.value)}
                   @click=${() => toggle(opt.value)}
                 >
                   ${opt.label}
