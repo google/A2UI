@@ -19,23 +19,7 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
 import { getNormalizedPath } from '../../core/utils';
 import { BasicCatalogComponent } from './basic-catalog-component';
-
-const JUSTIFY_MAP: Record<string, string> = {
-  start: "flex-start",
-  center: "center",
-  end: "flex-end",
-  spaceBetween: "space-between",
-  spaceAround: "space-around",
-  spaceEvenly: "space-evenly",
-  stretch: "stretch",
-};
-
-const ALIGN_MAP: Record<string, string> = {
-  start: "flex-start",
-  center: "center",
-  end: "flex-end",
-  stretch: "stretch",
-};
+import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
 
 /**
  * Angular implementation of the A2UI Row component (v0.9).
