@@ -135,26 +135,31 @@ function getFieldBehavior(
 // --- Generic Binder ---
 
 type DynamicTypes = DataBinding | FunctionCall;
-type IsDynamic<T> = DataBinding extends NonNullable<T> ? true : false;
+type ResolvedChildNode = { id: string; basePath?: string };
+
+type IsAction<T> = [NonNullable<T>] extends [Action] ? true : false;
+type IsChildList<T> = [NonNullable<T>] extends [ChildList] ? true : false;
 
 /**
  * Maps raw Zod inferred types to their resolved runtime equivalents.
  * For example, an `Action` object becomes a callable `() => void` function.
  */
-export type ResolveA2uiProp<T> = [NonNullable<T>] extends [Action]
+export type ResolveA2uiProp<T> = IsAction<T> extends true
   ? (() => void) | Extract<T, undefined>
-  : [NonNullable<T>] extends [ChildList]
-    ? any | Extract<T, undefined>
-    : Exclude<T, DynamicTypes> extends never
-      ? any
-      : Exclude<T, DynamicTypes>;
+  : IsChildList<T> extends true
+    ? ResolvedChildNode[] | Extract<T, undefined>
+    : Exclude<NonNullable<T>, DynamicTypes> extends Array<infer U>
+      ? Array<ResolveA2uiProp<U>> | Extract<T, undefined>
+      : Exclude<NonNullable<T>, DynamicTypes> extends object
+        ? ResolveA2uiProps<Exclude<NonNullable<T>, DynamicTypes>> | Extract<T, undefined>
+        : Exclude<T, DynamicTypes>;
 
 /**
  * Automatically generates two-way binding setters for dynamic properties.
  * If a schema has a `value: DynamicString`, this type generates a `setValue(val: string)` method.
  */
 export type GenerateSetters<T> = {
-  [K in keyof T as IsDynamic<T[K]> extends true
+  [K in keyof T as DataBinding extends NonNullable<T[K]>
     ? `set${Capitalize<string & K>}`
     : never]-?: (value: Exclude<NonNullable<T[K]>, DynamicTypes>) => void;
 };
@@ -163,15 +168,14 @@ export type GenerateSetters<T> = {
  * The final output type of the Generic Binder, providing fully resolved, ready-to-use props.
  * This is what framework-specific adapters (like `createReactComponent`) pass to the developer's view logic.
  */
-export type ResolveA2uiProps<T> = (T extends object
+export type ResolveA2uiProps<T> = T extends object
   ? {
       [K in keyof T]: ResolveA2uiProp<T[K]>;
+    } & GenerateSetters<T> & {
+      isValid?: boolean;
+      validationErrors?: string[];
     }
-  : T) &
-  GenerateSetters<T> & {
-    isValid?: boolean;
-    validationErrors?: string[];
-  };
+  : T;
 
 /**
  * The Generic Binder is a framework-agnostic engine that transforms raw A2UI JSON payload
