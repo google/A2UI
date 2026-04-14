@@ -22,6 +22,7 @@ import { SliderComponent } from './slider.component';
 import { DateTimeInputComponent } from './date-time-input.component';
 import { ListComponent } from './list.component';
 import { TabsComponent } from './tabs.component';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
 import { ModalComponent } from './modal.component';
 import { BoundProperty } from '../../core/types';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
@@ -37,30 +38,12 @@ describe('Complex Components', () => {
       surfaceGroup: {
         getSurface: jasmine.createSpy('getSurface').and.returnValue({
           componentsModel: new Map([
-            [
-              'child-1',
-              { id: 'child-1', type: 'Text', properties: { text: { value: 'Child 1' } } },
-            ],
-            [
-              'child-2',
-              { id: 'child-2', type: 'Text', properties: { text: { value: 'Child 2' } } },
-            ],
-            [
-              'content-1',
-              { id: 'content-1', type: 'Text', properties: { text: { value: 'Content 1' } } },
-            ],
-            [
-              'content-2',
-              { id: 'content-2', type: 'Text', properties: { text: { value: 'Content 2' } } },
-            ],
-            [
-              'trigger-btn',
-              { id: 'trigger-btn', type: 'Text', properties: { text: { value: 'Open' } } },
-            ],
-            [
-              'modal-content',
-              { id: 'modal-content', type: 'Text', properties: { text: { value: 'Modal' } } },
-            ],
+            ['child-1', new ComponentModel('child-1', 'Text', { text: { value: 'Child 1' } })],
+            ['child-2', new ComponentModel('child-2', 'Text', { text: { value: 'Child 2' } })],
+            ['content-1', new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } })],
+            ['content-2', new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } })],
+            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', { text: { value: 'Open' } })],
+            ['modal-content', new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } })],
           ]),
           catalog: {
             id: 'mock-catalog',

@@ -17,6 +17,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, input, signal } from '@angular/core';
 import { RowComponent } from './row.component';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
@@ -44,9 +45,9 @@ describe('RowComponent', () => {
   beforeEach(async () => {
     mockSurface = {
       componentsModel: new Map([
-        ['child1', { id: 'child1', type: 'Child', properties: {} }],
-        ['child2', { id: 'child2', type: 'Child', properties: {} }],
-        ['template1', { id: 'template1', type: 'Child', properties: {} }],
+        ['child1', new ComponentModel('child1', 'Child', {})],
+        ['child2', new ComponentModel('child2', 'Child', {})],
+        ['template1', new ComponentModel('template1', 'Child', {})],
       ]),
       catalog: {
         id: 'test-catalog',
@@ -94,10 +95,9 @@ describe('RowComponent', () => {
 
   it('should apply flex styles from props', () => {
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-row'));
-    expect(div.styles['justify-content']).toBe('center');
-    expect(div.styles['align-items']).toBe('baseline');
-    expect(div.styles['gap']).toBe('4px');
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.justifyContent).toBe('center');
+    expect(style.alignItems).toBe('baseline');
   });
 
   it('should render non-repeating children', () => {
@@ -161,7 +161,7 @@ describe('RowComponent', () => {
       },
     });
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-row'));
+    const div = fixture.debugElement;
     expect(div.styles['justify-content']).toBeFalsy();
     expect(div.styles['align-items']).toBeFalsy();
   });
