@@ -21,10 +21,12 @@ on:
     paths:
       - 'agent_sdks/python/**'
       - 'specification/**/json/**'
+      - 'agent_sdks/conformance/**'
   pull_request:
     paths:
       - 'agent_sdks/python/**'
       - 'specification/**/json/**'
+      - 'agent_sdks/conformance/**'
 
 jobs:
   build-and-test:
@@ -48,9 +50,17 @@ jobs:
         working-directory: agent_sdks/python
         run: uv run pyink --check .
 
+      - name: Check Formatting for Conformance
+        working-directory: agent_sdks/conformance
+        run: uv run --with pyink pyink --check tests/
+
       - name: Run unit tests
         working-directory: agent_sdks/python
         run: uv run --with pytest pytest tests/
+
+      - name: Run conformance YAML validation
+        working-directory: agent_sdks/conformance
+        run: uv run pytest
 
       - name: Build the python SDK
         working-directory: agent_sdks/python

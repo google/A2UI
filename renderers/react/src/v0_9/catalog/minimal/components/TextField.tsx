@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 
@@ -31,7 +31,7 @@ export const TextFieldApiDef = {
   schema: TextFieldSchema,
 };
 
-export const TextField = createReactComponent(TextFieldApiDef, ({props, context}) => {
+export const TextField = createComponentImplementation(TextFieldApiDef, ({props, context}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (props.setValue) {
       props.setValue(e.target.value);

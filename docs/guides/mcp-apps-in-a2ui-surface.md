@@ -2,7 +2,7 @@
 
 This guide explains how **Model Context Protocol (MCP) Applications** are integrated and displayed within the **A2UI** surface, along with the security model and testing guidelines.
 
-> **Looking for the core A2UI-over-MCP protocol?** See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
+> NOTE: Looking for the core A2UI-over-MCP protocol? See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
 
 ## Overview
 
@@ -70,7 +70,7 @@ export const DEMO_CATALOG = {
 
 ### 2. Usage in A2UI Message
 
-In the Host or Agent context, you send an A2UI message that translates to this custom node.
+In the Host or Agent context, send an A2UI message that translates to this custom node.
 
 ```json
 {
@@ -120,21 +120,21 @@ To run the samples, ensure you have the following installed:
 
 There are two primary samples demonstrating MCP Apps integration:
 
-### 1. Contact Multi-Surface Sample (Lit & ADK Agent)
+### 1. MCP App Standalone Sample (Lit & ADK Agent)
 
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
 -   **A2A Agent Server**:
-    -   Path: [`samples/agent/adk/contact_multiple_surfaces/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_multiple_surfaces/)
+    -   Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
     -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 -   **Lit Client App**:
-    -   Path: [`samples/client/lit/contact/`](https://github.com/google/A2UI/tree/main/samples/client/lit/contact/)
+    -   Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
     -   Command: `npm run dev` (requires building the Lit renderer first)
     -   URL: `http://localhost:5173/`
 
-**What to expect**: A contact page where actions prompt an app interface on specific interactions.
+**What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
 
-### 2. MCP Apps (Calculator) (Angular)
+### 2. MCP Apps (Calculator + Pong) (Angular)
 
 This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
 
@@ -149,7 +149,11 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
     -   Command: `npm start -- mcp_calculator` (requires `npm run build:sandbox` and `npm install`)
     -   URL: `http://localhost:4200/?disable_security_self_test=true`
 
-**What to expect**: A basic calculator will be rendered. You can execute arithmetic calculations cleanly through the sandbox.
+**What to expect**: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.
+
+| Calculator App | Pong App |
+| :---: | :---: |
+| ![An animated GIF of the calculator app being used to perform multiplications.](../assets/calculator_demo.gif) | ![An animated GIF of the pong app being played.](../assets/pong_demo.gif) |
 
 ## URL Options for Testing
 

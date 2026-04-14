@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {DateTimeInputApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
-export const DateTimeInput = createReactComponent(DateTimeInputApi, ({props}) => {
+export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.setValue(e.target.value);
   };

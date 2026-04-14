@@ -36,7 +36,7 @@ export * from './state/surface-group-model.js';
 export * from './state/surface-model.js';
 export * from './errors.js';
 
-export {effect, Signal, signal} from '@preact/signals-core';
+export {effect, Signal, signal, computed} from '@preact/signals-core';
 
 import A2uiMessageSchemaRaw from './schemas/server_to_client.json' with {type: 'json'};
 

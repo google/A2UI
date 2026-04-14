@@ -16,11 +16,17 @@
 
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI AudioPlayer component (v0.9).
  *
  * Renders an audio player with standard controls and an optional description.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-audioplayer-background`: Controls the background of the player. Defaults to `transparent`.
+ * - `--a2ui-audioplayer-border-radius`: Controls the border radius. Defaults to `0`.
+ * - `--a2ui-audioplayer-padding`: Controls the padding. Defaults to `0`.
  */
 @Component({
   selector: 'a2ui-v09-audio-player',
@@ -43,12 +49,15 @@ import { BoundProperty } from '../../core/types';
       .a2ui-audio-player {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--a2ui-spacing-xs, 0.25rem);
+        background: var(--a2ui-audioplayer-background, transparent);
+        border-radius: var(--a2ui-audioplayer-border-radius, 0);
+        padding: var(--a2ui-audioplayer-padding, 0);
         width: 100%;
       }
       .a2ui-audio-description {
-        font-size: 14px;
-        color: #666;
+        font-size: var(--a2ui-font-size-s, 0.875rem);
+        color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
       }
       .a2ui-audio {
         width: 100%;
@@ -57,7 +66,7 @@ import { BoundProperty } from '../../core/types';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AudioPlayerComponent {
+export class AudioPlayerComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
