@@ -1026,6 +1026,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Web Components (Lit)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building from Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1045,6 +1073,17 @@
     <span class="md-ellipsis">
       
         Setup Example (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming
       
     </span>
   </a>
@@ -2136,6 +2175,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Web Components (Lit)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building from Source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2155,6 +2222,17 @@
     <span class="md-ellipsis">
       
         Setup Example (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming
       
     </span>
   </a>
@@ -2370,23 +2448,33 @@
 <p>A component catalog is any collection of components — the Basic Catalog, your own components, or shared libraries. <strong>Your design system is what matters.</strong> You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.</p>
 <p>See <a href="../defining-your-own-catalog/">Defining Your Own Catalog</a> for how to define a catalog that matches your design system.</p>
 <h2 id="shared-web-library">Shared Web Library<a class="headerlink" href="#shared-web-library" title="Permanent link">&para;</a></h2>
-<p>All web renderers (Lit, Angular, React) share a common foundation: <strong><code>@a2ui/web-lib</code></strong>. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.</p>
+<p>All web renderers (Lit, Angular, React) share a common foundation: <strong><code>@a2ui/web_core</code></strong> ocean. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.</p>
 <p>This means core protocol handling is consistent across web platforms — only the component rendering differs.</p>
 <h2 id="web-components-lit">Web Components (Lit)<a class="headerlink" href="#web-components-lit" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>NOTE: Attention</p>
-<p>The Lit client library is not yet published to NPM. Check back in the coming days.</p>
+<p>The Lit client library is not yet published to NPM. To use it, you must build it from source.</p>
 </blockquote>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/web-lib<span class="w"> </span>lit<span class="w"> </span>@lit-labs/signals
+<h3 id="building-from-source">Building from Source<a class="headerlink" href="#building-from-source" title="Permanent link">&para;</a></h3>
+<p>Before running the sample or using the renderer, you need to build the shared libraries:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Build the shared web core</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>renderers/web_core
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>npm<span class="w"> </span>install
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>npm<span class="w"> </span>run<span class="w"> </span>build
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Build the Lit renderer</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nb">cd</span><span class="w"> </span>../lit
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>npm<span class="w"> </span>install
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>npm<span class="w"> </span>run<span class="w"> </span>build
 </span></code></pre></div>
-<p>The Lit renderer uses:</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<p>Once built, you can use the renderer in your app. The Lit renderer uses:</p>
 <ul>
 <li><strong>Message Processor</strong>: Manages A2UI state and processes incoming messages.</li>
 <li><strong><code>&lt;a2ui-surface&gt;</code> component</strong>: Renders surfaces in your app.</li>
 <li><strong>Lit Signals</strong>: Provides reactive state management for automatic UI updates.</li>
 </ul>
-<p>TODO: Add verified setup example.</p>
-<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell">Lit shell sample</a></p>
+<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell">Lit shell sample</a> — Check its README for detailed run instructions.</p>
 <h2 id="angular">Angular<a class="headerlink" href="#angular" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>NOTE: Attention</p>
@@ -2424,9 +2512,14 @@
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">  </span><span class="p">]</span>
 </span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="p">};</span>
 </span></code></pre></div>
-<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer">Angular v0.9 Explorer</a></p>
+<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/samples/client/angular">Angular samples</a></p>
+<h3 id="streaming">Streaming<a class="headerlink" href="#streaming" title="Permanent link">&para;</a></h3>
+<p>By default, the Angular client uses the non-streaming API. To enable streaming, set the <code>ENABLE_STREAMING</code> environment variable to <code>true</code> before starting the app:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ENABLE_STREAMING</span><span class="o">=</span><span class="nb">true</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>npm<span class="w"> </span>start<span class="w"> </span>--<span class="w"> </span>restaurant
+</span></code></pre></div>
 <h2 id="react">React<a class="headerlink" href="#react" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/react<span class="w"> </span>@a2ui/web-lib
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/react<span class="w"> </span>@a2ui/web_core
 </span></code></pre></div>
 <p>The React renderer provides:</p>
 <ul>
@@ -2436,7 +2529,7 @@
 </ul>
 <p><strong>See working example:</strong> <a href="https://github.com/google/A2UI/tree/main/samples/client/react/shell">React shell</a></p>
 <h2 id="flutter-genui-sdk">Flutter (GenUI SDK)<a class="headerlink" href="#flutter-genui-sdk" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>flutter<span class="w"> </span>pub<span class="w"> </span>add<span class="w"> </span>flutter_genui
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>flutter<span class="w"> </span>pub<span class="w"> </span>add<span class="w"> </span>flutter_genui
 </span></code></pre></div>
 <p>Flutter uses the GenUI SDK which provides native A2UI rendering.</p>
 <p><strong>Docs:</strong> <a href="https://docs.flutter.dev/ai/genui">GenUI SDK</a> | <a href="https://github.com/flutter/genui">GitHub</a> | <a href="https://github.com/flutter/genui/blob/main/packages/genui/README.md#getting-started-with-genui">README in GenUI Flutter Package</a></p>
@@ -2453,7 +2546,7 @@
 <li><strong>WebSockets</strong>: Bidirectional real-time communication</li>
 <li><strong>A2A Protocol</strong>: Standardized agent-to-agent communication with A2UI support</li>
 </ul>
-<p>TODO: Add transport implementation examples.</p>
+<p>See <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell/client.ts">samples/client/lit/shell/client.ts</a> for an example of using the A2A protocol client.</p>
 <p><strong>See:</strong> <a href="../../concepts/transports/">Transports guide</a></p>
 <h2 id="handling-user-actions">Handling User Actions<a class="headerlink" href="#handling-user-actions" title="Permanent link">&para;</a></h2>
 <p>When users interact with A2UI components (clicking buttons, submitting forms, etc.), the client:</p>
@@ -2463,7 +2556,7 @@
 <li>Sends the action to the agent</li>
 <li>Processes the agent's response messages</li>
 </ol>
-<p>TODO: Add action handling examples.</p>
+<p>See the <code>@a2uiaction</code> event handler in <code>#maybeRenderData</code> in <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts">samples/client/lit/shell/app.ts</a> for an example of handling button clicks and form submissions.</p>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Common errors to handle:</p>
 <ul>
@@ -2472,7 +2565,7 @@
 <li><strong>Invalid Data Path</strong>: Check data model structure and JSON Pointer syntax.</li>
 <li><strong>Schema Validation Failed</strong>: Verify message format matches A2UI specification.</li>
 </ul>
-<p>TODO: Add error handling examples.</p>
+<p>See <code>try...catch</code> blocks in <code>#sendMessage</code> in <a href="https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts">samples/client/lit/shell/app.ts</a> for examples of handling communication errors.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../quickstart/">Quickstart</a></strong>: Try the demo application</li>
