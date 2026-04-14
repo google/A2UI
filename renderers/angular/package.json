@@ -47,8 +47,8 @@
   },
   "devDependencies": {
     "@a2ui/markdown-it": "file:../markdown/markdown-it",
-    "@angular/build": "^21.2.0",
-    "@angular/cli": "^21.2.0",
+    "@angular/build": "^21.2.7",
+    "@angular/cli": "^21.2.7",
     "@angular/compiler": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
     "@angular/core": "^21.2.0",
