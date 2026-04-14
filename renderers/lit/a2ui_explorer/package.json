@@ -5,8 +5,9 @@
   "description": "A2UI Lit Explorer",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "npm run build:deps && vite",
+    "build:deps": "for dir in '../../web_core' '../../lit'; do npm install --prefix $dir && npm run build --prefix $dir; done && npm install",
+    "build": "npm run build:deps && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

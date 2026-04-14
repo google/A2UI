@@ -52,7 +52,7 @@
     "build": "wireit",
     "build:tsc": "wireit",
     "test": "wireit",
-    "demo": "cd a2ui_explorer && npm install && vite"
+    "demo": "cd a2ui_explorer && npm run dev"
   },
   "wireit": {
 
