@@ -26,21 +26,40 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
     display: 'inline-block',
   };
 
+  const headerReset: React.CSSProperties = {
+    margin: 0,
+    fontWeight: 600,
+    lineHeight: 1.2,
+  };
+
   switch (props.variant) {
     case 'h1':
-      return <h1 style={style}>{text}</h1>;
+      return <h1 style={{...style, ...headerReset, fontSize: '2.25rem'}}>{text}</h1>;
     case 'h2':
-      return <h2 style={style}>{text}</h2>;
+      return <h2 style={{...style, ...headerReset, fontSize: '1.5rem'}}>{text}</h2>;
     case 'h3':
-      return <h3 style={style}>{text}</h3>;
+      return <h3 style={{...style, ...headerReset, fontSize: '1.25rem'}}>{text}</h3>;
     case 'h4':
-      return <h4 style={style}>{text}</h4>;
+      return <h4 style={{...style, ...headerReset, fontSize: '1.1rem'}}>{text}</h4>;
     case 'h5':
-      return <h5 style={style}>{text}</h5>;
+      return <h5 style={{...style, ...headerReset, fontSize: '1rem'}}>{text}</h5>;
     case 'caption':
-      return <caption style={{...style, color: '#666', textAlign: 'left'}}>{text}</caption>;
+      return (
+        <span
+          style={{
+            ...style,
+            color: '#666',
+            fontSize: '0.75rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            fontWeight: 500,
+          }}
+        >
+          {text}
+        </span>
+      );
     case 'body':
     default:
-      return <span style={style}>{text}</span>;
+      return <span style={{...style, lineHeight: 1.5}}>{text}</span>;
   }
 });

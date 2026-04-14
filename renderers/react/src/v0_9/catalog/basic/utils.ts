@@ -16,17 +16,23 @@
 
 import type React from 'react';
 
-/** Standard leaf margin from the implementation guide. */
-export const LEAF_MARGIN = '8px';
+/** 
+ * Standard leaf margin. 
+ * We set this to 0px and prefer 'gap' on containers for more predictable layouts.
+ */
+export const LEAF_MARGIN = '0px';
 
 /** Standard internal padding for visually bounded containers. */
 export const CONTAINER_PADDING = '16px';
 
 /** Standard border for cards and inputs. */
-export const STANDARD_BORDER = '1px solid #ccc';
+export const STANDARD_BORDER = '1px solid #f0f0f0';
 
 /** Standard border radius. */
-export const STANDARD_RADIUS = '8px';
+export const STANDARD_RADIUS = '12px';
+
+/** Standard gap for Rows and Columns */
+export const STANDARD_GAP = '12px';
 
 export const mapJustify = (j?: string) => {
   switch (j) {
@@ -74,5 +80,7 @@ export const getBaseContainerStyle = (): React.CSSProperties => ({
   padding: CONTAINER_PADDING,
   border: STANDARD_BORDER,
   borderRadius: STANDARD_RADIUS,
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)',
   boxSizing: 'border-box',
+  backgroundColor: '#fff',
 });

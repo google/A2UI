@@ -17,7 +17,7 @@
 import {createComponentImplementation} from '../../../adapter';
 import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
-import {mapJustify, mapAlign} from '../utils';
+import {mapJustify, mapAlign, STANDARD_GAP} from '../utils';
 
 export const Row = createComponentImplementation(RowApi, ({props, buildChild, context}) => {
   return (
@@ -27,6 +27,7 @@ export const Row = createComponentImplementation(RowApi, ({props, buildChild, co
         flexDirection: 'row',
         justifyContent: mapJustify(props.justify),
         alignItems: mapAlign(props.align),
+        gap: STANDARD_GAP,
         width: '100%',
         margin: 0,
         padding: 0,
