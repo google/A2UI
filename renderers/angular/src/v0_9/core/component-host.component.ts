@@ -16,12 +16,15 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
+  HostBinding,
   OnInit,
   Type,
   inject,
   input,
+  signal,
 } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { ComponentContext } from '@a2ui/web_core/v0_9';
@@ -51,11 +54,11 @@ import { ComponentBinder } from './component-binder.service';
         *ngComponentOutlet="
           componentType;
           inputs: {
-          props: props,
-          surfaceId: surfaceId(),
-          componentId: resolvedComponentId,
-          dataContextPath: resolvedDataContextPath,
-        }
+            props: props,
+            surfaceId: surfaceId(),
+            componentId: resolvedComponentId,
+            dataContextPath: resolvedDataContextPath,
+          }
         "
       ></ng-container>
     }
@@ -69,13 +72,21 @@ export class ComponentHostComponent implements OnInit {
   /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
 
-  private rendererService = inject(A2uiRendererService);
-  private binder = inject(ComponentBinder);
-  private destroyRef = inject(DestroyRef);
+  private readonly rendererService = inject(A2uiRendererService);
+  private readonly binder = inject(ComponentBinder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected componentType: Type<any> | null = null;
   protected props: any = {};
   private context?: ComponentContext;
+  protected weight = signal<string | number | null>(null);
+
+  @HostBinding('style.flex')
+  get flexStyle() {
+    const w = this.weight();
+    return w ? `${w}` : '';
+  }
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
 
@@ -104,10 +115,29 @@ export class ComponentHostComponent implements OnInit {
     const componentModel = surface.componentsModel.get(id);
 
     if (!componentModel) {
-      console.warn(`Component ${id} not found in surface ${this.surfaceId()}`);
+      console.warn(`Component ${id} not found in surface ${this.surfaceId()}. Waiting for it...`);
+
+      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+        if (comp.id === id) {
+          this.initializeComponent(surface, comp, id, basePath);
+          this.cdr.markForCheck();
+          sub.unsubscribe();
+        }
+      });
+
+      this.destroyRef.onDestroy(() => sub.unsubscribe());
       return;
     }
 
+    this.initializeComponent(surface, componentModel, id, basePath);
+  }
+
+  private initializeComponent(
+    surface: any,
+    componentModel: any,
+    id: string,
+    basePath: string,
+  ): void {
     // Resolve component from the surface's catalog
     const catalog = surface.catalog as AngularCatalog;
     const api = catalog.components.get(componentModel.type);
@@ -123,9 +153,23 @@ export class ComponentHostComponent implements OnInit {
     this.props = this.binder.bind(this.context);
     this.resolvedDataContextPath = this.context.dataContext.path;
 
+    // Subscribes to updates to the component model properties, to get the
+    // component to react when a new prop is added after creation.
+    const onPropsUpdateSub = componentModel.onUpdated.subscribe(() => {
+      this.props = this.binder.bind(this.context!);
+      this.cdr.markForCheck();
+    });
+
+    if (componentModel.weight) {
+      this.weight.set(componentModel.weight);
+    }
+
     this.destroyRef.onDestroy(() => {
       // ComponentContext itself doesn't have a dispose, but its inner components might.
       // However, SurfaceModel takes care of component disposal.
+      onPropsUpdateSub.unsubscribe();
     });
+
+    this.cdr.markForCheck();
   }
 }
