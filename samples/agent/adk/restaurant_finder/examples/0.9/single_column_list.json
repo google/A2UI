@@ -138,24 +138,24 @@
       "surfaceId": "default",
       "path": "/",
       "value": {
-        "items": {
-          "item1": {
+        "items": [
+          {
             "name": "The Fancy Place",
-            "rating": 4.8,
+            "rating": "★★★★★",
             "detail": "Fine dining experience",
-            "infoLink": "https://example.com/fancy",
+            "infoLink": "[More Info](https://example.com/fancy)",
             "imageUrl": "https://example.com/fancy.jpg",
             "address": "123 Main St"
           },
-          "item2": {
+          {
             "name": "Quick Bites",
-            "rating": 4.2,
+            "rating": "★★★★☆",
             "detail": "Casual and fast",
-            "infoLink": "https://example.com/quick",
+            "infoLink": "[More Info](https://example.com/quick)",
             "imageUrl": "https://example.com/quick.jpg",
             "address": "456 Oak Ave"
           }
-        }
+        ]
       }
     }
   }

@@ -24,8 +24,10 @@ ROLE_DESCRIPTION = (
 
 UI_DESCRIPTION = """
 -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) object (e.g., for the "items" key).
--   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
+-   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template. This template uses a `List` component with a `children` template property.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
+-   **IMPORTANT: When using a template (like in `SINGLE_COLUMN_LIST_EXAMPLE`), components inside the template MUST use relative paths (e.g., `path: "imageUrl"`) for data binding, NOT absolute paths starting with a slash (e.g., `path: "/imageUrl"`). Relative paths ensure that each item in the list resolves to its own data correctly.**
+-   **Ensure that all component IDs and data model paths match the provided examples exactly. Do NOT add leading slashes to paths that are shown as relative in the examples.**
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
 -   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
 """
