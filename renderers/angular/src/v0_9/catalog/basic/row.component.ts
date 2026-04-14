@@ -18,24 +18,30 @@ import { Component, input, computed, ChangeDetectionStrategy } from '@angular/co
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
 import { getNormalizedPath } from '../../core/utils';
+import { BasicCatalogComponent } from './basic-catalog-component';
+import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
 
 /**
  * Angular implementation of the A2UI Row component (v0.9).
  *
  * Arranges child components in a horizontal flex layout. Supports both static
  * lists of children and repeating templates bound to a data collection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-row-gap`: Controls the gap between items in the row. Defaults to `--a2ui-spacing-m` (16px).
  */
 @Component({
   selector: 'a2ui-v09-row',
   standalone: true,
   imports: [ComponentHostComponent],
+  host: {
+    '[style.display]': '"flex"',
+    '[style.flex-direction]': '"row"',
+    '[style.gap]': '"var(--a2ui-row-gap, var(--a2ui-spacing-m, 16px))"',
+    '[style.justify-content]': 'justify()',
+    '[style.align-items]': 'align()'
+  },
   template: `
-    <div
-      class="a2ui-row"
-      [style.justify-content]="justify()"
-      [style.align-items]="align()"
-      style="display: flex; flex-direction: row; width: 100%; gap: 4px;"
-    >
       @if (!isRepeating()) {
         @for (child of normalizedChildren(); track child.id) {
           <a2ui-v09-component-host
@@ -55,11 +61,10 @@ import { getNormalizedPath } from '../../core/utils';
           </a2ui-v09-component-host>
         }
       }
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RowComponent {
+export class RowComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -73,8 +78,14 @@ export class RowComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  protected justify = computed(() => this.props()['justify']?.value());
-  protected align = computed(() => this.props()['align']?.value());
+  protected justify = computed(() => {
+    const val = this.props()['justify']?.value();
+    return val ? (JUSTIFY_MAP[val] || val) : undefined;
+  });
+  protected align = computed(() => {
+    const val = this.props()['align']?.value();
+    return val ? (ALIGN_MAP[val] || val) : undefined;
+  });
 
   protected children = computed(() => {
     const raw = this.props()['children']?.value() || [];

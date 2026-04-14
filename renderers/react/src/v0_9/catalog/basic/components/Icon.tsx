@@ -19,9 +19,18 @@ import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
+/**
+ * Convert camelCase to snake_case for Material Symbols font.
+ * e.g., "shoppingCart" -> "shopping_cart", "skipPrevious" -> "skip_previous"
+ */
+function toSnakeCase(str: string): string {
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+}
+
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
-  const iconName =
+  const rawName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
+  const iconName = rawName ? toSnakeCase(rawName) : undefined;
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     fontSize: '24px',

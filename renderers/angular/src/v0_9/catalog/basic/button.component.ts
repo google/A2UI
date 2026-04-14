@@ -25,12 +25,22 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Button component (v0.9).
  *
  * Renders a clickable button with a single child component (usually Text).
  * Dispatches an action when clicked if an `action` property is provided.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-button-padding`: Controls the padding.
+ * - `--a2ui-button-border-radius`: Controls the border radius.
+ * - `--a2ui-button-border`: Controls the border.
+ * - `--a2ui-button-margin`: Controls the margin.
+ * - `--a2ui-button-background`: Controls the background color.
+ * - `--a2ui-button-box-shadow`: Controls the box shadow.
+ * - `--a2ui-button-font-weight`: Controls the font weight.
  */
 @Component({
   selector: 'a2ui-v09-button',
@@ -55,21 +65,29 @@ import { BoundProperty } from '../../core/types';
   styles: [
     `
       .a2ui-button {
-        padding: 8px 16px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+        padding: var(--a2ui-button-padding, var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem));
+        border-radius: var(--a2ui-button-border-radius, var(--a2ui-spacing-s, 0.25rem));
+        border: var(--a2ui-button-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
         cursor: pointer;
+        margin: var(--a2ui-button-margin, var(--a2ui-spacing-m, 0.5rem));
+        background: var(--a2ui-button-background, var(--a2ui-color-surface, #fff));
+        box-shadow: var(--a2ui-button-box-shadow, none);
+        font-weight: var(--a2ui-button-font-weight, normal);
+        --_a2ui-text-margin: 0;
+        --_a2ui-text-color: var(--a2ui-color-on-secondary, #333);
+        color: var(--_a2ui-text-color);
       }
       .a2ui-button.primary {
-        background-color: #007bff;
-        color: white;
-        border-color: #0069d9;
+        background-color: var(--a2ui-color-primary, #17e);
+        --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
+        color: var(--_a2ui-text-color);
+        border-color: var(--a2ui-color-primary-hover, #0069d9);
       }
       .a2ui-button.borderless {
         background: none;
         border: none;
         padding: 0;
-        color: #007bff;
+        color: var(--a2ui-color-primary, #17e);
       }
       .a2ui-button:disabled {
         background-color: #e9ecef;
@@ -81,7 +99,7 @@ import { BoundProperty } from '../../core/types';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent {
+export class ButtonComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *

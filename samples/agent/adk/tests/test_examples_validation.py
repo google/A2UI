@@ -30,18 +30,6 @@ SAMPLES_DIR = ROOT_DIR / "samples" / "agent" / "adk"
 
 SAMPLE_CONFIGS = [
     {
-        "name": "contact_lookup",
-        "path": SAMPLES_DIR / "contact_lookup",
-        "catalogs": [
-            BasicCatalog.get_config(
-                version=VERSION_0_9,
-                examples_path="examples/0.9",
-            )
-        ],
-        "schema_modifiers": [],
-        "validate": False,  # Use invalid examples to test retry logic
-    },
-    {
         "name": "custom-components-example",
         "path": SAMPLES_DIR / "custom-components-example",
         "catalogs": [

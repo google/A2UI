@@ -41,11 +41,6 @@ function syncDir(sourceDir, targetDir) {
 }
 
 syncDir(
-  path.resolve(process.cwd(), '../../../../specification/v0_9/json/catalogs/minimal/examples'),
-  path.resolve(process.cwd(), 'public/specs/v0_9/minimal/examples')
-);
-
-syncDir(
   path.resolve(process.cwd(), '../../../../specification/v0_9/json/catalogs/basic/examples'),
   path.resolve(process.cwd(), 'public/specs/v0_9/basic/examples')
 );
