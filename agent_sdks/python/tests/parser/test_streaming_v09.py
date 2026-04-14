@@ -408,7 +408,8 @@ def test_v09_path_heuristic_relative_path(mock_catalog):
   chunk_uc = (
       A2UI_OPEN_TAG
       + '[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components":'
-      ' [{"id": "root", "component": "Text", "text": {"path": "some/relative/path"}}]}}]'
+      ' [{"id": "root", "component": "Text", "text": {"path":'
+      ' "some/relative/path"}}]}}]'
       + A2UI_CLOSE_TAG
   )
 
