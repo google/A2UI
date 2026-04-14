@@ -14,13 +14,55 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 import { CheckBoxApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-checkbox")
-export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
+export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<typeof CheckBoxApi> {
+  /**
+   * The styles of the checkbox can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-checkbox-size`: Size of the box. Defaults to `1rem`.
+   * - `--a2ui-checkbox-border-radius`: Default corner rounding of the box.
+   * - `--a2ui-checkbox-gap`: Spacing between the checkbox and its label. Defaults to `8px`.
+   * - `--a2ui-checkbox-margin`: Outer margin of the component. Defaults to `--a2ui-spacing-m`.
+   * - `--a2ui-checkbox-color-error`: Color for invalid state. Defaults to `red`.
+   * - `--a2ui-checkbox-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
+   * - `--a2ui-checkbox-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
+   */
+  static styles = css`
+    :host {
+      display: inline-block;
+      margin: var(--a2ui-checkbox-margin, var(--a2ui-spacing-m));
+    }
+    label.a2ui-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--a2ui-checkbox-gap, var(--a2ui-spacing-s, 0.5rem));
+      font-size: var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-weight: var(--a2ui-checkbox-label-font-weight, var(--a2ui-label-font-weight, bold));
+      cursor: pointer;
+    }
+    label.invalid {
+      color: var(--a2ui-checkbox-color-error, red);
+    }
+    input {
+      width: var(--a2ui-checkbox-size, 1rem);
+      height: var(--a2ui-checkbox-size, 1rem);
+      background: var(--a2ui-checkbox-background, inherit);
+      border: var(--a2ui-checkbox-border, var(--a2ui-border));
+      border-radius: var(--a2ui-checkbox-border-radius, 4px);
+    }
+    input.invalid {
+      outline: 1px solid var(--a2ui-checkbox-color-error, red);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, CheckBoxApi);
   }
@@ -29,10 +71,15 @@ export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
     const props = this.controller.props;
     if (!props) return nothing;
 
+    const isInvalid = props.isValid === false;
+    const labelClasses = { "a2ui-checkbox": true, invalid: isInvalid };
+    const inputClasses = { invalid: isInvalid };
+
     return html`
-      <label class="a2ui-checkbox">
+      <label class=${classMap(labelClasses)}>
         <input
           type="checkbox"
+          class=${classMap(inputClasses)}
           .checked=${props.value || false}
           @change=${(e: Event) =>
             props.setValue?.((e.target as HTMLInputElement).checked)}

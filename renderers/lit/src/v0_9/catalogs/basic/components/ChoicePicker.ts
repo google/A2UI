@@ -14,15 +14,47 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { ChoicePickerApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-choicepicker")
-export class A2uiChoicePickerElement extends A2uiLitElement<
+export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<
   typeof ChoicePickerApi
 > {
+  /**
+   * The styles of the choice picker can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-choicepicker-label-color`: Color of all labels.
+   * - `--a2ui-choicepicker-label-font-size`: Font size of all labels. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s` for the main label.
+   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the main label. Defaults to `--a2ui-label-font-weight` then `bold`.
+   * - `--a2ui-choicepicker-gap`: Spacing between options.
+   */
+  static styles = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
+      padding: var(--a2ui-choicepicker-padding, 0);
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
+    }
+    label {
+      color: var(--a2ui-choicepicker-label-color, inherit);
+      font-size: var(--a2ui-choicepicker-label-font-size, inherit);
+    }
+    :host > label {
+      font-size: var(--a2ui-choicepicker-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-weight: var(--a2ui-choicepicker-label-font-weight, var(--a2ui-label-font-weight, bold));
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ChoicePickerApi);
   }
@@ -48,22 +80,20 @@ export class A2uiChoicePickerElement extends A2uiLitElement<
     };
 
     return html`
-      <div class="a2ui-choicepicker">
-        ${props.label ? html`<label>${props.label}</label>` : nothing}
-        <div class="options">
-          ${props.options?.map(
-            (opt: any) => html`
-              <label>
-                <input
-                  type=${isMulti ? "checkbox" : "radio"}
-                  .checked=${selected.includes(opt.value)}
-                  @change=${() => toggle(opt.value)}
-                />
-                ${opt.label}
-              </label>
-            `,
-          )}
-        </div>
+      ${props.label ? html`<label>${props.label}</label>` : nothing}
+      <div class="options">
+        ${props.options?.map(
+          (opt: any) => html`
+            <label>
+              <input
+                type=${isMulti ? "checkbox" : "radio"}
+                .checked=${selected.includes(opt.value)}
+                @change=${() => toggle(opt.value)}
+              />
+              ${opt.label}
+            </label>
+          `,
+        )}
       </div>
     `;
   }

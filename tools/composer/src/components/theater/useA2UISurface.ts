@@ -16,15 +16,11 @@
 
 import { useMemo } from 'react';
 import { transpileToV0_8 } from '@/lib/transcoder';
-
-export interface ComponentInstance {
-  id: string;
-  component: Record<string, any>;
-}
+import type { A2UIComponent } from '@/types/widget';
 
 export interface A2UISurfaceState {
   root: string;
-  components: ComponentInstance[];
+  components: A2UIComponent[];
   data: Record<string, any>;
 }
 
@@ -35,7 +31,7 @@ export interface A2UISurfaceState {
 export function useA2UISurface(messages: any[]): A2UISurfaceState {
   return useMemo(() => {
     let root = "root";
-    const componentsMap = new Map<string, ComponentInstance>();
+    const componentsMap = new Map<string, A2UIComponent>();
     let data: Record<string, any> = {};
 
     for (const msg of messages) {

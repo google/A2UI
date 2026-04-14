@@ -14,17 +14,34 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
-import { styleMap } from "lit/directives/style-map.js";
 import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-list")
-export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
+export class A2uiListElement extends BasicCatalogA2uiLitElement<typeof ListApi> {
+  static styles = css`
+    :host {
+      display: flex;
+      overflow: auto;
+      gap: var(--a2ui-list-gap, var(--a2ui-spacing-m, 0.5rem));
+      padding: var(--a2ui-list-padding, 0);
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ListApi);
+  }
+
+  updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    const props = this.controller.props;
+    if (props) {
+      this.style.flexDirection = props.direction === "horizontal" ? "row" : "column";
+    }
   }
 
   render() {
@@ -32,20 +49,7 @@ export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
     if (!props) return nothing;
 
     const children = Array.isArray(props.children) ? props.children : [];
-    const styles = {
-      display: "flex",
-      flexDirection: props.direction === "horizontal" ? "row" : "column",
-      overflow: "auto",
-      gap: "8px",
-    };
-    return html`
-      <div
-        class="a2ui-list"
-        style=${styleMap(styles as Record<string, string>)}
-      >
-        ${map(children, (child: any) => html`${this.renderNode(child)}`)}
-      </div>
-    `;
+    return html`${map(children, (child: any) => html`${this.renderNode(child)}`)}`;
   }
 }
 

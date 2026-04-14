@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useStreamingPlayer } from '@/components/theater/useStreamingPlayer';
 import { useA2UISurface } from '@/components/theater/useA2UISurface';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import { A2UIViewer } from '@/lib/a2ui';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { scenarios, ScenarioId } from '@/data/theater';

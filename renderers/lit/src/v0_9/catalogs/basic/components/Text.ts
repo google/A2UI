@@ -14,17 +14,56 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { consume } from "@lit/context";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController, Context } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController, Context } from "@a2ui/lit/v0_9";
 import * as Types from "@a2ui/web_core/types/types";
 
 import { markdown } from "../../../directives/directives.js";
 
 @customElement("a2ui-basic-text")
-export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
+export class A2uiBasicTextElement extends BasicCatalogA2uiLitElement<typeof TextApi> {
+  /**
+   * The styles of the text component can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-text-color-text`: The color of the text. Defaults to `--a2ui-color-on-background`.
+   * - `--a2ui-text-caption-color`: The color for caption text. Defaults to `light-dark(#666, #aaa)`.
+   *
+   * It also supports `--_a2ui-text-color` override from parent components (like Button).
+   */
+  static styles = css`
+    :host {
+      display: inline-block;
+      color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
+    }
+    p, h1, h2, h3, h4, h5, h6, ol, ul, li, blockquote, pre {
+      margin: var(--_a2ui-text-margin, 0);
+    }
+    h1, h2, h3, h4, h5 {
+      font-family: var(--a2ui-font-family-title, inherit);
+      line-height: var(--a2ui-line-height-headings, 1.2);
+    }
+    h1 { font-size: var(--a2ui-font-size-2xl); }
+    h2 { font-size: var(--a2ui-font-size-xl); }
+    h3 { font-size: var(--a2ui-font-size-l); }
+    p, h4 { font-size: var(--a2ui-font-size-m); }
+    h5 { font-size: var(--a2ui-font-size-s); }
+    p, ol, ul, li, blockquote, .a2ui-caption {
+      line-height: var(--a2ui-line-height-body, 1.5);
+    }
+    .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) {
+      font-size: var(--a2ui-font-size-xs);
+      color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
+    }
+    a {
+      color: var(--a2ui-text-a-color, inherit);
+      font-weight: var(--a2ui-text-a-font-weight, inherit);
+    }
+  `;
 
   // Retrieve a MarkdownRenderer provided by the application.
   @consume({ context: Context.markdown, subscribe: true })
@@ -39,7 +78,7 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     if (!props) return nothing;
 
     // Use props.variant to convert props.text to markdown
-    let markdownText = props.text;
+    let markdownText = typeof props.text === "string" ? props.text : String(props.text ?? "");
     switch (props.variant) {
       case "h1":
         markdownText = `# ${markdownText}`;

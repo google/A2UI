@@ -576,7 +576,10 @@ export declare interface Surface {
 // Markdown rendering
 /**
  * Renders `markdown` using `options`.
- * @returns A promise that resolves to the rendered HTML as a string.
+ *
+ * Implementations MUST sanitize the resulting HTML to prevent XSS vulnerabilities.
+ *
+ * @returns A promise that resolves to the rendered, sanitized HTML as a string.
  */
 export declare type MarkdownRenderer = (
   markdown: string,

@@ -50,7 +50,12 @@ export function EditorHeader({ widget }: EditorHeaderProps) {
 
   return (
     <div className="flex h-14 items-center justify-between border-b border-border px-4">
-      <h1 className="text-sm font-medium">{widget.name}</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-sm font-medium">{widget.name}</h1>
+        <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+          v{widget.specVersion}
+        </span>
+      </div>
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
