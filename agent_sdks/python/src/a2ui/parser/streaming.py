@@ -76,6 +76,7 @@ class A2uiStreamParser:
     return super().__new__(cls)
 
   def __init__(self, catalog: "A2uiCatalog" = None):
+    self._version = getattr(catalog, "version", None) if catalog else None
     self._ref_fields_map = extract_component_ref_fields(catalog) if catalog else {}
     self._required_fields_map = (
         extract_component_required_fields(catalog) if catalog else {}
@@ -1010,8 +1011,8 @@ class A2uiStreamParser:
           if "componentId" not in obj:
             obj.clear()
           obj.update({"path": "/" + key})
-        else:
-          # If not in data model, still ensure path has leading slash if it's a bindable object
+        elif self._version != VERSION_0_9:
+          # If not in data model, still ensure path has leading slash if it's a bindable object (v0.8 only)
           current_path = obj.get("path")
           if current_path is not None:
             if not isinstance(current_path, str) or not current_path.startswith("/"):
