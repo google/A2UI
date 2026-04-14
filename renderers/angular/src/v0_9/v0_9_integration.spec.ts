@@ -19,6 +19,8 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { A2uiRendererService, A2UI_RENDERER_CONFIG } from './core/a2ui-renderer.service';
 import { SurfaceComponent } from './core/surface.component';
 import { BasicCatalog } from './catalog/basic/basic-catalog';
+import { A2uiMessage } from '@a2ui/web_core/v0_9';
+import { MarkdownRenderer } from './core/markdown';
 
 import * as restaurantCardMock from './test_data/mocks/restaurant-card.json';
 import * as contactCardMock from './test_data/mocks/contact-card.json';
@@ -58,6 +60,12 @@ describe('v0.9 Angular Renderer Integration', () => {
           }),
           deps: [BasicCatalog],
         },
+        {
+          provide: MarkdownRenderer,
+          useValue: {
+            render: (val: string) => Promise.resolve(val),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -66,7 +74,7 @@ describe('v0.9 Angular Renderer Integration', () => {
   });
 
   it('should render a basic component tree from protocol messages', async () => {
-    const messages = [
+    const messages: A2uiMessage[] = [
       {
         version: 'v0.9',
         createSurface: {
@@ -81,28 +89,28 @@ describe('v0.9 Angular Renderer Integration', () => {
           components: [
             {
               id: 'root',
-              component: 'column',
+              component: 'Column',
               children: ['text-id', 'button-id'],
             },
             {
               id: 'text-id',
-              component: 'text',
+              component: 'Text',
               text: 'Hello v0.9',
             },
             {
               id: 'button-id',
-              component: 'button',
+              component: 'Button',
               child: 'button-text-id',
             },
             {
               id: 'button-text-id',
-              component: 'text',
+              component: 'Text',
               text: 'Click Me',
             },
           ],
         },
       },
-    ] as any[];
+    ];
 
     rendererService.processMessages(messages);
     fixture.detectChanges();
@@ -138,13 +146,13 @@ describe('v0.9 Angular Renderer Integration', () => {
           components: [
             {
               id: 'root',
-              component: 'text',
+              component: 'Text',
               text: { path: '/user/name' },
             },
           ],
         },
       },
-    ] as any[]);
+    ] as A2uiMessage[]);
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -163,7 +171,7 @@ describe('v0.9 Angular Renderer Integration', () => {
           value: 'Alice',
         },
       },
-    ] as any[]);
+    ] as A2uiMessage[]);
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -189,7 +197,7 @@ describe('v0.9 Angular Renderer Integration', () => {
           components: [
             {
               id: 'root',
-              component: 'button',
+              component: 'Button',
               child: 'btn-text',
               action: {
                 event: {
@@ -200,13 +208,13 @@ describe('v0.9 Angular Renderer Integration', () => {
             },
             {
               id: 'btn-text',
-              component: 'text',
+              component: 'Text',
               text: 'Fire Action',
             },
           ],
         },
       },
-    ] as any[]);
+    ] as A2uiMessage[]);
 
     fixture.detectChanges();
     await fixture.whenStable();

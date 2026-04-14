@@ -43,10 +43,6 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm run build:renderer
 
-      - name: Build contact sample
-        working-directory: ./samples/client/angular
-        run: npm run build contact
-
       - name: Build restaurant sample
         working-directory: ./samples/client/angular
         run: npm run build restaurant

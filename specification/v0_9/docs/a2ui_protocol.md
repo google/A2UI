@@ -392,6 +392,9 @@ This section describes how UI components **represent** and reference data from t
 
 Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
 
+> [!NOTE]
+> A2UI extends JSON Pointer to support **Relative Paths** that do not start with a forward slash `/`. This is a deviation from strict RFC 6901 to support template-based list rendering.
+
 > **Note on progressive rendering:** During the initial streaming phase, data paths may resolve to `undefined` if the `updateDataModel` message containing that data has not yet arrived. Renderers should handle `undefined` values gracefully (e.g., by treating them as empty strings or showing a loading indicator) to support progressive rendering.
 
 #### The root scope

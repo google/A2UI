@@ -16,7 +16,7 @@
 
 import { Part, SendMessageSuccessResponse, Task } from "@a2a-js/sdk";
 import { A2AClient } from "@a2a-js/sdk/client";
-import { v0_8 } from "@a2ui/lit";
+import * as v0_9 from "@a2ui/web_core/v0_9";
 
 const A2UI_MIME_TYPE = "application/json+a2ui";
 
@@ -43,7 +43,10 @@ export class A2UIClient {
         {
           fetchImpl: async (url, init) => {
             const headers = new Headers(init?.headers);
-            headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
+            headers.set(
+              "X-A2A-Extensions",
+              "https://a2ui.org/a2a-extension/a2ui/v0.9",
+            );
             return fetch(url, { ...init, headers });
           }
         }
@@ -53,10 +56,9 @@ export class A2UIClient {
   }
 
   async send(
-    message: v0_8.Types.A2UIClientEventMessage | string
-  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+    message: any | string
+  ): Promise<any[]> {
     const client = await this.#getClient();
-
     let parts: Part[] = [];
 
     if (typeof message === 'string') {
@@ -98,10 +100,10 @@ export class A2UIClient {
 
     const result = (response as SendMessageSuccessResponse).result as Task;
     if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
+      const messages: any[] = [];
       for (const part of result.status.message.parts) {
         if (part.kind === 'data') {
-          messages.push(part.data as v0_8.Types.ServerToClientMessage);
+          messages.push(part.data);
         }
       }
       return messages;

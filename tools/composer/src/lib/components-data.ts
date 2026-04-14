@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { ComponentInstance } from '@copilotkit/a2ui-renderer';
+import type { A2UIComponent } from '@/types/widget';
 
 export interface ComponentProp {
   name: string;
@@ -26,7 +26,7 @@ export interface ComponentProp {
 
 export interface PreviewConfig {
   root: string;
-  components: ComponentInstance[];
+  components: A2UIComponent[];
   data?: Record<string, unknown>;
 }
 

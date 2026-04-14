@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 import {ChildList} from './ChildList';
@@ -68,7 +68,7 @@ export const RowApiDef = {
   schema: RowSchema,
 };
 
-export const Row = createReactComponent(RowApiDef, ({props, buildChild}) => {
+export const Row = createComponentImplementation(RowApiDef, ({props, buildChild}) => {
   return (
     <div
       style={{

@@ -31,15 +31,14 @@ A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
 and is in active development [on GitHub](https://github.com/google/A2UI).
 
-The problem A2UI solves is: **how can AI agents safely send rich UIs across trust boundaries?**
+A2UI solves the following problem: **how can AI agents safely send rich UIs across trust boundaries?**
 
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
-In this repo you will find
-[A2UI specifications](specification/v0.8-a2ui.md) (v0.8 stable, v0.9 draft),
-implementations for
-[renderers](reference/renderers.md) (Angular, Flutter, Lit, Markdown, etc.) on the client side,
-and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI messages between agents and clients.
+This repository contains:
+- **[A2UI specifications](specification/v0.8-a2ui.md)** (v0.8 stable, v0.9 draft).
+- **Implementations for [renderers](reference/renderers.md)** (Angular, Flutter, Lit, Markdown, etc.) on the client side.
+- **Transports like [A2A](concepts/transports.md)** which communicate A2UI messages between agents and clients.
 
 <div class="grid cards" markdown>
 
@@ -108,6 +107,8 @@ and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI mess
 </div>
 
 ## How It Works
+
+The typical interaction flow consists of these steps:
 
 1. **User sends a message** to an AI agent
 2. **Agent generates A2UI messages** describing the UI (structure + data)

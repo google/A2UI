@@ -34,6 +34,8 @@ import { componentRegistry } from "@a2ui/lit/ui";
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
+  #contextId?: string;
+
   get ready() {
     return this.#ready;
   }
@@ -53,7 +55,10 @@ export class A2UIClient {
     };
 
     const response = await fetch("/a2a", {
-      body: JSON.stringify(finalMessage),
+      body: JSON.stringify({
+        event: finalMessage,
+        contextId: this.#contextId
+      }),
       method: "POST",
     });
 
@@ -83,11 +88,15 @@ export class A2UIClient {
           if (line.startsWith("data: ")) {
             const jsonStr = line.replace(/^data:\s*/, "");
             try {
-              const parsed = JSON.parse(jsonStr);
-              if ("error" in parsed) {
-                throw new Error(parsed.error);
+              const responseData = JSON.parse(jsonStr);
+              if (responseData.error) {
+                throw new Error(responseData.error);
               } else {
-                const chunkMessages = this.#extractMessages(parsed);
+                if (responseData.contextId) {
+                  this.#contextId = responseData.contextId;
+                }
+                const parts = responseData.parts || responseData;
+                const chunkMessages = this.#extractMessages(parts);
                 if (chunkMessages.length > 0) {
                   messages.push(...chunkMessages);
                   onChunk?.(chunkMessages);
@@ -102,11 +111,15 @@ export class A2UIClient {
       return messages;
     }
 
-    const data = (await response.json()) as any;
-    if (data && typeof data === 'object' && "error" in data) {
-      throw new Error(data.error);
+    const responseData = (await response.json()) as any;
+    if (responseData && typeof responseData === 'object' && "error" in responseData) {
+      throw new Error(responseData.error);
     } else {
-      const extracted = this.#extractMessages(data);
+      if (responseData.contextId) {
+        this.#contextId = responseData.contextId;
+      }
+      const parts = responseData.parts || responseData;
+      const extracted = this.#extractMessages(parts);
       messages.push(...extracted);
       if (messages.length > 0) {
         onChunk?.(messages);

@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
  *
  * Renders a set of options as either radio buttons/checkboxes or chips.
  * Supports both single and multiple selection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-choicepicker-gap`: Controls spacing between options/chips.
+ * - `--a2ui-choicepicker-padding`: Controls padding of the container.
+ * - `--a2ui-choicepicker-checkbox-size`: Controls size of checkboxes/radios.
+ * - `--a2ui-choicepicker-chip-padding`: Controls padding of chips.
+ * - `--a2ui-choicepicker-chip-border-radius`: Controls border radius of chips.
+ * - `--a2ui-choicepicker-chip-border`: Controls border of chips.
+ * - `--a2ui-choicepicker-chip-background`: Controls background of chips.
+ * - `--a2ui-choicepicker-chip-background-selected`: Controls background of selected chips.
  */
 @Component({
   selector: 'a2ui-v09-choice-picker',
@@ -67,45 +77,47 @@ import { BoundProperty } from '../../core/types';
     `
       .a2ui-choice-picker {
         width: 100%;
+        padding: var(--a2ui-choicepicker-padding, 0);
       }
       .a2ui-options-group {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
       }
       .a2ui-option-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
         cursor: pointer;
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-option-input {
-        width: 18px;
-        height: 18px;
+        width: var(--a2ui-choicepicker-checkbox-size, 1rem);
+        height: var(--a2ui-choicepicker-checkbox-size, 1rem);
       }
       .a2ui-chips-group {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
       }
       .a2ui-chip {
-        padding: 4px 12px;
-        border-radius: 16px;
-        border: 1px solid #ccc;
-        background: white;
+        padding: var(--a2ui-choicepicker-chip-padding, var(--a2ui-spacing-s, 0.5rem) var(--a2ui-spacing-m, 1rem));
+        border-radius: var(--a2ui-choicepicker-chip-border-radius, 100px);
+        border: var(--a2ui-choicepicker-chip-border, 1px solid var(--a2ui-color-border, #ccc));
+        background: var(--a2ui-choicepicker-chip-background, var(--a2ui-color-surface, #fff));
         cursor: pointer;
         transition: all 0.2s;
       }
       .a2ui-chip.active {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
+        background-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
+        color: var(--a2ui-color-on-primary, #fff);
+        border-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChoicePickerComponent {
+export class ChoicePickerComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -119,8 +131,6 @@ export class ChoicePickerComponent {
   surfaceId = input.required<string>();
   componentId = input<string>();
   dataContextPath = input<string>('/');
-
-  private rendererService = inject(A2uiRendererService);
 
   displayStyle = computed(() => this.props()['displayStyle']?.value());
   choices = computed(

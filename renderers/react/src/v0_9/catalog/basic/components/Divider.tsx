@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {DividerApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
-export const Divider = createReactComponent(DividerApi, ({props}) => {
+export const Divider = createComponentImplementation(DividerApi, ({props}) => {
   const isVertical = props.axis === 'vertical';
   const style: React.CSSProperties = {
     margin: LEAF_MARGIN,

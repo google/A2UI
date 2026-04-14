@@ -2,7 +2,7 @@
 
 This guide explains how **Model Context Protocol (MCP) Applications** are integrated and displayed within the **A2UI** surface, along with the security model and testing guidelines.
 
-> **Looking for the core A2UI-over-MCP protocol?** See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
+> NOTE: Looking for the core A2UI-over-MCP protocol? See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
 
 ## Overview
 
@@ -72,7 +72,7 @@ export const DEMO_CATALOG = {
 
 ### 2. Usage in A2UI Message
 
-In the Host or Agent context, you send an A2UI message that translates to this custom node.
+In the Host or Agent context, send an A2UI message that translates to this custom node.
 
 ```json
 {
@@ -137,55 +137,41 @@ There are two primary samples demonstrating MCP Apps integration. Each sample re
 
 ---
 
-### Sample 1: Contact Multi-Surface (Lit Client + ADK Agent)
+### Sample 1: MCP App Standalone Sample (Lit Client + ADK Agent)
 
-This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
+This sample demonstrates how to integrate an MCP App within the A2UI environment using a secure, double-sandboxed iframe architecture.
 
-#### Step 1: Start the A2A Agent Server
+#### Step 1: Start the Client Dev Server
 
-```bash
-cd samples/agent/adk/contact_lookup/
-export GEMINI_API_KEY="your-key"  # or use a .env file
-uv run .
-```
-
-> ⚠️ **Python version**: This agent requires Python ≥ 3.13 (see its `pyproject.toml`). If `uv run .` fails with a Python version error, ensure you have Python 3.13+ available.
-
-The agent starts on `http://localhost:10003` by default.
-
-#### Step 2: Build the Lit Renderer
-
-In a **new terminal**, build the renderers (required before the client can run):
+Navigate to the client sample directory and start the Vite server:
 
 ```bash
-cd samples/client/lit/
-npm install
-npm run build:renderer
-```
-
-> ⚠️ **First-time build**: The `build:renderer` script builds three packages (`web_core`, `markdown-it`, and `lit` renderer) in sequence. This may take a minute on the first run.
-
-#### Step 3: Start the Lit Client
-
-```bash
-cd samples/client/lit/
-npm run serve:shell
+cd samples/client/lit/mcp-apps-in-a2ui-sample
+npm run dev
 ```
 
 The client starts at `http://localhost:5173/`.
 
-> 💡 **Shortcut**: You can run agent + client together with:
-> ```bash
-> cd samples/client/lit/
-> npm run demo:contact
-> ```
-> This builds the renderer and starts both the shell and the contact_lookup agent concurrently.
+#### Step 2: Start the Agent
 
-**What to expect**: A contact page where actions prompt an app interface on specific interactions.
+In a separate terminal, navigate to the agent directory and start the agent:
+
+```bash
+cd samples/agent/adk/mcp-apps-in-a2ui-sample
+uv run agent.py
+```
+
+The agent will run on `http://localhost:8000`.
+
+#### Step 3: Open in Browser
+
+Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
+
+**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
 
 ---
 
-### Sample 2: MCP Calculator (Angular Client + MCP Server + Proxy Agent)
+### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
 
 This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
 
@@ -239,7 +225,11 @@ Navigate to:
 http://localhost:4200/?disable_security_self_test=true
 ```
 
-**What to expect**: A basic calculator will be rendered. You can execute arithmetic calculations cleanly through the sandbox.
+**What to expect**: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.
+
+| Calculator App | Pong App |
+| :---: | :---: |
+| ![An animated GIF of the calculator app being used to perform multiplications.](../assets/calculator_demo.gif) | ![An animated GIF of the pong app being played.](../assets/pong_demo.gif) |
 
 ---
 

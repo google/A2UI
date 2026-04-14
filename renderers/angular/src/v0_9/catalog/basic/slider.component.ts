@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Slider component (v0.9).
  *
  * Renders a range input slider with a label and its current value.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-slider-margin`: Controls the margin of the container.
+ * - `--a2ui-slider-label-font-size`: Controls the font size of the label.
+ * - `--a2ui-slider-label-font-weight`: Controls the font weight of the label.
+ * - `--a2ui-slider-thumb-color`: Controls the accent color of the thumb.
+ * - `--a2ui-slider-track-color`: Controls the background of the track.
  */
 @Component({
   selector: 'a2ui-v09-slider',
@@ -50,22 +57,27 @@ import { BoundProperty } from '../../core/types';
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: var(--a2ui-spacing-xs, 4px);
+        margin: var(--a2ui-slider-margin, var(--a2ui-spacing-m, 16px));
       }
       .a2ui-slider-header {
         display: flex;
         justify-content: space-between;
-        font-size: 14px;
+        font-size: var(--a2ui-slider-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-weight: var(--a2ui-slider-label-font-weight, bold);
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-slider {
         width: 100%;
         cursor: pointer;
+        accent-color: var(--a2ui-slider-thumb-color, var(--a2ui-color-primary, #007bff));
+        background: var(--a2ui-slider-track-color, var(--a2ui-color-secondary, #e9ecef));
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SliderComponent {
+export class SliderComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -80,8 +92,6 @@ export class SliderComponent {
   surfaceId = input.required<string>();
   componentId = input<string>();
   dataContextPath = input<string>('/');
-
-  private rendererService = inject(A2uiRendererService);
 
   label = computed(() => this.props()['label']?.value());
   value = computed(() => this.props()['value']?.value());
