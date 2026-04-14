@@ -6,16 +6,19 @@ Integrate A2UI into your application using the renderer for your platform.
 
 | Renderer                 | Platform           | v0.8 | v0.9 | Status            |
 | ------------------------ | ------------------ | ---- | ---- | ----------------- |
-| **[React](https://github.com/google/A2UI/tree/main/renderers/react)** | Web | ✅ | ❌ | ✅ Stable |
+| **[React](https://github.com/google/A2UI/tree/main/renderers/react)** | Web | ✅ | ✅ | ✅ Stable |
 | **[Lit (Web Components)](https://github.com/google/A2UI/tree/main/renderers/lit)** | Web | ✅ | ✅ | ✅ Stable |
 | **[Angular](https://github.com/google/A2UI/tree/main/renderers/angular)** | Web | ✅ | ✅ | ✅ Stable |
 | **[Flutter (GenUI SDK)](https://docs.flutter.dev/ai/genui)** | Mobile/Desktop/Web | ✅ | ✅ | ✅ Stable |
-| **SwiftUI**              | iOS/macOS          | —    | —    | 🚧 Planned Q2 2026 |
 | **Jetpack Compose**      | Android            | —    | —    | 🚧 Planned Q2 2026 |
+
+For more see all [A2UI Renderers](../reference/renderers.md) and [Community A2UI Renderers](../ecosystem/renderers.md).
 
 ## Component Catalogs
 
-A component catalog is any collection of components — the Basic Catalog, your own components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
+A component catalog is any collection of components.  A2UI provides a "Basic Catalog" but we expect you will add your own components, or shared libraries or fully replace the basic components with your own. 
+
+**Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
 
 See [Defining Your Own Catalog](defining-your-own-catalog.md) for how to define a catalog that matches your design system.
 
@@ -25,6 +28,11 @@ All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web_
 
 This means core protocol handling is consistent across web platforms — only the component rendering differs.
 
+The shared `web_core` library provides:
+
+- **Message Processor**: Manages A2UI state and processes incoming messages.
+
+
 ## Web Components (Lit)
 
 ```bash
@@ -33,7 +41,7 @@ npm install @a2ui/lit @a2ui/web_core
 
 Once installed, you can use the renderer in your app. The Lit renderer uses:
 
-- **Message Processor**: Manages A2UI state and processes incoming messages.
+- **Message Processor**: Wraps the A2UI message processor.
 - **`<a2ui-surface>` component**: Renders surfaces in your app.
 - **Lit Signals**: Provides reactive state management for automatic UI updates.
 
@@ -98,9 +106,9 @@ npm install @a2ui/react @a2ui/web_core
 
 The React renderer provides:
 
+- **`MessageProcessor` class**: A class that manages the A2UI message processor and reactive model.
 - **`<A2UISurface>` component**: Renders A2UI surfaces in your React app
 - **`useA2UI()` hook**: Accesses the message processor from any component
-- **`MessageProcessor` class**: Handles incoming A2UI messages (shared with other web renderers)
 
 **See working example:** [React shell](https://github.com/google/A2UI/tree/main/samples/client/react/shell)
 
