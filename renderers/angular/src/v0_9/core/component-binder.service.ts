@@ -103,7 +103,7 @@ export class ComponentBinder {
         raw: value,
         onUpdate: isBoundPath
           ? (newValue: any) => context.dataContext.set(value.path, newValue)
-          : () => { }, // No-op for non-bound values
+          : () => {}, // No-op for non-bound values
       };
 
       if (key === 'checks') {
@@ -129,13 +129,13 @@ export class ComponentBinder {
         bound['isValid'] = {
           value: toAngularSignal(isValidPreactSig, this.destroyRef, this.ngZone),
           raw: null,
-          onUpdate: () => { },
+          onUpdate: () => {},
         };
 
         bound['validationErrors'] = {
           value: toAngularSignal(validationErrorsPreactSig, this.destroyRef, this.ngZone),
           raw: null,
-          onUpdate: () => { },
+          onUpdate: () => {},
         };
       }
     }
