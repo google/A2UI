@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as v0_9 from "@a2ui/web_core/v0_9";
-
 /**
  * Configuration interface for the Universal App Shell.
  */
