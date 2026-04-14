@@ -22,6 +22,9 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI Video component (v0.9).
  *
  * Renders a video player with standard controls and an optional poster image.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-video-border-radius`: Controls the border radius of the video element.
  */
 @Component({
   selector: 'a2ui-v09-video',
@@ -49,6 +52,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         width: 100%;
         height: auto;
         display: block;
+        border-radius: var(--a2ui-video-border-radius, 0);
       }
     `,
   ],

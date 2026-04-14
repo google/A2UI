@@ -27,6 +27,9 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
  *
  * Arranges child components in a vertical flex layout. Supports both static
  * lists of children and repeating templates bound to a data collection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-column-gap`: Controls the gap between items in the column. Defaults to `--a2ui-spacing-m` (16px).
  */
 @Component({
   selector: 'a2ui-v09-column',

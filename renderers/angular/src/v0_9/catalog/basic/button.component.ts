@@ -32,6 +32,15 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  *
  * Renders a clickable button with a single child component (usually Text).
  * Dispatches an action when clicked if an `action` property is provided.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-button-padding`: Controls the padding.
+ * - `--a2ui-button-border-radius`: Controls the border radius.
+ * - `--a2ui-button-border`: Controls the border.
+ * - `--a2ui-button-margin`: Controls the margin.
+ * - `--a2ui-button-background`: Controls the background color.
+ * - `--a2ui-button-box-shadow`: Controls the box shadow.
+ * - `--a2ui-button-font-weight`: Controls the font weight.
  */
 @Component({
   selector: 'a2ui-v09-button',
@@ -60,6 +69,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         border-radius: var(--a2ui-button-border-radius, var(--a2ui-spacing-s, 0.25rem));
         border: var(--a2ui-button-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
         cursor: pointer;
+        margin: var(--a2ui-button-margin, var(--a2ui-spacing-m, 0.5rem));
+        background: var(--a2ui-button-background, var(--a2ui-color-surface, #fff));
+        box-shadow: var(--a2ui-button-box-shadow, none);
+        font-weight: var(--a2ui-button-font-weight, normal);
         --_a2ui-text-margin: 0;
       }
       .a2ui-button.primary {

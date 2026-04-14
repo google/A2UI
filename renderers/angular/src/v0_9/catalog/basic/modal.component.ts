@@ -23,6 +23,13 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI Modal component (v0.9).
  *
  * Renders a trigger component that opening an overlay containing a content component.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-modal-background`: Controls the background of the modal content.
+ * - `--a2ui-modal-padding`: Controls the padding of the modal content.
+ * - `--a2ui-modal-border-radius`: Controls the border radius of the modal content.
+ * - `--a2ui-modal-box-shadow`: Controls the box shadow of the modal content.
+ * - `--a2ui-modal-backdrop-bg`: Controls the background of the backdrop.
  */
 @Component({
   selector: 'a2ui-v09-modal',
@@ -70,7 +77,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--a2ui-modal-backdrop-bg, rgba(0, 0, 0, 0.5));
         display: flex;
         justify-content: center;
         align-items: center;

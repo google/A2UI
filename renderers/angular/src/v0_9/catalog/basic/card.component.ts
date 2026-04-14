@@ -23,6 +23,14 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI Card component (v0.9).
  *
  * Renders a container with a shadow and rounded corners for grouping related content.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-card-padding`: Controls the padding.
+ * - `--a2ui-card-border-radius`: Controls the border radius.
+ * - `--a2ui-card-box-shadow`: Controls the box shadow.
+ * - `--a2ui-card-background`: Controls the background color.
+ * - `--a2ui-card-border`: Controls the border.
+ * - `--a2ui-card-margin`: Controls the margin.
  */
 @Component({
   selector: 'a2ui-v09-card',
@@ -47,6 +55,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         box-shadow: var(--a2ui-card-box-shadow, 0 2px 4px rgba(0,0,0,0.1));
         background-color: var(--a2ui-card-background, var(--a2ui-color-surface, #fff));
         border: var(--a2ui-card-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+        margin: var(--a2ui-card-margin, var(--a2ui-spacing-m, 16px));
       }
     `,
   ],

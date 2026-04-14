@@ -22,6 +22,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI AudioPlayer component (v0.9).
  *
  * Renders an audio player with standard controls and an optional description.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-audioplayer-background`: Controls the background of the player. Defaults to `transparent`.
+ * - `--a2ui-audioplayer-border-radius`: Controls the border radius. Defaults to `0`.
+ * - `--a2ui-audioplayer-padding`: Controls the padding. Defaults to `0`.
  */
 @Component({
   selector: 'a2ui-v09-audio-player',

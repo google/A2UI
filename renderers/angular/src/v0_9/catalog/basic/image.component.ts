@@ -22,6 +22,14 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI Image component (v0.9).
  *
  * Renders an image with configurable fit and shape variants.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-image-border-radius`: Controls the rounded corners.
+ * - `--a2ui-image-icon-size`: Size of the icon variant.
+ * - `--a2ui-image-avatar-size`: Size of the avatar variant.
+ * - `--a2ui-image-small-feature-size`: Max-width of smallFeature variant.
+ * - `--a2ui-image-large-feature-size`: Max-height of largeFeature variant.
+ * - `--a2ui-image-header-size`: Height of header variant.
  */
 @Component({
   selector: 'a2ui-v09-image',
@@ -50,17 +58,16 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         border-radius: var(--a2ui-image-border-radius, var(--a2ui-border-radius, 8px));
       }
       .a2ui-image.icon {
-        width: var(--a2ui-icon-size, 24px);
-        height: var(--a2ui-icon-size, 24px);
+        width: var(--a2ui-image-icon-size, 24px);
+        height: var(--a2ui-image-icon-size, 24px);
       }
       .a2ui-image.avatar {
-        width: var(--a2ui-avatar-size, 40px);
-        height: var(--a2ui-avatar-size, 40px);
+        width: var(--a2ui-image-avatar-size, 40px);
+        height: var(--a2ui-image-avatar-size, 40px);
         border-radius: 50%;
       }
       .a2ui-image.smallFeature {
-        width: 100px;
-        height: 100px;
+        max-width: var(--a2ui-image-small-feature-size, 100px);
       }
       .a2ui-image.mediumFeature {
         max-width: 300px;
@@ -68,11 +75,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       }
       .a2ui-image.largeFeature {
         width: 100%;
-        max-height: 400px;
+        max-height: var(--a2ui-image-large-feature-size, 400px);
       }
       .a2ui-image.header {
         width: 100%;
-        height: 200px;
+        height: var(--a2ui-image-header-size, 200px);
       }
     `,
   ],

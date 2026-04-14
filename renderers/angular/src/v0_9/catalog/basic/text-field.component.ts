@@ -23,6 +23,17 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  *
  * Renders a text input field with an optional label and placeholder.
  * Updates the bound data model property on every input change.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-color-input`: Controls the background color of the input.
+ * - `--a2ui-color-on-input`: Controls the text color of the input.
+ * - `--a2ui-textfield-border`: Controls the border of the input.
+ * - `--a2ui-textfield-border-radius`: Controls the border radius of the input.
+ * - `--a2ui-textfield-padding`: Controls the padding of the input.
+ * - `--a2ui-textfield-color-border-focus`: Controls the border color on focus.
+ * - `--a2ui-textfield-color-error`: Controls the border and text color for error states.
+ * - `--a2ui-textfield-label-font-size`: Controls the font size of the label.
+ * - `--a2ui-textfield-label-font-weight`: Controls the font weight of the label.
  */
 @Component({
   selector: 'a2ui-v09-text-field',
@@ -53,16 +64,26 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         gap: var(--a2ui-spacing-xs, 4px);
         margin: var(--a2ui-spacing-xs, 4px);
       }
+      label {
+        font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-weight: var(--a2ui-textfield-label-font-weight, bold);
+      }
       input {
         padding: var(--a2ui-textfield-padding, 8px);
         border: var(--a2ui-textfield-border, 1px solid var(--a2ui-color-border, #ccc));
         border-radius: var(--a2ui-textfield-border-radius, 4px);
+        background-color: var(--a2ui-color-input, #fff);
+        color: var(--a2ui-color-on-input, #333);
+      }
+      input:focus {
+        border-color: var(--a2ui-textfield-color-border-focus, var(--a2ui-color-primary, #17e));
+        outline: none;
       }
       input.invalid {
-        border-color: var(--a2ui-color-error, red);
+        border-color: var(--a2ui-textfield-color-error, var(--a2ui-color-error, red));
       }
       .a2ui-error-message {
-        color: var(--a2ui-color-error, red);
+        color: var(--a2ui-textfield-color-error, var(--a2ui-color-error, red));
         font-size: var(--a2ui-font-size-xs, 12px);
       }
     `,

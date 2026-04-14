@@ -23,6 +23,16 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  *
  * Renders a set of options as either radio buttons/checkboxes or chips.
  * Supports both single and multiple selection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-choicepicker-gap`: Controls spacing between options/chips.
+ * - `--a2ui-choicepicker-padding`: Controls padding of the container.
+ * - `--a2ui-choicepicker-checkbox-size`: Controls size of checkboxes/radios.
+ * - `--a2ui-choicepicker-chip-padding`: Controls padding of chips.
+ * - `--a2ui-choicepicker-chip-border-radius`: Controls border radius of chips.
+ * - `--a2ui-choicepicker-chip-border`: Controls border of chips.
+ * - `--a2ui-choicepicker-chip-background`: Controls background of chips.
+ * - `--a2ui-choicepicker-chip-background-selected`: Controls background of selected chips.
  */
 @Component({
   selector: 'a2ui-v09-choice-picker',
@@ -67,6 +77,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     `
       .a2ui-choice-picker {
         width: 100%;
+        padding: var(--a2ui-choicepicker-padding, 0);
       }
       .a2ui-options-group {
         display: flex;

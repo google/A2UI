@@ -23,6 +23,15 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  *
  * Renders date and/or time input fields. Combines them into an ISO string
  * for the bound data model property.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-datetimeinput-background`: Controls the background of inputs.
+ * - `--a2ui-datetimeinput-color`: Controls the text color of inputs.
+ * - `--a2ui-datetimeinput-border`: Controls the border of inputs.
+ * - `--a2ui-datetimeinput-border-radius`: Controls the border radius of inputs.
+ * - `--a2ui-datetimeinput-padding`: Controls the padding of inputs.
+ * - `--a2ui-datetimeinput-label-font-size`: Controls the font size of the label.
+ * - `--a2ui-datetimeinput-label-font-weight`: Controls the font weight of the label.
  */
 @Component({
   selector: 'a2ui-v09-date-time-input',
@@ -64,7 +73,8 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         width: 100%;
       }
       .a2ui-date-time-label {
-        font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-size: var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-weight: var(--a2ui-datetimeinput-label-font-weight, bold);
         color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
       }
       .a2ui-date-time-inputs {
@@ -73,9 +83,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         width: 100%;
       }
       .a2ui-date-time-input {
-        padding: var(--a2ui-textfield-padding, 8px);
-        border-radius: var(--a2ui-textfield-border-radius, 4px);
-        border: var(--a2ui-textfield-border, 1px solid var(--a2ui-color-border, #ccc));
+        padding: var(--a2ui-datetimeinput-padding, 8px);
+        border-radius: var(--a2ui-datetimeinput-border-radius, 4px);
+        border: var(--a2ui-datetimeinput-border, 1px solid var(--a2ui-color-border, #ccc));
+        background-color: var(--a2ui-datetimeinput-background, var(--a2ui-color-input, #fff));
+        color: var(--a2ui-datetimeinput-color, var(--a2ui-color-on-input, #333));
         font-family: inherit;
         flex: 1;
       }

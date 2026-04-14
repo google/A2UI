@@ -24,6 +24,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  *
  * Renders a list of child components with support for ordered, unordered,
  * and unstyled layouts in both vertical and horizontal orientations.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-list-gap`: Controls the gap between items.
+ * - `--a2ui-list-padding`: Controls the padding (applied to padding-inline-start).
  */
 @Component({
   selector: 'a2ui-v09-list',
@@ -76,16 +80,16 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     `
       .a2ui-list {
         display: flex;
-        padding-inline-start: var(--a2ui-list-padding-start, var(--a2ui-spacing-l, 24px));
+        padding-inline-start: var(--a2ui-list-padding, var(--a2ui-spacing-l, 24px));
         margin: 0;
       }
       .a2ui-list.vertical {
         flex-direction: column;
-        gap: var(--a2ui-list-gap-vertical, var(--a2ui-spacing-s, 8px));
+        gap: var(--a2ui-list-gap, var(--a2ui-spacing-s, 8px));
       }
       .a2ui-list.horizontal {
         flex-direction: row;
-        gap: var(--a2ui-list-gap-horizontal, var(--a2ui-spacing-m, 16px));
+        gap: var(--a2ui-list-gap, var(--a2ui-spacing-m, 16px));
         list-style-position: inside;
       }
       .a2ui-list-item-none {

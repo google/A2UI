@@ -22,11 +22,19 @@ import { BasicCatalogComponent } from './basic-catalog-component';
  * Angular implementation of the A2UI Divider component (v0.9).
  *
  * Renders a horizontal or vertical line to separate content.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-divider-border`: Controls the border of the divider (horizontal and vertical).
+ * - `--a2ui-divider-spacing`: Controls the margin around the divider.
  */
 @Component({
   selector: 'a2ui-v09-divider',
   standalone: true,
   imports: [],
+  host: {
+    '[style.display]': '"block"',
+    '[style.width]': 'axis() === "horizontal" ? "100%" : "auto"',
+  },
   template: `
     <hr
       class="a2ui-divider"
