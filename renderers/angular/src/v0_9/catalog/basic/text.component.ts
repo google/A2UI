@@ -17,11 +17,23 @@
 import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 import { MarkdownRenderer } from '../../core/markdown';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Text component (v0.9).
  *
  * Renders text with support for simple Markdown.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-text-color-text`: Controls the text color.
+ * - `--a2ui-text-margin`: Controls the margin of text elements.
+ * - `--a2ui-font-family-title`: Controls the font family for titles.
+ * - `--a2ui-line-height-headings`: Controls the line height for headings.
+ * - `--a2ui-line-height-body`: Controls the line height for body text.
+ * - `--a2ui-text-caption-color`: Controls the color for caption text.
+ * - `--a2ui-text-a-color`: Controls the color for links.
+ * - `--a2ui-text-a-font-weight`: Controls the font weight for links.
+ * - Font sizes: `--a2ui-font-size-2xl`, `--a2ui-font-size-xl`, `--a2ui-font-size-l`, `--a2ui-font-size-m`, `--a2ui-font-size-s`, `--a2ui-font-size-xs`.
  */
 @Component({
   selector: 'a2ui-v09-text',
@@ -30,9 +42,58 @@ import { MarkdownRenderer } from '../../core/markdown';
     <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()">
     </span>
   `,
+  // We use :host ::ng-deep because the template content is injected via innerHTML (Markdown).
+  // Angular's default view encapsulation cannot target elements injected via innerHTML because they lack the scoping attributes generated at compile time.
+  // ::ng-deep allows styles to reach into the injected HTML, while :host keeps them scoped to this component.
+  styles: [
+    `
+      :host ::ng-deep .a2ui-text p,
+      :host ::ng-deep .a2ui-text h1,
+      :host ::ng-deep .a2ui-text h2,
+      :host ::ng-deep .a2ui-text h3,
+      :host ::ng-deep .a2ui-text h4,
+      :host ::ng-deep .a2ui-text h5,
+      :host ::ng-deep .a2ui-text h6,
+      :host ::ng-deep .a2ui-text ol,
+      :host ::ng-deep .a2ui-text ul,
+      :host ::ng-deep .a2ui-text li,
+      :host ::ng-deep .a2ui-text blockquote,
+      :host ::ng-deep .a2ui-text pre {
+        margin: var(--_a2ui-text-margin, 0);
+      }
+      :host ::ng-deep .a2ui-text {
+        color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
+      }
+      :host ::ng-deep .a2ui-text h1,
+      :host ::ng-deep .a2ui-text h2,
+      :host ::ng-deep .a2ui-text h3,
+      :host ::ng-deep .a2ui-text h4,
+      :host ::ng-deep .a2ui-text h5,
+      :host ::ng-deep .a2ui-text h6 {
+        font-family: var(--a2ui-font-family-title, inherit);
+        line-height: var(--a2ui-line-height-headings, 1.2);
+      }
+      :host ::ng-deep .a2ui-text h1 { font-size: var(--a2ui-font-size-2xl); }
+      :host ::ng-deep .a2ui-text h2 { font-size: var(--a2ui-font-size-xl); }
+      :host ::ng-deep .a2ui-text h3 { font-size: var(--a2ui-font-size-l); }
+      :host ::ng-deep .a2ui-text p, :host ::ng-deep .a2ui-text h4 { font-size: var(--a2ui-font-size-m); }
+      :host ::ng-deep .a2ui-text h5 { font-size: var(--a2ui-font-size-s); }
+      :host ::ng-deep .a2ui-text p {
+        line-height: var(--a2ui-line-height-body, 1.5);
+      }
+      :host ::ng-deep .a2ui-text.caption {
+        font-size: var(--a2ui-font-size-xs);
+        color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
+      }
+      :host ::ng-deep .a2ui-text a {
+        color: var(--a2ui-text-a-color, inherit);
+        font-weight: var(--a2ui-text-a-font-weight, inherit);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent {
+export class TextComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -54,6 +115,7 @@ export class TextComponent {
   private renderRequestId = 0;
 
   constructor() {
+    super();
     effect(() => {
       const text = this.text();
       const variant = this.variant();

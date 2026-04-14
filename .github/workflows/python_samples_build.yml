@@ -64,5 +64,5 @@ jobs:
         run: uv build .
 
       - name: Build rizzcharts
-        working-directory: samples/agent/adk/rizzcharts
+        working-directory: samples/agent/adk/rizzcharts/python
         run: uv build .

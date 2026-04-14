@@ -7,7 +7,7 @@ These are sample implementations of A2UI in Angular.
 1. [nodejs](https://nodejs.org/en)
 2. [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
-NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
+NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/python/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
 
 ## Running
 
@@ -29,7 +29,7 @@ Here are the instructions if you want to do each step manually.
 2. Install the dependencies: `npm install`
 3. Run the relevant A2A server:
   * [For the restaurant app](../../agent/adk/restaurant_finder/)
-  * [For the rizzcharts app](../../agent/adk/rizzcharts/)
+  * [For the rizzcharts app](../../agent/adk/rizzcharts/python/)
   * [For the orchestrator app](../../agent/adk/orchestrator/)
 4. Run the relevant app:
   * `npm start -- restaurant`

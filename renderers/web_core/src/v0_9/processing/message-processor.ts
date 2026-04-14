@@ -27,7 +27,6 @@ import {
   UpdateComponentsMessage,
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
-  A2uiMessageList,
   A2uiMessageListWrapper,
 } from '../schema/server-to-client.js';
 import {

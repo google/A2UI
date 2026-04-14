@@ -42,6 +42,9 @@ import { ComponentBinder } from './component-binder.service';
 @Component({
   selector: 'a2ui-v09-component-host',
   imports: [NgComponentOutlet],
+  host: {
+    'style': 'display: contents;'
+  },
   template: `
     @if (componentType) {
       <ng-container
