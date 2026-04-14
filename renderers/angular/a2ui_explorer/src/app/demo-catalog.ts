@@ -44,7 +44,7 @@ export class DemoCatalog extends BasicCatalogBase {
       {
         name: 'capitalize',
         returnType: 'string',
-        schema: z.object({ value: z.string().optional() }),
+        schema: z.object({ value: z.string().optional() }) as any,
       },
       (args) => {
         const value = String(args.value || '');

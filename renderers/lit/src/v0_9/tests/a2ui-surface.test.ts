@@ -27,7 +27,7 @@ import { MessageProcessor } from "@a2ui/web_core/v0_9";
  * - Renders the actual root component once it becomes available in the data model.
  */
 describe("A2uiSurface", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
 
   before(async () => {
     setupTestDom();
@@ -35,8 +35,7 @@ describe("A2uiSurface", () => {
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context and crashing.
     await import("../surface/a2ui-surface.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
   });
   after(teardownTestDom);
 
@@ -44,14 +43,14 @@ describe("A2uiSurface", () => {
   let surfaceModel: any;
 
   beforeEach(() => {
-    processor = new MessageProcessor([minimalCatalog]);
+    processor = new MessageProcessor([basicCatalog]);
     // Initialize the test surface
     processor.processMessages([
       {
         version: "v0.9",
         createSurface: {
           surfaceId: "test-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
     ]);
@@ -112,15 +111,17 @@ describe("A2uiSurface", () => {
       ]);
     });
 
+    await el.updateComplete;
+
     // Wait for the child element (a2ui-text) to finish updating as well
-    const childEl = el.shadowRoot?.querySelector("a2ui-text") as any;
+    const childEl = el.shadowRoot?.querySelector("a2ui-basic-text") as any;
     if (childEl && childEl.updateComplete) {
       await childEl.updateComplete;
     }
 
     const html = el.shadowRoot?.innerHTML;
     const childHtml = childEl?.shadowRoot?.innerHTML;
-    // Let's just assert that the loading text is gone
+
     assert.ok(
       !html?.includes("Loading surface"),
       "Loading text should be gone",

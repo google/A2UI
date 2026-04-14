@@ -21,7 +21,7 @@ See [Defining Your Own Catalog](defining-your-own-catalog.md) for how to define 
 
 ## Shared Web Library
 
-All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web-lib`**. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.
+All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web_core`** ocean. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.
 
 This means core protocol handling is consistent across web platforms — only the component rendering differs.
 
@@ -29,21 +29,33 @@ This means core protocol handling is consistent across web platforms — only th
 
 > NOTE: Attention
 >
-> The Lit client library is not yet published to NPM. Check back in the coming days.
+> The Lit client library is not yet published to NPM. To use it, you must build it from source.
+
+### Building from Source
+
+Before running the sample or using the renderer, you need to build the shared libraries:
 
 ```bash
-npm install @a2ui/web-lib lit @lit-labs/signals
+# Build the shared web core
+cd renderers/web_core
+npm install
+npm run build
+
+# Build the Lit renderer
+cd ../lit
+npm install
+npm run build
 ```
 
-The Lit renderer uses:
+### Setup
+
+Once built, you can use the renderer in your app. The Lit renderer uses:
 
 - **Message Processor**: Manages A2UI state and processes incoming messages.
 - **`<a2ui-surface>` component**: Renders surfaces in your app.
 - **Lit Signals**: Provides reactive state management for automatic UI updates.
 
-TODO: Add verified setup example.
-
-**See working example:** [Lit shell sample](https://github.com/google/a2ui/tree/main/samples/client/lit/shell)
+**See working example:** [Lit shell sample](https://github.com/google/a2ui/tree/main/samples/client/lit/shell) — Check its README for detailed run instructions.
 
 ## Angular
 
@@ -89,12 +101,21 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-**See working example:** [Angular v0.9 Explorer](https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer)
+**See working example:** [Angular samples](https://github.com/google/a2ui/tree/main/samples/client/angular)
+
+### Streaming
+
+By default, the Angular client uses the non-streaming API. To enable streaming, set the `ENABLE_STREAMING` environment variable to `true` before starting the app:
+
+```bash
+export ENABLE_STREAMING=true
+npm start -- restaurant
+```
 
 ## React
 
 ```bash
-npm install @a2ui/react @a2ui/web-lib
+npm install @a2ui/react @a2ui/web_core
 ```
 
 The React renderer provides:
@@ -129,7 +150,7 @@ Common transport options:
 - **WebSockets**: Bidirectional real-time communication
 - **A2A Protocol**: Standardized agent-to-agent communication with A2UI support
 
-TODO: Add transport implementation examples.
+See [samples/client/lit/shell/client.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/client.ts) for an example of using the A2A protocol client.
 
 **See:** [Transports guide](../concepts/transports.md)
 
@@ -142,7 +163,7 @@ When users interact with A2UI components (clicking buttons, submitting forms, et
 3. Sends the action to the agent
 4. Processes the agent's response messages
 
-TODO: Add action handling examples.
+See the `@a2uiaction` event handler in `#maybeRenderData` in [samples/client/lit/shell/app.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts) for an example of handling button clicks and form submissions.
 
 ## Error Handling
 
@@ -153,7 +174,7 @@ Common errors to handle:
 - **Invalid Data Path**: Check data model structure and JSON Pointer syntax.
 - **Schema Validation Failed**: Verify message format matches A2UI specification.
 
-TODO: Add error handling examples.
+See `try...catch` blocks in `#sendMessage` in [samples/client/lit/shell/app.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts) for examples of handling communication errors.
 
 ## Next Steps
 

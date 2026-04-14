@@ -157,5 +157,6 @@ export const A2uiMessageListWrapperSchema = z
   .strict()
   .describe('An object wrapping a list of messages.');
 
-export type A2uiMessageListWrapper = z.infer<typeof A2uiMessageListWrapperSchema>;
-
+export type A2uiMessageListWrapper = z.infer<
+  typeof A2uiMessageListWrapperSchema
+>;

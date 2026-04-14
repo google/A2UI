@@ -235,7 +235,7 @@ For agents with a fixed set of UI capabilities, simply use the `schema_manager`
 to generate the system instruction.
 
 **Example Samples:**
-[contact_lookup](../../../samples/agent/adk/contact_lookup), [restaurant_finder](../../../samples/agent/adk/restaurant_finder)
+[restaurant_finder](../../../samples/agent/adk/restaurant_finder)
 
 ```python
 # Generate system prompt
@@ -258,7 +258,7 @@ user's request, client capabilities, or conversational context. This is common
 for dashboard-style agents that support multiple distinct visualization types (
 e.g., Charts vs. Maps).
 
-**Example Sample:** [rizzcharts](../../../samples/agent/adk/rizzcharts)
+**Example Sample:** [rizzcharts](../../../samples/agent/adk/rizzcharts/python)
 
 #### 2a. Injecting Catalogs into Session State
 
