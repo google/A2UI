@@ -161,13 +161,36 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   }
   console.log('\nPre-flight checks passed.');
 
+  console.log('\n--- Git Provenance Check ---');
+  let currentBranch = 'unknown';
+  let commitHash = 'unknown';
+  let isDirty = false;
+
+  try {
+    currentBranch = exec('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
+    commitHash = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    const status = exec('git status --porcelain', { encoding: 'utf8' }).trim();
+    isDirty = status.length > 0;
+  } catch (e) {
+    console.warn('⚠️ Could not verify Git status. Ensure you are in a valid Git repository.');
+  }
+
+  if (isDirty) {
+    console.warn(`\n⚠️  WARNING: Your Git working tree is DIRTY (you have uncommitted changes).`);
+    console.warn(`Publishing from a dirty tree means the published code will NOT exactly match the commit history.`);
+    console.warn(`It is highly recommended to commit or stash your changes before publishing.`);
+  }
+
+  console.log(`Publishing from branch: ${currentBranch}`);
+  console.log(`Commit hash: ${commitHash}`);
+
   if (!autoYes) {
     const askUser = async () => {
       if (customReadline) return await customReadline();
 
       const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
       return await new Promise(resolve => {
-        rl.question('\nDo you want to proceed with publishing these versions? (yes/no): ', (ans) => {
+        rl.question(`\nDo you want to proceed with publishing these versions from commit ${commitHash.substring(0, 7)}? (yes/no): `, (ans) => {
           rl.close();
           resolve(ans);
         });

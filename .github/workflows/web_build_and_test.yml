@@ -45,6 +45,10 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run build
 
+      - name: Lint web_core
+        working-directory: ./renderers/web_core
+        run: npm run lint
+
       - name: Test web_core
         working-directory: ./renderers/web_core
         run: npm run test
