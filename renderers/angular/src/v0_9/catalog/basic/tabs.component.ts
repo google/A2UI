@@ -17,12 +17,21 @@
 import { Component, input, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Tabs component (v0.9).
  *
  * Renders a set of tabs where each tab has a label and associated content.
  * Manages the active tab state internally.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-tabs-border`: Controls the border of the tab bar.
+ * - `--a2ui-tabs-header-background`: Controls the background of tab buttons.
+ * - `--a2ui-tabs-header-color`: Controls the text color of tab buttons.
+ * - `--a2ui-tabs-header-background-active`: Controls the background of the active tab button.
+ * - `--a2ui-tabs-header-color-active`: Controls the text color of the active tab button.
+ * - `--a2ui-tabs-content-padding`: Controls the padding of the tab content.
  */
 @Component({
   selector: 'a2ui-v09-tabs',
@@ -61,31 +70,32 @@ import { BoundProperty } from '../../core/types';
       }
       .a2ui-tab-bar {
         display: flex;
-        border-bottom: 2px solid #eee;
-        gap: 16px;
+        border-bottom: var(--a2ui-tabs-border, 2px solid var(--a2ui-color-border, #eee));
+        gap: var(--a2ui-spacing-m, 16px);
       }
       .a2ui-tab-button {
-        padding: 8px 16px;
+        padding: var(--a2ui-spacing-s, 8px) var(--a2ui-spacing-m, 16px);
         border: none;
-        background: none;
+        background: var(--a2ui-tabs-header-background, transparent);
         cursor: pointer;
         font-weight: 500;
-        color: #666;
+        color: var(--a2ui-tabs-header-color, var(--a2ui-text-caption-color, #666));
         border-bottom: 2px solid transparent;
         margin-bottom: -2px;
       }
       .a2ui-tab-button.active {
-        color: #007bff;
-        border-bottom: 2px solid #007bff;
+        background: var(--a2ui-tabs-header-background-active, transparent);
+        color: var(--a2ui-tabs-header-color-active, var(--a2ui-color-primary, #007bff));
+        border-bottom: 2px solid var(--a2ui-color-primary, #007bff);
       }
       .a2ui-tab-content {
-        padding: 16px 0;
+        padding: var(--a2ui-tabs-content-padding, var(--a2ui-spacing-m, 16px) 0);
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabsComponent {
+export class TabsComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *

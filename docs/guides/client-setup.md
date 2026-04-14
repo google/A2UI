@@ -27,35 +27,25 @@ This means core protocol handling is consistent across web platforms — only th
 
 ## Web Components (Lit)
 
-> NOTE: Attention
->
-> The Lit client library is not yet published to NPM. Check back in the coming days.
-
 ```bash
-npm install @a2ui/web_core lit @lit-labs/signals
+npm install @a2ui/lit @a2ui/web_core
 ```
 
-The Lit renderer uses:
+Once installed, you can use the renderer in your app. The Lit renderer uses:
 
 - **Message Processor**: Manages A2UI state and processes incoming messages.
 - **`<a2ui-surface>` component**: Renders surfaces in your app.
 - **Lit Signals**: Provides reactive state management for automatic UI updates.
 
-TODO: Add verified setup example.
-
-**See working example:** [Lit shell sample](https://github.com/google/a2ui/tree/main/samples/client/lit/shell)
+**See working example:** [Lit shell sample](https://github.com/google/a2ui/tree/main/samples/client/lit/shell) — Check its README for detailed run instructions.
 
 ## Angular
-
-> NOTE: Attention
->
-> The Angular client library is not yet published to NPM. Check back in the coming days.
 
 ```bash
 npm install @a2ui/angular @a2ui/web_core
 ```
 
-The Angular renderer provides:
+Once installed, you can use the renderer in your app. The Angular renderer provides:
 
 - **`A2uiRendererService`**: A service that manages the A2UI message processor and reactive model.
 - **`a2ui-v09-component-host` component**: A dynamic component host that renders A2UI components from a surface.
@@ -89,7 +79,16 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-**See working example:** [Angular v0.9 Explorer](https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer)
+**See working example:** [Angular samples](https://github.com/google/a2ui/tree/main/samples/client/angular)
+
+### Streaming
+
+By default, the Angular client uses the non-streaming API. To enable streaming, set the `ENABLE_STREAMING` environment variable to `true` before starting the app:
+
+```bash
+export ENABLE_STREAMING=true
+npm start -- restaurant
+```
 
 ## React
 
@@ -129,7 +128,7 @@ Common transport options:
 - **WebSockets**: Bidirectional real-time communication
 - **A2A Protocol**: Standardized agent-to-agent communication with A2UI support
 
-TODO: Add transport implementation examples.
+See [samples/client/lit/shell/client.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/client.ts) for an example of using the A2A protocol client.
 
 **See:** [Transports guide](../concepts/transports.md)
 
@@ -142,7 +141,7 @@ When users interact with A2UI components (clicking buttons, submitting forms, et
 3. Sends the action to the agent
 4. Processes the agent's response messages
 
-TODO: Add action handling examples.
+See the `@a2uiaction` event handler in `#maybeRenderData` in [samples/client/lit/shell/app.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts) for an example of handling button clicks and form submissions.
 
 ## Error Handling
 
@@ -153,7 +152,7 @@ Common errors to handle:
 - **Invalid Data Path**: Check data model structure and JSON Pointer syntax.
 - **Schema Validation Failed**: Verify message format matches A2UI specification.
 
-TODO: Add error handling examples.
+See `try...catch` blocks in `#sendMessage` in [samples/client/lit/shell/app.ts](https://github.com/google/a2ui/tree/main/samples/client/lit/shell/app.ts) for examples of handling communication errors.
 
 ## Next Steps
 

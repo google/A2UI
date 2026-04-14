@@ -14,13 +14,38 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-modal")
-export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
+export class A2uiLitModal extends BasicCatalogA2uiLitElement<typeof ModalApi> {
+  /**
+   * The styles of the modal can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-modal-backdrop-bg`: Controls the backdrop color of the dialog.
+   * - `--a2ui-modal-padding`: Padding inside the dialog content area. Defaults to `24px`.
+   * - `--a2ui-modal-border-radius`: Border radius of the dialog. Defaults to `8px`.
+   */
+  static styles = css`
+    :host {
+      display: inline-block;
+    }
+    dialog {
+      border: 1px solid var(--a2ui-color-border, #ccc);
+      border-radius: var(--a2ui-modal-border-radius, 8px);
+      padding: var(--a2ui-modal-padding, 24px);
+      min-width: 300px;
+      background: var(--a2ui-color-surface, #fff);
+    }
+    dialog::backdrop {
+      background: var(--a2ui-modal-backdrop-bg, rgba(0, 0, 0, 0.5));
+    }
+  `;
+
   protected createController() {
     return new A2uiController(this, ModalApi);
   }
@@ -31,13 +56,10 @@ export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
     if (!props) return nothing;
 
     return html`
-      <div @click=${() => this.dialog?.showModal()}>
+      <div @click=${() => this.dialog?.showModal()} style="display: contents;">
         ${props.trigger ? html`${this.renderNode(props.trigger)}` : nothing}
       </div>
-      <dialog
-        class="a2ui-modal"
-        style="border: 1px solid #ccc; border-radius: 8px; padding: 24px; min-width: 300px;"
-      >
+      <dialog class="a2ui-modal">
         <form method="dialog" style="text-align: right;">
           <button>×</button>
         </form>

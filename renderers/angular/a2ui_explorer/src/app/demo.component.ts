@@ -197,8 +197,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
       .rendered-content {
         width: 100%;
         max-width: 800px;
-        background-color: #ffffff;
-        color: #333;
+        background-color: var(--a2ui-color-surface, #ffffff);
         border-radius: 8px;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         padding: 24px;
