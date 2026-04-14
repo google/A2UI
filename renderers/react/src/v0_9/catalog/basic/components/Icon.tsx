@@ -35,9 +35,10 @@ function toMaterialSymbol(str: string): string {
 }
 
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
-  const iconName = typeof props.name === 'string'
-    ? toMaterialSymbol(props.name)
-    : (props.name as {path?: string})?.path;
+  const iconName =
+    typeof props.name === 'string'
+      ? toMaterialSymbol(props.name)
+      : (props.name as {path?: string})?.path;
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     fontSize: '24px',
