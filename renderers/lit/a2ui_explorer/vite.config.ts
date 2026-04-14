@@ -23,4 +23,9 @@ export default defineConfig({
   resolve: {
     dedupe: ['lit'],
   },
+  server: {
+    fs: {
+      allow: ['../', '../../../specification']
+    }
+  }
 });

@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /*
  * Copyright 2025 Google LLC
  *
@@ -248,29 +249,20 @@ export class LocalGallery extends LitElement {
   async loadExamples() {
     try {
       const items: DemoItem[] = [];
-      await this.fetchExamplesFrom("./specs/v0_9/basic/examples", items);
+      
+      // Dynamically import all examples from the specification folder
+      const exampleModules = import.meta.glob(
+        '../../../../specification/v0_9/json/catalogs/basic/examples/*.json',
+        { eager: true }
+      );
+      
+      const sortedEntries = Object.entries(exampleModules).sort((a, b) => a[0].localeCompare(b[0]));
 
-      this.demoItems = items;
-      if (items.length > 0) {
-        this.selectItem(0);
-      }
-    } catch (err) {
-      console.error(`Failed to initiate gallery:`, err);
-    }
-  }
-
-  async fetchExamplesFrom(dir: string, items: DemoItem[]) {
-    try {
-      const indexResp = await fetch(`${dir}/index.json`);
-      if (!indexResp.ok) throw new Error(`Could not load manifest from ${dir}`);
-      const filenames = (await indexResp.json()) as string[];
-
-      for (const filename of filenames) {
+      for (const [path, data] of sortedEntries) {
         try {
-          const response = await fetch(`${dir}/${filename}`);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const data = await response.json();
-          const messages = Array.isArray(data) ? data : data.messages || [];
+          const filename = path.split('/').pop() || '';
+          const jsonData = (data as { default: unknown }).default ?? data;
+          const messages = Array.isArray(jsonData) ? jsonData : (jsonData as any).messages || [];
 
           let surfaceId = filename.replace(".json", "");
           const createMsg = messages.find((m: any) => m.createSurface);
@@ -294,15 +286,20 @@ export class LocalGallery extends LitElement {
               .join(" ")
               .replace(".json", ""),
             filename: filename,
-            description: data.description || `Source: ${filename}`,
+            description: (jsonData as any).description || `Source: ${filename}`,
             messages: messages,
           });
         } catch (err) {
-          console.error(`Error loading ${filename}:`, err);
+          console.error(`Error loading ${path}:`, err);
         }
       }
-    } catch (e) {
-      console.warn(`Could not load ${dir}`, e);
+
+      this.demoItems = items;
+      if (items.length > 0) {
+        this.selectItem(0);
+      }
+    } catch (err) {
+      console.error(`Failed to initiate gallery:`, err);
     }
   }
 
