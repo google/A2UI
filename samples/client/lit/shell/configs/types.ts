@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { v0_8 } from "@a2ui/lit";
+import * as v0_9 from "@a2ui/web_core/v0_9";
 
 /**
  * Configuration interface for the Universal App Shell.
@@ -32,10 +32,10 @@ export interface AppConfig {
   heroImageDark?: string;
   /** Placeholder text for the input field */
   placeholder: string;
-  /** Text to display while loading (optional). Can be a single string or an array of strings to rotate. */
-  loadingText?: string | string[];
+  /** Text to display while loading (optional). */
+  loadingText?: string[];
   /** Optional server URL for the agent (e.g., http://localhost:10003) */
   serverUrl?: string;
-  /** Theme overrides (CSS Variables) */
-  theme?: v0_8.Types.Theme;
+  /** Custom CSSStyleSheet overrides for components */
+  cssOverrides?: CSSStyleSheet;
 }
