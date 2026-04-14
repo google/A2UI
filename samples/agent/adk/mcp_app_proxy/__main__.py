@@ -15,8 +15,8 @@
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2ui.core.schema.constants import VERSION_0_8
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.constants import VERSION_0_8
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
 from agent import McpAppProxyAgent
 from agent_executor import McpAppProxyAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
 from dotenv import load_dotenv

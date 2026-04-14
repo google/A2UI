@@ -84,10 +84,14 @@ export const plugin = (): Plugin => {
                   originalBody
                 );
 
-                const clientEvent = JSON.parse(originalBody);
+                const requestData = JSON.parse(originalBody);
+                const contextId = requestData.contextId;
+                const clientEvent = requestData.event || requestData; // fallback if it's old format
+
                 sendParams = {
                   message: {
                     messageId: uuidv4(),
+                    contextId,
                     role: "user",
                     parts: [
                       {
@@ -131,10 +135,19 @@ export const plugin = (): Plugin => {
 
                   for await (const chunk of stream) {
                     // A2AClient unpacks the JSON-RPC, so chunk is an A2AStreamEventData
+                    let parts: Part[] = [];
                     if (chunk.kind === "status-update" && chunk.status.message?.parts) {
-                      res.write(`data: ${JSON.stringify(chunk.status.message.parts)}\n\n`);
+                      parts = chunk.status.message.parts;
                     } else if (chunk.kind === "message" && chunk.parts) {
-                      res.write(`data: ${JSON.stringify(chunk.parts)}\n\n`);
+                      parts = chunk.parts;
+                    }
+
+                    if (parts.length > 0) {
+                      const responseData = {
+                        parts,
+                        contextId: (chunk as any).contextId || (chunk as any).status?.message?.contextId
+                      };
+                      res.write(`data: ${JSON.stringify(responseData)}\n\n`);
                     }
                   }
                   res.end();
@@ -149,7 +162,11 @@ export const plugin = (): Plugin => {
                     const result = (response as SendMessageSuccessResponse).result as Task;
                     res.statusCode = 200;
                     res.setHeader("Content-Type", "application/json");
-                    res.end(JSON.stringify(result.kind === "task" ? result.status.message?.parts || [] : []));
+                    const responseData = {
+                      parts: result.kind === "task" ? result.status.message?.parts || [] : [],
+                      contextId: result.contextId
+                    };
+                    res.end(JSON.stringify(responseData));
                   }
                 }
               } catch (e: any) {

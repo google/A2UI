@@ -18,9 +18,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Surface } from './surface';
 import { MessageProcessor } from '../data/processor';
 import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { signal } from '@angular/core';
+import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
   selector: '[a2ui-renderer]',

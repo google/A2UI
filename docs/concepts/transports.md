@@ -31,9 +31,9 @@ standardized agent communication.  An A2A extension provides easy integration wi
 
 **Benefits:**
 
-- Security and authentication built-in
-- Bindings for many message formats, auth, and transport protocols
-- Clean separation of concerns
+- Security and authentication built-in.
+- Bindings for many message formats, auth, and transport protocols.
+- Clean separation of concerns.
 
 If you are using A2A, this should be nearly automatic.
 

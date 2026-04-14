@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 
@@ -30,7 +30,7 @@ export const ButtonApiDef = {
   schema: ButtonSchema,
 };
 
-export const Button = createReactComponent(ButtonApiDef, ({props, buildChild}) => {
+export const Button = createComponentImplementation(ButtonApiDef, ({props, buildChild}) => {
   const style: React.CSSProperties = {
     padding: '8px 16px',
     cursor: 'pointer',

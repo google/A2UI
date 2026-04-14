@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI CheckBox component (v0.9).
  *
  * Renders a checkbox with a label. Updates the bound data model property
  * when the checked state changes.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-checkbox-margin`: Controls the margin.
+ * - `--a2ui-checkbox-gap`: Controls the gap between checkbox and label.
+ * - `--a2ui-checkbox-label-font-size`: Controls the font size of the label.
+ * - `--a2ui-checkbox-label-font-weight`: Controls the font weight of the label.
+ * - `--a2ui-checkbox-size`: Controls the width and height of the checkbox.
+ * - `--a2ui-checkbox-background`: Controls the background of the checkbox.
+ * - `--a2ui-checkbox-border`: Controls the border of the checkbox.
+ * - `--a2ui-checkbox-border-radius`: Controls the border radius of the checkbox.
+ * - `--a2ui-checkbox-color-error`: Controls the color for error states.
  */
 @Component({
   selector: 'a2ui-v09-check-box',
@@ -44,23 +55,29 @@ import { BoundProperty } from '../../core/types';
       .a2ui-check-box-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--a2ui-checkbox-gap, var(--a2ui-spacing-s, 0.5rem));
         cursor: pointer;
         padding: 4px 0;
+        margin: var(--a2ui-checkbox-margin, var(--a2ui-spacing-m, 16px));
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-check-box-input {
-        width: 18px;
-        height: 18px;
+        width: var(--a2ui-checkbox-size, 1rem);
+        height: var(--a2ui-checkbox-size, 1rem);
         cursor: pointer;
+        background: var(--a2ui-checkbox-background, inherit);
+        border: var(--a2ui-checkbox-border, var(--a2ui-border-width, 1px) solid #ccc);
+        border-radius: var(--a2ui-checkbox-border-radius, 4px);
       }
       .a2ui-check-box-text {
-        font-size: 16px;
+        font-size: var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px)));
+        font-weight: var(--a2ui-checkbox-label-font-weight, bold);
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckBoxComponent {
+export class CheckBoxComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -72,8 +89,6 @@ export class CheckBoxComponent {
   surfaceId = input.required<string>();
   componentId = input<string>();
   dataContextPath = input<string>('/');
-
-  private rendererService = inject(A2uiRendererService);
 
   value = computed(() => this.props()['value']?.value() === true);
   label = computed(() => this.props()['label']?.value());

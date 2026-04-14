@@ -21,6 +21,7 @@ import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarNav } from "./sidebar-nav";
+import { VersionSelector } from "./version-selector";
 import { SidebarWidgets } from "./sidebar-widgets";
 import { Button } from "@/components/ui/button";
 
@@ -57,6 +58,8 @@ export function Sidebar() {
         )}
       >
         <SidebarHeader />
+        <hr />
+        <VersionSelector />
         <hr />
         <SidebarNav onNavigate={() => setIsOpen(false)} />
         <hr />

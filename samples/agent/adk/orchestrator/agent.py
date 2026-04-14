@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import json
 import logging
 import os
@@ -36,9 +37,14 @@ from a2a.client.client import Consumer, Client
 from a2a.client.middleware import ClientCallContext, ClientCallInterceptor
 from a2a.client.client import ClientConfig as A2AClientConfig
 from a2a.client.client_factory import ClientFactory as A2AClientFactory
-from a2ui.a2a import *
+from a2ui.a2a.extension import (
+    A2UI_EXTENSION_BASE_URI,
+    AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY,
+    AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY,
+)
+from a2ui.a2a.parts import is_a2ui_part
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
-from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +87,33 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
             "Added client capabilities to remote agent message metadata:"
             f" {client_capabilities}"
         )
+
+        # Data Model Stripping to prevent data leakage
+        data_model = message.get("metadata", {}).get("a2uiClientDataModel")
+        if data_model and "surfaces" in data_model:
+          if agent_card and agent_card.name:
+            current_surfaces = data_model["surfaces"]
+            surface_ids_to_check = list(current_surfaces.keys())
+            owner_agents = await asyncio.gather(*[
+                SubagentRouteManager.get_route_to_subagent_name(sid, context.state)
+                for sid in surface_ids_to_check
+            ])
+
+            filtered_surfaces = {}
+            for i, surface_id in enumerate(surface_ids_to_check):
+              if owner_agents[i] == agent_card.name:
+                filtered_surfaces[surface_id] = current_surfaces[surface_id]
+
+            message["metadata"]["a2uiClientDataModel"]["surfaces"] = filtered_surfaces
+            logger.info(
+                f"Stripped data model for {agent_card.name}. "
+                f"Kept surfaces: {list(filtered_surfaces.keys())}"
+            )
+          else:
+            message["metadata"]["a2uiClientDataModel"]["surfaces"] = {}
+            logger.warning(
+                "No agent card or name provided. Stripped all surfaces from data model."
+            )
 
     return request_payload, http_kwargs
 

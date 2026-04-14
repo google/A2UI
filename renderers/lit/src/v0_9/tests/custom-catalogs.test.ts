@@ -44,7 +44,7 @@ const customCatalog = new Catalog<LitComponentApi>("custom-catalog-v1", [
  *   disparate catalogs running concurrently within the same environment across different surfaces.
  */
 describe("Custom Catalogs Integration", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
 
   before(async () => {
     setupTestDom();
@@ -52,8 +52,7 @@ describe("Custom Catalogs Integration", () => {
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context.
     await import("../surface/a2ui-surface.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
   });
 
   after(teardownTestDom);
@@ -99,7 +98,7 @@ describe("Custom Catalogs Integration", () => {
   it("should handle multiple catalogs concurrently across different surfaces", async () => {
     // MessageProcessor instantiated with MULTIPLE catalogs
     const processor = new MessageProcessor<LitComponentApi>([
-      minimalCatalog,
+      basicCatalog,
       customCatalog,
     ]);
 
@@ -110,7 +109,7 @@ describe("Custom Catalogs Integration", () => {
         version: "v0.9",
         createSurface: {
           surfaceId: "minimal-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
       {
@@ -173,7 +172,7 @@ describe("Custom Catalogs Integration", () => {
     });
 
     // Validates that the minimal catalog surface spawned the classic a2ui-text node
-    assert.ok(el1.shadowRoot?.querySelector("a2ui-text"));
+    assert.ok(el1.shadowRoot?.querySelector("a2ui-basic-text"));
 
     // Validates that the custom catalog surface dynamically spawned the custom node tag `<a2ui-customwidget>`
     assert.ok(el2.shadowRoot?.querySelector("a2ui-customwidget"));

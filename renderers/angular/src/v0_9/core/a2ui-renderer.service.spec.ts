@@ -16,7 +16,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { A2uiRendererService, A2UI_RENDERER_CONFIG } from './a2ui-renderer.service';
-import { AngularCatalog } from '../catalog/types';
+
 
 describe('A2uiRendererService', () => {
   let service: A2uiRendererService;

@@ -15,7 +15,7 @@
  */
 
 import React, {useState} from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {ChoicePickerApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
@@ -24,7 +24,7 @@ import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type _Option = any;
 
-export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, context}) => {
+export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({props, context}) => {
   const [filter, setFilter] = useState('');
 
   const values = Array.isArray(props.value) ? props.value : [];

@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "sync-gallery": "node scripts/sync-gallery.mjs",
+    "predev": "node scripts/sync-gallery.mjs",
+    "prebuild": "node scripts/sync-gallery.mjs",
     "build": "next build",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 3001",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -16,7 +19,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@copilotkit/a2ui-renderer": "1.50.1",
+    "@a2ui/react": "0.9.0-alpha.0",
+    "@a2ui/web_core": "0.9.1-alpha.0",
     "@copilotkit/react-core": "^1.50.1",
     "@copilotkit/react-ui": "^1.50.1",
     "@copilotkit/runtime": "^1.50.1",
