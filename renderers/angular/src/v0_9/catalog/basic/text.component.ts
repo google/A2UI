@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect, ViewEncapsulation } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 import { MarkdownRenderer } from '../../core/markdown';
 import { BasicCatalogComponent } from './basic-catalog-component';
@@ -31,21 +31,23 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()">
     </span>
   `,
-  encapsulation: ViewEncapsulation.None,
+  // We use :host ::ng-deep because the template content is injected via innerHTML (Markdown).
+  // Angular's default view encapsulation cannot target elements injected via innerHTML because they lack the scoping attributes generated at compile time.
+  // ::ng-deep allows styles to reach into the injected HTML, while :host keeps them scoped to this component.
   styles: [
     `
-      .a2ui-text p,
-      .a2ui-text h1,
-      .a2ui-text h2,
-      .a2ui-text h3,
-      .a2ui-text h4,
-      .a2ui-text h5,
-      .a2ui-text h6,
-      .a2ui-text ol,
-      .a2ui-text ul,
-      .a2ui-text li,
-      .a2ui-text blockquote,
-      .a2ui-text pre {
+      :host ::ng-deep .a2ui-text p,
+      :host ::ng-deep .a2ui-text h1,
+      :host ::ng-deep .a2ui-text h2,
+      :host ::ng-deep .a2ui-text h3,
+      :host ::ng-deep .a2ui-text h4,
+      :host ::ng-deep .a2ui-text h5,
+      :host ::ng-deep .a2ui-text h6,
+      :host ::ng-deep .a2ui-text ol,
+      :host ::ng-deep .a2ui-text ul,
+      :host ::ng-deep .a2ui-text li,
+      :host ::ng-deep .a2ui-text blockquote,
+      :host ::ng-deep .a2ui-text pre {
         margin: var(--_a2ui-text-margin, 0);
       }
     `,
