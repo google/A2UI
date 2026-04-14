@@ -76,6 +76,7 @@ export class McpApp extends Root {
         <iframe
           id="mcp-sandbox"
           referrerpolicy="origin"
+          sandbox="allow-scripts allow-same-origin"
         ></iframe>
       </div>
     `;
