@@ -35,10 +35,26 @@
             "id": "temp-row",
             "component": "Row",
             "children": [
-              "temp-high",
-              "temp-low"
+              "high-group",
+              "low-group"
             ],
-            "align": "start"
+            "align": "center",
+            "justify": "center"
+          },
+          {
+            "id": "high-group",
+            "component": "Column",
+            "children": [
+              "high-label",
+              "temp-high"
+            ],
+            "align": "center"
+          },
+          {
+            "id": "high-label",
+            "component": "Text",
+            "text": "High",
+            "variant": "caption"
           },
           {
             "id": "temp-high",
@@ -53,6 +69,21 @@
             "variant": "h1"
           },
           {
+            "id": "low-group",
+            "component": "Column",
+            "children": [
+              "low-label",
+              "temp-low"
+            ],
+            "align": "center"
+          },
+          {
+            "id": "low-label",
+            "component": "Text",
+            "text": "Low",
+            "variant": "caption"
+          },
+          {
             "id": "temp-low",
             "component": "Text",
             "text": {
@@ -62,7 +93,7 @@
               },
               "returnType": "string"
             },
-            "variant": "h2"
+            "variant": "h1"
           },
           {
             "id": "location",
@@ -78,7 +109,7 @@
             "text": {
               "path": "/description"
             },
-            "variant": "caption"
+            "variant": "body"
           },
           {
             "id": "forecast-row",
@@ -87,7 +118,8 @@
               "path": "/forecast",
               "componentId": "forecast-day-template"
             },
-            "justify": "spaceAround"
+            "justify": "spaceAround",
+            "align": "center"
           },
           {
             "id": "forecast-day-template",
@@ -132,7 +164,7 @@
               },
               "returnType": "string"
             },
-            "variant": "caption"
+            "variant": "body"
           }
         ]
       }

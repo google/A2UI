@@ -30,7 +30,8 @@
               "divider",
               "message",
               "actions"
-            ]
+            ],
+            "align": "stretch"
           },
           {
             "id": "from-row",
@@ -39,8 +40,7 @@
               "from-label",
               "from-value"
             ],
-            "align": "center"
-          },
+            "align": "center"},
           {
             "id": "from-label",
             "component": "Text",
@@ -62,8 +62,7 @@
               "to-label",
               "to-value"
             ],
-            "align": "center"
-          },
+            "align": "center"},
           {
             "id": "to-label",
             "component": "Text",
@@ -85,8 +84,7 @@
               "subject-label",
               "subject-value"
             ],
-            "align": "center"
-          },
+            "align": "center"},
           {
             "id": "subject-label",
             "component": "Text",

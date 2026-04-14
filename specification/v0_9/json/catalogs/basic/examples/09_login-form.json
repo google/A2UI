@@ -173,8 +173,8 @@
             "id": "signup-text",
             "component": "Row",
             "children": ["no-account", "signup-link"],
-            "justify": "center"
-          },
+            "justify": "center",
+            "align": "center"},
           {
             "id": "no-account",
             "component": "Text",
@@ -190,6 +190,7 @@
             "id": "signup-link",
             "component": "Button",
             "child": "signup-link-text",
+            "variant": "borderless",
             "action": {
               "event": {
                 "name": "signup",

@@ -28,8 +28,7 @@
               "content",
               "priority"
             ],
-            "align": "start"
-          },
+            "align": "start"},
           {
             "id": "status-checkbox",
             "component": "CheckBox",
@@ -70,12 +69,11 @@
               "due-date-input",
               "project"
             ],
-            "align": "center"
-          },
+            "align": "center"},
           {
             "id": "due-date-input",
             "component": "DateTimeInput",
-            "label": "Due",
+            "label": "DUE DATE",
             "value": {
               "path": "/dueDate"
             },
@@ -108,7 +106,7 @@
           "completed": false,
           "title": "Review pull request",
           "description": "Review and approve the authentication module changes.",
-          "dueDate": "2025-12-15T17:00:00Z",
+          "dueDate": "2025-12-15T17:00",
           "project": "Backend",
           "priorityIcon": "priority_high"
         }
