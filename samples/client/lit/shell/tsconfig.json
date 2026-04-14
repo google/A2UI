@@ -8,7 +8,6 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
-    // "allowJs": true,
     "preserveWatchOutput": true,
     "sourceMap": true,
     "target": "es2022",

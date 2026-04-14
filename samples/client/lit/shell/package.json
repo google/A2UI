@@ -1,8 +1,8 @@
 {
-  "name": "@a2ui/shell_v0_9",
+  "name": "@a2ui/shell",
   "private": true,
   "version": "0.9.0",
-  "description": "A2UI Universal Shell (v0.9)",
+  "description": "A2UI Universal Shell (Protocol v0.9)",
   "main": "./dist/shell.js",
   "types": "./dist/shell.d.ts",
   "type": "module",
@@ -55,7 +55,7 @@
     }
   },
   "repository": {
-    "directory": "samples/client/lit/shell_v0_9",
+    "directory": "samples/client/lit/shell",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
