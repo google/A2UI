@@ -16,8 +16,8 @@
 
 import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-
 import { fileURLToPath } from 'node:url';
+import { getPackageGraph } from './lib/workspace.mjs';
 
 // This script prepares a package for publishing.
 // Arguments:
@@ -46,19 +46,22 @@ if (!existsSync(resolvedDistDir)) {
   mkdirSync(resolvedDistDir, { recursive: true });
 }
 
-// 1. Get current @a2ui/web_core version
-const corePkgPath = join(rootDir, 'renderers/web_core/package.json');
-const coreVersion = JSON.parse(readFileSync(corePkgPath, 'utf8')).version;
-
+const graph = getPackageGraph();
 const pkg = JSON.parse(readFileSync(resolvedSourcePkg, 'utf8'));
 
-// 2. Update @a2ui/web_core dependency
-if (pkg.dependencies && pkg.dependencies['@a2ui/web_core']) {
-  pkg.dependencies['@a2ui/web_core'] = '^' + coreVersion;
-}
-if (pkg.peerDependencies && pkg.peerDependencies['@a2ui/web_core']) {
-  pkg.peerDependencies['@a2ui/web_core'] = '^' + coreVersion;
-}
+// 2. Update internal @a2ui dependencies
+const updateInternalDeps = (deps) => {
+  if (!deps) return;
+  for (const name in deps) {
+    const version = deps[name];
+    if (version.startsWith('file:') && graph[name]) {
+      deps[name] = '^' + graph[name].version;
+    }
+  }
+};
+
+updateInternalDeps(pkg.dependencies);
+updateInternalDeps(pkg.peerDependencies);
 
 // 3. Adjust paths
 if (!skipPathAdjustment) {

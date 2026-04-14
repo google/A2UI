@@ -83,7 +83,7 @@ npm run publish:package
 **What happens during `npm run publish:package`?**
 Before publishing, the script runs the necessary `build` command which processes the code. Then, a preparation script (usually `prepare-publish.mjs`) runs, which:
 1. Copies `package.json`, `README.md`, and `LICENSE` to the `dist/` folder.
-2. If it's a renderer, it reads the `version` from `@a2ui/web_core` and updates the `file:` dependency in the `dist/package.json` to the actual core version (e.g., `^0.9.0`).
+2. It scans all dependencies and peerDependencies for internal `@a2ui/` packages (those using `file:` links) and updates them to the actual current versions in the mono-repo (e.g., `^0.9.0`).
 3. Adjusts exports and paths (removing the `./dist/` prefix) so they are correct when consumed from the package root.
 4. Removes any build scripts (`prepublishOnly`, `scripts`, `wireit`) so they don't interfere with the publish process.
 
