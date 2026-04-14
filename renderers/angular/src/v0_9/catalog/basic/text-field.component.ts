@@ -67,6 +67,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       label {
         font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
         font-weight: var(--a2ui-textfield-label-font-weight, bold);
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       input {
         padding: var(--a2ui-textfield-padding, 8px);

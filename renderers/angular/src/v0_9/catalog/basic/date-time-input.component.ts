@@ -75,7 +75,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       .a2ui-date-time-label {
         font-size: var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
         font-weight: var(--a2ui-datetimeinput-label-font-weight, bold);
-        color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-date-time-inputs {
         display: flex;

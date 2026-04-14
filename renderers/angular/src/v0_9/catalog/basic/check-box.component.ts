@@ -59,6 +59,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         cursor: pointer;
         padding: 4px 0;
         margin: var(--a2ui-checkbox-margin, var(--a2ui-spacing-m, 16px));
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-check-box-input {
         width: var(--a2ui-checkbox-size, 1rem);

@@ -62,7 +62,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         margin: var(--_a2ui-text-margin, 0);
       }
       :host ::ng-deep .a2ui-text {
-        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background));
+        color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
       }
       :host ::ng-deep .a2ui-text h1,
       :host ::ng-deep .a2ui-text h2,

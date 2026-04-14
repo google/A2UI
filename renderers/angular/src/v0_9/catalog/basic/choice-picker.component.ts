@@ -89,6 +89,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         align-items: center;
         gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
         cursor: pointer;
+        color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
       .a2ui-option-input {
         width: var(--a2ui-choicepicker-checkbox-size, 1rem);

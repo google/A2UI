@@ -74,10 +74,13 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         box-shadow: var(--a2ui-button-box-shadow, none);
         font-weight: var(--a2ui-button-font-weight, normal);
         --_a2ui-text-margin: 0;
+        --_a2ui-text-color: var(--a2ui-color-on-secondary, #333);
+        color: var(--_a2ui-text-color);
       }
       .a2ui-button.primary {
         background-color: var(--a2ui-color-primary, #17e);
-        color: var(--a2ui-color-on-primary, #fff);
+        --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
+        color: var(--_a2ui-text-color);
         border-color: var(--a2ui-color-primary-hover, #0069d9);
       }
       .a2ui-button.borderless {

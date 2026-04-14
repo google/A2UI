@@ -37,7 +37,6 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
   host: {
     '[style.display]': '"flex"',
     '[style.flex-direction]': '"row"',
-    '[style.width]': '"100%"',
     '[style.gap]': '"var(--a2ui-row-gap, var(--a2ui-spacing-m, 16px))"',
     '[style.justify-content]': 'justify()',
     '[style.align-items]': 'align()'
@@ -48,7 +47,6 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
           <a2ui-v09-component-host
             [componentKey]="child"
             [surfaceId]="surfaceId()"
-            style="display: flex;"
           >
           </a2ui-v09-component-host>
         }
@@ -59,7 +57,6 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
           <a2ui-v09-component-host
             [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
             [surfaceId]="surfaceId()"
-            style="display: flex;"
           >
           </a2ui-v09-component-host>
         }
@@ -83,11 +80,11 @@ export class RowComponent extends BasicCatalogComponent {
 
   protected justify = computed(() => {
     const val = this.props()['justify']?.value();
-    return JUSTIFY_MAP[val] || val || 'flex-start';
+    return val ? (JUSTIFY_MAP[val] || val) : undefined;
   });
   protected align = computed(() => {
     const val = this.props()['align']?.value();
-    return ALIGN_MAP[val] || val || 'stretch';
+    return val ? (ALIGN_MAP[val] || val) : undefined;
   });
 
   protected children = computed(() => {
