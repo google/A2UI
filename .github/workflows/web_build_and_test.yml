@@ -52,7 +52,7 @@ jobs:
       - name: Test web_core
         working-directory: ./renderers/web_core
         run: npm run test
-  test-scripts:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
