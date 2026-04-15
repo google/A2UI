@@ -31,6 +31,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   let autoYes = false;
   let dryRun = false;
   let skipTests = false;
+  let testOnly = false;
 
   for (const arg of args) {
     if (arg.startsWith('--packages=')) {
@@ -43,11 +44,13 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
       dryRun = true;
     } else if (arg === '--skip-tests') {
       skipTests = true;
+    } else if (arg === '--test-only') {
+      testOnly = true;
     }
   }
 
   if (packagesToPublish.length === 0) {
-    throw new Error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests]');
+    throw new Error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests] [--test-only]');
   }
 
   const graph = getPackageGraph();
@@ -234,6 +237,11 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
       if (dryRun) console.log(`[DRY RUN] Would execute: npm run ${testScript} in ${pkg.dir}`);
       else runCmd('npm', ['run', testScript], { cwd: pkg.dir });
     }
+  }
+
+  if (testOnly) {
+    console.log('\n[TEST ONLY] Build and tests completed successfully. Skipping publish phase.');
+    return;
   }
 
   console.log('\n--- Proceeding to publish ---');

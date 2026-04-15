@@ -70,4 +70,32 @@ describe('publish_npm script integration test', () => {
     assert.ok(webCorePublishIndex < litPublishIndex, 'web_core must be published before lit');
     assert.ok(markdownItPublishIndex < litPublishIndex, 'markdown-it must be published before lit');
   });
+
+  it('should skip publishing when --test-only is provided', async () => {
+    const executedCommands = [];
+
+    function mockRunCommand(cmd, args, options) {
+      executedCommands.push(`${cmd} ${args.join(' ')}`);
+    }
+
+    function mockExecSync(cmd) {
+      if (cmd.includes('npm view')) return '0.0.1\n';
+      return '';
+    }
+
+    await runPublish(
+      ['--packages=web_core', '--yes', '--test-only'],
+      mockRunCommand,
+      mockExecSync,
+      null
+    );
+
+    const hasInstall = executedCommands.some(cmd => cmd.includes('npm install'));
+    const hasTest = executedCommands.some(cmd => cmd.includes('npm run test'));
+    const hasPublish = executedCommands.some(cmd => cmd.includes('publish:package'));
+
+    assert.ok(hasInstall, 'Should run npm install');
+    assert.ok(hasTest, 'Should run npm test');
+    assert.strictEqual(hasPublish, false, 'Should NOT run publish:package');
+  });
 });

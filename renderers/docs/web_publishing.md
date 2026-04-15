@@ -44,6 +44,7 @@ This script will:
 - `--yes`: Bypasses the manual user confirmation prompt (useful for CI).
 - `--dry-run`: Simulates the process, printing the commands it *would* execute without actually running them.
 - `--skip-tests`: Skips the `npm run test` phase before publishing.
+- `--test-only`: Runs the full build and test suite in topological order, but skips the final `npm run publish:package` step. Useful for verifying that packages build and tests pass before performing a real release.
 
 ### 3. Upload Manifest
 
@@ -53,7 +54,25 @@ Finally, trigger the public release to npmjs.com by uploading a manifest file:
 ./renderers/scripts/upload_manifest.mjs
 ```
 
-This generates a `manifest.json` with the current versions of all renderer packages and uploads it to GCS to trigger the internal release infrastructure.
+This generates a `manifest.json` with the current versions of all renderer packages and uploads it to GCS to trigger the internal release infrastructure. You should receive an email from exit-gate noting that publishing has commenced.
+
+#### Manual alternative
+
+You can also do this step manually, if you are authenticated with `gcloud` with a corporate Google account in the correct groups:
+
+1. Create a new manifest.json file with these contents:
+   ```json
+   {
+     "publish_all": true
+   }
+   ```
+
+2. Upload the file
+
+   ```sh
+   gcloud storage cp manifest.json gs://oss-exit-gate-prod-projects-bucket/a2ui/npm/manifests/manifest.json
+   ```
+
 ---
 
 ## Internal Release Process
