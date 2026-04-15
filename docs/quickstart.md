@@ -201,7 +201,8 @@ The repository includes several other demos:
 See all available A2UI components:
 
 ```bash
-npm run demo:gallery09
+cd ../../../renderers/lit
+npm run demo
 ```
 
 This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.
