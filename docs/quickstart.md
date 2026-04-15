@@ -62,6 +62,24 @@ This command will:
 4. Launch the development server
 5. Open your browser to `http://localhost:5173`
 
+The source code for the Restaurant Finder agent is located in [`samples/agent/adk/restaurant_finder`](../samples/agent/adk/restaurant_finder).
+
+### Running Manually (Alternative)
+
+If you prefer to run the agent and client in separate terminals, or need to troubleshoot:
+
+**1. Run the Agent:**
+```bash
+cd samples/agent/adk/restaurant_finder
+uv run .
+```
+
+**2. Run the Client:**
+```bash
+cd samples/client/lit/shell
+npm run dev
+```
+
 NOTE: Demo Running
 
 If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
