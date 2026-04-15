@@ -29,6 +29,11 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
     uv run .
     ```
 
+4. In other terminal window verify that the agent is available via a2a:
+
+    ```bash
+    curl http://localhost:10002/.well-known/agent-card.json
+    ```
 
 ## Disclaimer
 
