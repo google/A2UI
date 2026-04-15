@@ -258,7 +258,7 @@ user's request, client capabilities, or conversational context. This is common
 for dashboard-style agents that support multiple distinct visualization types (
 e.g., Charts vs. Maps).
 
-**Example Sample:** [rizzcharts](../../../samples/agent/adk/rizzcharts)
+**Example Sample:** [rizzcharts](../../../samples/agent/adk/rizzcharts/python)
 
 #### 2a. Injecting Catalogs into Session State
 
