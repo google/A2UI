@@ -12,10 +12,10 @@ A2UI uses an **adjacency list model** for component hierarchies. Instead of nest
 
 **A2UI adjacency list:**
 
-- ✅ Flat structure, easy for LLMs to generate
-- ✅ Send components incrementally
-- ✅ Update any component by ID
-- ✅ Clear separation of structure and data
+- Flat structure, easy for LLMs to generate.
+- Send components incrementally.
+- Update any component by ID.
+- Clear separation of structure and data.
 
 ## The Adjacency List Model
 
@@ -171,7 +171,7 @@ Every component has:
 
 ## The Basic Catalog
 
-To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../specification/v0_9/json/basic_catalog.json).
+To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
 
 This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.
 
@@ -232,6 +232,8 @@ Components compose into **surfaces** (widgets):
 A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
 
 ## Incremental Updates
+
+Incremental updates support the following operations:
 
 - **Add** - Send new component definitions with new IDs
 - **Update** - Send component definitions with existing ID and new properties

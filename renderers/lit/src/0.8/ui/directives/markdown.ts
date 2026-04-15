@@ -61,13 +61,22 @@ class MarkdownDirective extends Directive {
       return until(rendered, html`<span class="no-markdown-renderer">${value}</span>`);
     }
 
-    if (!MarkdownDirective.defaultMarkdownWarningLogged) {
-      console.warn("[MarkdownDirective]",
-        "can't render markdown because no markdown renderer is configured.\n",
-        "Use `@a2ui/markdown-it`, or your own markdown renderer.");
-      MarkdownDirective.defaultMarkdownWarningLogged = true;
-    }
-    return html`<span class="no-markdown-renderer">${value}</span>`;
+    const dynamicRendererPromise = (async () => {
+      try {
+        // @ts-ignore - optional peer dependency
+        const { renderMarkdown } = await import('@a2ui/markdown-it');
+        const rendered = await renderMarkdown(value, markdownOptions);
+        return unsafeHTML(rendered);
+      } catch (e) {
+        if (!MarkdownDirective.defaultMarkdownWarningLogged) {
+          console.warn("[MarkdownDirective] Failed to load optional `@a2ui/markdown-it` renderer. Using fallback regex.");
+          MarkdownDirective.defaultMarkdownWarningLogged = true;
+        }
+        return html`<span class="no-markdown-renderer">${value}</span>`;
+      }
+    })();
+
+    return until(dynamicRendererPromise, html`<span class="no-markdown-renderer">${value}</span>`);
   }
 }
 

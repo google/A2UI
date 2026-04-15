@@ -19,10 +19,8 @@ import { Text } from './text';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
 import { MarkdownRenderer } from '../data/markdown';
 import { By } from '@angular/platform-browser';
-import { ChangeDetectionStrategy } from '@angular/core';
 
 describe('Text Component', () => {
   let component: Text;

@@ -63,7 +63,7 @@ if (!disableSelfTest) {
 // iframe on a separate origin. It creates an inner iframe for untrusted HTML content.
 const inner = document.createElement("iframe");
 inner.style.cssText = "width:100%; height:100%; border:none;";
-inner.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms");
+inner.setAttribute("sandbox", "allow-scripts allow-forms allow-popups allow-modals");
 document.body.appendChild(inner);
 
 const RESOURCE_READY_NOTIFICATION: McpUiSandboxResourceReadyNotification["method"] =

@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {ImageApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
-export const Image = createReactComponent(ImageApi, ({props}) => {
+export const Image = createComponentImplementation(ImageApi, ({props}) => {
   const mapFit = (fit?: string): React.CSSProperties['objectFit'] => {
     if (fit === 'scaleDown') return 'scale-down';
     return (fit as React.CSSProperties['objectFit']) || 'fill';

@@ -223,8 +223,8 @@
       "path": "/",
       "value": {
         "title": "Top Restaurants",
-        "items": {
-          "item1": {
+        "items": [
+          {
             "name": "The Fancy Place",
             "rating": 4.8,
             "detail": "Fine dining experience",
@@ -232,7 +232,7 @@
             "imageUrl": "https://example.com/fancy.jpg",
             "address": "123 Main St"
           },
-          "item2": {
+          {
             "name": "Quick Bites",
             "rating": 4.2,
             "detail": "Casual and fast",
@@ -240,7 +240,7 @@
             "imageUrl": "https://example.com/quick.jpg",
             "address": "456 Oak Ave"
           }
-        }
+        ]
       }
     }
   }
