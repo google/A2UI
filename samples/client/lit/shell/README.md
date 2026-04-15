@@ -23,12 +23,7 @@ Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/REA
 (cd samples/client/lit/shell/; npm i; npm run dev);
 ```
 
-If you hit errors around NPM install:
-
-```
-rm -r samples/client/lit/node_modules
-rm samples/client/lit/package-lock.json
-```
+If you hit errors around `npm i` remove the directory `node_modules` and the file `package-lock.json`.
 
 ### Open UI
 
