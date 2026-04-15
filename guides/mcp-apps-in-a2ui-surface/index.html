@@ -653,18 +653,44 @@
       
     </span>
 </a>
+<nav aria-label="2. MCP Apps (Calculator + Pong) (Angular)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-3-open-in-browser">
+<span class="md-ellipsis">
+      
+        Step 3: Open in Browser
+      
+    </span>
+</a>
 </li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#url-options-for-testing">
+<a class="md-nav__link" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">
 <span class="md-ellipsis">
       
-        URL Options for Testing
+        Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
       
     </span>
 </a>
+<nav aria-label="Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-start-the-mcp-server-calculator">
+<span class="md-ellipsis">
+      
+        Step 1: Start the MCP Server (Calculator)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -1113,18 +1139,44 @@
       
     </span>
 </a>
+<nav aria-label="2. MCP Apps (Calculator + Pong) (Angular)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-3-open-in-browser">
+<span class="md-ellipsis">
+      
+        Step 3: Open in Browser
+      
+    </span>
+</a>
 </li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#url-options-for-testing">
+<a class="md-nav__link" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">
 <span class="md-ellipsis">
       
-        URL Options for Testing
+        Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
       
     </span>
 </a>
+<nav aria-label="Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-start-the-mcp-server-calculator">
+<span class="md-ellipsis">
+      
+        Step 1: Start the MCP Server (Calculator)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -1168,6 +1220,7 @@
 </blockquote>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
 <p>The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.</p>
+<p><img alt="MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent" src="../assets/mcp-apps-calculator-demo.gif" width="640"/></p>
 <h2 id="double-iframe-isolation-pattern">Double-Iframe Isolation Pattern<a class="headerlink" href="#double-iframe-isolation-pattern" title="Permanent link">¶</a></h2>
 <p>To run untrusted third-party code securely, A2UI utilizes a <strong>double-iframe</strong> isolation pattern. This approach isolates raw DOM injection from the main application while maintaining a structured JSON-RPC channel.</p>
 <h3 id="security-rationale">Security Rationale<a class="headerlink" href="#security-rationale" title="Permanent link">¶</a></h3>
@@ -1176,7 +1229,7 @@
 <h3 id="the-architecture">The Architecture<a class="headerlink" href="#the-architecture" title="Permanent link">¶</a></h3>
 <ol>
 <li><strong><a href="https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html">Sandbox Proxy (<code>sandbox.html</code>)</a></strong>: An intermediate <code>iframe</code> served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.<ul>
-<li>Permissions: <strong>Do not sandbox</strong> in the host template (e.g., <a href="https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts"><code>mcp-app.ts</code></a> or <a href="https://github.com/google/A2UI/blob/main/samples/client/lit/contact/ui/custom-components/mcp-apps-component.ts"><code>mcp-apps-component.ts</code></a>).</li>
+<li>Permissions: <strong>Do not sandbox</strong> in the host template (e.g., <a href="https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts"><code>mcp-app.ts</code></a> or <a href="https://github.com/google/A2UI/blob/main/samples/client/lit/custom-components-example/ui/custom-components/mcp-apps-component.ts"><code>mcp-apps-component.ts</code></a>).</li>
 <li>Host origin validation: Validates that messages come from the expected host origin.</li>
 </ul>
 </li>
@@ -1250,11 +1303,25 @@
 -   The MCP app <strong>cannot</strong> use <code>localStorage</code>, <code>sessionStorage</code>, <code>IndexedDB</code>, or cookies. Each application runs with a unique origin.
 -   Direct DOM manipulation by the parent is blocked. All interactions must proceed via message passing.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
-<p>To run the samples, ensure you have the following installed:
--   <strong>Python (uv)</strong> (version 3.12 or higher suggested)
--   <strong>Node.js (npm)</strong> (version 18 or higher recommended)</p>
+<p>To run the samples, ensure you have the following installed:</p>
+<ul>
+<li><strong>Python 3.10+</strong> — Required for the agent and MCP server backends</li>
+<li><strong><a href="https://docs.astral.sh/uv/">uv</a></strong> — Fast Python package manager (used to run all Python samples)</li>
+<li><strong>Node.js 18+</strong> and <strong>npm</strong> — Required for building and running the client apps</li>
+<li><strong>A <code>GEMINI_API_KEY</code></strong> — Required by all ADK-based agents. Get one from <a href="https://aistudio.google.com/apikey">Google AI Studio</a></li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>Environment variable setup</strong>: You can either export <code>GEMINI_API_KEY</code> in your shell or create a <code>.env</code> file in each agent directory. The agents use <code>dotenv</code> to load <code>.env</code> files automatically.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Option 1: Export in shell</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GEMINI_API_KEY</span><span class="o">=</span><span class="s2">"your-api-key-here"</span>
+</span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1"># Option 2: Create .env file in the agent directory</span>
+</span><span id="__span-3-5"><a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'GEMINI_API_KEY=your-api-key-here'</span><span class="w"> </span>&gt;<span class="w"> </span>.env
+</span></code></pre></div>
+</blockquote>
 <h2 id="samples">Samples<a class="headerlink" href="#samples" title="Permanent link">¶</a></h2>
-<p>There are two primary samples demonstrating MCP Apps integration:</p>
+<p>There are two primary samples demonstrating MCP Apps integration. Each sample requires running <strong>multiple terminals</strong> — one for each backend service and one for the client.</p>
+<hr/>
 <h3 id="1-mcp-app-standalone-sample-lit-adk-agent">1. MCP App Standalone Sample (Lit &amp; ADK Agent)<a class="headerlink" href="#1-mcp-app-standalone-sample-lit-adk-agent" title="Permanent link">¶</a></h3>
 <p>This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.</p>
 <ul>
@@ -1265,32 +1332,87 @@
 </li>
 <li><strong>Lit Client App</strong>:<ul>
 <li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/"><code>samples/client/lit/mcp-apps-in-a2ui-sample/</code></a></li>
-<li>Command: <code>npm run dev</code> (requires building the Lit renderer first)</li>
+<li>Command: <code>npm install &amp;&amp; npm run dev</code> (requires building the Lit renderer first)</li>
 <li>URL: <code>http://localhost:5173/</code></li>
 </ul>
 </li>
 </ul>
 <p><strong>What to expect</strong>: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.</p>
 <h3 id="2-mcp-apps-calculator-pong-angular">2. MCP Apps (Calculator + Pong) (Angular)<a class="headerlink" href="#2-mcp-apps-calculator-pong-angular" title="Permanent link">¶</a></h3>
-<p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.</p>
-<ul>
-<li><strong>MCP Server (Calculator)</strong>:<ul>
-<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/mcp/mcp-apps-calculator/"><code>samples/agent/mcp/mcp-apps-calculator/</code></a></li>
-<li>Command: <code>uv run .</code> (runs on port 8000)</li>
-</ul>
-</li>
-<li><strong>MCP Apps Proxy Agent</strong>:<ul>
-<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp_app_proxy/"><code>samples/agent/adk/mcp_app_proxy/</code></a></li>
-<li>Command: <code>uv run .</code> (requires <code>GEMINI_API_KEY</code> in <code>.env</code>)</li>
-</ul>
-</li>
-<li><strong>Angular Client App</strong>:<ul>
-<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/angular/"><code>samples/client/angular/</code></a></li>
-<li>Command: <code>npm start -- mcp_calculator</code> (requires <code>npm run build:sandbox</code> and <code>npm install</code>)</li>
-<li>URL: <code>http://localhost:4200/?disable_security_self_test=true</code></li>
-</ul>
-</li>
-</ul>
+<h4 id="step-3-open-in-browser">Step 3: Open in Browser<a class="headerlink" href="#step-3-open-in-browser" title="Permanent link">¶</a></h4>
+<p>Open your browser and navigate to <code>http://localhost:5173</code>. You should see the A2UI interface loading the MCP App.</p>
+<p><strong>What to expect</strong>: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.</p>
+<hr/>
+<h3 id="sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)<a class="headerlink" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent" title="Permanent link">¶</a></h3>
+<p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires <strong>three</strong> backend processes.</p>
+<h4 id="step-1-start-the-mcp-server-calculator">Step 1: Start the MCP Server (Calculator)<a class="headerlink" href="#step-1-start-the-mcp-server-calculator" title="Permanent link">¶</a></h4>
+<h1 id="cd-samplesagentmcpmcp-apps-calculator-uv-run"><div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/mcp/mcp-apps-calculator/
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div><a class="headerlink" href="#cd-samplesagentmcpmcp-apps-calculator-uv-run" title="Permanent link">¶</a></h1>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">cd</span><span class="w"> </span>samples/client/lit/mcp-apps-in-a2ui-sample
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>npm<span class="w"> </span>install
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+</span></code></pre></div>
+<p>The client starts at <code>http://localhost:5173/</code>.</p>
+<h4 id="step-2-start-the-agent">Step 2: Start the Agent<a class="headerlink" href="#step-2-start-the-agent" title="Permanent link">¶</a></h4>
+<p>In a separate terminal, navigate to the agent directory and start the agent:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/adk/mcp-apps-in-a2ui-sample
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>uv<span class="w"> </span>run<span class="w"> </span>agent.py
+</span></code></pre></div>
+<p>The agent will run on <code>http://localhost:8000</code>.</p>
+<h4 id="step-3-open-in-browser_1">Step 3: Open in Browser<a class="headerlink" href="#step-3-open-in-browser_1" title="Permanent link">¶</a></h4>
+<p>Open your browser and navigate to <code>http://localhost:5173</code>. You should see the A2UI interface loading the MCP App.</p>
+<p><strong>What to expect</strong>: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.</p>
+<hr/>
+<h3 id="sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent_1">Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)<a class="headerlink" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent_1" title="Permanent link">¶</a></h3>
+<p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires <strong>three</strong> backend processes.</p>
+<h4 id="step-1-start-the-mcp-server-calculator_1">Step 1: Start the MCP Server (Calculator)<a class="headerlink" href="#step-1-start-the-mcp-server-calculator_1" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/mcp/mcp-apps-calculator/
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>e3c17f1f (docs: add npm install step to MCP guide)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>The MCP server starts on <code>http://localhost:8000</code> using SSE transport.</p>
+<h4 id="step-2-start-the-mcp-apps-proxy-agent">Step 2: Start the MCP Apps Proxy Agent<a class="headerlink" href="#step-2-start-the-mcp-apps-proxy-agent" title="Permanent link">¶</a></h4>
+<p>In a <strong>new terminal</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/adk/mcp_app_proxy/
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GEMINI_API_KEY</span><span class="o">=</span><span class="s2">"your-key"</span><span class="w">  </span><span class="c1"># or use a .env file</span>
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div>
+<p>The proxy agent starts on <code>http://localhost:10006</code> by default.</p>
+<h4 id="step-3-build-and-start-the-angular-client">Step 3: Build and Start the Angular Client<a class="headerlink" href="#step-3-build-and-start-the-angular-client" title="Permanent link">¶</a></h4>
+<p>In a <strong>new terminal</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>samples/client/angular/
+</span><span id="__span-9-2"><a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="c1"># Build the renderers (required — Angular depends on local renderer packages)</span>
+</span><span id="__span-9-4"><a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a>npm<span class="w"> </span>run<span class="w"> </span>build:renderer
+</span><span id="__span-9-5"><a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a>npm<span class="w"> </span>install<span class="w"> </span>--include<span class="o">=</span>dev
+</span><span id="__span-9-7"><a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a>npm<span class="w"> </span>run<span class="w"> </span>build:sandbox
+</span><span id="__span-9-8"><a href="#__codelineno-9-8" id="__codelineno-9-8" name="__codelineno-9-8"></a>npm<span class="w"> </span>start<span class="w"> </span>--<span class="w"> </span>mcp_calculator
+</span></code></pre></div>
+<blockquote>
+<p>⚠️ <strong><code>--include=dev</code> is required</strong>: The Angular CLI (<code>@angular/cli</code>) is a dev dependency. Without <code>--include=dev</code>, <code>ng serve</code> won't be available.</p>
+<p>⚠️ <strong><code>build:renderer</code> and <code>build:sandbox</code> are both required</strong>: <code>build:renderer</code> compiles the A2UI renderer packages that the Angular app depends on. <code>build:sandbox</code> bundles the sandbox proxy into the Angular project's public assets. Without either, the app won't work.</p>
+</blockquote>
+<p>The client starts at <code>http://localhost:4200/</code>.</p>
+<h4 id="step-4-open-in-browser">Step 4: Open in Browser<a class="headerlink" href="#step-4-open-in-browser" title="Permanent link">¶</a></h4>
+<p>Navigate to:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>http://localhost:4200/?disable_security_self_test=true
+</span></code></pre></div>
 <p><strong>What to expect</strong>: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.</p>
 <table>
 <thead>
@@ -1306,12 +1428,57 @@
 </tr>
 </tbody>
 </table>
+<hr/>
 <h2 id="url-options-for-testing">URL Options for Testing<a class="headerlink" href="#url-options-for-testing" title="Permanent link">¶</a></h2>
 <p>For testing purposes, you can opt-out of the security self-test by using specific URL query parameters.</p>
-<p><code>disable_security_self_test=true</code></p>
-<p>This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments.</p>
+<h3 id="disable_security_self_testtrue"><code>disable_security_self_test=true</code><a class="headerlink" href="#disable_security_self_testtrue" title="Permanent link">¶</a></h3>
+<p>This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments where the double-iframe setup may not pass strict origin checks (e.g., <code>localhost</code> development).</p>
 <p>Example usage:
-<code>http://localhost:4200/?disable_security_self_test=true</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a>http://localhost:4200/?disable_security_self_test=true
+</span></code></pre></div></p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GEMINI_API_KEY environment variable not set</code></td>
+<td>Export the key or add a <code>.env</code> file in the agent directory</td>
+</tr>
+<tr>
+<td>Python version error on <code>contact_lookup</code> agent</td>
+<td>Install Python 3.13+ (required by that sample's <code>pyproject.toml</code>)</td>
+</tr>
+<tr>
+<td><code>npm run build:renderer</code> fails</td>
+<td>Make sure you ran <code>npm install</code> first in <code>samples/client/lit/</code></td>
+</tr>
+<tr>
+<td>Angular client shows blank page</td>
+<td>Ensure you ran <code>npm run build:sandbox</code> before <code>npm start</code></td>
+</tr>
+<tr>
+<td>MCP app iframe doesn't load</td>
+<td>Check that both the MCP server (port 8000) and proxy agent (port 10006) are running</td>
+</tr>
+<tr>
+<td><code>ng serve</code> not found</td>
+<td>Run <code>npm install --include=dev</code> to install dev dependencies including <code>@angular/cli</code></td>
+</tr>
+<tr>
+<td>"URL with hostname not allowed"</td>
+<td>Angular 21 restricts allowed hosts. Use <code>localhost</code> (the default) — do not pass <code>--host 0.0.0.0</code></td>
+</tr>
+<tr>
+<td>Security self-test fails in dev</td>
+<td>Add <code>?disable_security_self_test=true</code> to the URL</td>
+</tr>
+</tbody>
+</table>
 </article>
 </div>
 <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
