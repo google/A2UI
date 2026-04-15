@@ -6,9 +6,9 @@ This document outlines the required features for a new renderer implementation o
 >
 > This guide primarily describes the v0.8 message flow. v0.9 renames several messages (`surfaceUpdate` → `updateComponents`, `dataModelUpdate` → `updateDataModel`, `beginRendering` → `createSurface`) and uses a flatter component format. See the [v0.9 specification](../specification/v0.9-a2ui.md) for details.
 
-## Web Renderers: Use `@a2ui/web-lib` (`web_core`)
+## Web Renderers: Use `@a2ui/web_core` (`web_core`)
 
-If you're building a renderer for the web (React, Vue, Svelte, etc.), you don't need to implement message processing, state management, or schema validation from scratch. The **[`@a2ui/web-lib`](https://github.com/google/A2UI/tree/main/renderers/web_core)** package (`web_core`) provides all the framework-agnostic logic that the maintained Lit, Angular, and React renderers share.
+If you're building a renderer for the web (React, Vue, Svelte, etc.), you don't need to implement message processing, state management, or schema validation from scratch. The **[`@a2ui/web_core`](https://github.com/google/A2UI/tree/main/renderers/web_core)** package (`web_core`) provides all the framework-agnostic logic that the maintained Lit, Angular, and React renderers share.
 
 ### What `web_core` provides
 

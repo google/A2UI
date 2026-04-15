@@ -9,37 +9,26 @@ This is a UI to generate and visualize A2UI responses.
 
 ## Running
 
-### Configure Gemini API Key
+### Run agent
 
-This step is **required** for the backend to work.
+Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/README.md) to run agent.
 
-- Navigate to the respective agent directory (e.g., `samples/agent/adk/restaurant_finder`
-  or `samples/agent/adk/contact_lookup`).
-- Copy `.env.example` to `.env` and set your `GEMINI_API_KEY`.
+### Build dependencies and run client application
 
-(More details can be found in the READMEs of the [agent samples](/samples/agent/adk).)
+Run from the root of the repository:
 
-### Run the Demo and Servers
+```bash
+(cd renderers/web_core/ && npm i && npm run build) && \
+(cd renderers/markdown/markdown-it/ && npm i && npm run build) && \
+(cd renderers/lit/ && npm i && npm run build) && \
+(cd samples/client/lit/shell/ && npm i && npm run dev)
+```
 
-From the `samples/client/lit` directory:
+If you hit errors around `npm i` remove the directory `node_modules` and the file `package-lock.json`.
 
-- Run the **Restaurant Finder** demo (starts both the agent and the shell):
-  ```bash
-  npm run demo:restaurant09
-  ```
-- Or run the **Contact Lookup** demo:
-  ```bash
-  npm run demo:contact09
-  ```
+### Open UI
 
-### Open the Application
-
-From a web browser:
-
-- Open `http://localhost:5173/` for the default application (Restaurant Finder).
-- Open `http://localhost:5173/?app=contacts` for the Contact Lookup application.
-
-> **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
+Follow the link in console output of the last command above. 
 
 ## Security Notice
 

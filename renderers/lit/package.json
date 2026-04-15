@@ -51,18 +51,11 @@
     "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "npm run serve --watch",
     "test": "wireit",
-    "serve": "wireit"
+    "demo": "cd a2ui_explorer && npm run dev"
   },
   "wireit": {
-    "serve": {
-      "command": "vite dev",
-      "dependencies": [
-        "build"
-      ],
-      "service": true
-    },
+
     "test": {
       "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js dist/src/v0_9/tests/*.test.js dist/src/v0_9/tests/**/*.test.js",
       "dependencies": [

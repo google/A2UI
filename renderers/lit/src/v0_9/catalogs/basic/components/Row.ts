@@ -52,9 +52,6 @@ export class A2uiBasicRowElement extends BasicCatalogA2uiLitElement<typeof RowAp
       flex-direction: row;
       gap: var(--a2ui-row-gap, var(--a2ui-spacing-m));
     }
-    :host > * {
-      display: flex;
-    }
   `;
 
   protected createController() {

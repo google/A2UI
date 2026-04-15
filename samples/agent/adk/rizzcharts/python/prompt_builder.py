@@ -30,11 +30,11 @@ if __name__ == "__main__":
           CatalogConfig.from_path(
               name="rizzcharts",
               catalog_path="rizzcharts_catalog_definition.json",
-              examples_path=f"examples/rizzcharts_catalog/{version}",
+              examples_path=f"../examples/rizzcharts_catalog/{version}",
           ),
           BasicCatalog.get_config(
               version=version,
-              examples_path=f"examples/standard_catalog/{version}",
+              examples_path=f"../examples/standard_catalog/{version}",
           ),
       ],
       accepts_inline_catalogs=True,
