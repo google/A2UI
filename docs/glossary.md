@@ -2,8 +2,6 @@
 
 ## A2UI protocol terms
 
-[Link back to anchor](#fw-adapter)
-
 Terms, required by A2UI protocol.
 
 ### A2UI agent and A2UI renderer
