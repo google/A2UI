@@ -1008,9 +1008,10 @@ class A2uiStreamParser:
         ):
           path = obj["path"]
           key = path.lstrip("/")
-          if "componentId" not in obj:
-            obj.clear()
-          obj.update({"path": "/" + key})
+          if self._version != VERSION_0_9:
+            if "componentId" not in obj:
+              obj.clear()
+            obj.update({"path": "/" + key})
         elif self._version != VERSION_0_9:
           # If not in data model, still ensure path has leading slash if it's a bindable object (v0.8 only)
           current_path = obj.get("path")
