@@ -62,16 +62,23 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     return pkg.name;
   });
 
-  // Validation: web_core check
+  // Validation: core dependencies check
   const webCoreName = '@a2ui/web_core';
+  const markdownItName = '@a2ui/markdown-it';
   const renderers = ['@a2ui/lit', '@a2ui/angular', '@a2ui/react'];
   const requestedRenderers = resolvedPackages.filter(p => renderers.includes(p));
 
-  if (requestedRenderers.length > 0 && !resolvedPackages.includes(webCoreName) && !force) {
-    console.warn('WARNING: You are publishing renderers but NOT @a2ui/web_core.');
-    console.warn('This can lead to broken versions if web_core has changed.');
-    console.warn('Use --force to override this check.');
-    throw new Error('Safety check failed: web_core missing from publish list.');
+  if (requestedRenderers.length > 0 && !force) {
+    const missingCores = [];
+    if (!resolvedPackages.includes(webCoreName)) missingCores.push(webCoreName);
+    if (!resolvedPackages.includes(markdownItName)) missingCores.push(markdownItName);
+
+    if (missingCores.length > 0) {
+      console.warn(`WARNING: You are publishing renderers but NOT ${missingCores.join(' and ')}.`);
+      console.warn('This can lead to broken versions if shared dependencies have changed.');
+      console.warn('Use --force to override this check.');
+      throw new Error(`Safety check failed: ${missingCores.join(' and ')} missing from publish list.`);
+    }
   }
 
   // Topological Sort
