@@ -11,25 +11,17 @@ This is a UI to generate and visualize A2UI responses.
 
 ### Run agent
 
-Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/README.md).
+Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/README.md) to run agent.
 
-### Build the renderer
+### Build dependencies and run client application
 
-This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
-
-   ```bash
-   cd ../../../renderers/web_core
-   npm install
-   npm run build
-   cd ../lit
-   npm install
-   npm run build
-   cd ../markdown/markdown-it
-   npm install
-   npm run build
-   cd - # back to the sample directory
-   npm install
-   ```
+```bash
+# Run from the root of repo:
+(cd renderers/web_core/; npm i; npm run build);
+(cd renderers/markdown/markdown-it/; npm i; npm run build);
+(cd renderers/lit/; npm i; npm run build);
+(cd samples/client/lit/shell/; npm i; npm run dev);
+```
 
 If you hit errors around NPM install:
 
@@ -38,39 +30,9 @@ rm -r samples/client/lit/node_modules
 rm samples/client/lit/package-lock.json
 ```
 
-2. **Run this sample:**
+### Open UI
 
-   ```bash
-   cd - # back to the sample directory
-   npm install
-
-
-
-
-
-
-
-### Run the Demo and Servers
-
-From the `samples/client/lit` directory:
-
-- Run the **Restaurant Finder** demo (starts both the agent and the shell):
-  ```bash
-  npm run demo:restaurant09
-  ```
-- Or run the **Contact Lookup** demo:
-  ```bash
-  npm run demo:contact09
-  ```
-
-### Open the Application
-
-From a web browser:
-
-- Open `http://localhost:5173/` for the default application (Restaurant Finder).
-- Open `http://localhost:5173/?app=contacts` for the Contact Lookup application.
-
-> **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
+Follow the link in console output of the last command above. 
 
 ## Security Notice
 
