@@ -28,15 +28,13 @@ export class Client {
 
   async handleAction(action: any) {
     try {
-      // Send the query as text since it's just a raw prompt from the user in this case.
-      // Or construct a valid clientEvent if it's meant to be a UI event. Let's send text.
-      const messages = await this.makeRequest({
-        userAction: {
-          surfaceId: 'default',
-          type: 'USER_ACTION',
-          actionName: action
-        }
-      } as any);
+      let messages;
+      if (action && typeof action === 'object' && 'event' in action) {
+        messages = await this.makeRequest(action.event);
+      } else {
+        // Fallback to text query if it's just a string or something else
+        messages = await this.makeRequest(String(action));
+      }
       this.renderer.processMessages(messages as unknown as A2uiMessage[]);
     } catch (err) {
       console.error(err);

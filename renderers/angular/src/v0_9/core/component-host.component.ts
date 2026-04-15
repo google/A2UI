@@ -27,7 +27,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
+import { ComponentContext, ComponentModel, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from './a2ui-renderer.service';
 import { AngularCatalog } from '../catalog/types';
 import { ComponentBinder } from './component-binder.service';
@@ -133,8 +133,8 @@ export class ComponentHostComponent implements OnInit {
   }
 
   private initializeComponent(
-    surface: any,
-    componentModel: any,
+    surface: SurfaceModel<any>,
+    componentModel: ComponentModel,
     id: string,
     basePath: string,
   ): void {
@@ -157,12 +157,11 @@ export class ComponentHostComponent implements OnInit {
     // component to react when a new prop is added after creation.
     const onPropsUpdateSub = componentModel.onUpdated.subscribe(() => {
       this.props = this.binder.bind(this.context!);
+      this.weight.set(componentModel.properties['weight'] || null);
       this.cdr.markForCheck();
     });
 
-    if (componentModel.weight) {
-      this.weight.set(componentModel.weight);
-    }
+    this.weight.set(componentModel.properties['weight'] || null);
 
     this.destroyRef.onDestroy(() => {
       // ComponentContext itself doesn't have a dispose, but its inner components might.
