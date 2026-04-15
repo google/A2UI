@@ -100,7 +100,7 @@ export function getPackageGraph() {
 
 /**
  * Increments a version string.
- * Supports: 0.9.2 -> 0.9.3, 0.9.2-beta.1 -> 0.9.2-beta.2
+ * Supports: 0.9.2 -> 0.9.3, 0.9.1-alpha.3 -> 0.9.1-alpha.4
  */
 export function incrementVersion(version) {
   const parts = version.split('.');

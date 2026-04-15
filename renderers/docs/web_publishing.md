@@ -15,7 +15,7 @@ To increment a package version and automatically sync all internal dependents (u
 renderers/scripts/increment_version.mjs web_core
 
 # Set a specific version (e.g. including pre-releases)
-renderers/scripts/increment_version.mjs lit 0.9.2-beta.1
+renderers/scripts/increment_version.mjs lit 0.9.2-alpha.4
 ```
 
 This script will:
@@ -83,7 +83,7 @@ npm run publish:package
 **What happens during `npm run publish:package`?**
 Before publishing, the script runs the necessary `build` command which processes the code. Then, a preparation script (usually `prepare-publish.mjs`) runs, which:
 1. Copies `package.json`, `README.md`, and `LICENSE` to the `dist/` folder.
-2. If it's a renderer, it reads the `version` from `@a2ui/web_core` and updates the `file:` dependency in the `dist/package.json` to the actual core version (e.g., `^0.9.0`).
+2. If it's a renderer, it reads the `version` from `@a2ui/web_core` and updates the `file:` dependency in the `dist/package.json` to the actual core version (e.g., `^0.23.0`).
 3. Adjusts exports and paths (removing the `./dist/` prefix) so they are correct when consumed from the package root.
 4. Removes any build scripts (`prepublishOnly`, `scripts`, `wireit`) so they don't interfere with the publish process.
 

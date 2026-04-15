@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/visual-parity",
-  "version": "0.8.0",
+  "version": "0.8.1-alpha.4",
   "private": true,
   "type": "module",
   "scripts": {
