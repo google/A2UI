@@ -16,6 +16,7 @@
 
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   play: 'play_arrow',
@@ -28,6 +29,12 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
  * Angular implementation of the A2UI Icon component (v0.9).
  *
  * Supports both Material Icons (by name) and custom SVG icons (by path).
+ *
+ * Supported CSS variables:
+ * - `--a2ui-icon-size`: Controls the width, height, and font size of the icon.
+ * - `--a2ui-icon-font-family`: Controls the font family for icon fonts.
+ * - `--a2ui-icon-color`: Controls the color of the icon.
+ * - `--a2ui-icon-font-variation-settings`: Controls font variation settings (e.g. FILL).
  */
 @Component({
   selector: 'a2ui-v09-icon',
@@ -48,10 +55,12 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
     `
       .a2ui-icon {
         display: inline-block;
-        width: 24px;
-        height: 24px;
-        font-size: 24px;
-        font-family: 'Material Icons';
+        width: var(--a2ui-icon-size, 24px);
+        height: var(--a2ui-icon-size, 24px);
+        font-size: var(--a2ui-icon-size, 24px);
+        font-family: var(--a2ui-icon-font-family, 'Material Icons');
+        color: var(--a2ui-icon-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333)));
+        font-variation-settings: var(--a2ui-icon-font-variation-settings, "FILL" 1);
         line-height: 1;
         text-transform: none;
         letter-spacing: normal;
@@ -71,7 +80,7 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IconComponent {
+export class IconComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *

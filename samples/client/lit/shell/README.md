@@ -4,47 +4,30 @@ This is a UI to generate and visualize A2UI responses.
 
 ## Prerequisites
 
-1. [nodejs](https://nodejs.org/en)
+* [nodejs](https://nodejs.org/en)
+* [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Running
 
-This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
+### Run agent
 
-1. **Build the renderer:**
-   ```bash
-   cd ../../../renderers/web_core
-   npm install
-   npm run build
-   cd ../lit
-   npm install
-   npm run build
-   ```
+Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/README.md) to run agent.
 
-2. **Run this sample:**
-   ```bash
-   cd - # back to the sample directory
-   npm install
-   ```
+### Build dependencies and run client application
 
-3. **Run the servers:**
-   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `npm run demo:restaurant`
-   - Run the dev server: `npm run dev`
+# Run from the root of repo:
+(cd renderers/web_core/ && npm i && npm run build) && \
+(cd renderers/markdown/markdown-it/ && npm i && npm run build) && \
+(cd renderers/lit/ && npm i && npm run build) && \
+(cd samples/client/lit/shell/ && npm i && npm run dev)
 
-### Running the Contact Sample
+If you hit errors around `npm i` remove the directory `node_modules` and the file `package-lock.json`.
 
-The shell app supports multiple configured applications. To run the Contact sample:
+### Open UI
 
-1. **Start the Contact Agent:**
-   ```bash
-   npm run demo:contact
-   ```
+Follow the link in console output of the last command above. 
 
-2. **Open the Contact App:**
-   - Open `http://localhost:5173/?app=contacts`
-
-> **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
-
-After starting the dev server, you can open http://localhost:5173/ to view the sample.
+## Security Notice
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
 

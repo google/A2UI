@@ -186,7 +186,7 @@ To handle interactivity within the rendered A2UI surface, your MCP App must capt
 **Example: Handling User Actions**
 
 ```typescript
-// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/main.ts))
+// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/src/main.ts))
 this.processor.events.subscribe(async (event) => {
   if (!event.message.userAction) return;
   

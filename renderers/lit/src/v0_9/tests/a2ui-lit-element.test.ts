@@ -29,15 +29,14 @@ let disposedCount = 0;
  * - Changing the element's ComponentContext safely tears down the old controller and creates a new one.
  */
 describe("A2uiLitElement", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
   before(async () => {
     setupTestDom();
 
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context and crashing.
     const { A2uiLitElement } = await import("../a2ui-lit-element.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
 
     // Create a mock subclass to intercept and track controller lifecycle events
     class TestA2uiElement extends A2uiLitElement<any> {
@@ -66,14 +65,14 @@ describe("A2uiLitElement", () => {
   beforeEach(() => {
     controllerCreatedCount = 0;
     disposedCount = 0;
-    processor = new MessageProcessor([minimalCatalog]);
+    processor = new MessageProcessor([basicCatalog]);
     // Initialize the test surface with a nested root/child component structure and bound respective data contexts
     processor.processMessages([
       {
         version: "v0.9",
         createSurface: {
           surfaceId: "test-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
       {

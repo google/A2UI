@@ -30,6 +30,7 @@ export default async () => {
   };
 
   return {
+    // Do we need this for this sample?
     plugins: [Middleware.A2AMiddleware.plugin()],
     build: {
       rollupOptions: {

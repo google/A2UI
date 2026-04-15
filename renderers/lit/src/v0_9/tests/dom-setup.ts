@@ -52,6 +52,7 @@ export function setupTestDom() {
       "MutationObserver",
       "requestAnimationFrame",
       "cancelAnimationFrame",
+      "CSSStyleSheet",
     ];
 
     // Save originals once
@@ -61,6 +62,26 @@ export function setupTestDom() {
   } else {
     // Reset body if already created
     dom.window.document.body.innerHTML = "";
+  }
+
+  // TODO(ditman): Update jsdom to ^29.0.0, which includes CSSOM by default, and remove this.
+  if (!dom.window.document.adoptedStyleSheets) {
+    dom.window.document.adoptedStyleSheets = [];
+  }
+
+  if (
+    dom.window.CSSStyleSheet &&
+    !dom.window.CSSStyleSheet.prototype.replaceSync
+  ) {
+    dom.window.CSSStyleSheet.prototype.replaceSync = function (text: string) {
+      let styleEl = (this as any)._styleEl;
+      if (!styleEl) {
+        styleEl = dom!.window.document.createElement("style");
+        dom!.window.document.head.appendChild(styleEl);
+        (this as any)._styleEl = styleEl;
+      }
+      styleEl.textContent = text;
+    };
   }
 
   // Set globals
@@ -73,6 +94,7 @@ export function setupTestDom() {
     Node: dom.window.Node,
     Event: dom.window.Event,
     MutationObserver: dom.window.MutationObserver,
+    CSSStyleSheet: dom.window.CSSStyleSheet,
     requestAnimationFrame: (cb: FrameRequestCallback) => setTimeout(cb, 16),
     cancelAnimationFrame: (id: string | number | NodeJS.Timeout | undefined) =>
       clearTimeout(id as any),

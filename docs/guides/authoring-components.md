@@ -19,7 +19,7 @@ The catalog schema defines the API of your catalog. It lists available component
 
 **This schema acts as a contract between the client and the server (agent).** Both must agree on this schema for rendering to work. The client advertises what catalogs it supports, and the server selects a compatible one. For details on how this handshake works, see [A2UI Catalog Negotiation](../concepts/catalogs.md#a2ui-catalog-negotiation).
 
-In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/README.md) example, the catalog schema is defined in [`rizzcharts_catalog_definition.json`](../../samples/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json).
+In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/python/README.md) example, the catalog schema is defined in [`rizzcharts_catalog_definition.json`](../../samples/agent/adk/rizzcharts/catalog_schemas/0.9/rizzcharts_catalog_definition.json).
 
 Here is the schema for the `Chart` component:
 
@@ -147,7 +147,7 @@ Keep these key points in mind when implementing components:
 
 Once the component is implemented, register it in your client catalog. This maps the component name (used by agents) to the implementation class.
 
-In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/README.md) example, this is done in [`catalog.ts`](../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
+In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/python/README.md) example, this is done in [`catalog.ts`](../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
 
 ```typescript
 import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
