@@ -15,11 +15,14 @@ Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/REA
 
 ### Build dependencies and run client application
 
-# Run from the root of repo:
+Run from the root of repo:
+
+```bash
 (cd renderers/web_core/ && npm i && npm run build) && \
 (cd renderers/markdown/markdown-it/ && npm i && npm run build) && \
 (cd renderers/lit/ && npm i && npm run build) && \
 (cd samples/client/lit/shell/ && npm i && npm run dev)
+```
 
 If you hit errors around `npm i` remove the directory `node_modules` and the file `package-lock.json`.
 
