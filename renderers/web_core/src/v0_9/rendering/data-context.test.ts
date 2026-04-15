@@ -58,8 +58,7 @@ describe('DataContext', () => {
   });
 
   it('resolves absolute paths', () => {
-    const rootContext = createTestDataContext(model, '/');
-    assert.strictEqual(rootContext.resolveDynamicValue({path: '/list/0'}), 'a');
+    assert.strictEqual(context.resolveDynamicValue({path: '/list/0'}), 'a');
   });
 
   it('resolves nested paths', () => {
@@ -109,8 +108,7 @@ describe('DataContext', () => {
     assert.strictEqual(context.resolveDynamicValue({path: 'name'}), 'Alice');
 
     // Absolute Path
-    const rootContext = createTestDataContext(model, '/');
-    assert.strictEqual(rootContext.resolveDynamicValue({path: '/list/0'}), 'a');
+    assert.strictEqual(context.resolveDynamicValue({path: '/list/0'}), 'a');
   });
 
   it('resolves literal arrays', () => {
