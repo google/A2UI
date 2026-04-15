@@ -4,19 +4,13 @@ This is a UI to generate and visualize A2UI responses.
 
 ## Prerequisites
 
-* [nodejs](https://nodejs.org/en)
-* [uv](https://docs.astral.sh/uv/getting-started/installation/)
+1. [nodejs](https://nodejs.org/en)
 
 ## Running
 
-### Run agent
-
-Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/README.md).
-
-### Build the renderer
-
 This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
 
+1. **Build the renderer:**
    ```bash
    cd ../../../renderers/web_core
    npm install
@@ -24,55 +18,35 @@ This sample depends on the Lit renderer. Before running this sample, you need to
    cd ../lit
    npm install
    npm run build
-   cd ../markdown/markdown-it
-   npm install
-   npm run build
+   ```
+
+
+
+2. **Run this sample:**
+   ```bash
    cd - # back to the sample directory
    npm install
    ```
 
-If you hit errors around NPM install:
+3. **Run the servers:**
+   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `npm run demo:restaurant`
+   - Run the dev server: `npm run dev`
 
-```
-rm -r samples/client/lit/node_modules
-rm samples/client/lit/package-lock.json
-```
+### Running the Contact Sample
 
-2. **Run this sample:**
+The shell app supports multiple configured applications. To run the Contact sample:
 
+1. **Start the Contact Agent:**
    ```bash
-   cd - # back to the sample directory
-   npm install
+   npm run demo:contact
+   ```
 
-
-
-
-
-
-
-### Run the Demo and Servers
-
-From the `samples/client/lit` directory:
-
-- Run the **Restaurant Finder** demo (starts both the agent and the shell):
-  ```bash
-  npm run demo:restaurant09
-  ```
-- Or run the **Contact Lookup** demo:
-  ```bash
-  npm run demo:contact09
-  ```
-
-### Open the Application
-
-From a web browser:
-
-- Open `http://localhost:5173/` for the default application (Restaurant Finder).
-- Open `http://localhost:5173/?app=contacts` for the Contact Lookup application.
+2. **Open the Contact App:**
+   - Open `http://localhost:5173/?app=contacts`
 
 > **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
 
-## Security Notice
+After starting the dev server, you can open http://localhost:5173/ to view the sample.
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
 
