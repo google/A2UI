@@ -17,7 +17,7 @@
 import { A2uiRendererService } from '@a2ui/angular/v0_9';
 import * as Types from '@a2ui/web_core/types/types';
 import { inject, Injectable, signal } from '@angular/core';
-import { A2uiMessage } from '@a2ui/web_core/v0_9';
+import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
@@ -26,15 +26,9 @@ export class Client {
 
   readonly isLoading = signal(false);
 
-  async handleAction(action: any) {
+  async handleAction(userAction: A2uiClientAction) {
     try {
-      let messages;
-      if (action && typeof action === 'object' && 'event' in action) {
-        messages = await this.makeRequest(action.event);
-      } else {
-        // Fallback to text query if it's just a string or something else
-        messages = await this.makeRequest(String(action));
-      }
+      const messages = await this.makeRequest({userAction});
       this.renderer.processMessages(messages as unknown as A2uiMessage[]);
     } catch (err) {
       console.error(err);

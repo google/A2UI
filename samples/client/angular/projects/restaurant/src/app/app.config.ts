@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { A2uiRendererService, A2UI_RENDERER_CONFIG, BasicCatalog, provideMarkdownRenderer } from '@a2ui/angular/v0_9';
-import { Client } from './client';
-import { inject, Injector } from '@angular/core';
-import { IMAGE_CONFIG } from '@angular/common';
+import {A2uiRendererService, A2UI_RENDERER_CONFIG, BasicCatalog, provideMarkdownRenderer} from '@a2ui/angular/v0_9';
+import {Client} from './client';
+import {inject, Injector} from '@angular/core';
+import {IMAGE_CONFIG} from '@angular/common';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { theme } from './theme';
-import { renderMarkdown } from '@a2ui/markdown-it';
+import {provideClientHydration, withEventReplay} from '@angular/platform-browser';
+import {renderMarkdown} from '@a2ui/markdown-it';
+import {A2uiClientAction} from '@a2ui/web_core/v0_9';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,7 +38,7 @@ export const appConfig: ApplicationConfig = {
         const injector = inject(Injector);
         return {
           catalogs: [new BasicCatalog()],
-          actionHandler: (action: any) => injector.get(Client).handleAction(action),
+          actionHandler: (action: A2uiClientAction) => injector.get(Client).handleAction(action),
         };
       },
     },

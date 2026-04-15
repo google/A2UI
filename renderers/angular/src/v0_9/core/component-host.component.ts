@@ -31,6 +31,7 @@ import { ComponentContext, ComponentModel, SurfaceModel } from '@a2ui/web_core/v
 import { A2uiRendererService } from './a2ui-renderer.service';
 import { AngularCatalog } from '../catalog/types';
 import { ComponentBinder } from './component-binder.service';
+import {BoundProperty} from './types';
 
 /**
  * Dynamically renders an A2UI component as defined in the current surface model.
@@ -78,10 +79,11 @@ export class ComponentHostComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   protected componentType: Type<any> | null = null;
-  protected props: any = {};
+  protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
   protected weight = signal<string | number | null>(null);
 
+  // TODO(#1199): Move weight handling to the catalog specification.
   @HostBinding('style.flex')
   get flexStyle() {
     const w = this.weight();
@@ -157,6 +159,7 @@ export class ComponentHostComponent implements OnInit {
     // component to react when a new prop is added after creation.
     const onPropsUpdateSub = componentModel.onUpdated.subscribe(() => {
       this.props = this.binder.bind(this.context!);
+      // TODO(#1199): Move weight handling to the catalog specification.
       this.weight.set(componentModel.properties['weight'] || null);
       this.cdr.markForCheck();
     });
