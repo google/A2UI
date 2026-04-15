@@ -225,11 +225,10 @@ Now that you've seen A2UI in action, you're ready to:
 
 ## Customizing Agent URLs
 
-By default, the samples expect agents to be running on specific ports (e.g., `10002` for Restaurant Finder, `10003` for Contact Lookup). If you need to run agents on different ports (for example, to support restricted port forwarding in remote environments), you can configure the URLs using environment variables before building or running the client:
+By default, the samples expect agents to be running on specific ports (e.g., `10002` for Restaurant Finder). If you need to run agents on different ports (for example, to support restricted port forwarding in remote environments), you can configure the URLs using environment variables before building or running the client:
 
 ```bash
 export VITE_RESTAURANT_AGENT_URL="http://localhost:8000"
-export VITE_CONTACTS_AGENT_URL="http://localhost:8001"
 ```
 
 These variables are picked up by Vite during development or build time.
