@@ -18,8 +18,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ComponentHostComponent } from './component-host.component';
 import { A2uiRendererService } from './a2ui-renderer.service';
-import { ComponentBinder } from './component-binder.service';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
+import { ComponentContext, ComponentModel, SurfaceComponentsModel, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -38,8 +37,7 @@ describe('ComponentHostComponent', () => {
   let fixture: ComponentFixture<ComponentHostComponent>;
   let mockRendererService: any;
   let mockCatalog: any;
-  let mockBinder: jasmine.SpyObj<ComponentBinder>;
-  let mockSurface: any;
+  let mockSurface: SurfaceModel<any>;
   let mockSurfaceGroup: any;
 
   beforeEach(async () => {
@@ -48,12 +46,13 @@ describe('ComponentHostComponent', () => {
       components: new Map([['TestType', { component: TestChildComponent }]]),
     };
 
+    const mockSurfaceComponentsModel = new SurfaceComponentsModel();
+    mockSurfaceComponentsModel.addComponent(new ComponentModel('comp1', 'TestType', { text: 'Hello' }));
+
     mockSurface = {
-      componentsModel: new Map([
-        ['comp1', { id: 'comp1', type: 'TestType', properties: { text: 'Hello' } }],
-      ]),
+      componentsModel: mockSurfaceComponentsModel,
       catalog: mockCatalog,
-    };
+    } as SurfaceModel<any>;
 
     mockSurfaceGroup = {
       getSurface: jasmine.createSpy('getSurface').and.returnValue(mockSurface),
@@ -63,16 +62,10 @@ describe('ComponentHostComponent', () => {
       surfaceGroup: mockSurfaceGroup,
     };
 
-    mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
-    mockBinder.bind.and.returnValue({
-      text: { value: () => 'bound-hello', onUpdate: () => {} } as any,
-    });
-
     await TestBed.configureTestingModule({
       imports: [ComponentHostComponent],
       providers: [
         { provide: A2uiRendererService, useValue: mockRendererService },
-        { provide: ComponentBinder, useValue: mockBinder },
       ],
     }).compileComponents();
 
@@ -98,21 +91,35 @@ describe('ComponentHostComponent', () => {
       });
 
       expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
-      expect(mockBinder.bind).toHaveBeenCalled();
 
-      // Verify context creation implicitly by checking if bind was called with a ComponentContext
-      const bindArg = mockBinder.bind.calls.mostRecent().args[0];
-      expect(bindArg).toBeInstanceOf(ComponentContext);
-      expect(bindArg.componentModel.id).toBe('comp1');
-      expect(bindArg.dataContext.path).toBe('/');
+      // @ts-ignore - Accessing private property
+      const context = component.context;
+      expect(context).toBeInstanceOf(ComponentContext);
+      expect(context!.componentModel.id).toBe('comp1');
+      expect(context!.dataContext.path).toBe('/');
     });
 
     it('should use provided dataContextPath for ComponentContext', () => {
       fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/nested/path' });
       fixture.detectChanges();
 
-      const bindArg = mockBinder.bind.calls.mostRecent().args[0];
-      expect(bindArg.dataContext.path).toBe('/nested/path');
+      // @ts-ignore - Accessing private property
+      expect(component.context!.dataContext.path).toBe('/nested/path');
+    });
+
+    it('should update props when component model is updated', () => {
+      fixture.detectChanges(); // Trigger ngOnInit
+      const compModel = mockSurface.componentsModel.get('comp1')!;
+      // @ts-ignore - Accessing protected property
+      expect(component.props.text.value()).toBe('Hello');
+
+      // This properties assignment triggers the update.
+      compModel.properties = { text: 'Hello', newProp: 'new value' };
+
+      // @ts-ignore - Accessing protected property
+      expect(component.props.text.value()).toBe('Hello');
+      // @ts-ignore - Accessing protected property
+      expect(component.props.newProp.value()).toBe('new value');
     });
 
     it('should warn and return if surface not found', () => {
@@ -128,13 +135,13 @@ describe('ComponentHostComponent', () => {
 
     it('should warn and return if component model not found', () => {
       const consoleWarnSpy = spyOn(console, 'warn');
-      mockSurface.componentsModel.clear();
+      mockSurface.componentsModel.dispose();
 
       fixture.detectChanges();
 
       // @ts-ignore
       expect(component.componentType).toBeNull();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1');
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1. Waiting for it...');
     });
 
     it('should error and return if component type not in catalog', () => {
