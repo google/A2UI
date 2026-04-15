@@ -30,7 +30,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 let client: A2AClient | null = null;
-const enableStreaming = process.env['ENABLE_STREAMING'] === 'true';
+const enableStreaming = process.env['ENABLE_STREAMING'] !== 'false';
 
 app.use(
   express.static(browserDistFolder, {
@@ -204,7 +204,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
-  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.8');
+  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.9');
   const newInit = { ...init, headers };
   return fetch(url, newInit);
 }

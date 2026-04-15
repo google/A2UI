@@ -14,35 +14,31 @@
  * limitations under the License.
  */
 
-import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
+import { A2uiRendererService } from '@a2ui/angular/v0_9';
 import * as Types from '@a2ui/web_core/types/types';
 import { inject, Injectable, signal } from '@angular/core';
+import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
-  private processor = inject(MessageProcessor);
+  private readonly renderer = inject(A2uiRendererService);
   private contextId?: string;
 
   readonly isLoading = signal(false);
 
-  constructor() {
-    this.processor.events.subscribe(async (event) => {
-      try {
-        const messages = await this.makeRequest(event.message);
-        event.completion.next(messages);
-        event.completion.complete();
-      } catch (err) {
-        event.completion.error(err);
-      }
-    });
+  async handleAction(userAction: A2uiClientAction) {
+    try {
+      const messages = await this.makeRequest({userAction});
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async makeRequest(request: Types.A2UIClientEventMessage | string): Promise<Types.ServerToClientMessage[]> {
     let messages: Types.ServerToClientMessage[] = [];
     try {
       this.isLoading.set(true);
-      // Clear surfaces at the start of a new request
-      this.processor.clearSurfaces();
 
       const isString = typeof request === 'string';
       const bodyData = isString
@@ -146,36 +142,18 @@ export class Client {
   private processParts(parts: any[]): Types.ServerToClientMessage[] {
     const messages: Types.ServerToClientMessage[] = [];
     for (const item of parts) {
+      if (item.kind === 'text') continue;
       if (item.data) {
-        messages.push(item.data);
-      } else if (item.kind === 'text' || item.text) {
-        const text = item.text || '';
-        const match = text.match(/<a2ui-json>(.*?)<\/a2ui-json>/s);
-        if (match) {
-          try {
-            const parsed = JSON.parse(match[1]);
-            const commands = Array.isArray(parsed) ? parsed : [parsed];
-            for (const cmd of commands) {
-              if (this.isValidA2uiCommand(cmd)) {
-                messages.push(cmd);
-              } else {
-                console.warn('[client] Ignored invalid A2UI command from text:', cmd);
-              }
-            }
-          } catch (e) {
-            console.error('Failed to parse a2ui-json from text:', e);
-          }
+        if (Array.isArray(item.data)) {
+          messages.push(...item.data);
+        } else {
+          messages.push(item.data);
         }
       }
     }
     if (messages.length > 0) {
-      console.log(`[client] Processing ${messages.length} A2UI commands:`, messages);
-      this.processor.processMessages(messages);
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
     }
     return messages;
-  }
-
-  private isValidA2uiCommand(cmd: any): boolean {
-    return !!(cmd.surfaceUpdate || cmd.dataModelUpdate || cmd.beginRendering || cmd.deleteSurface);
   }
 }

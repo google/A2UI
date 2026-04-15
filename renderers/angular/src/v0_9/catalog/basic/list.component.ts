@@ -18,6 +18,7 @@ import { Component, input, computed, ChangeDetectionStrategy } from '@angular/co
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { Child } from '../../core/component-binder.service';
 
 /**
  * Angular implementation of the A2UI List component (v0.9).
@@ -37,7 +38,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     @switch (listTag()) {
       @case ('ol') {
         <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child.id) {
+          @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host
                 [componentKey]="child"
@@ -50,7 +51,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       }
       @case ('ul') {
         <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child.id) {
+          @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host
                 [componentKey]="child"
@@ -63,7 +64,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       }
       @default {
         <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
-          @for (child of children(); track child.id) {
+          @for (child of children(); track trackBy($index, child)) {
             <div class="a2ui-list-item-none">
               <a2ui-v09-component-host
                 [componentKey]="child"
@@ -123,8 +124,6 @@ export class ListComponent extends BasicCatalogComponent {
     return Array.isArray(raw) ? raw : [];
   });
 
-
-
   listTag = computed(() => {
     const style = this.listStyle();
     if (style === 'ordered') return 'ol';
@@ -137,4 +136,10 @@ export class ListComponent extends BasicCatalogComponent {
     if (style === 'none') return 'none';
     return '';
   });
+
+  /**
+   * Track-by function to ensure stable change detection for list items.
+   * Uses the full resolved path (`basePath/id`) to uniquely identify items.
+   */
+  readonly trackBy = (index: number, item: Child) => `${item.basePath}/${item.id}`;
 }
