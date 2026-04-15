@@ -15,7 +15,7 @@ Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/REA
 
 ### Build dependencies and run client application
 
-Run from the root of repo:
+Run from the root of the repository:
 
 ```bash
 (cd renderers/web_core/ && npm i && npm run build) && \
