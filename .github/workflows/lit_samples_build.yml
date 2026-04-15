@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lit samples build
+name: Lit samples
 
 on:
   push:
@@ -28,20 +28,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
-      - name: Install lib's deps
-        working-directory: ./renderers/lit
-        run: npm i
-
-      - name: Build lib
-        working-directory: ./renderers/lit
-        run: npm run build
+      - name: Build lit renderer and its dependencies
+        working-directory: ./samples/client/lit
+        run: npm run build:renderer
 
       - name: Install all lit samples workspaces' dependencies
         working-directory: ./samples/client/lit

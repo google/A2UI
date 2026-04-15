@@ -6,20 +6,22 @@ Get hands-on with A2UI by running the restaurant finder demo. This guide will ha
 
 By the end of this quickstart, you'll have:
 
-- ✅ A running web app with A2UI Lit renderer
-- ✅ A Gemini-powered agent that generates dynamic UIs
-- ✅ An interactive restaurant finder with form generation, time selection, and confirmation flows
-- ✅ Understanding of how A2UI messages flow from agent to UI
+- A running web app with A2UI Lit renderer.
+- A Gemini-powered agent that generates dynamic UIs.
+- An interactive restaurant finder with form generation, time selection, and confirmation flows.
+- Understanding of how A2UI messages flow from agent to UI.
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- **Node.js** (v18 or later) - [Download here](https://nodejs.org/)
-- **A Gemini API key** - [Get one free from Google AI Studio](https://aistudio.google.com/apikey)
+- **Node.js** (v18 or later) — [Download here](https://nodejs.org/)
+- **uv** (Python package manager) — [Install here](https://docs.astral.sh/uv/getting-started/installation/) (used to run the Python agent backend)
+- **A Gemini API key** — [Get one free from Google AI Studio](https://aistudio.google.com/apikey)
 
-!!! warning "Security Notice"
-    This demo runs an A2A agent that uses Gemini to generate A2UI responses. The agent has access to your API key and will make requests to Google's Gemini API. Always review agent code before running it in production environments.
+WARNING: Security Notice
+
+This demo runs an A2A agent that uses Gemini to generate A2UI responses. The agent has access to your API key and will make requests to Google's Gemini API. Always review agent code before running it in production environments.
 
 ## Step 1: Clone the Repository
 
@@ -36,7 +38,9 @@ Export your Gemini API key as an environment variable:
 export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
 
-## Step 3: Navigate to the Lit Client
+## Step 3: Navigate to the Lit Client Samples Directory
+
+The client application source code is located in `samples/client/lit/shell`. Navigate to the parent samples directory to run the demo:
 
 ```bash
 cd samples/client/lit
@@ -47,8 +51,7 @@ cd samples/client/lit
 Run the one-command demo launcher:
 
 ```bash
-npm install
-npm run demo:all
+npm run demo:restaurant
 ```
 
 This command will:
@@ -59,8 +62,9 @@ This command will:
 4. Launch the development server
 5. Open your browser to `http://localhost:5173`
 
-!!! success "Demo Running"
-    If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
+NOTE: Demo Running
+
+If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
 
 ## Step 5: Try It Out
 
@@ -107,86 +111,67 @@ In the web app, try these prompts:
 
 Let's peek at what the agent is sending. Here's a simplified example of the JSON messages:
 
-### Defining the UI
+=== "v0.8 (Stable)"
 
-```json
-{
-  "surfaceUpdate": {
-    "surfaceId": "main",
-    "components": [
-      {
-        "id": "header",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Book Your Table"},
-            "usageHint": "h1"
-          }
-        }
-      },
-      {
-        "id": "date-picker",
-        "component": {
-          "DateTimeInput": {
-            "label": {"literalString": "Select Date"},
-            "value": {"path": "/reservation/date"},
-            "enableDate": true
-          }
-        }
-      },
-      {
-        "id": "submit-btn",
-        "component": {
-          "Button": {
-            "child": "submit-text",
-            "action": {"name": "confirm_booking"}
-          }
-        }
-      },
-      {
-        "id": "submit-text",
-        "component": {
-          "Text": {"text": {"literalString": "Confirm Reservation"}}
-        }
-      }
-    ]
-  }
-}
-```
+    **Defining the UI:**
 
-This defines the UI components for the surface: a text header, a date picker, and a button.
+    ```json
+    {"surfaceUpdate": {"surfaceId": "main", "components": [
+      {"id": "header", "component": {"Text": {"text": {"literalString": "Book Your Table"}, "usageHint": "h1"}}},
+      {"id": "date-picker", "component": {"DateTimeInput": {"label": {"literalString": "Select Date"}, "value": {"path": "/reservation/date"}, "enableDate": true}}},
+      {"id": "submit-text", "component": {"Text": {"text": {"literalString": "Confirm Reservation"}}}},
+      {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm_booking"}}}}
+    ]}}
+    ```
 
-### Populating Data
+    **Populating data:**
 
-```json
-{
-  "dataModelUpdate": {
-    "surfaceId": "main",
-    "contents": [
-      {
-        "key": "reservation",
-        "valueMap": [
-          {"key": "date", "valueString": "2025-12-15"},
-          {"key": "time", "valueString": "19:00"},
-          {"key": "guests", "valueInt": 2}
-        ]
-      }
-    ]
-  }
-}
-```
+    ```json
+    {"dataModelUpdate": {"surfaceId": "main", "contents": [
+      {"key": "reservation", "valueMap": [
+        {"key": "date", "valueString": "2025-12-15"},
+        {"key": "time", "valueString": "19:00"},
+        {"key": "guests", "valueInt": 2}
+      ]}
+    ]}}
+    ```
 
-This populates the data model that components can bind to.
+    **Signaling render:**
 
-### Signaling Render
+    ```json
+    {"beginRendering": {"surfaceId": "main", "root": "header"}}
+    ```
 
-```json
-{"beginRendering": {"surfaceId": "main", "root": "header"}}
-```
+=== "v0.9 (Draft)"
 
-This tells the client it has enough information to render the UI.
+    **Creating the surface:**
 
-!!! tip "It's Just JSON"
-    Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.
+    ```json
+    {"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"}}
+    ```
+
+    **Defining the UI:**
+
+    ```json
+    {"version": "v0.9", "updateComponents": {"surfaceId": "main", "components": [
+      {"id": "header", "component": "Text", "text": "# Book Your Table", "variant": "h1"},
+      {"id": "date-picker", "component": "DateTimeInput", "label": "Select Date", "value": {"path": "/reservation/date"}, "enableDate": true},
+      {"id": "submit-text", "component": "Text", "text": "Confirm Reservation"},
+      {"id": "submit-btn", "component": "Button", "child": "submit-text", "variant": "primary", "action": {"event": {"name": "confirm_booking"}}}
+    ]}}
+    ```
+
+    **Populating data:**
+
+    ```json
+    {"version": "v0.9", "updateDataModel": {"surfaceId": "main", "path": "/reservation", "value": {"date": "2025-12-15", "time": "19:00", "guests": 2}}}
+    ```
+
+    Note: In v0.9, `createSurface` replaces `beginRendering`, components use a flatter format, and the data model uses plain JSON values instead of typed adjacency lists.
+
+TIP: It's Just JSON
+
+Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.
 
 ## Exploring Other Demos
 
@@ -202,15 +187,13 @@ npm start -- gallery
 
 This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.
 
-### Contact Lookup Demo
+### Other Languages and Frameworks
 
-Try a different agent use case:
+While this guide uses the Lit client as an example, A2UI provides samples for other popular frameworks in the `samples/client` directory:
+- **Angular**: `samples/client/angular`
+- **React**: `samples/client/react`
 
-```bash
-npm run demo:contact
-```
-
-This demonstrates a contact lookup agent that generates search forms and result lists.
+Explore the [samples/client](../samples/client) directory to see all available client implementations.
 
 ## What's Next?
 
@@ -235,33 +218,46 @@ If you see errors about missing API keys:
 2. Make sure it's a valid Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
 3. Try re-exporting: `export GEMINI_API_KEY="your_key"`
 
-### Python Dependencies
+### Connection Errors on Startup
 
-The demo uses Python for the A2A agent. If you encounter Python errors:
+If you see `ERR_CONNECTION_REFUSED` errors when the browser opens, **don't worry** — this is a known race condition ([#587](https://github.com/google/A2UI/issues/587)). The web app starts faster than the Python agent backend. Just wait a few seconds and refresh the page.
+
+### Python / uv Issues
+
+The demo agents require [uv](https://docs.astral.sh/uv/) to run. If you see `uv: command not found`:
 
 ```bash
-# Make sure Python 3.10+ is installed
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Verify
+uv --version
+```
+
+If you encounter other Python errors:
+
+```bash
+# Make sure Python 3.10+ is available
 python3 --version
 
-# The demo should auto-install dependencies via the npm script
-# If not, manually install them:
-cd ../../agent/adk/restaurant_finder
-pip install -r requirements.txt
+# Try running the agent manually
+cd samples/agent/adk/restaurant_finder
+uv run .
 ```
 
 ### Still Having Issues?
 
 - Check the [GitHub Issues](https://github.com/google/a2ui/issues)
-- Review the [samples/client/lit/README.md](https://github.com/google/a2ui/tree/main/samples/client/lit)
+- Review the [samples/client/lit/README.md](../samples/client/lit)
 - Join the community discussions
 
 ## Understanding the Demo Code
 
 Want to see how it works? Check out:
 
-- **Agent Code**: `samples/agent/adk/restaurant_finder/` - The Python A2A agent
-- **Client Code**: `samples/client/lit/` - The Lit web client with A2UI renderer
-- **A2UI Renderer**: `web-lib/` - The web renderer implementation
+- **Agent Code**: `samples/agent/adk/restaurant_finder/` — The Python A2A agent
+- **Client Code**: `samples/client/lit/` — The Lit web client with A2UI renderer
+- **A2UI Renderers**: `renderers/lit/` (Lit) and `renderers/web_core/` (framework-agnostic core)
 
 Each directory has its own README with detailed documentation.
 

@@ -4,30 +4,44 @@ This is a UI to generate and visualize A2UI responses.
 
 ## Prerequisites
 
-1. [nodejs](https://nodejs.org/en)
+* [nodejs](https://nodejs.org/en)
+* [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Running
 
-This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
+### Configure Gemini API Key
 
-1. **Build the renderer:**
-   ```bash
-   cd ../../../renderers/lit
-   npm install
-   npm run build
-   ```
+This step is **required** for the backend to work.
 
-2. **Run this sample:**
-   ```bash
-   cd - # back to the sample directory
-   npm install
-   ```
+- Navigate to the respective agent directory (e.g., `samples/agent/adk/restaurant_finder`
+  or `samples/agent/adk/contact_lookup`).
+- Copy `.env.example` to `.env` and set your `GEMINI_API_KEY`.
 
-3. **Run the servers:**
-   - Run the [A2A server](../../../agent/adk/restaurant_finder/)
-   - Run the dev server: `npm run dev`
+(More details can be found in the READMEs of the [agent samples](/samples/agent/adk).)
 
-After starting the dev server, you can open http://localhost:5173/ to view the sample.
+### Run the Demo and Servers
+
+From the `samples/client/lit` directory:
+
+- Run the **Restaurant Finder** demo (starts both the agent and the shell):
+  ```bash
+  npm run demo:restaurant09
+  ```
+- Or run the **Contact Lookup** demo:
+  ```bash
+  npm run demo:contact09
+  ```
+
+### Open the Application
+
+From a web browser:
+
+- Open `http://localhost:5173/` for the default application (Restaurant Finder).
+- Open `http://localhost:5173/?app=contacts` for the Contact Lookup application.
+
+> **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
+
+## Security Notice
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
 

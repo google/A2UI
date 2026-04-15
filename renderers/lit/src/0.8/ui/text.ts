@@ -1,30 +1,32 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import * as Types from "@a2ui/web_core/types/types";
+import * as Context from "./context/context.js";
+import { consume } from "@lit/context";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
-import { ResolvedText, Theme } from "../types/types.js";
 
 interface HintedStyles {
   h1: Record<string, string>;
@@ -39,10 +41,15 @@ interface HintedStyles {
 @customElement("a2ui-text")
 export class Text extends Root {
   @property()
-  accessor text: StringValue | null = null;
+  accessor text: Primitives.StringValue | null = null;
 
   @property({ reflect: true, attribute: "usage-hint" })
-  accessor usageHint: ResolvedText["usageHint"] | null = null;
+  accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
+
+  // Allow users to specify their own markdown renderer,
+  // or the one provided by @a2ui/markdown-it.
+  @consume({context: Context.markdown})
+  accessor markdownRenderer: Types.MarkdownRenderer | undefined = undefined;
 
   static styles = [
     structuralStyles,
@@ -118,7 +125,9 @@ export class Text extends Root {
 
     return html`${markdown(
       markdownText,
-      Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+      this.markdownRenderer, {
+        tagClassMap: Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+      },
     )}`;
   }
 

@@ -2,11 +2,13 @@
   "name": "a2a-chat-canvas",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0"
+    "@angular/common": "^21.2.0",
+    "@angular/core": "^21.2.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@a2ui/web_core": "file:../../../../../renderers/web_core",
+    "@a2ui/angular": "file:../../dist/lib"
   },
   "sideEffects": false
 }

@@ -2,6 +2,8 @@
 
 This section explains the fundamental architecture of A2UI. Understanding these concepts will help you build effective agent-driven interfaces.
 
+See [Glossary](../glossary.md) for short definitions of key terms.
+
 ## The Big Picture
 
 A2UI is built around three core ideas:
@@ -23,11 +25,24 @@ How components connect to application state using JSON Pointer paths. Covers rea
 
 ## Message Types
 
-A2UI uses four message types:
+=== "v0.8 (Stable)"
 
-- **`surfaceUpdate`**: Define or update UI components
-- **`dataModelUpdate`**: Update application state
-- **`beginRendering`**: Signal the client to render
-- **`deleteSurface`**: Remove a UI surface
+    Version 0.8 uses the following message types:
+
+    - **`surfaceUpdate`**: Define or update UI components
+    - **`dataModelUpdate`**: Update application state
+    - **`beginRendering`**: Signal the client to render
+    - **`deleteSurface`**: Remove a UI surface
+
+=== "v0.9 (Draft)"
+
+    Version 0.9 uses the following message types:
+
+    - **`createSurface`**: Create a new surface and specify its catalog
+    - **`updateComponents`**: Add or update UI components in a surface
+    - **`updateDataModel`**: Update application state
+    - **`deleteSurface`**: Remove a UI surface
+
+    v0.9 separates surface creation from rendering — `createSurface` replaces both `beginRendering` and the implicit surface creation in `surfaceUpdate`. All messages include a `version` field.
 
 For complete technical details, see [Message Reference](../reference/messages.md).

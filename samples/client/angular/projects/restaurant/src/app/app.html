@@ -14,39 +14,41 @@
  limitations under the License.
  -->
 
-@if (client.isLoading()) {
+@if (!hasData()) {
+<form (submit)="handleSubmit($event)">
+  <img class="hero-img" src="hero-img" src="hero.png" alt="Image of the restaurant">
+
+  <h1 class="app-title">Restaurant Finder</h1>
+  <div>
+    <input required value="Top 5 Chinese restaurants in New York." autocomplete="off" id="body" name="body" type="text"
+      [disabled]="client.isLoading()" />
+    <button type="submit" [disabled]="client.isLoading()">
+      <span class="g-icon filled-heavy">send</span>
+    </button>
+  </div>
+</form>
+} @else {
+<div class="surfaces">
+  @let surfaces = processor.getSurfaces();
+
+  @if (client.isLoading() && surfaces.size === 0) {
   <div class="pending">
     <div class="spinner"></div>
     <div class="loading-text">{{loadingTextLines[loadingTextIndex()]}}</div>
   </div>
-} @else if (!hasData()) {
-  <form (submit)="handleSubmit($event)">
-    <img class="hero-img" src="hero-img" src="hero.png" alt="Image of the restaurant">
-
-    <h1 class="app-title">Restaurant Finder</h1>
-    <div>
-      <input
-        required
-        value="Top 5 Chinese restaurants in New York."
-        autocomplete="off"
-        id="body"
-        name="body"
-        type="text"
-        [disabled]="client.isLoading()"
-      />
-      <button type="submit" [disabled]="client.isLoading()">
-        <span class="g-icon filled-heavy">send</span>
-      </button>
-    </div>
-  </form>
-} @else {
-  <div class="surfaces">
-    @let surfaces = processor.getSurfaces();
-
-    @for (entry of surfaces; track $index) {
-      <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
-    }
+  } @else {
+  @if (client.isLoading()) {
+  <div class="streaming-indicator">
+    <div class="progress-bar"></div>
+    <span>Finding the best spots for you...</span>
   </div>
+  }
+
+  @for (entry of surfaces; track entry[0]) {
+  <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]" />
+  }
+  }
+</div>
 }
 
 <button (click)="toggleTheme(toggleButton)" class="theme-toggle" #toggleButton>

@@ -1,26 +1,27 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
-import { Types } from '@a2ui/lit/0.8';
+import * as Types from '@a2ui/web_core/types/types';
 import { inject, Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
   private processor = inject(MessageProcessor);
+  private contextId?: string;
 
   readonly isLoading = signal(false);
 
@@ -36,49 +37,145 @@ export class Client {
     });
   }
 
-  async makeRequest(request: Types.A2UIClientEventMessage | string) {
-    let messages: Types.ServerToClientMessage[];
-
+  async makeRequest(request: Types.A2UIClientEventMessage | string): Promise<Types.ServerToClientMessage[]> {
+    let messages: Types.ServerToClientMessage[] = [];
     try {
       this.isLoading.set(true);
-      const response = await this.send(request as Types.A2UIClientEventMessage);
-      messages = response;
+      // Clear surfaces at the start of a new request
+      this.processor.clearSurfaces();
+
+      const isString = typeof request === 'string';
+      const bodyData = isString
+        ? { query: request, contextId: this.contextId }
+        : { event: request, contextId: this.contextId };
+
+      const response = await fetch('/a2a', {
+        body: JSON.stringify(bodyData),
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = (await response.json()) as { error: string };
+        throw new Error(error.error);
+      }
+
+      const contentType = response.headers.get('content-type');
+      console.log(`[client] Received response with content-type: ${contentType}`);
+      if (contentType?.includes('text/event-stream')) {
+        await this.handleStreamingResponse(response, messages);
+      } else {
+        await this.handleNonStreamingResponse(response, messages);
+      }
     } catch (err) {
       console.error(err);
       throw err;
     } finally {
       this.isLoading.set(false);
     }
-
-    this.processor.clearSurfaces();
-    this.processor.processMessages(messages);
     return messages;
   }
 
-  private async send(
-    message: Types.A2UIClientEventMessage,
-  ): Promise<Types.ServerToClientMessage[]> {
-    const response = await fetch('/a2a', {
-      body: JSON.stringify(message),
-      method: 'POST',
-    });
-
-    if (response.ok) {
-      const data = (await response.json()) as A2AServerPayload;
-      const messages: Types.ServerToClientMessage[] = [];
-
-      if ('error' in data) {
-        throw new Error(data.error);
-      } else {
-        for (const item of data) {
-          if (item.kind === 'text') continue;
-          messages.push(item.data);
-        }
-      }
-      return messages;
+  private async handleStreamingResponse(
+    response: Response,
+    messages: Types.ServerToClientMessage[]
+  ): Promise<void> {
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No response body');
     }
 
-    const error = (await response.json()) as { error: string };
-    throw new Error(error.error);
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const now = performance.now();
+      buffer += decoder.decode(value, { stream: true });
+
+      // Parse SSE events. The server sends "data: <json>\n\n"
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const jsonStr = line.slice(6);
+          try {
+            const responseData = JSON.parse(jsonStr);
+            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, responseData);
+
+            if (responseData.error) {
+              throw new Error(responseData.error);
+            } else {
+              if (responseData.contextId) {
+                this.contextId = responseData.contextId;
+              }
+              const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
+              console.log(
+                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${parts.length} parts`
+              );
+              // Use a microtask to ensure we don't block the stream reader
+              await Promise.resolve();
+              const newMessages = this.processParts(parts);
+              messages.push(...newMessages);
+            }
+          } catch (e) {
+            console.error('Error parsing SSE data:', e, jsonStr);
+          }
+        }
+      }
+    }
+  }
+
+  private async handleNonStreamingResponse(
+    response: Response,
+    messages: Types.ServerToClientMessage[]
+  ): Promise<void> {
+    const responseData = await response.json();
+    console.log(`[client] Received JSON response:`, responseData);
+
+    if (responseData.contextId) {
+      this.contextId = responseData.contextId;
+    }
+    const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
+    const newMessages = this.processParts(parts);
+    messages.push(...newMessages);
+  }
+
+  private processParts(parts: any[]): Types.ServerToClientMessage[] {
+    const messages: Types.ServerToClientMessage[] = [];
+    for (const item of parts) {
+      if (item.data) {
+        messages.push(item.data);
+      } else if (item.kind === 'text' || item.text) {
+        const text = item.text || '';
+        const match = text.match(/<a2ui-json>(.*?)<\/a2ui-json>/s);
+        if (match) {
+          try {
+            const parsed = JSON.parse(match[1]);
+            const commands = Array.isArray(parsed) ? parsed : [parsed];
+            for (const cmd of commands) {
+              if (this.isValidA2uiCommand(cmd)) {
+                messages.push(cmd);
+              } else {
+                console.warn('[client] Ignored invalid A2UI command from text:', cmd);
+              }
+            }
+          } catch (e) {
+            console.error('Failed to parse a2ui-json from text:', e);
+          }
+        }
+      }
+    }
+    if (messages.length > 0) {
+      console.log(`[client] Processing ${messages.length} A2UI commands:`, messages);
+      this.processor.processMessages(messages);
+    }
+    return messages;
+  }
+
+  private isValidA2uiCommand(cmd: any): boolean {
+    return !!(cmd.surfaceUpdate || cmd.dataModelUpdate || cmd.beginRendering || cmd.deleteSurface);
   }
 }

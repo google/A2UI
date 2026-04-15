@@ -37,7 +37,11 @@ class SubagentRouteManager:
   ) -> Optional[str]:
     """Gets the subagent route for the given tool call id."""
     subagent_name = state.get(cls._get_routing_key(surface_id), None)
-    logging.info("Got subagent route for surface_id %s to subagent_name %s", surface_id, subagent_name)    
+    logging.info(
+        "Got subagent route for surface_id %s to subagent_name %s",
+        surface_id,
+        subagent_name,
+    )
     return subagent_name
 
   @classmethod
@@ -49,7 +53,7 @@ class SubagentRouteManager:
       session: Session,
   ):
     """Sets the subagent route for the given tool call id."""
-    key = cls._get_routing_key(surface_id)    
+    key = cls._get_routing_key(surface_id)
 
     if session.state.get(key) != subagent_name:
       await session_service.append_event(
@@ -61,4 +65,8 @@ class SubagentRouteManager:
           ),
       )
 
-      logging.info("Set subagent route for surface_id %s to subagent_name %s", surface_id, subagent_name)
+      logging.info(
+          "Set subagent route for surface_id %s to subagent_name %s",
+          surface_id,
+          subagent_name,
+      )
