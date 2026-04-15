@@ -15,13 +15,11 @@ Follow the steps in [agent's README.md](../../../agent/adk/restaurant_finder/REA
 
 ### Build dependencies and run client application
 
-```bash
 # Run from the root of repo:
-(cd renderers/web_core/; npm i; npm run build);
-(cd renderers/markdown/markdown-it/; npm i; npm run build);
-(cd renderers/lit/; npm i; npm run build);
-(cd samples/client/lit/shell/; npm i; npm run dev);
-```
+(cd renderers/web_core/ && npm i && npm run build) && \
+(cd renderers/markdown/markdown-it/ && npm i && npm run build) && \
+(cd renderers/lit/ && npm i && npm run build) && \
+(cd samples/client/lit/shell/ && npm i && npm run dev)
 
 If you hit errors around NPM install:
 
