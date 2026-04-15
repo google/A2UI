@@ -87,7 +87,6 @@
   "workspaces": [
     "projects/*",
     "../../../renderers/web_core",
-    "../../../renderers/markdown/markdown-it",
-    "../../../renderers/angular"
+    "../../../renderers/markdown/markdown-it"
   ]
 }
