@@ -64,10 +64,13 @@ const HEIGHTS = {
   'live-invitation-builder': 700,
 };
 
-// Gallery card scale overrides (for wide content that needs shrinking)
-const SCALES = {
-  'financial-data-grid': 0.85,
-};
+// Gallery card scale overrides (for wide content that needs shrinking).
+// The Financial Data Grid previously used scale: 0.85 to squeeze its 4-column
+// grid into the narrow gallery preview; globals.css now handles this via a
+// widget-scoped `min-width: 440px` + `overflow-x: scroll` on the Card, so the
+// scale workaround is no longer needed and was making content render smaller
+// than every other gallery tile.
+const SCALES = {};
 const DEFAULT_HEIGHT = 340;
 
 function slugToName(slug) {

@@ -30,6 +30,23 @@ export function GalleryWidget({ widget, height = 200, scale, onClick }: GalleryW
   // Get the first data state's data for preview
   const previewData = widget.dataStates?.[0]?.data ?? {};
 
+  // The Live Invitation Builder's editor + preview Row can't fit side-by-side
+  // in a ~275px gallery card without clipping. Make this specific gallery
+  // wrapper a size-query container so the matching `@container` rule in
+  // globals.css can stack its inner Row when narrow. Scoped by widget id so
+  // other widgets are unaffected, and only applies in the gallery (not the
+  // preview modal or editor preview, which don't set a container).
+  const isInvitationBuilder = widget.id === 'gallery-v09-live-invitation-builder';
+
+  const innerStyle: React.CSSProperties = {
+    ...(scale ? {
+      width: `${100 / scale}%`,
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+    } : {}),
+    ...(isInvitationBuilder ? { containerType: 'inline-size' } : {}),
+  };
+
   return (
     <div
       role={onClick ? 'button' : undefined}
@@ -49,11 +66,8 @@ export function GalleryWidget({ widget, height = 200, scale, onClick }: GalleryW
         >
           <div
             className="w-full min-w-0"
-            style={scale ? {
-              width: `${100 / scale}%`,
-              transform: `scale(${scale})`,
-              transformOrigin: 'top left',
-            } : undefined}
+            data-gallery-widget-id={widget.id}
+            style={innerStyle}
           >
             <A2UIViewer
               root={widget.root}

@@ -243,6 +243,81 @@
   overflow: hidden;
 }
 
+/*
+ * Live Invitation Builder gallery preview only:
+ * The widget's editor+preview Row can't fit side-by-side in a ~275px gallery
+ * card without clipping. When the gallery wrapper (which has
+ * `container-type: inline-size` only for this widget) is <= 400px wide, stack
+ * any inner Row vertically. The modal and editor preview are wider AND don't
+ * set a container on their wrapper, so this rule never fires there —
+ * side-by-side is preserved in the expanded view. Uses an attribute selector
+ * on inline `flex-direction: row` because the renderer styles Rows inline; no
+ * changes to Row.tsx or any other component needed.
+ */
+@container (max-width: 400px) {
+  [data-gallery-widget-id="gallery-v09-live-invitation-builder"] div[style*="flex-direction: row"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+}
+
+/*
+ * Financial Data Grid gallery preview only:
+ * 4 flex columns (weights 2/1/1/1.5) with long currency values can't share a
+ * ~275px gallery card — cells render on top of each other. Give the Card
+ * horizontal scroll and force its inner grid to a readable min-width so cells
+ * lay out cleanly. Targets the Card by its distinctive inline `box-shadow`
+ * (Card is the only component in the basic catalog that sets box-shadow
+ * inline), scoped under the widget-specific data attribute so no other gallery
+ * preview is affected, and stable because Card has no hover state that swaps
+ * the shadow mid-interaction.
+ *
+ * The gallery wrapper has `pointer-events: none` for click-to-open, so the
+ * scrollbar isn't interactive in the gallery — the goal here is just to stop
+ * the overlap and signal "there's more content" via a persistent visible
+ * scrollbar. Users get real interactive scroll in the preview modal, whose
+ * wrapper has pointer-events enabled.
+ *
+ * `overflow-x: scroll` (not auto) + explicit webkit-scrollbar styles force
+ * the scrollbar to always render on macOS, where overlay scrollbars would
+ * otherwise stay hidden in a non-interactive preview.
+ */
+[data-gallery-widget-id="gallery-v09-financial-data-grid"]
+  div[style*="box-shadow"] {
+  overflow-x: scroll !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  /* The gallery wrapper sets `pointer-events: none` to route clicks to the
+   * role=button parent for click-to-open. Re-enable events on just the Card
+   * so wheel/touchpad/drag actually scroll it. Clicks still bubble up to the
+   * wrapper's onClick, so click-to-open keeps working. */
+  pointer-events: auto;
+}
+[data-gallery-widget-id="gallery-v09-financial-data-grid"]
+  div[style*="box-shadow"]::-webkit-scrollbar {
+  height: 6px;
+  -webkit-appearance: none;
+}
+[data-gallery-widget-id="gallery-v09-financial-data-grid"]
+  div[style*="box-shadow"]::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+[data-gallery-widget-id="gallery-v09-financial-data-grid"]
+  div[style*="box-shadow"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-gallery-widget-id="gallery-v09-financial-data-grid"]
+  div[style*="box-shadow"] > div {
+  /* Inline `min-width: 0` is set on every Column for flex shrink behavior —
+   * beats our external rule without !important. 440px is a compromise: wide
+   * enough that cells don't compress to the point of text overlap, narrow
+   * enough that the ~243px visible area shows Asset + Price + start of 24h
+   * Change, making clear that the table scrolls. */
+  min-width: 440px !important;
+}
+
 /* Monaco editor - use background highlight instead of border */
 .monaco-editor .current-line,
 .monaco-editor .view-overlays .current-line {
