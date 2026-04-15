@@ -20,14 +20,8 @@ import { customElement, state } from "lit/decorators.js";
 import { MessageProcessor } from "@a2ui/web_core/v0_9";
 import { basicCatalog, Context } from "@a2ui/lit/v0_9";
 import { renderMarkdown } from "@a2ui/markdown-it";
-// Try avoiding direct deep import if A2uiMessage is not exported at the top level, using any for now as this is just a type for the array of messages
-interface DemoItem {
-  id: string;
-  title: string;
-  filename: string;
-  description: string;
-  messages: any[];
-}
+import { getDemoItems, DemoItem } from "./examples";
+import { appStyles } from "./local-gallery.css";
 
 @customElement("local-gallery")
 export class LocalGallery extends LitElement {
@@ -49,189 +43,7 @@ export class LocalGallery extends LitElement {
 
   private dataModelSubscription?: { unsubscribe: () => void };
 
-  static styles = [
-    css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        width: 100vw;
-        overflow: hidden;
-        background: #0f172a;
-        color: #f1f5f9;
-        font-family: system-ui, sans-serif;
-      }
-
-      header {
-        padding: 16px 24px;
-        background: rgba(15, 23, 42, 0.8);
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 1.5rem;
-      }
-      p.subtitle {
-        color: #94a3b8;
-        margin: 4px 0 0 0;
-        font-size: 0.9rem;
-      }
-
-      main {
-        flex: 1;
-        display: flex;
-        overflow: hidden;
-      }
-
-      .nav-pane {
-        width: 250px;
-        background: #1e293b;
-        border-right: 1px solid rgba(148, 163, 184, 0.1);
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-      }
-
-      .nav-item {
-        padding: 16px;
-        cursor: pointer;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-        transition: background 0.2s;
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .nav-item.active {
-        background: rgba(56, 189, 248, 0.1);
-        border-left: 4px solid #38bdf8;
-      }
-
-      .nav-title {
-        margin: 0 0 4px 0;
-        font-size: 0.95rem;
-        font-weight: 500;
-      }
-      .nav-desc {
-        margin: 0;
-        font-size: 0.8rem;
-        color: #94a3b8;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .gallery-pane {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background: #0f172a;
-        overflow: hidden;
-      }
-
-      .preview-header {
-        padding: 16px;
-        background: #1e293b;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .stepper-controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-
-      button {
-        background: #38bdf8;
-        color: #0f172a;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      button:hover {
-        background: #7dd3fc;
-      }
-      button:disabled {
-        background: #475569;
-        color: #94a3b8;
-        cursor: not-allowed;
-      }
-
-      .preview-content {
-        flex: 1;
-        padding: 24px;
-        overflow-y: auto;
-        display: flex;
-        justify-content: center;
-      }
-
-      .surface-container {
-        width: 100%;
-        max-width: 600px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 8px;
-        padding: 24px;
-      }
-
-      .inspector-pane {
-        width: 400px;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px solid rgba(148, 163, 184, 0.1);
-        background: #020617;
-      }
-
-      .inspector-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        overflow: hidden;
-      }
-
-      .inspector-header {
-        padding: 12px 16px;
-        background: #1e293b;
-        font-weight: bold;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        color: #94a3b8;
-      }
-
-      .inspector-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 16px;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.8rem;
-        white-space: pre-wrap;
-      }
-
-      .log-list {
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 8px;
-      }
-
-      .log-entry {
-        padding: 8px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 4px;
-        border-left: 2px solid #38bdf8;
-      }
-    `,
-  ];
+  static styles = [appStyles];
 
   async connectedCallback() {
     super.connectedCallback();
@@ -242,67 +54,17 @@ export class LocalGallery extends LitElement {
       });
     });
 
-    await this.loadExamples();
+    this.loadExamples();
   }
 
-  async loadExamples() {
+  loadExamples() {
     try {
-      const items: DemoItem[] = [];
-      await this.fetchExamplesFrom("./specs/v0_9/basic/examples", items);
-
-      this.demoItems = items;
-      if (items.length > 0) {
+      this.demoItems = getDemoItems();
+      if (this.demoItems.length > 0) {
         this.selectItem(0);
       }
     } catch (err) {
       console.error(`Failed to initiate gallery:`, err);
-    }
-  }
-
-  async fetchExamplesFrom(dir: string, items: DemoItem[]) {
-    try {
-      const indexResp = await fetch(`${dir}/index.json`);
-      if (!indexResp.ok) throw new Error(`Could not load manifest from ${dir}`);
-      const filenames = (await indexResp.json()) as string[];
-
-      for (const filename of filenames) {
-        try {
-          const response = await fetch(`${dir}/${filename}`);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const data = await response.json();
-          const messages = Array.isArray(data) ? data : data.messages || [];
-
-          let surfaceId = filename.replace(".json", "");
-          const createMsg = messages.find((m: any) => m.createSurface);
-          if (createMsg) {
-            surfaceId = createMsg.createSurface.surfaceId;
-          } else {
-            messages.unshift({
-              version: "v0.9",
-              createSurface: {
-                surfaceId,
-                catalogId: basicCatalog.id,
-              },
-            });
-          }
-
-          items.push({
-            id: surfaceId,
-            title: filename
-              .split("_")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ")
-              .replace(".json", ""),
-            filename: filename,
-            description: data.description || `Source: ${filename}`,
-            messages: messages,
-          });
-        } catch (err) {
-          console.error(`Error loading ${filename}:`, err);
-        }
-      }
-    } catch (e) {
-      console.warn(`Could not load ${dir}`, e);
     }
   }
 
@@ -372,8 +134,8 @@ export class LocalGallery extends LitElement {
     return html`
       <header>
         <div>
-          <h1>A2UI Local Gallery</h1>
-          <p class="subtitle">v0.9 Minimal Catalog</p>
+          <h1>A2UI Explorer</h1>
+          <p class="subtitle">v0.9 Basic Catalog</p>
         </div>
       </header>
       <main>

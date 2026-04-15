@@ -18,13 +18,13 @@ Integrate A2UI rendering into your existing app or build a new agent-powered fro
 For Angular:
 
 ```bash
-npm install @a2ui/angular @a2ui/web-lib
+npm install @a2ui/angular @a2ui/web_core
 ```
 
 For React:
 
 ```bash
-npm install @a2ui/react @a2ui/web-lib
+npm install @a2ui/react @a2ui/web_core
 ```
 
 Connect to agent messages (SSE, WebSockets, or A2A) and customize styling to match your brand.

@@ -82,7 +82,7 @@ class RestaurantAgentExecutor(AgentExecutor):
 
     if ui_event_part:
       logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-      action = ui_event_part.get("actionName")
+      action = ui_event_part.get("name")
       ctx = ui_event_part.get("context", {})
 
       if action == "book_restaurant":
