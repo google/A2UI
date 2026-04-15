@@ -21,7 +21,7 @@ import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
 import { Renderer } from '../rendering/renderer';
 import { Types } from '../types';
-import { Component, Directive, Input } from '@angular/core';
+import { Directive, Input } from '@angular/core';
 
 // Mock Renderer directive to avoid full tree rendering issues for isolated unit tests
 @Directive({

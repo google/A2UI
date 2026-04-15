@@ -1,3 +1,4 @@
+// Force rebuild by wireit
 /*
  * Copyright 2025 Google LLC
  *
@@ -242,16 +243,12 @@ export class DataContext {
 
       const stopper = effect(() => {
         try {
-          const hasArgErrors = keys.some(
-            key =>
-              typeof (argSignals[key] as any).__a2uiHasError === 'function' &&
-              (argSignals[key] as any).__a2uiHasError(),
-          );
+          const args = argsSig.value;
 
-          if (hasArgErrors) {
-            stopCurrentResult();
-            resultSig.value = undefined;
-            return;
+          if (abortController) abortController.abort();
+          if (innerUnsubscribe) {
+            innerUnsubscribe();
+            innerUnsubscribe = undefined;
           }
 
           const args = argsSig.value;

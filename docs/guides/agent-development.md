@@ -22,6 +22,12 @@ pip install google-adk
 adk create my_agent
 ```
 
+> **TIP**: If you are using `uv` and working within the sample directories (or a project that already depends on `google-adk`), you can use `uv run adk` instead of installing it globally:
+>
+> ```bash
+> uv run adk create my_agent
+> ```
+
 Then edit the `my_agent/agent.py` file with a very simple agent for restaurant recommendations.
 
 ```python
@@ -92,57 +98,54 @@ Select `my_agent` from the list, and ask questions about restaurants in New York
 
 ## Generating A2UI Messages
 
-Getting the LLM to generate A2UI messages requires some prompt engineering.  
+Getting the LLM to generate A2UI messages requires some prompt engineering. The SDK provides the `A2uiSchemaManager` to help you generate a system prompt that includes the A2UI schema and examples from your component catalog.
 
-IMPORTANT: Attention
-This area is under active design. The developer ergonomics are not yet finalized.
+First, make sure you have `a2ui-agent-sdk` installed (it is included in the samples).
 
-For now, copy the `a2ui_schema.py` from the contact lookup example. This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
-
-```bash
-cp samples/agent/adk/contact_lookup/a2ui_schema.py my_agent/
-```
-
-First, add the new imports to the `agent.py` file:
+In your agent file (e.g., `agent.py`), import the necessary classes:
 
 ```python
-# The schema for any A2UI message.  This never changes.
-from .a2ui_schema import A2UI_SCHEMA
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
 ```
 
-Now, modify the agent instructions to generate A2UI messages instead of plain text. Leave a placeholder for future UI examples.
+Then, you can use `A2uiSchemaManager` to generate the system prompt. This ensures that the schema and examples are correctly formatted and up to date.
 
 ```python
+# Define your agent's role
+ROLE_DESCRIPTION = (
+    "You are a helpful restaurant finding assistant. Your final output MUST be a a2ui"
+    " UI JSON response."
+)
 
-# Eventually you can copy & paste some UI examples here, for few-shot in context learning
-RESTAURANT_UI_EXAMPLES = """
-"""
-
-# Construct the full prompt with UI instructions, examples, and schema
-A2UI_AND_AGENT_INSTRUCTION = AGENT_INSTRUCTION + f"""
-
-Your final output MUST be a a2ui UI JSON response.
-
-To generate the response, you MUST follow these rules:
-1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-2.  The first part is your conversational text response.
-3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
-
---- UI TEMPLATE RULES ---
-Follow these rules to select the appropriate UI template:
--   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
+# Define rules for when to use which UI template
+UI_DESCRIPTION = """
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) object (e.g., for the "items" key).
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
 -   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
-
-{RESTAURANT_UI_EXAMPLES}
-
----BEGIN A2UI JSON SCHEMA---
-{A2UI_SCHEMA}
----END A2UI JSON SCHEMA---
 """
+
+# Initialize the schema manager with the Basic Catalog
+schema_manager = A2uiSchemaManager(
+    version=VERSION_0_8, # Use VERSION_0_9 for newer protocol
+    catalogs=[
+        BasicCatalog.get_config(
+            version=VERSION_0_8, examples_path="examples/0.8"
+        )
+    ],
+)
+
+# Generate the full system prompt
+A2UI_AND_AGENT_INSTRUCTION = schema_manager.generate_system_prompt(
+    role_description=ROLE_DESCRIPTION,
+    ui_description=UI_DESCRIPTION,
+    include_schema=True,
+    include_examples=True,
+    validate_examples=True,
+)
 
 root_agent = Agent(
     model='gemini-2.5-flash',

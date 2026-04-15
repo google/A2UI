@@ -100,7 +100,7 @@ Functionality of A2UI renderer consists of layers that can be developed separate
 
   For example, see the [basic catalog schema](../specification/v0_10/json/basic_catalog.json).
 
-- **Framework adapter**:
+- **Framework adapter**:<a id="fw-adapter"></a>
   
   Code that implements the execution of the agent’s instructions in a concrete framework. For example:
   
@@ -160,12 +160,12 @@ A function provided for agent to invoke when needed.
 
 Do not confuse with LLM tool:
 
-| Feature      | Client Function                                                       | LLM Tool Invocation                                                               |
-| ------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Executor     | A2UI Renderer                                                         | LLM requests invocation without concern about execution details.                  |
-| Timing       | After the agent to renderer message is sent.                          | Before the agent to renderer message is sent.                                     |
-| Purpose      | UI logic (Validation, visible toggles, Formatting)                    | Reasoning, Data Fetching, Backend Actions                                         |
-| Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
+| Feature      | Client Function                                                       | LLM Tool Invocation                                                                   |
+| ------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Executor     | A2UI Renderer                                                         | LLM requests invocation without concern about execution details.                      |
+| Timing       | After the agent to renderer message is sent.                          | Before the agent to renderer message is sent.                                         |
+| Purpose      | UI logic (Validation, visible toggles, Formatting)                    | Reasoning, Data Fetching, Backend Actions                                             |
+| Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                             |
 | State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, databases, and services |
 
 See the [example in common types](../specification/v0_9/json/common_types.json#L200).

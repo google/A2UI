@@ -42,6 +42,9 @@ import { ComponentBinder } from './component-binder.service';
 @Component({
   selector: 'a2ui-v09-component-host',
   imports: [NgComponentOutlet],
+  host: {
+    'style': 'display: contents;'
+  },
   template: `
     @if (componentType) {
       <ng-container
@@ -50,8 +53,8 @@ import { ComponentBinder } from './component-binder.service';
           inputs: {
           props: props,
           surfaceId: surfaceId(),
-          componentId: componentId(),
-          dataContextPath: dataContextPath(),
+          componentId: resolvedComponentId,
+          dataContextPath: resolvedDataContextPath,
         }
         "
       ></ng-container>
@@ -60,17 +63,11 @@ import { ComponentBinder } from './component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentHostComponent implements OnInit {
-  /** The ID of the component to render. Defaults to 'root'. */
-  componentId = input<string>('root');
+  /** The key of the component to render, either an ID string or an object with ID and basePath. Defaults to 'root'. */
+  componentKey = input<string | { id: string; basePath: string }>('root');
 
   /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
-
-  /**
-   * The path within the surface's data model that represents the current data state.
-   * Defaults to '/'.
-   */
-  dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
   private binder = inject(ComponentBinder);
@@ -79,6 +76,8 @@ export class ComponentHostComponent implements OnInit {
   protected componentType: Type<any> | null = null;
   protected props: any = {};
   private context?: ComponentContext;
+  protected resolvedComponentId: string = '';
+  protected resolvedDataContextPath: string = '/';
 
   ngOnInit(): void {
     const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
@@ -88,10 +87,24 @@ export class ComponentHostComponent implements OnInit {
       return;
     }
 
-    const componentModel = surface.componentsModel.get(this.componentId());
+    const key = this.componentKey();
+    let id: string;
+    let basePath: string;
+
+    if (typeof key === 'object' && key !== null && 'id' in key) {
+      id = key.id;
+      basePath = key.basePath || '/';
+    } else {
+      id = key;
+      basePath = '/';
+    }
+
+    this.resolvedComponentId = id;
+
+    const componentModel = surface.componentsModel.get(id);
 
     if (!componentModel) {
-      console.warn(`Component ${this.componentId()} not found in surface ${this.surfaceId()}`);
+      console.warn(`Component ${id} not found in surface ${this.surfaceId()}`);
       return;
     }
 
@@ -106,12 +119,9 @@ export class ComponentHostComponent implements OnInit {
     this.componentType = api.component;
 
     // Create context
-    this.context = new ComponentContext(surface, this.componentId(), this.dataContextPath());
-    this.bindProps();
-
-    const updatedSubscription = componentModel.onUpdated.subscribe(() => {
-      this.bindProps();
-    });
+    this.context = new ComponentContext(surface, id, basePath);
+    this.props = this.binder.bind(this.context);
+    this.resolvedDataContextPath = this.context.dataContext.path;
 
     this.destroyRef.onDestroy(() => {
       updatedSubscription.unsubscribe();

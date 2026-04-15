@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseContainerStyle} from '../utils';
 
-export const Card = createReactComponent(CardApi, ({props, buildChild}) => {
+export const Card = createComponentImplementation(CardApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
     ...getBaseContainerStyle(),
     backgroundColor: '#fff',

@@ -35,5 +35,10 @@
       "rxjs/operators": ["./node_modules/rxjs/operators/index.js"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.json"],
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictTemplates": true,
+    "strictPropertyInitialization": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.json"]
 }

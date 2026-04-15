@@ -19,7 +19,9 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ExternalLink, Copy, Check } from 'lucide-react';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import { A2UIViewer } from '@/lib/a2ui';
+import { useSpecVersion } from '@/contexts/spec-version-context';
+import type { A2UIComponent, SpecVersion } from '@/types/widget';
 
 // 100 most important Material Icons for common UI patterns
 const MATERIAL_ICONS = [
@@ -66,7 +68,14 @@ const MATERIAL_ICONS = [
   'dashboard', 'list', 'view_list', 'grid_view', 'table_chart', 'bar_chart',
 ];
 
-function IconCard({ name, isSelected, onClick }: { name: string; isSelected: boolean; onClick: () => void }) {
+function iconComponent(name: string, specVersion: SpecVersion): A2UIComponent[] {
+  if (specVersion === '0.9') {
+    return [{ id: 'icon', component: 'Icon', name }];
+  }
+  return [{ id: 'icon', component: { Icon: { name: { literalString: name } } } }];
+}
+
+function IconCard({ name, isSelected, onClick, specVersion }: { name: string; isSelected: boolean; onClick: () => void; specVersion: SpecVersion }) {
   return (
     <button
       onClick={onClick}
@@ -80,16 +89,8 @@ function IconCard({ name, isSelected, onClick }: { name: string; isSelected: boo
       <div className="flex h-12 w-12 items-center justify-center scale-[2]">
         <A2UIViewer
           root="icon"
-          components={[
-            {
-              id: 'icon',
-              component: {
-                Icon: {
-                  name: { literalString: name },
-                },
-              },
-            },
-          ]}
+          components={iconComponent(name, specVersion)}
+          specVersion={specVersion}
         />
       </div>
       <span className="text-xs text-muted-foreground truncate w-full text-center">
@@ -100,6 +101,7 @@ function IconCard({ name, isSelected, onClick }: { name: string; isSelected: boo
 }
 
 export default function IconsPage() {
+  const { specVersion } = useSpecVersion();
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -156,6 +158,7 @@ export default function IconsPage() {
             name={name}
             isSelected={selectedIcon === name}
             onClick={() => setSelectedIcon(name)}
+            specVersion={specVersion}
           />
         ))}
       </div>
