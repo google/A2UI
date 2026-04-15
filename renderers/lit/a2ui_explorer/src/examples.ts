@@ -80,11 +80,12 @@ export function getDemoItems(): DemoItem[] {
 /**
  * Ensures that the messages array contains a createSurface message.
  *
- * If it doesn't, synthesizes one using the filename, and prepends it to the
- * messages array.
+ * If it doesn't, synthesizes one using the filename, and **prepends it to the
+ * messages array.**
  *
  * @param filename The name of the file, used as fallback surfaceId.
- * @param messages The array of A2UI messages.
+ * @param messages The array of A2UI messages. **Note: This array may be mutated
+ *                 by prepending a createSurface message if none exists.**
  * @returns The surfaceId for the createSurface message of this set of messages.
  */
 function ensureCreateSurfaceMessage(filename: string, messages: A2uiMessage[]): string {
