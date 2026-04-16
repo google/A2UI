@@ -30,6 +30,7 @@ export * from './core/surface.component';
 export * from './core/component-binder.service';
 export * from './core/types';
 export * from './core/utils';
+export * from './core/markdown';
 
 // Catalog Types and Implementations
 export * from './catalog/types';

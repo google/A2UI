@@ -19,7 +19,6 @@ import { Icon } from './icon';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
 import { By } from '@angular/platform-browser';
 
 describe('Icon Component', () => {

@@ -17,12 +17,18 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
+import { BasicCatalogComponent } from './basic-catalog-component';
+import { Child } from '../../core/component-binder.service';
 
 /**
  * Angular implementation of the A2UI List component (v0.9).
  *
  * Renders a list of child components with support for ordered, unordered,
  * and unstyled layouts in both vertical and horizontal orientations.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-list-gap`: Controls the gap between items.
+ * - `--a2ui-list-padding`: Controls the padding (applied to padding-inline-start).
  */
 @Component({
   selector: 'a2ui-v09-list',
@@ -32,12 +38,11 @@ import { BoundProperty } from '../../core/types';
     @switch (listTag()) {
       @case ('ol') {
         <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child) {
+          @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </li>
@@ -46,12 +51,11 @@ import { BoundProperty } from '../../core/types';
       }
       @case ('ul') {
         <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
-          @for (child of children(); track child) {
+          @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </li>
@@ -60,12 +64,11 @@ import { BoundProperty } from '../../core/types';
       }
       @default {
         <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
-          @for (child of children(); track child) {
+          @for (child of children(); track trackBy($index, child)) {
             <div class="a2ui-list-item-none">
               <a2ui-v09-component-host
-                [componentId]="child"
+                [componentKey]="child"
                 [surfaceId]="surfaceId()"
-                [dataContextPath]="dataContextPath()"
               >
               </a2ui-v09-component-host>
             </div>
@@ -78,16 +81,16 @@ import { BoundProperty } from '../../core/types';
     `
       .a2ui-list {
         display: flex;
-        padding-inline-start: 24px;
+        padding-inline-start: var(--a2ui-list-padding, var(--a2ui-spacing-l, 24px));
         margin: 0;
       }
       .a2ui-list.vertical {
         flex-direction: column;
-        gap: 8px;
+        gap: var(--a2ui-list-gap, var(--a2ui-spacing-s, 8px));
       }
       .a2ui-list.horizontal {
         flex-direction: row;
-        gap: 16px;
+        gap: var(--a2ui-list-gap, var(--a2ui-spacing-m, 16px));
         list-style-position: inside;
       }
       .a2ui-list-item-none {
@@ -100,7 +103,7 @@ import { BoundProperty } from '../../core/types';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent {
+export class ListComponent extends BasicCatalogComponent {
   /**
    * Reactive properties resolved from the A2UI {@link ComponentModel}.
    *
@@ -133,4 +136,10 @@ export class ListComponent {
     if (style === 'none') return 'none';
     return '';
   });
+
+  /**
+   * Track-by function to ensure stable change detection for list items.
+   * Uses the full resolved path (`basePath/id`) to uniquely identify items.
+   */
+  readonly trackBy = (index: number, item: Child) => `${item.basePath}/${item.id}`;
 }

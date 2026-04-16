@@ -34,6 +34,8 @@ export class ComponentContext {
   readonly dataContext: DataContext;
   /** The collection of all component models for the current surface, allowing lookups by ID. */
   readonly surfaceComponents: SurfaceComponentsModel;
+  /** The theme configuration for the surface this component belongs to. */
+  readonly theme: any;
 
   /**
    * Creates a new component context.
@@ -53,6 +55,7 @@ export class ComponentContext {
     }
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
+    this.theme = surface.theme;
 
     this.dataContext = new DataContext(surface, dataModelBasePath);
     this._actionDispatcher = action =>

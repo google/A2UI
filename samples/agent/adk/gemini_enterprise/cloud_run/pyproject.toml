@@ -26,7 +26,11 @@ dependencies = [
     "uvicorn",
     "google-cloud-aiplatform>=1.84",
     "jsonschema>=4.0.0",
+<<<<<<< HEAD
     "a2ui-agent-sdk>=0.1.1",
+=======
+    "a2ui-agent-sdk",
+>>>>>>> main
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -45,3 +49,9 @@ default = true
 
 [project.scripts]
 start = "main:serve"
+<<<<<<< HEAD
+=======
+
+[tool.uv.sources]
+a2ui-agent-sdk = { path = "../../../../agent_sdks/python", editable = true }
+>>>>>>> main

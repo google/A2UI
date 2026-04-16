@@ -31,7 +31,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class RestaurantAgentExecutor(AgentExecutor):
 
     if ui_event_part:
       logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-      action = ui_event_part.get("actionName")
+      action = ui_event_part.get("name")
       ctx = ui_event_part.get("context", {})
 
       if action == "book_restaurant":

@@ -27,11 +27,12 @@ import {
 import { z } from "zod";
 import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
+import { useSpecVersion } from "@/contexts/spec-version-context";
 import type { Widget } from "@/types/widget";
-import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
+import type { A2UIComponent } from "@/types/widget";
 import { parseRobustJSON } from "@/lib/json-parser";
 
-const DEFAULT_COMPONENTS: ComponentInstance[] = [
+const DEFAULT_COMPONENTS_V08: A2UIComponent[] = [
   {
     id: "root",
     component: {
@@ -50,13 +51,30 @@ const DEFAULT_COMPONENTS: ComponentInstance[] = [
   },
 ];
 
+const DEFAULT_COMPONENTS_V09: A2UIComponent[] = [
+  {
+    id: "root",
+    component: "Card",
+    child: "content",
+  },
+  {
+    id: "content",
+    component: "Text",
+    text: { path: "/title" },
+  },
+];
+
 const DEFAULT_DATA = { title: "Hello World" };
 
 export function CreateWidget() {
   const router = useRouter();
   const { addWidget } = useWidgets();
-  const { agent } = useAgent();
+  const { specVersion } = useSpecVersion();
+  const agentId = specVersion === '0.9' ? 'v09' : 'v08';
+  const { agent } = useAgent({ agentId });
   const { copilotkit } = useCopilotKit();
+
+  const defaultComponents = specVersion === '0.9' ? DEFAULT_COMPONENTS_V09 : DEFAULT_COMPONENTS_V08;
 
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -64,7 +82,7 @@ export function CreateWidget() {
 
   // Refs to capture tool results
   const generatedName = useRef<string | null>(null);
-  const generatedComponents = useRef<ComponentInstance[] | null>(null);
+  const generatedComponents = useRef<A2UIComponent[] | null>(null);
   const generatedData = useRef<Record<string, unknown> | null>(null);
 
   // Frontend tool for creating new widgets - captures AI output
@@ -169,7 +187,7 @@ export function CreateWidget() {
         >;
         generatedComponents.current = parseRobustJSON(
           components,
-        ) as ComponentInstance[];
+        ) as A2UIComponent[];
       } catch (error) {
         return {
           success: false,
@@ -213,8 +231,9 @@ export function CreateWidget() {
         name: generatedName.current ?? "Untitled widget",
         createdAt: new Date(),
         updatedAt: new Date(),
+        specVersion,
         root: "root",
-        components: generatedComponents.current ?? DEFAULT_COMPONENTS,
+        components: generatedComponents.current ?? defaultComponents,
         dataStates: [
           {
             name: "default",
@@ -252,8 +271,9 @@ export function CreateWidget() {
       name: "Untitled widget",
       createdAt: new Date(),
       updatedAt: new Date(),
+      specVersion,
       root: "root",
-      components: DEFAULT_COMPONENTS,
+      components: defaultComponents,
       dataStates: [
         {
           name: "default",

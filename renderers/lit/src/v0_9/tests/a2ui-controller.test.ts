@@ -29,7 +29,7 @@ import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
  * - Safely cleaning up subscriptions when the host is disconnected or the controller is disposed.
  */
 describe("A2uiController", () => {
-  let minimalCatalog: any;
+  let basicCatalog: any;
 
   /**
    * Helper function to instantiate and append the `test-mock-host` custom element
@@ -57,8 +57,7 @@ describe("A2uiController", () => {
     // Dynamically import component files *after* setting up JSDOM globals
     // to prevent LitElement from evaluating in an empty Node context and crashing.
     const { A2uiLitElement } = await import("../a2ui-lit-element.js");
-    minimalCatalog = (await import("../catalogs/minimal/index.js"))
-      .minimalCatalog;
+    basicCatalog = (await import("../catalogs/basic/index.js")).basicCatalog;
 
     /**
      * A real Lit element registered as `test-mock-host` in JSDOM.
@@ -84,14 +83,14 @@ describe("A2uiController", () => {
   let context: ComponentContext;
 
   beforeEach(() => {
-    processor = new MessageProcessor([minimalCatalog]);
+    processor = new MessageProcessor([basicCatalog]);
     // Initialize the test surface and seed an initial text component
     processor.processMessages([
       {
         version: "v0.9",
         createSurface: {
           surfaceId: "test-surface",
-          catalogId: minimalCatalog.id,
+          catalogId: basicCatalog.id,
         },
       },
       {

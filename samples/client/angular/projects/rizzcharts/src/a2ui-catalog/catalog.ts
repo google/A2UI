@@ -40,4 +40,12 @@ export const RIZZ_CHARTS_CATALOG = {
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
     ],
   },
+  YouTube: {
+    type: () => import('./youtube').then((r) => r.YouTube),
+    bindings: ({ properties }) => [
+      inputBinding('videoId', () => ('videoId' in properties && properties['videoId']) || undefined),
+      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
+      inputBinding('autoplay', () => ('autoplay' in properties && properties['autoplay']) || undefined),
+    ],
+  },
 } as Catalog;

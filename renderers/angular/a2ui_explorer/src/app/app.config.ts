@@ -15,7 +15,8 @@
  */
 
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideMarkdownRenderer } from '../../../src/v0_9/core/markdown';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners()],
+  providers: [provideBrowserGlobalErrorListeners(), provideMarkdownRenderer()],
 };

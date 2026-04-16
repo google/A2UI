@@ -66,9 +66,9 @@ describe('Basic Catalog Components', () => {
 
     it('renders with correct heading tag based on variant', () => {
       const { view } = renderA2uiComponent(Text, 't1', { text: 'Title', variant: 'h1' });
-      const h1 = view.container.querySelector('h1');
+      const h1 = view.container.querySelector('div.h1');
       expect(h1).not.toBeNull();
-      expect(h1?.textContent).toBe('Title');
+      expect(h1?.textContent).toBe('# Title');
     });
   });
 
@@ -108,6 +108,21 @@ describe('Basic Catalog Components', () => {
       const { view } = renderA2uiComponent(Icon, 'ic1', { name: 'settings' });
       expect(view.container.textContent).toContain('settings');
       expect(view.container.querySelector('.material-symbols-outlined')).not.toBeNull();
+    });
+
+    it('converts camelCase icon names to snake_case', () => {
+      const { view } = renderA2uiComponent(Icon, 'ic1', { name: 'shoppingCart' });
+      expect(view.container.textContent).toContain('shopping_cart');
+    });
+
+    it.each([
+      ['play', 'play_arrow'],
+      ['rewind', 'fast_rewind'],
+      ['favoriteOff', 'favorite_border'],
+      ['starOff', 'star_border'],
+    ])('maps "%s" to "%s"', (specName, materialName) => {
+      const { view } = renderA2uiComponent(Icon, 'ic1', { name: specName });
+      expect(view.container.textContent).toContain(materialName);
     });
   });
 

@@ -15,7 +15,7 @@
  */
 
 import {useState} from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
@@ -24,7 +24,7 @@ import {LEAF_MARGIN} from '../utils';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type _Tab = any;
 
-export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
+export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const tabs = props.tabs || [];

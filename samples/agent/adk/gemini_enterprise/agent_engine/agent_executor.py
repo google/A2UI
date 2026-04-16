@@ -30,7 +30,11 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
+<<<<<<< HEAD
 from a2ui.a2a import try_activate_a2ui_extension
+=======
+from a2ui.a2a.extension import try_activate_a2ui_extension
+>>>>>>> main
 from agent import ContactAgent
 
 logger = logging.getLogger(__name__)

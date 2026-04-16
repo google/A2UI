@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+from collections import OrderedDict
 from collections.abc import AsyncIterable
 from typing import Any, Optional, Dict
 
@@ -41,17 +42,35 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import (
-    get_a2ui_agent_extension,
-    stream_response_to_parts,
-)
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.a2a.extension import get_a2ui_agent_extension
+from a2ui.a2a.parts import parse_response_to_parts, stream_response_to_parts
 
 logger = logging.getLogger(__name__)
+
+from google.adk.utils import instructions_utils
+
+# Monkey patch to work around ADK issue where it tries to interpolate A2UI
+# syntax (like ${...}) as session state.
+# Bug filed against ADK: https://github.com/google/adk-python/issues/5179
+original_inject = instructions_utils.inject_session_state
+
+
+async def custom_inject_session_state(template: str, context: Any) -> str:
+  # Protect A2UI interpolation syntax from ADK
+  protected = template.replace("${", "__PROTECTED_BRACE__")
+  # Run original ADK injection
+  result = await original_inject(protected, context)
+  # Restore syntax for the model
+  return result.replace("__PROTECTED_BRACE__", "${")
+
+
+# Apply the monkeypatch
+instructions_utils.inject_session_state = custom_inject_session_state
 
 
 class RestaurantAgent:
@@ -67,7 +86,8 @@ class RestaurantAgent:
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
-    self._parsers = {}
+    self._parsers = OrderedDict()
+    self._max_parsers = 1000  # Max active sessions to keep in memory
 
     for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
@@ -158,6 +178,20 @@ class RestaurantAgent:
         else get_text_prompt()
     )
 
+    if schema_manager:
+      instruction += (
+          "\n\nMANDATORY: Every single response from you MUST start with a"
+          " `createSurface` message followed by an `updateComponents` message, before"
+          " any `updateDataModel` messages. The client requires them to render the"
+          " interface on every turn.\nCRITICAL: You MUST ALWAYS use an ARRAY for"
+          " `items` in a list, do NOT use an object with keys like `item1`.\nCRITICAL:"
+          " When updating the list of restaurants, use `updateDataModel` with `path:"
+          ' "/items"` so that you do not overwrite the `title` property at the'
+          " root.\nCRITICAL: You MUST output the entire `updateDataModel` message with"
+          " all items at once at the end of your response. Do NOT output partial lists"
+          " or stream items one by one."
+      )
+
     return LlmAgent(
         model=LiteLlm(model=LITELLM_MODEL),
         name="restaurant_agent",
@@ -169,7 +203,7 @@ class RestaurantAgent:
   async def stream(
       self, query, session_id, ui_version: Optional[str] = None
   ) -> AsyncIterable[dict[str, Any]]:
-    session_state = {"base_url": self.base_url}
+    session_state = {"base_url": self.base_url, "expression": "{expression}"}
 
     # Determine which runner to use based on whether the a2ui extension is active.
     if ui_version:
@@ -236,6 +270,7 @@ class RestaurantAgent:
       )
 
       full_content_list = []
+      parts_streamed = False
 
       async def token_stream():
         async for event in runner.run_async(
@@ -253,11 +288,16 @@ class RestaurantAgent:
                 yield p.text
 
       if selected_catalog:
-        from a2ui.core.parser.streaming import A2uiStreamParser
+        from a2ui.parser.streaming import A2uiStreamParser
 
-        if session_id not in self._parsers:
+        if session_id in self._parsers:
+          self._parsers.move_to_end(session_id)
+        else:
           self._parsers[session_id] = A2uiStreamParser(catalog=selected_catalog)
+          if len(self._parsers) > self._max_parsers:
+            self._parsers.popitem(last=False)
 
+        parts_streamed = True
         async for part in stream_response_to_parts(
             self._parsers[session_id],
             token_stream(),
@@ -326,13 +366,16 @@ class RestaurantAgent:
 
       if is_valid:
         logger.info(
-            "--- RestaurantAgent.stream: Response is valid. Task complete"
+            "--- RestaurantAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
+        )
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
         )
 
         yield {
             "is_task_complete": True,
-            "parts": [],
+            "parts": [] if parts_streamed else final_parts,
         }
         return  # We're done, exit the generator
 

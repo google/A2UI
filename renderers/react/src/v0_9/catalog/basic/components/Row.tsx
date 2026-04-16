@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 import {mapJustify, mapAlign} from '../utils';
 
-export const Row = createReactComponent(RowApi, ({props, buildChild, context}) => {
+export const Row = createComponentImplementation(RowApi, ({props, buildChild, context}) => {
   return (
     <div
       style={{

@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/react",
-  "version": "0.9.0",
+  "version": "0.9.0-alpha.3",
   "description": "React renderer for A2UI (Agent-to-User Interface)",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -90,6 +90,7 @@
     "test:demo": "cd a2ui_explorer && vitest run src"
   },
   "dependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it",
     "@a2ui/web_core": "file:../web_core",
     "clsx": "^2.1.0",
     "markdown-it": "^14.0.0",
