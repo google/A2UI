@@ -25,17 +25,6 @@ from a2a.types import (
     Part,
     TextPart,
 )
-<<<<<<< HEAD
-from a2ui.a2a import (
-    get_a2ui_agent_extension,
-    parse_response_to_parts,
-)
-from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.parser.parser import parse_response
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
-from a2ui.core.schema.manager import A2uiSchemaManager
-=======
 from a2ui.a2a.extension import get_a2ui_agent_extension
 from a2ui.a2a.parts import parse_response_to_parts
 from a2ui.basic_catalog.provider import BasicCatalog
@@ -43,8 +32,6 @@ from a2ui.parser.parser import parse_response
 from a2ui.schema.common_modifiers import remove_strict_validation
 from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
 from a2ui.schema.manager import A2uiSchemaManager
-
->>>>>>> main
 import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
@@ -71,7 +58,9 @@ class ContactAgent:
     self.base_url = base_url
     self._agent_name = "contact_agent"
     self._user_id = "remote_agent"
-    self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
+    self._text_runner: Optional[Runner] = self._build_runner(
+        self._build_llm_agent()
+    )
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
@@ -137,7 +126,8 @@ class ContactAgent:
     return AgentCard(
         name="Contact Lookup Agent",
         description=(
-            "This agent helps find contact info for people in your organization."
+            "This agent helps find contact info for people in your"
+            " organization."
         ),
         url=self.base_url,
         version="1.0.0",
@@ -225,7 +215,9 @@ class ContactAgent:
     current_query_text = query
 
     # Ensure catalog schema was loaded
-    if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
+    if ui_version and (
+        not selected_catalog or not selected_catalog.catalog_schema
+    ):
       logger.error(
           "--- ContactAgent.fetch_response: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -261,8 +253,14 @@ class ContactAgent:
           new_message=current_message,
       ):
         if event.is_final_response():
-          if event.content and event.content.parts and event.content.parts[0].text:
-            full_content_list.extend([p.text for p in event.content.parts if p.text])
+          if (
+              event.content
+              and event.content.parts
+              and event.content.parts[0].text
+          ):
+            full_content_list.extend(
+                [p.text for p in event.content.parts if p.text]
+            )
 
       final_response_content = "".join(full_content_list)
 
@@ -282,7 +280,8 @@ class ContactAgent:
           logger.info("Retries exhausted on no-response")
           # Retries exhausted on no-response
           final_response_content = (
-              "I'm sorry, I encountered an error and couldn't process your request."
+              "I'm sorry, I encountered an error and couldn't process your"
+              " request."
           )
           # Fall through to send this as a text-only error
 
@@ -341,7 +340,8 @@ class ContactAgent:
               f" (Attempt {attempt}) ---"
           )
           logger.warning(
-              f"--- Failed response content: {final_response_content[:500]}... ---"
+              "--- Failed response content:"
+              f" {final_response_content[:500]}... ---"
           )
           error_message = f"Validation failed: {e}."
 
