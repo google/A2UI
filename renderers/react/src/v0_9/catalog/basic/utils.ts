@@ -83,5 +83,5 @@ export const getBaseContainerStyle = (): React.CSSProperties => ({
 // proportions honored when the row needs to shrink, not just when it grows.
 export const getWeightStyle = (weight?: number): React.CSSProperties => {
   if (typeof weight !== 'number') return {};
-  return {flex: `${weight} ${weight} 0`, minWidth: 0};
+  return {flex: `${weight} ${weight} 0px`, minWidth: 0};
 };
