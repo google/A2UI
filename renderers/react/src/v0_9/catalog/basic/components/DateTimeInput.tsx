@@ -53,8 +53,10 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
         <label
           htmlFor={uniqueId}
           style={{
-            fontSize: 'var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
-            fontWeight: 'var(--a2ui-datetimeinput-label-font-weight, var(--a2ui-label-font-weight, bold))'
+            fontSize:
+              'var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
+            fontWeight:
+              'var(--a2ui-datetimeinput-label-font-weight, var(--a2ui-label-font-weight, bold))',
           }}
         >
           {props.label}

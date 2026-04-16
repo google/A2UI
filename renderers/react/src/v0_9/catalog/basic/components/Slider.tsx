@@ -41,7 +41,8 @@ export const Slider = createComponentImplementation(SliderApi, ({props}) => {
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 'var(--a2ui-slider-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
+    fontSize:
+      'var(--a2ui-slider-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
     fontWeight: 'var(--a2ui-slider-label-font-weight, var(--a2ui-label-font-weight, bold))',
   };
 

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
-import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
+import type React from 'react';
+import {useEffect} from 'react';
+import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Hook to automatically inject the web_core basic catalog styles.

@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {AudioPlayerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle, useBasicCatalogStyles} from '../utils';
+import {useBasicCatalogStyles} from '../utils';
 
 export const AudioPlayer = createComponentImplementation(AudioPlayerApi, ({props}) => {
   useBasicCatalogStyles();
@@ -33,10 +33,12 @@ export const AudioPlayer = createComponentImplementation(AudioPlayerApi, ({props
   return (
     <div style={containerStyle}>
       {props.description && (
-        <span style={{
-          fontSize: 'var(--a2ui-font-size-xs, 0.75rem)',
-          color: 'var(--a2ui-text-caption-color, light-dark(#666, #aaa))'
-        }}>
+        <span
+          style={{
+            fontSize: 'var(--a2ui-font-size-xs, 0.75rem)',
+            color: 'var(--a2ui-text-caption-color, light-dark(#666, #aaa))',
+          }}
+        >
           {props.description}
         </span>
       )}

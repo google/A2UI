@@ -57,9 +57,7 @@ export const TextField = createComponentImplementation(TextFieldApi, ({props}) =
           onChange={onChange}
         />
       )}
-      {hasError && (
-        <span className={styles.error}>{props.validationErrors![0]}</span>
-      )}
+      {hasError && <span className={styles.error}>{props.validationErrors![0]}</span>}
     </div>
   );
 });

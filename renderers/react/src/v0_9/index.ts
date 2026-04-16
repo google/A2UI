@@ -19,5 +19,3 @@ export * from './adapter';
 
 // Export basic catalog components directly for 3P developers
 export * from './catalog/basic';
-
-

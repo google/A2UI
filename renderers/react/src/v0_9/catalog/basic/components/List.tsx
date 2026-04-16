@@ -30,7 +30,7 @@ export const List = createComponentImplementation(ListApi, ({props, buildChild, 
     overflowX: isHorizontal ? 'auto' : 'hidden',
     overflowY: isHorizontal ? 'hidden' : 'auto',
     gap: 'var(--a2ui-list-gap, var(--a2ui-spacing-s))',
-    padding: 'var(--a2ui-list-padding, 0)', 
+    padding: 'var(--a2ui-list-padding, 0)',
   };
 
   return (

@@ -38,7 +38,8 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
   const tabsHeaders: React.CSSProperties = {
     display: 'flex',
     gap: 'var(--a2ui-spacing-xs, 0.25rem)',
-    borderBottom: 'var(--a2ui-tabs-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc))',
+    borderBottom:
+      'var(--a2ui-tabs-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc))',
     marginBottom: 'var(--a2ui-spacing-m, 0.5rem)',
   };
 
@@ -70,7 +71,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
             onClick={() => setSelectedIndex(i)}
             style={{
               ...tabsHeaderBase,
-              ...(selectedIndex === i ? tabsHeaderActive : {})
+              ...(selectedIndex === i ? tabsHeaderActive : {}),
             }}
           >
             {tab.title}

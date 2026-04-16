@@ -58,7 +58,8 @@ export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => 
   const labelBaseStyle: React.CSSProperties = {
     cursor: 'pointer',
     color: 'var(--a2ui-color-on-surface, inherit)',
-    fontSize: 'var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
+    fontSize:
+      'var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
     fontWeight: 'var(--a2ui-checkbox-label-font-weight, var(--a2ui-label-font-weight, bold))',
   };
 
@@ -82,7 +83,7 @@ export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => 
           onChange={onChange}
           style={{
             ...inputBaseStyle,
-            ...(hasError ? inputErrorStyle : {})
+            ...(hasError ? inputErrorStyle : {}),
           }}
         />
         {props.label && (
@@ -90,18 +91,14 @@ export const CheckBox = createComponentImplementation(CheckBoxApi, ({props}) => 
             htmlFor={uniqueId}
             style={{
               ...labelBaseStyle,
-              ...(hasError ? labelErrorStyle : {})
+              ...(hasError ? labelErrorStyle : {}),
             }}
           >
             {props.label}
           </label>
         )}
       </div>
-      {hasError && (
-        <span style={errorStyle}>
-          {props.validationErrors?.[0]}
-        </span>
-      )}
+      {hasError && <span style={errorStyle}>{props.validationErrors?.[0]}</span>}
     </div>
   );
 });

@@ -32,13 +32,20 @@ import styles from './Text.module.css';
  */
 const handleVariant = (text: string, variant?: string): string => {
   switch (variant) {
-    case 'h1': return `# ${text}`;
-    case 'h2': return `## ${text}`;
-    case 'h3': return `### ${text}`;
-    case 'h4': return `#### ${text}`;
-    case 'h5': return `##### ${text}`;
-    case 'caption': return `*${text}*`;
-    default: return text;
+    case 'h1':
+      return `# ${text}`;
+    case 'h2':
+      return `## ${text}`;
+    case 'h3':
+      return `### ${text}`;
+    case 'h4':
+      return `#### ${text}`;
+    case 'h5':
+      return `##### ${text}`;
+    case 'caption':
+      return `*${text}*`;
+    default:
+      return text;
   }
 };
 
@@ -53,14 +60,12 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
   };
 
   const isCaption = props.variant === 'caption';
-  const classes = [
-    styles.a2uiText,
-    isCaption ? styles.a2uiCaption : (props.variant || 'body')
-  ];
+  const classes = [styles.a2uiText, isCaption ? styles.a2uiCaption : props.variant || 'body'];
   if (renderedHtml === null) {
     classes.push('no-markdown-renderer');
   }
-  const contentProps = renderedHtml !== null
+  const contentProps =
+    renderedHtml !== null
       ? {dangerouslySetInnerHTML: {__html: renderedHtml}}
       : {children: markdownText};
 

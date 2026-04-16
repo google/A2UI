@@ -54,11 +54,7 @@ export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({pro
 
   return (
     <div className={styles.host}>
-      {props.label && (
-        <strong className={styles.label}>
-          {props.label}
-        </strong>
-      )}
+      {props.label && <strong className={styles.label}>{props.label}</strong>}
       {props.filterable && (
         <input
           type="text"
