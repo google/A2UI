@@ -6,7 +6,7 @@ The [agents](agents.md) are responsible for generating the A2UI messages,
 and the [transports](../concepts/transports.md) are responsible for delivering the messages to the client.
 The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, render widgets, and route user actions back to the agent.
 
-Let's use the web as an analogy. The A2UI protocol is like HTML. It provides a language and the semantics of the UI model. The agent is like the server that serves HTML to the client. The renderer is like a browser. It talks to the agents, interprets the A2UI protocol, and renders the UI. Just like there are multiple browser engines for HTML, there are multiple different renderers for A2UI.
+Let's use the web as an analogy. The A2UI protocol is like HTML. It provides a language and the semantics of the UI model. The agent is like the server that serves HTML to the client. The renderer is like a browser. It talks to the agent, interprets the A2UI protocol, and renders the UI. Just like there are multiple browser engines for HTML, there are multiple different renderers for A2UI.
 
 You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.
 
