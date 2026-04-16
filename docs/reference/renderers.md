@@ -12,7 +12,7 @@ You have a lot of flexibility, to bring custom components to a renderer, or buil
 
 ## Maintained Renderers
 
-Web:
+### Web
 
 | Renderer | Platform | v0.8 | v0.9 | Links |
 |----------|----------|------|------|-------|
