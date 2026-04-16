@@ -53,7 +53,6 @@ from a2ui.a2a.parts import parse_response_to_parts, stream_response_to_parts
 logger = logging.getLogger(__name__)
 
 
-
 class RestaurantAgent:
   """An agent that finds restaurants based on user criteria."""
 
@@ -158,8 +157,6 @@ class RestaurantAgent:
         if schema_manager
         else get_text_prompt()
     )
-
-
 
     return LlmAgent(
         model=LiteLlm(model=LITELLM_MODEL),
