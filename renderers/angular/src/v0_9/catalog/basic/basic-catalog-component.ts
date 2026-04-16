@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Directive, computed, HostBinding, input} from '@angular/core';
+import { Directive, computed, HostBinding, input } from '@angular/core';
 import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
 import {BoundProperty} from '../../core/types';
 
@@ -31,7 +31,7 @@ export abstract class BasicCatalogComponent {
   props = input<Record<string, BoundProperty>>({});
 
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   constructor() {
@@ -41,7 +41,7 @@ export abstract class BasicCatalogComponent {
   /**
    * Computes the weight of the component from the properties.
    */
-  protected readonly weight = computed(() => this.props()['weight']?.value() || null);
+  protected readonly weight = computed(() => this.props()['weight']?.value() ?? null);
 
   /**
    * Binds the flex style to the host element based on the weight.
