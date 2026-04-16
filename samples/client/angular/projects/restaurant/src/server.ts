@@ -113,9 +113,8 @@ app.post('/a2a', (req, res) => {
       };
     }
 
-    const client = await createOrGetClient();
-
     try {
+      const client = await createOrGetClient();
       if (enableStreaming) {
         await handleStreamingResponse(client, sendParams, res);
       } else {
