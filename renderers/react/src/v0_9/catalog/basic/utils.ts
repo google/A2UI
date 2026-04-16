@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import type React from 'react';
+import React, { useEffect } from 'react';
+import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
 
-/** Standard leaf margin from the implementation guide. */
-export const LEAF_MARGIN = '8px';
-
-/** Standard internal padding for visually bounded containers. */
-export const CONTAINER_PADDING = '16px';
-
-/** Standard border for cards and inputs. */
-export const STANDARD_BORDER = '1px solid #ccc';
-
-/** Standard border radius. */
-export const STANDARD_RADIUS = '8px';
+/**
+ * Hook to automatically inject the web_core basic catalog styles.
+ */
+export const useBasicCatalogStyles = () => {
+  useEffect(() => {
+    if (typeof document !== 'undefined' && document.adoptedStyleSheets) {
+      injectBasicCatalogStyles();
+    }
+  }, []);
+};
 
 export const mapJustify = (j?: string) => {
   switch (j) {
@@ -65,15 +65,10 @@ export const mapAlign = (a?: string) => {
 };
 
 export const getBaseLeafStyle = (): React.CSSProperties => ({
-  margin: LEAF_MARGIN,
   boxSizing: 'border-box',
 });
 
 export const getBaseContainerStyle = (): React.CSSProperties => ({
-  margin: LEAF_MARGIN,
-  padding: CONTAINER_PADDING,
-  border: STANDARD_BORDER,
-  borderRadius: STANDARD_RADIUS,
   boxSizing: 'border-box',
 });
 
