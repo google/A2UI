@@ -99,7 +99,7 @@ describe('Basic Catalog Components', () => {
       });
       const img = view.container.querySelector('img') as HTMLImageElement;
       expect(img.style.borderRadius).toBe('50%');
-      expect(img.style.width).toBe('40px');
+      expect(img.style.width).toBe('var(--a2ui-image-avatar-size, 40px)');
     });
   });
 
@@ -310,7 +310,7 @@ describe('Basic Catalog Components', () => {
 
     it('Divider renders a themed line', () => {
       const { view } = renderA2uiComponent(Divider, 'd1', { axis: 'horizontal' });
-      expect(view.container.firstChild).toHaveStyle({ height: '1px' });
+      expect(view.container.firstChild).toHaveStyle({ height: 'var(--a2ui-border-width, 1px)' });
     });
   });
 
@@ -349,6 +349,35 @@ describe('Basic Catalog Components', () => {
       
       fireEvent.click(screen.getByLabelText('B'));
       expect(surface.dataModel.get('/picked')).toEqual(['b']);
+    });
+
+    it('ChoicePicker filters options', () => {
+      renderA2uiComponent(ChoicePicker, 'cp2', {
+        label: 'Pick',
+        options: [{ label: 'Apple', value: 'apple' }, { label: 'Banana', value: 'banana' }],
+        value: { path: '/picked' },
+        filterable: true
+      });
+
+      expect(screen.getByText('Apple')).toBeDefined();
+      expect(screen.getByText('Banana')).toBeDefined();
+
+      fireEvent.change(screen.getByPlaceholderText('Filter options...'), { target: { value: 'App' } });
+
+      expect(screen.getByText('Apple')).toBeDefined();
+      expect(screen.queryByText('Banana')).toBeNull();
+    });
+
+    it('ChoicePicker renders chips and handles selection', () => {
+      const { surface } = renderA2uiComponent(ChoicePicker, 'cp3', {
+        label: 'Pick',
+        options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }],
+        value: { path: '/picked' },
+        displayStyle: 'chips'
+      });
+
+      fireEvent.click(screen.getByText('A'));
+      expect(surface.dataModel.get('/picked')).toEqual(['a']);
     });
 
     it('DateTimeInput handles date changes', () => {
