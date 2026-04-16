@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle, getWeightStyle, useBasicCatalogStyles} from '../utils';
