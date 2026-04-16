@@ -1428,6 +1428,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Maintained Renderers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mobile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2020,6 +2048,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Maintained Renderers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mobile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mobile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2146,9 +2202,11 @@
 <p>Renderers convert A2UI JSON messages into native UI components for different platforms.</p>
 <p>The <a href="../agents/">agents</a> are responsible for generating the A2UI messages,
 and the <a href="../../concepts/transports/">transports</a> are responsible for delivering the messages to the client.
-The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).</p>
+The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, render widgets, and route user actions back to the agent.</p>
+<p>Let's use the web as an analogy. The A2UI protocol is like HTML. It provides a language and the semantics of the UI model. The agent is like the server that serves HTML to the client. The renderer is like a browser. It talks to the agent, interprets the A2UI protocol, and renders the UI. Just like there are multiple browser engines for HTML, there are multiple different renderers for A2UI.</p>
 <p>You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.</p>
 <h2 id="maintained-renderers">Maintained Renderers<a class="headerlink" href="#maintained-renderers" title="Permanent link">&para;</a></h2>
+<h3 id="web">Web<a class="headerlink" href="#web" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2181,6 +2239,27 @@ The client renderer library must buffer and handle A2UI messages, implement the 
 <td>✅ Stable</td>
 <td><a href="https://github.com/google/A2UI/tree/main/renderers/angular">Code</a></td>
 </tr>
+<tr>
+<td><strong>Flutter (GenUI SDK)</strong></td>
+<td>Mobile/Desktop/Web</td>
+<td>✅ Stable</td>
+<td>✅ Stable</td>
+<td><a href="https://docs.flutter.dev/ai/genui">Docs</a> · <a href="https://github.com/flutter/genui">Code</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mobile">Mobile<a class="headerlink" href="#mobile" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Renderer</th>
+<th>Platform</th>
+<th>v0.8</th>
+<th>v0.9</th>
+<th>Links</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><strong>Flutter (GenUI SDK)</strong></td>
 <td>Mobile/Desktop/Web</td>
