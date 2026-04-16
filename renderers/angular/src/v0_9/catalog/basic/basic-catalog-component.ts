@@ -48,7 +48,6 @@ export abstract class BasicCatalogComponent {
    */
   @HostBinding('style.flex')
   get flexStyle() {
-    const w = this.weight();
-    return w ? `${w}` : '';
+    return this.weight() !== null ? `${this.weight()} 1 0%` : null;
   }
 }

@@ -110,6 +110,27 @@ describe('ColumnComponent', () => {
     expect(style.flex).toBe('2 1 0%');
   });
 
+  it('should apply flex style from weight prop when value is 0', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(0), raw: 0, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).toBe('0 1 0%');
+  });
+
+  it('should not apply flex style when weight prop is null', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(null), raw: null, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).not.toBe('2 1 0%');
+    expect(style.flex).not.toBe('0 1 0%');
+  });
+
   it('should render non-repeating children', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
