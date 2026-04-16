@@ -200,6 +200,7 @@ def main():
           "__init__.py",
           "agent_executor.py",
           "prompt_builder.py",
+          "contact_data.json",
           "agent.py",
           "tools.py",
           "examples",
