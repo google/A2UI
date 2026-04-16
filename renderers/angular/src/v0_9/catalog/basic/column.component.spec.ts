@@ -100,6 +100,16 @@ describe('ColumnComponent', () => {
     expect(style.alignItems).toBe('stretch');
   });
 
+  it('should apply flex style from weight prop', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(2), raw: 2, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).toBe('2 1 0%');
+  });
+
   it('should render non-repeating children', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));

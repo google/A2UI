@@ -14,15 +14,41 @@
  * limitations under the License.
  */
 
-import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Directive, computed, HostBinding, input} from '@angular/core';
+import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BoundProperty} from '../../core/types';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
  *
  * Automatically injects the basic catalog styles when the component is instantiated.
  */
+@Directive()
 export abstract class BasicCatalogComponent {
+  /**
+   * Reactive properties resolved from the A2UI ComponentModel.
+   */
+  props = input<Record<string, BoundProperty>>({});
+
+  surfaceId = input.required<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>('/');
+
   constructor() {
     injectBasicCatalogStyles();
+  }
+
+  /**
+   * Computes the weight of the component from the properties.
+   */
+  protected readonly weight = computed(() => this.props()['weight']?.value() || null);
+
+  /**
+   * Binds the flex style to the host element based on the weight.
+   */
+  @HostBinding('style.flex')
+  get flexStyle() {
+    const w = this.weight();
+    return w ? `${w}` : '';
   }
 }

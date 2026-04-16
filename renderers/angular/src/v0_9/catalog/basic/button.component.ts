@@ -16,7 +16,6 @@
 
 import {
   Component,
-  input,
   computed,
   ChangeDetectionStrategy,
   inject,
@@ -24,7 +23,6 @@ import {
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { BoundProperty } from '../../core/types';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -100,25 +98,15 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `child`: The ID of the component to render inside the button.
-   * - `variant`: Button style variant ('default', 'primary', 'borderless').
-   * - `action`: The A2UI action to dispatch on click.
-   * - `checks`: Optional validation rules.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input.required<string>();
-  dataContextPath = input<string>('/');
+
+
+
 
   private rendererService = inject(A2uiRendererService);
 
-  variant = computed(() => this.props()['variant']?.value() ?? 'default');
-  child = computed(() => this.props()['child']?.value());
-  action = computed(() => this.props()['action']?.value());
+  readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
+  readonly child = computed(() => this.props()['child']?.value());
+  readonly action = computed(() => this.props()['action']?.value());
 
 
 
@@ -129,7 +117,7 @@ export class ButtonComponent extends BasicCatalogComponent {
       if (surface) {
         const dataContext = new DataContext(surface, this.dataContextPath());
         const resolvedAction = dataContext.resolveAction(action);
-        surface.dispatchAction(resolvedAction, this.componentId());
+        surface.dispatchAction(resolvedAction, this.componentId()!);
       }
     }
   }

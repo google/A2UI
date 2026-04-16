@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
-import { BasicCatalogComponent } from './basic-catalog-component';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
@@ -118,26 +117,12 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChoicePickerComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `value`: The currently selected value(s).
-   * - `choices` or `options`: List of choice objects (label and value).
-   * - `displayStyle`: How to render the choices ('default' or 'chips').
-   * - `variant`: Selection mode ('singleSelection' or 'multipleSelection').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  displayStyle = computed(() => this.props()['displayStyle']?.value());
-  choices = computed(
+  readonly displayStyle = computed(() => this.props()['displayStyle']?.value());
+  readonly choices = computed(
     () => this.props()['choices']?.value() || this.props()['options']?.value() || [],
   );
-  variant = computed(() => this.props()['variant']?.value());
-  selectedValue = computed(() => this.props()['value']?.value());
+  readonly variant = computed(() => this.props()['variant']?.value());
+  readonly selectedValue = computed(() => this.props()['value']?.value());
 
   isMultiple(): boolean {
     return this.variant() === 'multipleSelection';

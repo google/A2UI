@@ -19,18 +19,16 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
-  HostBinding,
   OnInit,
   Type,
   inject,
   input,
-  signal,
 } from '@angular/core';
-import { NgComponentOutlet } from '@angular/common';
-import { ComponentContext, ComponentModel, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from './a2ui-renderer.service';
-import { AngularCatalog } from '../catalog/types';
-import { ComponentBinder } from './component-binder.service';
+import {NgComponentOutlet} from '@angular/common';
+import {ComponentContext, ComponentModel, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {A2uiRendererService} from './a2ui-renderer.service';
+import {AngularCatalog} from '../catalog/types';
+import {ComponentBinder} from './component-binder.service';
 import {BoundProperty} from './types';
 
 /**
@@ -68,7 +66,7 @@ import {BoundProperty} from './types';
 })
 export class ComponentHostComponent implements OnInit {
   /** The key of the component to render, either an ID string or an object with ID and basePath. Defaults to 'root'. */
-  componentKey = input<string | { id: string; basePath: string }>('root');
+  componentKey = input<string | {id: string; basePath: string}>('root');
 
   /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
@@ -81,14 +79,7 @@ export class ComponentHostComponent implements OnInit {
   protected componentType: Type<any> | null = null;
   protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
-  protected weight = signal<string | number | null>(null);
 
-  // TODO(#1199): Move weight handling to the catalog specification.
-  @HostBinding('style.flex')
-  get flexStyle() {
-    const w = this.weight();
-    return w ? `${w}` : '';
-  }
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
 
@@ -159,12 +150,8 @@ export class ComponentHostComponent implements OnInit {
     // component to react when a new prop is added after creation.
     const onPropsUpdateSub = componentModel.onUpdated.subscribe(() => {
       this.props = this.binder.bind(this.context!);
-      // TODO(#1199): Move weight handling to the catalog specification.
-      this.weight.set(componentModel.properties['weight'] || null);
       this.cdr.markForCheck();
     });
-
-    this.weight.set(componentModel.properties['weight'] || null);
 
     this.destroyRef.onDestroy(() => {
       // ComponentContext itself doesn't have a dispose, but its inner components might.

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { MarkdownRenderer } from '../../core/markdown';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
@@ -94,22 +93,14 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `text`: The string content to display.
-   * - `variant`: A hint for the base text style ('h1', 'h2', 'h3', 'h4', 'h5', 'caption', 'body').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
+
+
+
 
   private markdownRenderer = inject(MarkdownRenderer);
 
-  variant = computed(() => this.props()['variant']?.value() || 'body');
-  text = computed(() => this.props()['text']?.value() || '');
+  readonly variant = computed(() => this.props()['variant']?.value() || 'body');
+  readonly text = computed(() => this.props()['text']?.value() || '');
 
   resolvedText = signal<string>('');
   private renderRequestId = 0;

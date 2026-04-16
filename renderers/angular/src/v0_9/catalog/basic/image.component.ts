@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -86,22 +85,12 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `url`: The absolute URL of the image.
-   * - `description`: Accessibility text for the image.
-   * - `fit`: Object-fit mode ('cover', 'contain', 'fill', 'none', 'scale-down').
-   * - `variant`: Style variant ('default', 'circle', 'rounded', 'icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
 
-  url = computed(() => this.props()['url']?.value());
-  description = computed(() => this.props()['description']?.value() || '');
-  fit = computed(() => this.props()['fit']?.value() || 'cover');
-  variant = computed(() => this.props()['variant']?.value() || 'default');
+
+
+
+  readonly url = computed(() => this.props()['url']?.value());
+  readonly description = computed(() => this.props()['description']?.value() || '');
+  readonly fit = computed(() => this.props()['fit']?.value() || 'cover');
+  readonly variant = computed(() => this.props()['variant']?.value() || 'default');
 }

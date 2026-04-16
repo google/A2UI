@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -74,33 +73,24 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `name`: The name of the icon (e.g., 'home', 'settings') OR an object
-   *           with a `path` property for SVG icons.
-   * - `color`: The CSS color to apply to the icon.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
 
-  color = computed(() => this.props()['color']?.value());
-  iconNameRaw = computed(() => this.props()['name']?.value());
 
-  isPath = computed(() => {
+
+
+  readonly color = computed(() => this.props()['color']?.value());
+  readonly iconNameRaw = computed(() => this.props()['name']?.value());
+
+  readonly isPath = computed(() => {
     const name = this.iconNameRaw();
     return typeof name === 'object' && name !== null && 'path' in name;
   });
 
-  path = computed(() => {
+  readonly path = computed(() => {
     const name = this.iconNameRaw();
     return (name as any)?.path || '';
   });
 
-  iconName = computed(() => {
+  readonly iconName = computed(() => {
     const name = this.iconNameRaw();
     if (typeof name !== 'string') return '';
     // Convert camelCase to snake_case for Material Icons

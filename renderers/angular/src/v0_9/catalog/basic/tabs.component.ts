@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -96,23 +95,16 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TabsComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `tabs`: A list of tab objects, each containing a `label` and `content` ID.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
+
+
+
 
   activeTabIndex = signal(0);
 
-  tabs = computed(() => this.props()['tabs']?.value() || []);
-  activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
+  readonly tabs = computed(() => this.props()['tabs']?.value() || []);
+  readonly activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
 
-  protected normalizedActiveTabContent = computed(() => {
+  protected readonly normalizedActiveTabContent = computed(() => {
     const content = this.activeTab()?.content;
     if (!content) return null;
     if (typeof content === 'object' && content !== null && 'id' in content) {
