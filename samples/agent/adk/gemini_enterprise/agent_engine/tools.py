@@ -46,13 +46,17 @@ def get_contact_info(name: str = None, department: str = "") -> str:
 
     # Filter by name
     results = [
-        contact for contact in all_contacts if name_lower in contact["name"].lower()
+        contact
+        for contact in all_contacts
+        if name_lower in contact["name"].lower()
     ]
 
     # If department is provided, filter results further
     if dept_lower:
       results = [
-          contact for contact in results if dept_lower in contact["department"].lower()
+          contact
+          for contact in results
+          if dept_lower in contact["department"].lower()
       ]
 
     logger.info(f"  - Success: Found {len(results)} matching contacts.")
