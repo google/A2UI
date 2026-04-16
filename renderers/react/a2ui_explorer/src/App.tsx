@@ -16,7 +16,7 @@
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
 import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
-import {minimalCatalog, basicCatalog, A2uiSurface, MarkdownContext, type ReactComponentImplementation} from '@a2ui/react/v0_9';
+import {basicCatalog, A2uiSurface, MarkdownContext, type ReactComponentImplementation} from '@a2ui/react/v0_9';
 import {exampleFiles, getMessages} from './examples';
 import {renderMarkdown} from '@a2ui/markdown-it';
 import styles from './App.module.css';
@@ -60,7 +60,7 @@ export default function App() {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor<ReactComponentImplementation>([minimalCatalog, basicCatalog], async (action: any) => {
+        const newProcessor = new MessageProcessor<ReactComponentImplementation>([basicCatalog], async (action: any) => {
           setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
         });
 
