@@ -109,7 +109,7 @@ export class ButtonComponent extends BasicCatalogComponent {
       if (surface) {
         const dataContext = new DataContext(surface, this.dataContextPath());
         const resolvedAction = dataContext.resolveAction(action);
-        surface.dispatchAction(resolvedAction, this.componentId()!);
+        surface.dispatchAction(resolvedAction, this.componentId());
       }
     }
   }
