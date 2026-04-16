@@ -124,8 +124,14 @@ describe('RowComponent', () => {
 
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'template1', basePath: '/items/0' });
-    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'template1', basePath: '/items/1' });
+    expect(hosts[0].componentInstance.componentKey()).toEqual({
+      id: 'template1',
+      basePath: '/items/0',
+    });
+    expect(hosts[1].componentInstance.componentKey()).toEqual({
+      id: 'template1',
+      basePath: '/items/1',
+    });
   });
 
   it('should handle non-array children value', () => {
@@ -166,4 +172,3 @@ describe('RowComponent', () => {
     expect(div.styles['align-items']).toBeFalsy();
   });
 });
-

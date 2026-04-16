@@ -69,7 +69,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         border-radius: var(--a2ui-checkbox-border-radius, 4px);
       }
       .a2ui-check-box-text {
-        font-size: var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px)));
+        font-size: var(
+          --a2ui-checkbox-label-font-size,
+          var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px))
+        );
         font-weight: var(--a2ui-checkbox-label-font-weight, bold);
       }
     `,
@@ -77,10 +80,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckBoxComponent extends BasicCatalogComponent {
-
-
-
-
   readonly value = computed(() => this.props()['value']?.value() === true);
   readonly label = computed(() => this.props()['label']?.value());
 

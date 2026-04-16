@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Component,
-  computed,
-  ChangeDetectionStrategy,
-  inject,
-} from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
@@ -52,10 +47,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       [disabled]="props()['isValid']?.value() === false"
     >
       @if (child()) {
-        <a2ui-v09-component-host
-          [componentKey]="child()!"
-          [surfaceId]="surfaceId()"
-        >
+        <a2ui-v09-component-host [componentKey]="child()!" [surfaceId]="surfaceId()">
         </a2ui-v09-component-host>
       }
     </button>
@@ -63,9 +55,15 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   styles: [
     `
       .a2ui-button {
-        padding: var(--a2ui-button-padding, var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem));
+        padding: var(
+          --a2ui-button-padding,
+          var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem)
+        );
         border-radius: var(--a2ui-button-border-radius, var(--a2ui-spacing-s, 0.25rem));
-        border: var(--a2ui-button-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+        border: var(
+          --a2ui-button-border,
+          var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
+        );
         cursor: pointer;
         margin: var(--a2ui-button-margin, var(--a2ui-spacing-m, 0.5rem));
         background: var(--a2ui-button-background, var(--a2ui-color-surface, #fff));
@@ -98,17 +96,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent extends BasicCatalogComponent {
-
-
-
-
   private rendererService = inject(A2uiRendererService);
 
   readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
   readonly child = computed(() => this.props()['child']?.value());
   readonly action = computed(() => this.props()['action']?.value());
-
-
 
   handleClick() {
     const action = this.action();

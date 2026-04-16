@@ -38,10 +38,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     <div class="a2ui-modal-wrapper">
       <div (click)="openModal()" class="a2ui-modal-trigger">
         @if (trigger()) {
-          <a2ui-v09-component-host
-            [componentKey]="trigger()!"
-            [surfaceId]="surfaceId()"
-          >
+          <a2ui-v09-component-host [componentKey]="trigger()!" [surfaceId]="surfaceId()">
           </a2ui-v09-component-host>
         }
       </div>
@@ -51,10 +48,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
           <div class="a2ui-modal-content" (click)="$event.stopPropagation()">
             <button class="a2ui-modal-close" (click)="closeModal()">&times;</button>
             @if (content()) {
-              <a2ui-v09-component-host
-                [componentKey]="content()!"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="content()!" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             }
           </div>
@@ -111,16 +105,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent extends BasicCatalogComponent {
-
-
-
-
   isOpen = signal(false);
 
   readonly trigger = computed(() => this.props()['trigger']?.value());
   readonly content = computed(() => this.props()['content']?.value());
-
-
 
   openModal() {
     this.isOpen.set(true);

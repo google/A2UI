@@ -66,10 +66,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioPlayerComponent extends BasicCatalogComponent {
-
-
-
-
   readonly description = computed(() => this.props()['description']?.value());
   readonly url = computed(() => this.props()['url']?.value());
 }

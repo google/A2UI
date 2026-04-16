@@ -72,7 +72,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         width: 100%;
       }
       .a2ui-date-time-label {
-        font-size: var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-size: var(
+          --a2ui-datetimeinput-label-font-size,
+          var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px))
+        );
         font-weight: var(--a2ui-datetimeinput-label-font-weight, bold);
         color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
@@ -95,10 +98,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateTimeInputComponent extends BasicCatalogComponent {
-
-
-
-
   readonly label = computed(() => this.props()['label']?.value());
   readonly enableDate = computed(() => this.props()['enableDate']?.value() ?? true);
   readonly enableTime = computed(() => this.props()['enableTime']?.value() ?? false);

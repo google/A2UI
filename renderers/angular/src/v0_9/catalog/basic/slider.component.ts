@@ -62,7 +62,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       .a2ui-slider-header {
         display: flex;
         justify-content: space-between;
-        font-size: var(--a2ui-slider-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-size: var(
+          --a2ui-slider-label-font-size,
+          var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px))
+        );
         font-weight: var(--a2ui-slider-label-font-weight, bold);
         color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
@@ -77,10 +80,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SliderComponent extends BasicCatalogComponent {
-
-
-
-
   readonly label = computed(() => this.props()['label']?.value());
   readonly value = computed(() => this.props()['value']?.value());
   readonly min = computed(() => this.props()['min']?.value() ?? 0);

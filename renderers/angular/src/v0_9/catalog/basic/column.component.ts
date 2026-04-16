@@ -40,43 +40,36 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
     '[style.width]': '"100%"',
     '[style.gap]': '"var(--a2ui-column-gap, var(--a2ui-spacing-m, 16px))"',
     '[style.justify-content]': 'justify()',
-    '[style.align-items]': 'align()'
+    '[style.align-items]': 'align()',
   },
   template: `
-      @if (!isRepeating()) {
-        @for (child of normalizedChildren(); track child.id) {
-          <a2ui-v09-component-host
-            [componentKey]="child"
-            [surfaceId]="surfaceId()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (!isRepeating()) {
+      @for (child of normalizedChildren(); track child.id) {
+        <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
+        </a2ui-v09-component-host>
       }
+    }
 
-      @if (isRepeating()) {
-        @for (item of children(); track item; let i = $index) {
-          <a2ui-v09-component-host
-            [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
-            [surfaceId]="surfaceId()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (isRepeating()) {
+      @for (item of children(); track item; let i = $index) {
+        <a2ui-v09-component-host
+          [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
+          [surfaceId]="surfaceId()"
+        >
+        </a2ui-v09-component-host>
       }
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColumnComponent extends BasicCatalogComponent {
-
-
-
-
   protected readonly justify = computed(() => {
     const val = this.props()['justify']?.value();
-    return val ? (JUSTIFY_MAP[val] || val) : undefined;
+    return val ? JUSTIFY_MAP[val] || val : undefined;
   });
   protected readonly align = computed(() => {
     const val = this.props()['align']?.value();
-    return val ? (ALIGN_MAP[val] || val) : undefined;
+    return val ? ALIGN_MAP[val] || val : undefined;
   });
 
   protected readonly children = computed(() => {
@@ -94,7 +87,7 @@ export class ColumnComponent extends BasicCatalogComponent {
 
   protected readonly normalizedChildren = computed(() => {
     if (this.isRepeating()) return [];
-    return this.children().map(child => {
+    return this.children().map((child) => {
       if (typeof child === 'object' && child !== null && 'id' in child) {
         return child as { id: string; basePath: string };
       }

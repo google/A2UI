@@ -58,10 +58,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoComponent extends BasicCatalogComponent {
-
-
-
-
   readonly url = computed(() => this.props()['url']?.value());
   readonly posterUrl = computed(() => this.props()['posterUrl']?.value());
 }

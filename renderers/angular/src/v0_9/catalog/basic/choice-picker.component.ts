@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
-import {BasicCatalogComponent} from './basic-catalog-component';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
@@ -100,7 +100,10 @@ import {BasicCatalogComponent} from './basic-catalog-component';
         gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
       }
       .a2ui-chip {
-        padding: var(--a2ui-choicepicker-chip-padding, var(--a2ui-spacing-s, 0.5rem) var(--a2ui-spacing-m, 1rem));
+        padding: var(
+          --a2ui-choicepicker-chip-padding,
+          var(--a2ui-spacing-s, 0.5rem) var(--a2ui-spacing-m, 1rem)
+        );
         border-radius: var(--a2ui-choicepicker-chip-border-radius, 100px);
         border: var(--a2ui-choicepicker-chip-border, 1px solid var(--a2ui-color-border, #ccc));
         background: var(--a2ui-choicepicker-chip-background, var(--a2ui-color-surface, #fff));
@@ -108,9 +111,15 @@ import {BasicCatalogComponent} from './basic-catalog-component';
         transition: all 0.2s;
       }
       .a2ui-chip.active {
-        background-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
+        background-color: var(
+          --a2ui-choicepicker-chip-background-selected,
+          var(--a2ui-color-primary, #17e)
+        );
         color: var(--a2ui-color-on-primary, #fff);
-        border-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
+        border-color: var(
+          --a2ui-choicepicker-chip-background-selected,
+          var(--a2ui-color-primary, #17e)
+        );
       }
     `,
   ],

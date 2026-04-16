@@ -39,10 +39,7 @@ import { Child } from '../../core/component-binder.service';
         <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </li>
           }
@@ -52,10 +49,7 @@ import { Child } from '../../core/component-binder.service';
         <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </li>
           }
@@ -65,10 +59,7 @@ import { Child } from '../../core/component-binder.service';
         <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
           @for (child of children(); track trackBy($index, child)) {
             <div class="a2ui-list-item-none">
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </div>
           }
@@ -103,10 +94,6 @@ import { Child } from '../../core/component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent extends BasicCatalogComponent {
-
-
-
-
   readonly listStyle = computed(() => this.props()['listStyle']?.value());
   readonly orientation = computed(() => this.props()['orientation']?.value() || 'vertical');
   readonly children = computed(() => {

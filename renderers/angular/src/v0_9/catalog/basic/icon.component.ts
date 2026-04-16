@@ -51,8 +51,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         height: var(--a2ui-icon-size, 24px);
         font-size: var(--a2ui-icon-size, 24px);
         font-family: var(--a2ui-icon-font-family, 'Material Icons');
-        color: var(--a2ui-icon-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333)));
-        font-variation-settings: var(--a2ui-icon-font-variation-settings, "FILL" 1);
+        color: var(
+          --a2ui-icon-color,
+          var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333))
+        );
+        font-variation-settings: var(--a2ui-icon-font-variation-settings, 'FILL' 1);
         line-height: 1;
         text-transform: none;
         letter-spacing: normal;
@@ -73,10 +76,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent extends BasicCatalogComponent {
-
-
-
-
   readonly color = computed(() => this.props()['color']?.value());
   readonly iconNameRaw = computed(() => this.props()['name']?.value());
 

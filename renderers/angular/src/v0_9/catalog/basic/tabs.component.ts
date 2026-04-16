@@ -95,10 +95,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TabsComponent extends BasicCatalogComponent {
-
-
-
-
   activeTabIndex = signal(0);
 
   readonly tabs = computed(() => this.props()['tabs']?.value() || []);

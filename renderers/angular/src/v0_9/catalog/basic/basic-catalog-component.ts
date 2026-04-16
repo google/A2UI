@@ -15,8 +15,8 @@
  */
 
 import { Directive, computed, HostBinding, input } from '@angular/core';
-import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
-import {BoundProperty} from '../../core/types';
+import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
+import { BoundProperty } from '../../core/types';
 
 /**
  * Base class for A2UI basic catalog components in Angular.

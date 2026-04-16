@@ -85,10 +85,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent extends BasicCatalogComponent {
-
-
-
-
   readonly url = computed(() => this.props()['url']?.value());
   readonly description = computed(() => this.props()['description']?.value() || '');
   readonly fit = computed(() => this.props()['fit']?.value() || 'cover');
