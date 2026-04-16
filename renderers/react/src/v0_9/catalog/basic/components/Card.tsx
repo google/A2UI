@@ -17,11 +17,12 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseContainerStyle} from '../utils';
+import {getBaseContainerStyle, getWeightStyle} from '../utils';
 
 export const Card = createComponentImplementation(CardApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
     ...getBaseContainerStyle(),
+    ...getWeightStyle(props.weight),
     backgroundColor: '#fff',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     width: '100%',

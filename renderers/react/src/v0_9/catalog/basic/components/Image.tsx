@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ImageApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, getWeightStyle} from '../utils';
 
 export const Image = createComponentImplementation(ImageApi, ({props}) => {
   const mapFit = (fit?: string): React.CSSProperties['objectFit'] => {
@@ -27,6 +27,7 @@ export const Image = createComponentImplementation(ImageApi, ({props}) => {
 
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
+    ...getWeightStyle(props.weight),
     objectFit: mapFit(props.fit),
     width: '100%',
     height: 'auto',

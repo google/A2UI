@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, getWeightStyle} from '../utils';
 import {useMarkdown} from '../hooks/useMarkdown';
 
 export const Text = createComponentImplementation(TextApi, ({props}) => {
@@ -48,6 +48,7 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
   const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
+    ...getWeightStyle(props.weight),
     display: 'inline-block',
   };
 
