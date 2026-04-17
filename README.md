@@ -105,7 +105,7 @@ Pick the path that matches where you want to start:
 | Path | What you get | Time |
 |------|--------------|------|
 | 🍜 **[Restaurant Finder demo](docs/quickstart.md)** | Full-stack A2UI running locally with a Gemini agent and Lit renderer. Best for learning the protocol end-to-end. | ~5 min |
-| ⚛️ **[A2UI + AG-UI quickstart (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | React/Next.js scaffold with an A2UI catalog and any agent framework behind AG-UI. Best for shipping A2UI in a React app. | ~5 min |
+| ⚛️ **[A2UI + AG-UI (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | Set up CopilotKit with your agent framework of choice, then enable A2UI rendering. Best for shipping A2UI in a React app. | ~5 min |
 | 🎨 **[A2UI Composer](https://a2ui-composer.ag-ui.com/)** · **[Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)** | Generate A2UI JSON from a visual editor and paste it into any agent prompt — no install required. | ~1 min |
 
 ### Restaurant Finder demo — TL;DR
@@ -125,12 +125,10 @@ This one command installs dependencies, builds the renderers, starts the Python 
 ### A2UI + AG-UI — TL;DR
 
 ```bash
-npx copilotkit@latest create my-app --framework a2ui
-cd my-app
-pnpm install && pnpm dev
+npx copilotkit@latest init
 ```
 
-Pairs a Next.js frontend (with a typed A2UI catalog) against the agent framework of your choice. See **[Use A2UI with Any Agent Framework (Using AG-UI)](docs/guides/a2ui-with-any-agent-framework.md)** for the catalog wiring, message shapes, and fixed-vs-dynamic schema patterns.
+Set up CopilotKit with your framework of choice (ADK, LangGraph, CrewAI, Mastra, …), then follow the **[AG-UI guide](docs/guides/a2ui-with-any-agent-framework.md)** to enable A2UI rendering. CopilotKit's [quickstart](https://docs.copilotkit.ai/quickstart) covers the initial install for any supported agent framework.
 
 ### Other renderers
 
