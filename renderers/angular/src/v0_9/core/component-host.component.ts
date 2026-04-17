@@ -19,10 +19,10 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
-  OnInit,
   Type,
   inject,
   input,
+  effect,
 } from '@angular/core';
 import {NgComponentOutlet} from '@angular/common';
 import {ComponentContext, ComponentModel, SurfaceModel} from '@a2ui/web_core/v0_9';
@@ -64,7 +64,7 @@ import {BoundProperty} from './types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComponentHostComponent implements OnInit {
+export class ComponentHostComponent {
   /** The key of the component to render, either an ID string or an object with ID and basePath. Defaults to 'root'. */
   componentKey = input<string | {id: string; basePath: string}>('root');
 
@@ -83,15 +83,33 @@ export class ComponentHostComponent implements OnInit {
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
 
-  ngOnInit(): void {
-    const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
+  private propsSub?: any;
+  private createSub?: any;
+
+  constructor() {
+    effect(() => {
+      const key = this.componentKey();
+      const surfaceId = this.surfaceId();
+      this.setupComponent(key, surfaceId);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.propsSub?.unsubscribe();
+      this.createSub?.unsubscribe();
+    });
+  }
+
+  private setupComponent(key: string | {id: string; basePath: string}, surfaceId: string) {
+    this.propsSub?.unsubscribe();
+    this.createSub?.unsubscribe();
+
+    const surface = this.rendererService.surfaceGroup?.getSurface(surfaceId);
 
     if (!surface) {
-      console.warn(`Surface ${this.surfaceId()} not found`);
+      console.warn(`Surface ${surfaceId} not found`);
       return;
     }
 
-    const key = this.componentKey();
     let id: string;
     let basePath: string;
 
@@ -108,17 +126,15 @@ export class ComponentHostComponent implements OnInit {
     const componentModel = surface.componentsModel.get(id);
 
     if (!componentModel) {
-      console.warn(`Component ${id} not found in surface ${this.surfaceId()}. Waiting for it...`);
+      console.warn(`Component ${id} not found in surface ${surfaceId}. Waiting for it...`);
 
-      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+      this.createSub = surface.componentsModel.onCreated.subscribe((comp) => {
         if (comp.id === id) {
           this.initializeComponent(surface, comp, id, basePath);
           this.cdr.markForCheck();
-          sub.unsubscribe();
+          this.createSub?.unsubscribe();
         }
       });
-
-      this.destroyRef.onDestroy(() => sub.unsubscribe());
       return;
     }
 
@@ -148,15 +164,9 @@ export class ComponentHostComponent implements OnInit {
 
     // Subscribes to updates to the component model properties, to get the
     // component to react when a new prop is added after creation.
-    const onPropsUpdateSub = componentModel.onUpdated.subscribe(() => {
+    this.propsSub = componentModel.onUpdated.subscribe(() => {
       this.props = this.binder.bind(this.context!);
       this.cdr.markForCheck();
-    });
-
-    this.destroyRef.onDestroy(() => {
-      // ComponentContext itself doesn't have a dispose, but its inner components might.
-      // However, SurfaceModel takes care of component disposal.
-      onPropsUpdateSub.unsubscribe();
     });
 
     this.cdr.markForCheck();
