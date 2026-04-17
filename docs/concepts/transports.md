@@ -43,11 +43,9 @@ TODO: Add a detailed guide.
 
 ## AG UI
 
-[AG UI](https://ag-ui.com/) translates from A2UI messages to AG UI messages, and handles transport and state sync automatically.
+[AG UI](https://ag-ui.com/) translates A2UI messages to AG UI events and handles transport and state sync automatically. It is the recommended transport for React / Next.js clients.
 
-If you are using AG UI, this should be automatic.
-
-TODO: Add a detailed guide.
+**See:** [Use A2UI with Any Agent Framework (Using AG-UI)](../guides/a2ui-with-any-agent-framework.md) — end-to-end guide covering catalog setup, A2UI operations, and fixed vs dynamic schema patterns.
 
 ## Custom Transports
 

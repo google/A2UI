@@ -100,66 +100,41 @@ A2UI is designed to be a lightweight format, but it fits into a larger ecosystem
 
 ## Getting started
 
-The best way to understand A2UI is to run the samples.
+Pick the path that matches where you want to start:
 
-### Prerequisites
+| Path | What you get | Time |
+|------|--------------|------|
+| 🍜 **[Restaurant Finder demo](docs/quickstart.md)** | Full-stack A2UI running locally with a Gemini agent and Lit renderer. Best for learning the protocol end-to-end. | ~5 min |
+| ⚛️ **[A2UI + AG-UI quickstart (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | React/Next.js scaffold with an A2UI catalog and any agent framework behind AG-UI. Best for shipping A2UI in a React app. | ~5 min |
+| 🎨 **[A2UI Composer](https://a2ui-composer.ag-ui.com/)** · **[Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)** | Generate A2UI JSON from a visual editor and paste it into any agent prompt — no install required. | ~1 min |
 
-* Node.js (for web clients)
-* Python (for agent samples)
-* A valid [Gemini API Key](https://aistudio.google.com/) is required for the samples.
+### Restaurant Finder demo — TL;DR
 
-### Running the Restaurant Finder demo
+Prerequisites: Node.js 18+, [uv](https://docs.astral.sh/uv/), and a [Gemini API key](https://aistudio.google.com/apikey).
 
-1. **Clone the repository:**
+```bash
+git clone https://github.com/google/A2UI.git
+cd A2UI
+export GEMINI_API_KEY="your_gemini_api_key"
+cd samples/client/lit
+npm run demo:restaurant
+```
 
-    ```bash
-    git clone https://github.com/google/A2UI.git
-    cd A2UI
-    ```
+This one command installs dependencies, builds the renderers, starts the Python agent, and opens the client at `http://localhost:5173`. For step-by-step instructions, alternative demos, and troubleshooting see the **[full Quickstart](docs/quickstart.md)**.
 
-2. **Set your API key:**
+### A2UI + AG-UI — TL;DR
 
-    ```bash
-    export GEMINI_API_KEY="your_gemini_api_key"
-    ```
+```bash
+npx copilotkit@latest create my-app --framework a2ui
+cd my-app
+pnpm install && pnpm dev
+```
 
-3. **Run the Agent (Backend):**
+Pairs a Next.js frontend (with a typed A2UI catalog) against the agent framework of your choice. See **[Use A2UI with Any Agent Framework (Using AG-UI)](docs/guides/a2ui-with-any-agent-framework.md)** for the catalog wiring, message shapes, and fixed-vs-dynamic schema patterns.
 
-    ```bash
-    cd samples/agent/adk/restaurant_finder
-    uv run .
-    ```
+### Other renderers
 
-4. **Run the Client (Frontend):**
-    Open a new terminal window:
-
-    ```bash
-    # Install and build the Markdown renderer
-    cd renderers/markdown/markdown-it
-    npm install
-    npm run build
-
-    # Install and build the Web Core library
-    cd ../../web_core
-    npm install
-    npm run build
-
-    # Install and build the Lit renderer
-    cd ../lit
-    npm install
-    npm run build
-
-    # Install and run the shell client
-    cd ../../samples/client/lit/shell
-    npm install
-    npm run dev
-    ```
-
-For Flutter developers, check out the [GenUI SDK](https://github.com/flutter/genui),
-which uses A2UI under the hood.
-
-CopilotKit has a public [A2UI Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)
-to try out as well.
+For Flutter, check out the [GenUI SDK](https://github.com/flutter/genui), which uses A2UI under the hood. See [docs/reference/renderers.md](docs/reference/renderers.md) for the full list of client implementations.
 
 ## Roadmap
 
