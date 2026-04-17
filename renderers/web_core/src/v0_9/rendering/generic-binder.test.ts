@@ -55,7 +55,7 @@ describe('GenericBinder Checkable Trait', () => {
 
     const schema = z.object({
       value: CommonSchemas.DynamicString,
-      checks: CommonSchemas.Checkable.shape.checks,
+      checks: CommonSchemas.Checks,
     });
 
     return {surface, schema};

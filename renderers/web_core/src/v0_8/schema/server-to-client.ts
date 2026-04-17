@@ -16,25 +16,25 @@
 
 import { z } from "zod";
 import {
-  AudioPlayerSchema,
-  ButtonSchema,
-  CardSchema,
-  CheckboxSchema,
-  ColumnSchema,
-  DateTimeInputSchema,
-  DividerSchema,
-  IconSchema,
-  ImageSchema,
-  ListSchema,
-  ModalSchema,
-  MultipleChoiceSchema,
-  RowSchema,
-  SliderSchema,
-  TabsSchema,
-  TextFieldSchema,
-  TextSchema,
-  VideoSchema,
-  DataValueSchema,
+  AudioPlayerSchema, AudioPlayer,
+  ButtonSchema, Button,
+  CardSchema, Card,
+  CheckboxSchema, Checkbox,
+  ColumnSchema, Column,
+  DateTimeInputSchema, DateTimeInput,
+  DividerSchema, Divider,
+  IconSchema, Icon,
+  ImageSchema, Image,
+  ListSchema, List,
+  ModalSchema, Modal,
+  MultipleChoiceSchema, MultipleChoice,
+  RowSchema, Row,
+  SliderSchema, Slider,
+  TabsSchema, Tabs,
+  TextFieldSchema, TextField,
+  TextSchema, Text,
+  VideoSchema, Video,
+  DataValueSchema, DataValue,
 } from "./common-types.js";
 
 const validateValueProperty = (val: any, ctx: z.RefinementCtx) => {
@@ -55,7 +55,29 @@ export const ValueMapSchema = DataValueSchema.describe(
   "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
 );
 
-export const AnyComponentSchema = z
+export interface AnyComponent {
+  Text?: Text;
+  Image?: Image;
+  Icon?: Icon;
+  Video?: Video;
+  AudioPlayer?: AudioPlayer;
+  Row?: Row;
+  Column?: Column;
+  List?: List;
+  Card?: Card;
+  Tabs?: Tabs;
+  Divider?: Divider;
+  Modal?: Modal;
+  Button?: Button;
+  Checkbox?: Checkbox;
+  TextField?: TextField;
+  DateTimeInput?: DateTimeInput;
+  MultipleChoice?: MultipleChoice;
+  Slider?: Slider;
+  [key: string]: any;
+}
+
+export const AnyComponentSchema: z.ZodType<AnyComponent> = z
   .object({
     Text: TextSchema.optional(),
     Image: ImageSchema.optional(),
@@ -80,7 +102,13 @@ export const AnyComponentSchema = z
 
 export const ComponentPropertiesSchema = AnyComponentSchema;
 
-export const ComponentInstanceSchema = z
+export interface ComponentInstance {
+  id: string;
+  weight?: number;
+  component: AnyComponent;
+}
+
+export const ComponentInstanceSchema: z.ZodType<ComponentInstance> = z
   .object({
     id: z.string().describe("The unique identifier for this component."),
     weight: z
@@ -98,7 +126,17 @@ export const ComponentInstanceSchema = z
     "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
   );
 
-export const BeginRenderingMessageSchema = z
+export interface BeginRenderingMessage {
+  surfaceId: string;
+  catalogId?: string;
+  root: string;
+  styles?: {
+    font?: string;
+    primaryColor?: string;
+  };
+}
+
+export const BeginRenderingMessageSchema: z.ZodType<BeginRenderingMessage> = z
   .object({
     surfaceId: z
       .string()
@@ -130,7 +168,12 @@ export const BeginRenderingMessageSchema = z
     "Signals the client to begin rendering a surface with a root component and specific styles.",
   );
 
-export const SurfaceUpdateMessageSchema = z
+export interface SurfaceUpdateMessage {
+  surfaceId: string;
+  components: ComponentInstance[];
+}
+
+export const SurfaceUpdateMessageSchema: z.ZodType<SurfaceUpdateMessage> = z
   .object({
     surfaceId: z
       .string()
@@ -227,7 +270,13 @@ export const SurfaceUpdateMessageSchema = z
   })
   .describe("Updates a surface with a new set of components.");
 
-export const DataModelUpdateMessageSchema = z
+export interface DataModelUpdateMessage {
+  surfaceId: string;
+  path?: string;
+  contents: DataValue[];
+}
+
+export const DataModelUpdateMessageSchema: z.ZodType<DataModelUpdateMessage> = z
   .object({
     surfaceId: z
       .string()
@@ -249,7 +298,11 @@ export const DataModelUpdateMessageSchema = z
   .strict()
   .describe("Updates the data model for a surface.");
 
-export const DeleteSurfaceMessageSchema = z
+export interface DeleteSurfaceMessage {
+  surfaceId: string;
+}
+
+export const DeleteSurfaceMessageSchema: z.ZodType<DeleteSurfaceMessage> = z
   .object({
     surfaceId: z
       .string()
@@ -260,7 +313,14 @@ export const DeleteSurfaceMessageSchema = z
     "Signals the client to delete the surface identified by 'surfaceId'.",
   );
 
-export const A2uiMessageSchema = z
+export interface A2uiMessage {
+  beginRendering?: BeginRenderingMessage;
+  surfaceUpdate?: SurfaceUpdateMessage;
+  dataModelUpdate?: DataModelUpdateMessage;
+  deleteSurface?: DeleteSurfaceMessage;
+}
+
+export const A2uiMessageSchema: z.ZodType<A2uiMessage> = z
   .object({
     beginRendering: BeginRenderingMessageSchema.optional(),
     surfaceUpdate: SurfaceUpdateMessageSchema.optional(),
@@ -288,5 +348,3 @@ export const A2uiMessageSchema = z
   .describe(
     "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   );
-
-export type A2uiMessage = z.infer<typeof A2uiMessageSchema>;

@@ -16,7 +16,11 @@
 
 import {z} from 'zod';
 
-export const DataBindingSchema = z
+export interface DataBinding {
+  path: string;
+}
+
+export const DataBindingSchema: z.ZodType<DataBinding> = z
   .object({
     path: z
       .string()
@@ -26,46 +30,72 @@ export const DataBindingSchema = z
     'REF:common_types.json#/$defs/DataBinding|A JSON Pointer path to a value in the data model.',
   );
 
-export const FunctionCallSchema = z
+const FUNCTION_CALL_RETURN_TYPE_VALUES = [
+  'string',
+  'number',
+  'boolean',
+  'array',
+  'object',
+  'any',
+  'void',
+] as const;
+type FunctionCallReturnType = (typeof FUNCTION_CALL_RETURN_TYPE_VALUES)[number];
+
+export interface FunctionCall {
+  call: string;
+  args: Record<string, any>;
+  returnType?: FunctionCallReturnType;
+}
+
+export const FunctionCallSchema: z.ZodType<FunctionCall> = z
   .object({
     call: z.string().describe('The name of the function to call.'),
     args: z.record(z.any()).describe('Arguments passed to the function.'),
-    returnType: z
-      .enum(['string', 'number', 'boolean', 'array', 'object', 'any', 'void'])
-      .default('boolean'),
+    returnType: z.enum(FUNCTION_CALL_RETURN_TYPE_VALUES).default('boolean'),
   })
   .describe(
     'REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.',
   );
 
-export const DynamicBooleanSchema = z
+export type DynamicBoolean = boolean | DataBinding | FunctionCall;
+
+export const DynamicBooleanSchema: z.ZodType<DynamicBoolean> = z
   .union([z.boolean(), DataBindingSchema, FunctionCallSchema])
   .describe(
     'REF:common_types.json#/$defs/DynamicBoolean|A boolean value that can be a literal, a path, or a function call returning a boolean.',
   );
 
-export const DynamicStringSchema = z
-  .union([
-    z.string(),
-    DataBindingSchema,
-    // FunctionCall returning string (simplified schema for Zod, stricter in JSON Schema)
-    FunctionCallSchema,
-  ])
+export type DynamicString = string | DataBinding | FunctionCall;
+
+export const DynamicStringSchema: z.ZodType<DynamicString> = z
+  .union([z.string(), DataBindingSchema, FunctionCallSchema])
   .describe('REF:common_types.json#/$defs/DynamicString|Represents a string');
 
-export const DynamicNumberSchema = z
+export type DynamicNumber = number | DataBinding | FunctionCall;
+
+export const DynamicNumberSchema: z.ZodType<DynamicNumber> = z
   .union([z.number(), DataBindingSchema, FunctionCallSchema])
   .describe(
     'REF:common_types.json#/$defs/DynamicNumber|Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.',
   );
 
-export const DynamicStringListSchema = z
+export type DynamicStringList = string[] | DataBinding | FunctionCall;
+
+export const DynamicStringListSchema: z.ZodType<DynamicStringList> = z
   .union([z.array(z.string()), DataBindingSchema, FunctionCallSchema])
   .describe(
     'REF:common_types.json#/$defs/DynamicStringList|Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.',
   );
 
-export const DynamicValueSchema = z
+export type DynamicValue =
+  | string
+  | number
+  | boolean
+  | any[]
+  | DataBinding
+  | FunctionCall;
+
+export const DynamicValueSchema: z.ZodType<DynamicValue> = z
   .union([
     z.string(),
     z.number(),
@@ -78,30 +108,22 @@ export const DynamicValueSchema = z
     'REF:common_types.json#/$defs/DynamicValue|A value that can be a literal, a path, or a function call returning any type.',
   );
 
-/** A JSON Pointer path to a value in the data model. */
-export type DataBinding = z.infer<typeof DataBindingSchema>;
-/** A function call representation. */
-export type FunctionCall = z.infer<typeof FunctionCallSchema>;
-/** A dynamic string that can be a literal, a data binding, or a function call. */
-export type DynamicString = z.infer<typeof DynamicStringSchema>;
-/** A dynamic number that can be a literal, a data binding, or a function call. */
-export type DynamicNumber = z.infer<typeof DynamicNumberSchema>;
-/** A dynamic boolean that can be a literal, a path, or a function call returning a boolean. */
-export type DynamicBoolean = z.infer<typeof DynamicBooleanSchema>;
-/** A dynamic list of strings that can be a literal array, a data binding, or a function call. */
-export type DynamicStringList = z.infer<typeof DynamicStringListSchema>;
-/** A dynamic value that can be a literal, a path, or a function call returning any type. */
-export type DynamicValue = z.infer<typeof DynamicValueSchema>;
+export type ComponentId = string;
 
-export const ComponentIdSchema = z
+export const ComponentIdSchema: z.ZodType<ComponentId> = z
   .string()
   .describe(
     'REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.',
   );
-/** The unique identifier for a component. */
-export type ComponentId = z.infer<typeof ComponentIdSchema>;
 
-export const ChildListSchema = z
+export type ChildList =
+  | ComponentId[]
+  | {
+      componentId: ComponentId;
+      path: string;
+    };
+
+export const ChildListSchema: z.ZodType<ChildList> = z
   .union([
     z
       .array(ComponentIdSchema)
@@ -118,10 +140,19 @@ export const ChildListSchema = z
       .describe('A template for generating a dynamic list of children.'),
   ])
   .describe('REF:common_types.json#/$defs/ChildList');
-/** A static list of child component IDs or a dynamic list template. */
-export type ChildList = z.infer<typeof ChildListSchema>;
 
-export const ActionSchema = z
+export type Action =
+  | {
+      event: {
+        name: string;
+        context?: Record<string, DynamicValue>;
+      };
+    }
+  | {
+      functionCall: FunctionCall;
+    };
+
+export const ActionSchema: z.ZodType<Action> = z
   .union([
     z
       .object({
@@ -138,10 +169,13 @@ export const ActionSchema = z
       .describe('Executes a local client-side function.'),
   ])
   .describe('REF:common_types.json#/$defs/Action');
-/** Triggers a server-side event or a local client-side function. */
-export type Action = z.infer<typeof ActionSchema>;
 
-export const CheckRuleSchema = z
+export interface CheckRule {
+  condition: DynamicBoolean;
+  message: string;
+}
+
+export const CheckRuleSchema: z.ZodType<CheckRule> = z
   .object({
     condition: DynamicBooleanSchema,
     message: z
@@ -151,41 +185,51 @@ export const CheckRuleSchema = z
   .describe(
     'REF:common_types.json#/$defs/CheckRule|A check rule consisting of a condition and an error message.',
   );
-/** A check rule consisting of a condition and an error message. */
-export type CheckRule = z.infer<typeof CheckRuleSchema>;
 
-export const CheckableSchema = z
+export interface Checkable {
+  checks?: CheckRule[];
+}
+
+export const ChecksSchema = z
+  .array(CheckRuleSchema)
+  .optional()
+  .describe('A list of checks to perform.');
+
+export const CheckableSchema: z.ZodType<Checkable> = z
   .object({
-    checks: z
-      .array(CheckRuleSchema)
-      .optional()
-      .describe('A list of checks to perform.'),
+    checks: ChecksSchema,
   })
   .describe(
     'REF:common_types.json#/$defs/Checkable|Properties for components that support client-side checks.',
   );
-/** An object that contains checks. */
-export type Checkable = z.infer<typeof CheckableSchema>;
 
-export const AccessibilityAttributesSchema = z
-  .object({
-    label: DynamicStringSchema.optional().describe(
-      'REF:common_types.json#/$defs/DynamicString|A short string used by assistive technologies to convey the purpose of an element.',
-    ),
-    description: DynamicStringSchema.optional().describe(
-      'REF:common_types.json#/$defs/DynamicString|Additional information provided by assistive technologies about an element.',
-    ),
-  })
-  .describe(
-    'REF:common_types.json#/$defs/AccessibilityAttributes|Attributes to enhance accessibility.',
-  );
+export interface AccessibilityAttributes {
+  label?: DynamicString;
+  description?: DynamicString;
+}
 
-/** Accessibility attributes like label and description. */
-export type AccessibilityAttributes = z.infer<
-  typeof AccessibilityAttributesSchema
->;
+export const AccessibilityAttributesSchema: z.ZodType<AccessibilityAttributes> =
+  z
+    .object({
+      label: DynamicStringSchema.optional().describe(
+        'REF:common_types.json#/$defs/DynamicString|A short string used by assistive technologies to convey the purpose of an element.',
+      ),
+      description: DynamicStringSchema.optional().describe(
+        'REF:common_types.json#/$defs/DynamicString|Additional information provided by assistive technologies about an element.',
+      ),
+    })
+    .describe(
+      'REF:common_types.json#/$defs/AccessibilityAttributes|Attributes to enhance accessibility.',
+    );
 
-export const AnyComponentSchema = z
+export interface AnyComponent {
+  component: string;
+  id?: ComponentId;
+  weight?: number;
+  [key: string]: any;
+}
+
+export const AnyComponentSchema: z.ZodType<AnyComponent> = z
   .object({
     component: z.string().describe('The type name of the component.'),
     id: ComponentIdSchema.optional(),
@@ -193,9 +237,6 @@ export const AnyComponentSchema = z
   })
   .passthrough()
   .describe('A generic A2UI component definition.');
-
-/** A generic A2UI component definition. */
-export type AnyComponent = z.infer<typeof AnyComponentSchema>;
 
 export const CommonSchemas = {
   ComponentId: ComponentIdSchema,
@@ -209,6 +250,7 @@ export const CommonSchemas = {
   FunctionCall: FunctionCallSchema,
   CheckRule: CheckRuleSchema,
   Checkable: CheckableSchema,
+  Checks: ChecksSchema,
   Action: ActionSchema,
   AccessibilityAttributes: AccessibilityAttributesSchema,
   AnyComponent: AnyComponentSchema,

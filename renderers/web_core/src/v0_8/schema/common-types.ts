@@ -30,7 +30,13 @@ const exactlyOneKey = (val: any, ctx: z.RefinementCtx) => {
   }
 };
 
-export const StringValueSchema = z
+export interface StringValue {
+  path?: string;
+  literalString?: string;
+  literal?: string;
+}
+
+export const StringValueSchema: z.ZodType<StringValue> = z
   .object({
     path: z.string().optional(),
     literalString: z.string().optional(),
@@ -38,9 +44,16 @@ export const StringValueSchema = z
   })
   .strict()
   .superRefine(exactlyOneKey);
-export type StringValue = z.infer<typeof StringValueSchema>;
 
-const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
+export interface DataValue {
+  key: string;
+  valueString?: string;
+  valueNumber?: number;
+  valueBoolean?: boolean;
+  valueMap?: DataValue[];
+}
+
+const DataValueMapItemSchema: z.ZodType<DataValue> = z.lazy(() =>
   z
     .object({
       key: z.string(),
@@ -65,7 +78,7 @@ const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
     }),
 );
 
-export const DataValueSchema = z
+export const DataValueSchema: z.ZodType<DataValue> = z
   .object({
     key: z.string(),
     valueString: z.string().optional(),
@@ -105,7 +118,13 @@ export const DataValueSchema = z
     checkDepth(val, 1);
   });
 
-export const NumberValueSchema = z
+export interface NumberValue {
+  path?: string;
+  literalNumber?: number;
+  literal?: number;
+}
+
+export const NumberValueSchema: z.ZodType<NumberValue> = z
   .object({
     path: z.string().optional(),
     literalNumber: z.number().optional(),
@@ -113,9 +132,14 @@ export const NumberValueSchema = z
   })
   .strict()
   .superRefine(exactlyOneKey);
-export type NumberValue = z.infer<typeof NumberValueSchema>;
 
-export const BooleanValueSchema = z
+export interface BooleanValue {
+  path?: string;
+  literalBoolean?: boolean;
+  literal?: boolean;
+}
+
+export const BooleanValueSchema: z.ZodType<BooleanValue> = z
   .object({
     path: z.string().optional(),
     literalBoolean: z.boolean().optional(),
@@ -123,12 +147,24 @@ export const BooleanValueSchema = z
   })
   .strict()
   .superRefine(exactlyOneKey);
-export type BooleanValue = z.infer<typeof BooleanValueSchema>;
 
 /**
  * Action Schema for components that trigger user actions
  */
-export const ActionSchema = z.object({
+export interface Action {
+  name: string;
+  context?: Array<{
+    key: string;
+    value: {
+      path?: string;
+      literalString?: string;
+      literalNumber?: number;
+      literalBoolean?: boolean;
+    };
+  }>;
+}
+
+export const ActionSchema: z.ZodType<Action> = z.object({
   name: z
     .string()
     .describe("A unique name identifying the action (e.g., 'submitForm')."),
@@ -168,45 +204,85 @@ export const ActionSchema = z.object({
  * Component Properties Schemas
  */
 
-export const TextSchema = z.object({
+const TEXT_USAGE_HINT_VALUES = ["h1", "h2", "h3", "h4", "h5", "caption", "body"] as const;
+type TextUsageHint = typeof TEXT_USAGE_HINT_VALUES[number];
+
+export interface Text {
+  text: StringValue;
+  usageHint?: TextUsageHint;
+}
+
+export const TextSchema: z.ZodType<Text> = z.object({
   text: StringValueSchema,
-  usageHint: z
-    .enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"])
-    .optional(),
+  usageHint: z.enum(TEXT_USAGE_HINT_VALUES).optional(),
 });
 
-export const ImageSchema = z.object({
+const IMAGE_USAGE_HINT_VALUES = [
+  "icon",
+  "avatar",
+  "smallFeature",
+  "mediumFeature",
+  "largeFeature",
+  "header",
+] as const;
+type ImageUsageHint = typeof IMAGE_USAGE_HINT_VALUES[number];
+
+const IMAGE_FIT_VALUES = ["contain", "cover", "fill", "none", "scale-down"] as const;
+type ImageFit = typeof IMAGE_FIT_VALUES[number];
+
+export interface Image {
+  url: StringValue;
+  usageHint?: ImageUsageHint;
+  fit?: ImageFit;
+  altText?: StringValue;
+}
+
+export const ImageSchema: z.ZodType<Image> = z.object({
   url: StringValueSchema,
-  usageHint: z
-    .enum([
-      "icon",
-      "avatar",
-      "smallFeature",
-      "mediumFeature",
-      "largeFeature",
-      "header",
-    ])
-    .optional(),
-  fit: z.enum(["contain", "cover", "fill", "none", "scale-down"]).optional(),
+  usageHint: z.enum(IMAGE_USAGE_HINT_VALUES).optional(),
+  fit: z.enum(IMAGE_FIT_VALUES).optional(),
   altText: StringValueSchema.optional(),
 });
 
-export const IconSchema = z.object({
+export interface Icon {
+  name: StringValue;
+}
+
+export const IconSchema: z.ZodType<Icon> = z.object({
   name: StringValueSchema,
 });
 
-export const VideoSchema = z.object({
+export interface Video {
+  url: StringValue;
+}
+
+export const VideoSchema: z.ZodType<Video> = z.object({
   url: StringValueSchema,
 });
 
-export const AudioPlayerSchema = z.object({
+export interface AudioPlayer {
+  url: StringValue;
+  description?: StringValue;
+}
+
+export const AudioPlayerSchema: z.ZodType<AudioPlayer> = z.object({
   url: StringValueSchema,
   description: StringValueSchema.optional().describe(
     "A label, title, or placeholder text.",
   ),
 });
 
-export const TabsSchema = z.object({
+export interface Tabs {
+  tabItems: Array<{
+    title: {
+      path?: string;
+      literalString?: string;
+    };
+    child: string;
+  }>;
+}
+
+export const TabsSchema: z.ZodType<Tabs> = z.object({
   tabItems: z
     .array(
       z
@@ -249,9 +325,18 @@ export const TabsSchema = z.object({
     .describe("A list of tabs, each with a title and a child component ID."),
 });
 
-export const DividerSchema = z.object({
+const DIVIDER_AXIS_VALUES = ["horizontal", "vertical"] as const;
+type DividerAxis = typeof DIVIDER_AXIS_VALUES[number];
+
+export interface Divider {
+  axis?: DividerAxis;
+  color?: string;
+  thickness?: number;
+}
+
+export const DividerSchema: z.ZodType<Divider> = z.object({
   axis: z
-    .enum(["horizontal", "vertical"])
+    .enum(DIVIDER_AXIS_VALUES)
     .optional()
     .describe("The orientation."),
   color: z
@@ -261,7 +346,12 @@ export const DividerSchema = z.object({
   thickness: z.number().optional().describe("The thickness of the divider."),
 });
 
-export const ModalSchema = z.object({
+export interface Modal {
+  entryPointChild: string;
+  contentChild: string;
+}
+
+export const ModalSchema: z.ZodType<Modal> = z.object({
   entryPointChild: z
     .string()
     .describe(
@@ -272,7 +362,13 @@ export const ModalSchema = z.object({
     .describe("The ID of the component to display as the modal's content."),
 });
 
-export const ButtonSchema = z.object({
+export interface Button {
+  child: string;
+  action: Action;
+  primary?: boolean;
+}
+
+export const ButtonSchema: z.ZodType<Button> = z.object({
   child: z
     .string()
     .describe("The ID of the component to display as the button's content."),
@@ -285,7 +381,15 @@ export const ButtonSchema = z.object({
     ),
 });
 
-export const CheckboxSchema = z.object({
+export interface Checkbox {
+  label: StringValue;
+  value: {
+    path?: string;
+    literalBoolean?: boolean;
+  };
+}
+
+export const CheckboxSchema: z.ZodType<Checkbox> = z.object({
   label: StringValueSchema,
   value: z
     .object({
@@ -301,17 +405,34 @@ export const CheckboxSchema = z.object({
     .superRefine(exactlyOneKey),
 });
 
-export const TextFieldSchema = z.object({
+const TEXT_FIELD_TYPE_VALUES = ["shortText", "number", "date", "longText"] as const;
+type TextFieldType = typeof TEXT_FIELD_TYPE_VALUES[number];
+
+export interface TextField {
+  text?: StringValue;
+  label: StringValue;
+  textFieldType?: TextFieldType;
+  validationRegexp?: string;
+}
+
+export const TextFieldSchema: z.ZodType<TextField> = z.object({
   text: StringValueSchema.optional(),
   label: StringValueSchema.describe("A label, title, or placeholder text."),
-  textFieldType: z.enum(["shortText", "number", "date", "longText"]).optional(),
+  textFieldType: z.enum(TEXT_FIELD_TYPE_VALUES).optional(),
   validationRegexp: z
     .string()
     .optional()
     .describe("A regex string to validate the input."),
 });
 
-export const DateTimeInputSchema = z.object({
+export interface DateTimeInput {
+  value: StringValue;
+  enableDate?: boolean;
+  enableTime?: boolean;
+  outputFormat?: string;
+}
+
+export const DateTimeInputSchema: z.ZodType<DateTimeInput> = z.object({
   value: StringValueSchema,
   enableDate: z.boolean().optional(),
   enableTime: z.boolean().optional(),
@@ -321,7 +442,27 @@ export const DateTimeInputSchema = z.object({
     .describe("The string format for the output (e.g., 'YYYY-MM-DD')."),
 });
 
-export const MultipleChoiceSchema = z.object({
+const MULTIPLE_CHOICE_TYPE_VALUES = ["checkbox", "chips"] as const;
+type MultipleChoiceType = typeof MULTIPLE_CHOICE_TYPE_VALUES[number];
+
+export interface MultipleChoice {
+  selections: {
+    path?: string;
+    literalArray?: string[];
+  };
+  options?: Array<{
+    label: {
+      path?: string;
+      literalString?: string;
+    };
+    value: string;
+  }>;
+  maxAllowedSelections?: number;
+  type?: MultipleChoiceType;
+  filterable?: boolean;
+}
+
+export const MultipleChoiceSchema: z.ZodType<MultipleChoice> = z.object({
   selections: z
     .object({
       path: z
@@ -357,11 +498,21 @@ export const MultipleChoiceSchema = z.object({
     )
     .optional(),
   maxAllowedSelections: z.number().optional(),
-  type: z.enum(["checkbox", "chips"]).optional(),
+  type: z.enum(MULTIPLE_CHOICE_TYPE_VALUES).optional(),
   filterable: z.boolean().optional(),
 });
 
-export const SliderSchema = z.object({
+export interface Slider {
+  value: {
+    path?: string;
+    literalNumber?: number;
+  };
+  minValue?: number;
+  maxValue?: number;
+  label?: StringValue;
+}
+
+export const SliderSchema: z.ZodType<Slider> = z.object({
   value: z
     .object({
       path: z
@@ -379,12 +530,22 @@ export const SliderSchema = z.object({
   label: StringValueSchema.optional(),
 });
 
-export const ComponentArrayTemplateSchema = z.object({
+export interface ComponentArrayTemplate {
+  componentId: string;
+  dataBinding: string;
+}
+
+export const ComponentArrayTemplateSchema: z.ZodType<ComponentArrayTemplate> = z.object({
   componentId: z.string(),
   dataBinding: z.string(),
 });
 
-export const ComponentArrayReferenceSchema = z
+export interface ComponentArrayReference {
+  explicitList?: string[];
+  template?: ComponentArrayTemplate;
+}
+
+export const ComponentArrayReferenceSchema: z.ZodType<ComponentArrayReference> = z
   .object({
     explicitList: z.array(z.string()).optional(),
     template: ComponentArrayTemplateSchema.describe(
@@ -394,43 +555,63 @@ export const ComponentArrayReferenceSchema = z
   .strict()
   .superRefine(exactlyOneKey);
 
-export const RowSchema = z.object({
+const COMPONENT_DISTRIBUTION_VALUES = [
+  "start",
+  "center",
+  "end",
+  "spaceBetween",
+  "spaceAround",
+  "spaceEvenly",
+] as const;
+type ComponentDistribution = typeof COMPONENT_DISTRIBUTION_VALUES[number];
+
+const COMPONENT_ALIGNMENT_VALUES = ["start", "center", "end", "stretch"] as const;
+type ComponentAlignment = typeof COMPONENT_ALIGNMENT_VALUES[number];
+
+export interface Row {
+  children: ComponentArrayReference;
+  distribution?: ComponentDistribution;
+  alignment?: ComponentAlignment;
+}
+
+export const RowSchema: z.ZodType<Row> = z.object({
   children: ComponentArrayReferenceSchema,
-  distribution: z
-    .enum([
-      "start",
-      "center",
-      "end",
-      "spaceBetween",
-      "spaceAround",
-      "spaceEvenly",
-    ])
-    .optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  distribution: z.enum(COMPONENT_DISTRIBUTION_VALUES).optional(),
+  alignment: z.enum(COMPONENT_ALIGNMENT_VALUES).optional(),
 });
 
-export const ColumnSchema = z.object({
+export interface Column {
+  children: ComponentArrayReference;
+  distribution?: ComponentDistribution;
+  alignment?: ComponentAlignment;
+}
+
+export const ColumnSchema: z.ZodType<Column> = z.object({
   children: ComponentArrayReferenceSchema,
-  distribution: z
-    .enum([
-      "start",
-      "center",
-      "end",
-      "spaceBetween",
-      "spaceAround",
-      "spaceEvenly",
-    ])
-    .optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  distribution: z.enum(COMPONENT_DISTRIBUTION_VALUES).optional(),
+  alignment: z.enum(COMPONENT_ALIGNMENT_VALUES).optional(),
 });
 
-export const ListSchema = z.object({
+const LIST_DIRECTION_VALUES = ["vertical", "horizontal"] as const;
+type ListDirection = typeof LIST_DIRECTION_VALUES[number];
+
+export interface List {
+  children: ComponentArrayReference;
+  direction?: ListDirection;
+  alignment?: ComponentAlignment;
+}
+
+export const ListSchema: z.ZodType<List> = z.object({
   children: ComponentArrayReferenceSchema,
-  direction: z.enum(["vertical", "horizontal"]).optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  direction: z.enum(LIST_DIRECTION_VALUES).optional(),
+  alignment: z.enum(COMPONENT_ALIGNMENT_VALUES).optional(),
 });
 
-export const CardSchema = z.object({
+export interface Card {
+  child: string;
+}
+
+export const CardSchema: z.ZodType<Card> = z.object({
   child: z
     .string()
     .describe("The ID of the component to be rendered inside the card."),

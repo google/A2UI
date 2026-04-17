@@ -15,9 +15,19 @@
  */
 
 import {z} from 'zod';
-import {AnyComponentSchema} from './common-types.js';
+import {AnyComponentSchema, AnyComponent} from './common-types.js';
 
-export const CreateSurfaceMessageSchema = z
+export interface CreateSurfaceMessage {
+  version: 'v0.9';
+  createSurface: {
+    surfaceId: string;
+    catalogId: string;
+    theme?: any;
+    sendDataModel?: boolean;
+  };
+}
+
+export const CreateSurfaceMessageSchema: z.ZodType<CreateSurfaceMessage> = z
   .object({
     version: z.literal('v0.9'),
     createSurface: z
@@ -38,24 +48,44 @@ export const CreateSurfaceMessageSchema = z
   })
   .strict();
 
-export const UpdateComponentsMessageSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    updateComponents: z
-      .object({
-        surfaceId: z
-          .string()
-          .describe('The unique identifier for the UI surface to be updated.'),
-        components: z
-          .array(AnyComponentSchema)
-          .min(1)
-          .describe('A list containing all UI components for the surface.'),
-      })
-      .strict(),
-  })
-  .strict();
+export interface UpdateComponentsMessage {
+  version: 'v0.9';
+  updateComponents: {
+    surfaceId: string;
+    components: AnyComponent[];
+  };
+}
 
-export const UpdateDataModelMessageSchema = z
+export const UpdateComponentsMessageSchema: z.ZodType<UpdateComponentsMessage> =
+  z
+    .object({
+      version: z.literal('v0.9'),
+      updateComponents: z
+        .object({
+          surfaceId: z
+            .string()
+            .describe(
+              'The unique identifier for the UI surface to be updated.',
+            ),
+          components: z
+            .array(AnyComponentSchema)
+            .min(1)
+            .describe('A list containing all UI components for the surface.'),
+        })
+        .strict(),
+    })
+    .strict();
+
+export interface UpdateDataModelMessage {
+  version: 'v0.9';
+  updateDataModel: {
+    surfaceId: string;
+    path?: string;
+    value?: any;
+  };
+}
+
+export const UpdateDataModelMessageSchema: z.ZodType<UpdateDataModelMessage> = z
   .object({
     version: z.literal('v0.9'),
     updateDataModel: z
@@ -78,7 +108,14 @@ export const UpdateDataModelMessageSchema = z
   })
   .strict();
 
-export const DeleteSurfaceMessageSchema = z
+export interface DeleteSurfaceMessage {
+  version: 'v0.9';
+  deleteSurface: {
+    surfaceId: string;
+  };
+}
+
+export const DeleteSurfaceMessageSchema: z.ZodType<DeleteSurfaceMessage> = z
   .object({
     version: z.literal('v0.9'),
     deleteSurface: z
@@ -91,51 +128,16 @@ export const DeleteSurfaceMessageSchema = z
   })
   .strict();
 
-export declare interface CreateSurfaceMessage extends z.infer<
-  typeof CreateSurfaceMessageSchema
-> {
-  version: 'v0.9';
-  createSurface: {
-    surfaceId: string;
-    catalogId: string;
-    theme?: any;
-    sendDataModel?: boolean;
-  };
-}
-export declare interface UpdateComponentsMessage extends z.infer<
-  typeof UpdateComponentsMessageSchema
-> {
-  version: 'v0.9';
-  updateComponents: {
-    surfaceId: string;
-    components: any[];
-  };
-}
-export declare interface UpdateDataModelMessage extends z.infer<
-  typeof UpdateDataModelMessageSchema
-> {
-  version: 'v0.9';
-  updateDataModel: {
-    surfaceId: string;
-    path?: string;
-    value?: any;
-  };
-}
-export declare interface DeleteSurfaceMessage extends z.infer<
-  typeof DeleteSurfaceMessageSchema
-> {
-  version: 'v0.9';
-  deleteSurface: {
-    surfaceId: string;
-  };
-}
-
-export const A2uiMessageSchema = z.union([
-  CreateSurfaceMessageSchema,
-  UpdateComponentsMessageSchema,
-  UpdateDataModelMessageSchema,
-  DeleteSurfaceMessageSchema,
-]);
+export const A2uiMessageSchema: z.ZodType<A2uiMessage> = z
+  .union([
+    CreateSurfaceMessageSchema,
+    UpdateComponentsMessageSchema,
+    UpdateDataModelMessageSchema,
+    DeleteSurfaceMessageSchema,
+  ])
+  .describe(
+    'Describes a JSON payload for an A2UI (Agent to UI) message in v0.9. It is a union of CreateSurface, UpdateComponents, UpdateDataModel, and DeleteSurface messages.',
+  );
 
 /** A message sent from the A2UI server to the client. */
 export type A2uiMessage =
@@ -144,19 +146,19 @@ export type A2uiMessage =
   | UpdateDataModelMessage
   | DeleteSurfaceMessage;
 
-export const A2uiMessageListSchema = z
+export type A2uiMessageList = A2uiMessage[];
+
+export const A2uiMessageListSchema: z.ZodType<A2uiMessageList> = z
   .array(A2uiMessageSchema)
   .describe('A list of messages.');
 
-export type A2uiMessageList = z.infer<typeof A2uiMessageListSchema>;
+export interface A2uiMessageListWrapper {
+  messages: A2uiMessageList;
+}
 
-export const A2uiMessageListWrapperSchema = z
+export const A2uiMessageListWrapperSchema: z.ZodType<A2uiMessageListWrapper> = z
   .object({
     messages: A2uiMessageListSchema,
   })
   .strict()
   .describe('An object wrapping a list of messages.');
-
-export type A2uiMessageListWrapper = z.infer<
-  typeof A2uiMessageListWrapperSchema
->;

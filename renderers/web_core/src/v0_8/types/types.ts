@@ -43,18 +43,18 @@ import {
 
 import type { z } from "zod";
 import type {
-  A2uiMessageSchema,
-  BeginRenderingMessageSchema,
-  ComponentInstanceSchema,
-  ComponentPropertiesSchema,
-  DataModelUpdateMessageSchema,
-  DeleteSurfaceMessageSchema,
-  SurfaceUpdateMessageSchema,
-  ValueMapSchema,
+  A2uiMessage,
+  BeginRenderingMessage as IBeginRenderingMessage,
+  ComponentInstance as IComponentInstance,
+  AnyComponent,
+  DataModelUpdateMessage as IDataModelUpdateMessage,
+  DeleteSurfaceMessage as IDeleteSurfaceMessage,
+  SurfaceUpdateMessage as ISurfaceUpdateMessage,
 } from "../schema/server-to-client.js";
 import type {
-  ComponentArrayReferenceSchema,
-  ComponentArrayTemplateSchema,
+  ComponentArrayReference as IComponentArrayReference,
+  ComponentArrayTemplate as IComponentArrayTemplate,
+  DataValue as IDataValue,
 } from "../schema/common-types.js";
 import { StringValue, NumberValue, BooleanValue } from "./primitives";
 export type { StringValue, NumberValue, BooleanValue };
@@ -257,21 +257,13 @@ export declare type DataMap = Map<string, DataValue>;
 export declare type DataArray = DataValue[];
 
 /** A template for creating components from a list in the data model. */
-export declare interface ComponentArrayTemplate
-  extends z.infer<typeof ComponentArrayTemplateSchema> {
-  componentId: string;
-  dataBinding: string;
-}
+export declare interface ComponentArrayTemplate extends IComponentArrayTemplate {}
 
 /** Defines a list of child components, either explicitly or via a template. */
-export declare interface ComponentArrayReference
-  extends z.infer<typeof ComponentArrayReferenceSchema> {
-  explicitList?: string[];
-  template?: ComponentArrayTemplate;
-}
+export declare interface ComponentArrayReference extends IComponentArrayReference {}
 
 /** Represents the general shape of a component's properties. */
-export declare interface ComponentProperties extends z.infer<typeof ComponentPropertiesSchema> {
+export declare interface ComponentProperties extends AnyComponent {
   Text?: Text;
   Image?: Image;
   Icon?: Icon;
@@ -293,46 +285,28 @@ export declare interface ComponentProperties extends z.infer<typeof ComponentPro
 }
 
 /** A raw component instance from a SurfaceUpdate message. */
-export declare interface ComponentInstance extends z.infer<typeof ComponentInstanceSchema> {
-  id: string;
-  weight?: number;
+export declare interface ComponentInstance extends IComponentInstance {
   component: ComponentProperties;
 }
 
-export declare interface BeginRenderingMessage extends z.infer<typeof BeginRenderingMessageSchema> {
-  surfaceId: string;
-  root: string;
-  styles?: {
-    font?: string;
-    primaryColor?: string;
-  };
-}
+export declare interface BeginRenderingMessage extends IBeginRenderingMessage {}
 
-export declare interface SurfaceUpdateMessage extends z.infer<typeof SurfaceUpdateMessageSchema> {
-  surfaceId: string;
+export declare interface SurfaceUpdateMessage extends ISurfaceUpdateMessage {
   components: ComponentInstance[];
 }
 
-export declare interface DataModelUpdate extends z.infer<typeof DataModelUpdateMessageSchema> {
-  surfaceId: string;
-  path?: string;
+export declare interface DataModelUpdate extends IDataModelUpdateMessage {
   contents: ValueMap[];
 }
 
 // ValueMap is a type of DataObject for passing to the data model.
-export declare interface ValueMap extends z.infer<typeof ValueMapSchema> {
-  key: string;
-  valueString?: string;
-  valueNumber?: number;
-  valueBoolean?: boolean;
+export declare interface ValueMap extends IDataValue {
   valueMap?: ValueMap[];
 }
 
-export declare interface DeleteSurfaceMessage extends z.infer<typeof DeleteSurfaceMessageSchema> {
-  surfaceId: string;
-}
+export declare interface DeleteSurfaceMessage extends IDeleteSurfaceMessage {}
 
-export declare interface ServerToClientMessage extends z.infer<typeof A2uiMessageSchema> {
+export declare interface ServerToClientMessage extends A2uiMessage {
   beginRendering?: BeginRenderingMessage;
   surfaceUpdate?: SurfaceUpdateMessage;
   dataModelUpdate?: DataModelUpdate;

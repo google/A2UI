@@ -32,6 +32,17 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Check for z.infer usage
+        run: |
+          RESULTS=$(grep -r --include="*.ts" --exclude-dir="node_modules" "z\.infer" renderers | grep -v "v0_9/catalog/types" || true)
+          if [ -n "$RESULTS" ]; then
+            echo "Error: z.infer found in codebase! Use manual interfaces instead to ensure Closure Compiler compatibility."
+            echo "Instead of: type Foo = z.infer<typeof Schema>;"
+            echo "Do: interface Foo { ... } AND const Schema: z.ZodType<Foo> = z.object({ ... });"
+            echo "$RESULTS"
+            exit 1
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:

@@ -14,45 +14,44 @@
  * limitations under the License.
  */
 
-import type { z } from "zod";
 import type {
-  ActionSchema,
-  AudioPlayerSchema,
-  ButtonSchema,
-  CardSchema,
-  CheckboxSchema,
-  ColumnSchema,
-  DateTimeInputSchema,
-  DividerSchema,
-  IconSchema,
-  ImageSchema,
-  ListSchema,
-  ModalSchema,
-  MultipleChoiceSchema,
-  RowSchema,
-  SliderSchema,
-  TabsSchema,
-  TextFieldSchema,
-  TextSchema,
-  VideoSchema,
+  Action as IAction,
+  AudioPlayer as IAudioPlayer,
+  Button as IButton,
+  Card as ICard,
+  Checkbox as ICheckbox,
+  Column as IColumn,
+  DateTimeInput as IDateTimeInput,
+  Divider as IDivider,
+  Icon as IIcon,
+  Image as IImage,
+  List as IList,
+  Modal as IModal,
+  MultipleChoice as IMultipleChoice,
+  Row as IRow,
+  Slider as ISlider,
+  Tabs as ITabs,
+  TextField as ITextField,
+  Text as IText,
+  Video as IVideo,
 } from "../schema/common-types.js";
 
-export declare interface Action extends z.infer<typeof ActionSchema> {}
-export declare interface Text extends z.infer<typeof TextSchema> {}
-export declare interface Image extends z.infer<typeof ImageSchema> {}
-export declare interface Icon extends z.infer<typeof IconSchema> {}
-export declare interface Video extends z.infer<typeof VideoSchema> {}
-export declare interface AudioPlayer extends z.infer<typeof AudioPlayerSchema> {}
-export declare interface Tabs extends z.infer<typeof TabsSchema> {}
-export declare interface Row extends z.infer<typeof RowSchema> {}
-export declare interface Column extends z.infer<typeof ColumnSchema> {}
-export declare interface List extends z.infer<typeof ListSchema> {}
-export declare interface Button extends z.infer<typeof ButtonSchema> {}
-export declare interface Modal extends z.infer<typeof ModalSchema> {}
-export declare interface Card extends z.infer<typeof CardSchema> {}
-export declare interface Divider extends z.infer<typeof DividerSchema> {}
-export declare interface TextField extends z.infer<typeof TextFieldSchema> {}
-export declare interface Checkbox extends z.infer<typeof CheckboxSchema> {}
-export declare interface DateTimeInput extends z.infer<typeof DateTimeInputSchema> {}
-export declare interface MultipleChoice extends z.infer<typeof MultipleChoiceSchema> {}
-export declare interface Slider extends z.infer<typeof SliderSchema> {}
+export declare interface Action extends IAction {}
+export declare interface Text extends IText {}
+export declare interface Image extends IImage {}
+export declare interface Icon extends IIcon {}
+export declare interface Video extends IVideo {}
+export declare interface AudioPlayer extends IAudioPlayer {}
+export declare interface Tabs extends ITabs {}
+export declare interface Row extends IRow {}
+export declare interface Column extends IColumn {}
+export declare interface List extends IList {}
+export declare interface Button extends IButton {}
+export declare interface Modal extends IModal {}
+export declare interface Card extends ICard {}
+export declare interface Divider extends IDivider {}
+export declare interface TextField extends ITextField {}
+export declare interface Checkbox extends ICheckbox {}
+export declare interface DateTimeInput extends IDateTimeInput {}
+export declare interface MultipleChoice extends IMultipleChoice {}
+export declare interface Slider extends ISlider {}
