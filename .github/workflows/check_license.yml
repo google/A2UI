@@ -41,6 +41,9 @@ jobs:
           if ! addlicense -check \
             -l apache \
             -c "Google LLC" \
+            -ignore "**/pnpm-lock.yaml" \
+            -ignore "**/package-lock.json" \
+            -ignore "**/yarn.lock" \
             .; then
             echo "License check failed. To fix this, install addlicense and run it:"
             echo "  go install github.com/google/addlicense@latest"
