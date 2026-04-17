@@ -77,11 +77,10 @@ export const getBaseContainerStyle = (): React.CSSProperties => ({
   boxSizing: 'border-box',
 });
 
-// `min-width: 0` lets weighted children shrink below their intrinsic content
-// width. Without it, a Text with a long string would force the row to
-// overflow. Setting both grow and shrink (rather than just grow) keeps the
-// proportions honored when the row needs to shrink, not just when it grows.
+// `min-width: 0` / `min-height: 0` let weighted children shrink below their
+// intrinsic content size. Without them, a component with large content would
+// force the container to overflow.
 export const getWeightStyle = (weight?: number): React.CSSProperties => {
   if (typeof weight !== 'number') return {};
-  return {flex: `${weight} ${weight} 0px`, minWidth: 0};
+  return {flex: `${weight}`, minWidth: 0, minHeight: 0};
 };

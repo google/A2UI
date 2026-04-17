@@ -30,17 +30,17 @@ describe('getWeightStyle', () => {
     expect(getWeightStyle(undefined)).toEqual({});
   });
 
-  it('returns flex and minWidth when weight is set', () => {
-    expect(getWeightStyle(2)).toEqual({ flex: '2 2 0px', minWidth: 0 });
+  it('returns flex, minWidth, and minHeight when weight is set', () => {
+    expect(getWeightStyle(2)).toEqual({ flex: '2', minWidth: 0, minHeight: 0 });
   });
 
   it('handles fractional weights', () => {
-    expect(getWeightStyle(1.5)).toEqual({ flex: '1.5 1.5 0px', minWidth: 0 });
+    expect(getWeightStyle(1.5)).toEqual({ flex: '1.5', minWidth: 0, minHeight: 0 });
   });
 
   it('treats weight: 0 as a valid value (a child that does not grow)', () => {
     // Per spec, weight is "similar to flex-grow"; 0 is a meaningful value.
-    expect(getWeightStyle(0)).toEqual({ flex: '0 0 0px', minWidth: 0 });
+    expect(getWeightStyle(0)).toEqual({ flex: '0', minWidth: 0, minHeight: 0 });
   });
 });
 
@@ -57,7 +57,7 @@ describe('weight property is honored on basic catalog components', () => {
     it(`${name} applies flex when weight is set`, () => {
       const { view } = renderA2uiComponent(impl, 'c1', { ...props, weight: 2 });
       const root = view.container.firstChild as HTMLElement;
-      expect(root.style.flex).toBe('2 2 0px');
+      expect(root.style.flexGrow).toBe('2');
       expect(root.style.minWidth).toBe('0');
     });
 
