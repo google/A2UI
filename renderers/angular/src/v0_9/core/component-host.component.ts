@@ -16,16 +16,16 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   Type,
   inject,
   input,
   effect,
+  signal,
 } from '@angular/core';
 import {NgComponentOutlet} from '@angular/common';
-import {ComponentContext, ComponentModel, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {ComponentContext, ComponentModel, SurfaceModel, Subscription} from '@a2ui/web_core/v0_9';
 import {A2uiRendererService} from './a2ui-renderer.service';
 import {AngularCatalog} from '../catalog/types';
 import {ComponentBinder} from './component-binder.service';
@@ -48,12 +48,12 @@ import {BoundProperty} from './types';
     'style': 'display: contents;'
   },
   template: `
-    @if (componentType) {
+    @if (componentType()) {
       <ng-container
         *ngComponentOutlet="
-          componentType;
+          componentType();
           inputs: {
-            props: props,
+            props: props(),
             surfaceId: surfaceId(),
             componentId: resolvedComponentId,
             dataContextPath: resolvedDataContextPath,
@@ -74,17 +74,16 @@ export class ComponentHostComponent {
   private readonly rendererService = inject(A2uiRendererService);
   private readonly binder = inject(ComponentBinder);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  protected componentType: Type<any> | null = null;
-  protected props: Record<string, BoundProperty> = {};
+  protected componentType = signal<Type<any> | null>(null);
+  protected props = signal<Record<string, BoundProperty>>({});
   private context?: ComponentContext;
 
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
 
-  private propsSub?: any;
-  private createSub?: any;
+  private propsSub?: Subscription;
+  private createSub?: Subscription;
 
   constructor() {
     effect(() => {
@@ -100,8 +99,7 @@ export class ComponentHostComponent {
   }
 
   private setupComponent(key: string | {id: string; basePath: string}, surfaceId: string) {
-    this.propsSub?.unsubscribe();
-    this.createSub?.unsubscribe();
+    this.resetState();
 
     const surface = this.rendererService.surfaceGroup?.getSurface(surfaceId);
 
@@ -128,13 +126,13 @@ export class ComponentHostComponent {
     if (!componentModel) {
       console.warn(`Component ${id} not found in surface ${surfaceId}. Waiting for it...`);
 
-      this.createSub = surface.componentsModel.onCreated.subscribe((comp) => {
+      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
         if (comp.id === id) {
           this.initializeComponent(surface, comp, id, basePath);
-          this.cdr.markForCheck();
-          this.createSub?.unsubscribe();
+          sub.unsubscribe();
         }
       });
+      this.createSub = sub;
       return;
     }
 
@@ -155,20 +153,31 @@ export class ComponentHostComponent {
       console.error(`Component type "${componentModel.type}" not found in catalog "${catalog.id}"`);
       return;
     }
-    this.componentType = api.component;
+    this.componentType.set(api.component);
 
     // Create context
     this.context = new ComponentContext(surface, id, basePath);
-    this.props = this.binder.bind(this.context);
+    this.props.set(this.binder.bind(this.context));
     this.resolvedDataContextPath = this.context.dataContext.path;
 
     // Subscribes to updates to the component model properties, to get the
     // component to react when a new prop is added after creation.
     this.propsSub = componentModel.onUpdated.subscribe(() => {
-      this.props = this.binder.bind(this.context!);
-      this.cdr.markForCheck();
+      this.props.set(this.binder.bind(this.context!));
     });
+  }
 
-    this.cdr.markForCheck();
+  /**
+   * Resets the component host state, unsubscribing from active subscriptions
+   * and clearing component properties to avoid rendering stale data while
+   * a new component is being loaded.
+   */
+  private resetState(): void {
+    this.propsSub?.unsubscribe();
+    this.createSub?.unsubscribe();
+
+    this.componentType.set(null);
+    this.props.set({});
+    this.resolvedDataContextPath = '/';
   }
 }
