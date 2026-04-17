@@ -51,6 +51,10 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm ci && npm run build
 
+      - name: Build markdown-it (dependency of @a2ui/react)
+        working-directory: ./renderers/markdown/markdown-it
+        run: npm ci && npm run build
+
       - name: Build React renderer (local file dependency)
         working-directory: ./renderers/react
         run: npm ci && npm run build
