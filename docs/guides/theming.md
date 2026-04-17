@@ -66,9 +66,9 @@ As an example, this is how the default *basic catalog* does it:
 
 ### The Web Basic Catalog Theming
 
-On the web, the *basic catalog* provided by the default A2UI renderers is themed by overriding CSS variables..
+On the web, the *basic catalog* provided by the default A2UI renderers is themed by overriding CSS variables.
 
-Basic catalog components inject a small stylesheet with default values for some CSS variable. These variables target
+Basic catalog components inject a small stylesheet with default values for these variables. The stylesheet targets
 `:where(:root)` so their specificity is minimal, and the host app can override them easily.
 
 For example, to override the primary color, you can simply add this to your app's CSS:
