@@ -1,7 +1,7 @@
 ## Unreleased
 
-- (v0_9) Duplicate `createSurface` messages are now silently ignored instead
-  of throwing. [#1225](https://github.com/google/A2UI/pull/1225)
+- (v0_9) Duplicate `createSurface` messages now log a warning instead of
+  throwing. [#1225](https://github.com/google/A2UI/pull/1225)
 
 ## 0.9.1
 
