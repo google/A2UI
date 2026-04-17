@@ -50,7 +50,7 @@ const handleVariant = (text: string, variant?: string): string => {
 
 export const Text = createComponentImplementation(TextApi, ({props}) => {
   useBasicCatalogStyles();
-  const text = props.text ?? '';
+  const text = typeof props.text === 'string' ? props.text : String(props.text ?? '');
   const markdownText = handleVariant(text, props.variant);
   const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
