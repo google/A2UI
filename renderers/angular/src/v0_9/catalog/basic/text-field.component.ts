@@ -94,6 +94,23 @@ export class TextFieldComponent {
   placeholder = computed(() => this.props()['placeholder']?.value() || '');
   variant = computed(() => this.props()['variant']?.value());
 
+  // localValidationErrors = computed(() => {
+  //   const regexStr = this.props()['validationRegexp']?.value();
+  //   if (!regexStr) return [];
+  //   try {
+  //     const regex = new RegExp(regexStr);
+  //     const val = this.value();
+  //     if (!regex.test(val)) {
+  //       return ['Invalid format'];
+  //     }
+  //   } catch (e) {
+  //     console.error('Invalid regex:', regexStr);
+  //   }
+  //   return [];
+  // });
+
+  // localIsValid = computed(() => this.localValidationErrors().length === 0);
+
   inputType = computed(() => {
     switch (this.variant()) {
       case 'obscured':

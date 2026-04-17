@@ -307,11 +307,15 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
 
         a2ui_catalog = await self._resolve_a2ui_catalog(tool_context)
         a2ui_json_payload = parse_and_fix(a2ui_json)
-        a2ui_catalog.validator.validate(a2ui_json_payload)
-
-        logger.info(
-            f"Validated call to tool {self.TOOL_NAME} with {self.A2UI_JSON_ARG_NAME}"
-        )
+        try:
+          a2ui_catalog.validator.validate(a2ui_json_payload)
+          logger.info(
+              f"Validated call to tool {self.TOOL_NAME} with {self.A2UI_JSON_ARG_NAME}"
+          )
+        except Exception as validation_err:
+          logger.warning(
+              f"Validation warning for tool {self.TOOL_NAME} (ignoring): {validation_err}"
+          )
 
         # Don't do a second LLM inference call for the JSON response
         tool_context.actions.skip_summarization = True

@@ -251,6 +251,10 @@ class RizzchartsAgent:
         else ""
     )
 
+    with open("full_instruction.txt", "w") as f:
+      f.write(instruction)
+    logger.info("Saved full instruction to full_instruction.txt")
+
     return LlmAgent(
         model=self._model,
         name=self._agent_name,

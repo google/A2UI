@@ -78,7 +78,7 @@ export class ChatService {
       try {
         // TODO: Replace this with a more robust event handling mechanism.
         // Send A2UI actions silently if requested from the action context
-        const isSilent = Boolean(action.context?.['silent']);
+        const isSilent = Boolean(action.context?.['silent'] ?? true);
         await this.sendMessage(JSON.stringify({ version: 'v0.9', action }), isSilent);
       } catch (err) {
         console.error('Failed to send action:', err);
@@ -93,9 +93,7 @@ export class ChatService {
    * @param text The text message to send.
    */
   async sendMessage(text: string, silent: boolean = false) {
-    if (!silent) {
-      this.addUserAndPendingAgentMessages(text);
-    }
+    this.addUserAndPendingAgentMessages(text, silent);
     this.isA2aStreamOpen.set(true);
 
     try {
@@ -129,11 +127,13 @@ export class ChatService {
    *
    * @param text The user's message text.
    */
-  private addUserAndPendingAgentMessages(text: string) {
+  private addUserAndPendingAgentMessages(text: string, silent: boolean = false) {
     const now = new Date().toISOString();
     const userMessage = this.createNewUserMessage(text, now);
     const agentMessage = this.createPendingAgentMessage(now);
-    this.history.update((curr) => [...curr, userMessage, agentMessage]);
+    this.history.update((curr) =>
+      silent ? [...curr, agentMessage] : [...curr, userMessage, agentMessage],
+    );
   }
 
   /**
@@ -147,6 +147,8 @@ export class ChatService {
     const newContents = agentResponseParts.map(
       (part): UiMessageContent => convertPartToUiMessageContent(part, this.partResolvers),
     );
+
+    console.log('newContents', newContents);
 
     if (!silent) {
       this.updateLastMessage((msg) => ({
