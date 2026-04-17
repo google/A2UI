@@ -128,7 +128,11 @@ describe('TextFieldComponent', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
       isValid: { value: signal(false), raw: false, onUpdate: () => {} },
-      validationErrors: { value: signal(['Error 1', 'Error 2']), raw: ['Error 1', 'Error 2'], onUpdate: () => {} },
+      validationErrors: {
+        value: signal(['Error 1', 'Error 2']),
+        raw: ['Error 1', 'Error 2'],
+        onUpdate: () => {},
+      },
     });
 
     fixture.detectChanges();

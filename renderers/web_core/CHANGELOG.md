@@ -4,6 +4,8 @@
   given framework like Preact or Angular.
   - Unused in this version; future versions will introduce this throughout web
     core and will likely be breaking changes.
+- Export `injectDefaultA2uiTheme` with default CSS variable values used
+  by the A2UI basic catalogs.
 
 ## 0.8.8
 

@@ -38,7 +38,9 @@ Export your Gemini API key as an environment variable:
 export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
 
-## Step 3: Navigate to the Lit Client
+## Step 3: Navigate to the Lit Client Samples Directory
+
+The client application source code is located in `samples/client/lit/shell`. Navigate to the parent samples directory to run the demo:
 
 ```bash
 cd samples/client/lit
@@ -49,8 +51,7 @@ cd samples/client/lit
 Run the one-command demo launcher:
 
 ```bash
-npm install
-npm run demo:all
+npm run demo:restaurant
 ```
 
 This command will:
@@ -60,6 +61,24 @@ This command will:
 3. Start the A2A restaurant finder agent (Python backend)
 4. Launch the development server
 5. Open your browser to `http://localhost:5173`
+
+The source code for the Restaurant Finder agent is located in [`samples/agent/adk/restaurant_finder`](../samples/agent/adk/restaurant_finder).
+
+### Running Manually (Alternative)
+
+If you prefer to run the agent and client in separate terminals, or need to troubleshoot:
+
+**1. Run the Agent:**
+```bash
+cd samples/agent/adk/restaurant_finder
+uv run .
+```
+
+**2. Run the Client:**
+```bash
+cd samples/client/lit/shell
+npm run dev
+```
 
 NOTE: Demo Running
 
@@ -186,15 +205,13 @@ npm start -- gallery
 
 This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.
 
-### Contact Lookup Demo
+### Other Languages and Frameworks
 
-Try a different agent use case:
+While this guide uses the Lit client as an example, A2UI provides samples for other popular frameworks in the `samples/client` directory:
+- **Angular**: `samples/client/angular`
+- **React**: `samples/client/react`
 
-```bash
-npm run demo:contact
-```
-
-This demonstrates a contact lookup agent that generates search forms and result lists.
+Explore the [samples/client](../samples/client) directory to see all available client implementations.
 
 ## What's Next?
 

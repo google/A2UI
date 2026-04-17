@@ -1289,7 +1289,7 @@
       expect: []
     - input: "}},"
       expect: [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": ['
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": ['
       expect: []
     - input: '{"id": "root", "component": "Column", "children": ['
       expect:
@@ -1297,7 +1297,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Column"
@@ -1311,7 +1310,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Column"
@@ -1325,7 +1323,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Column"
@@ -1342,7 +1339,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -1359,7 +1355,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -1401,7 +1396,7 @@
   process_chunk:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "c1", "component": "Text", "text": "hello"}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "c1", "component": "Text", "text": "hello"}'
       expect: []
     - input: ', {"id": "root", "component": "Card", "child": "c1"}}]}}</a2ui-json>'
       expect:
@@ -1409,7 +1404,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -1439,13 +1433,12 @@
   process_chunk:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "root"}, {"id": "orphan", "component": "Text", "text": "orphan"}]}}]</a2ui-json>'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "root"}, {"id": "orphan", "component": "Text", "text": "orphan"}]}}]</a2ui-json>'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -1472,7 +1465,7 @@
   process_chunk:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "c1", "components": [{"id": "c1", "component": "Card", "child": "c2"}]}},{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "c2", "component": "Card", "child": "c1"}]}}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "child"}]}},{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "child", "component": "Card", "child": "root"}]}}'
       expect_error: "Circular reference detected"
 
 - name: test_self_reference_detection_v09
@@ -1496,7 +1489,7 @@
   process_chunk:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "c1", "components": [{"id": "c1", "component": "Card", "child": "c1"}]}}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "root"}]}}'
       expect_error: "Self-reference detected"
 
 - name: test_interleaved_conversational_text_v09
@@ -1611,14 +1604,13 @@
         - text: "Some text here "
           a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]
         - text: " mid text"
-    - input: ' more text <a2ui-json>[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "block2"}]}}] </a2ui-json> trailing text'
+    - input: ' more text <a2ui-json>[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "block2"}]}}] </a2ui-json> trailing text'
       expect:
         - text: " more text "
           a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -1653,13 +1645,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "hello'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hello'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -1700,7 +1691,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Card", "child": "c1"}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "c1"}'
       expect: []
     - input: ', {"id": "c1", "component": "Text", "text": "child 1"}]}}'
       expect:
@@ -1708,7 +1699,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -1757,7 +1747,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "List", "children": {"componentId": "c1"'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "List", "children": {"componentId": "c1"'
       expect: []
     - input: ', "path": "/items"'
       expect: []
@@ -1767,7 +1757,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -1811,7 +1800,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Container", "children": ["c1", "c2", "c3"]}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Container", "children": ["c1", "c2", "c3"]}'
       expect: []
     - input: ', {"id": "c1", "component": "Text", "text": "child 1"}]}} </a2ui-json>'
       expect: []
@@ -1859,13 +1848,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}]</a2ui-json>'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}]</a2ui-json>'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -1907,13 +1895,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}, '
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -1960,7 +1947,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/loca'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/loca'
       expect: []
     - input: 'tion"}]}}]</a2ui-json>'
       expect:
@@ -1968,7 +1955,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2006,7 +1992,7 @@
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
       expect: []
-    - input: '-card"}}, {"version": "v0.9", "updateComponents": {"surfaceId": "contact-card", "root": "root", "components": [{"id": "button'
+    - input: '-card"}}, {"version": "v0.9", "updateComponents": {"surfaceId": "contact-card", "components": [{"id": "button'
       expect:
         - a2ui:
             - version: "v0.9"
@@ -2021,7 +2007,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "contact-card"
-                root: "root"
                 components:
                   - id: "button-text"
                     component: "Text"
@@ -2060,13 +2045,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "Em'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "Em'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2077,7 +2061,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2106,7 +2089,7 @@
   process_chunk:
     - input: '<a2ui-json>['
       expect: []
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}]</a2ui-json>'
       expect:
@@ -2118,7 +2101,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2160,13 +2142,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/name"}}]}}, '
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2214,7 +2195,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/loca'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/loca'
       expect: []
     - input: 'tion"}]}}]</a2ui-json>'
       expect:
@@ -2222,7 +2203,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2260,7 +2240,7 @@
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
       expect: []
-    - input: '-card"}}, {"version": "v0.9", "updateComponents": {"surfaceId": "contact-card", "root": "root", "components": [{"id": "button'
+    - input: '-card"}}, {"version": "v0.9", "updateComponents": {"surfaceId": "contact-card", "components": [{"id": "button'
       expect:
         - a2ui:
             - version: "v0.9"
@@ -2275,7 +2255,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "contact-card"
-                root: "root"
                 components:
                   - id: "button-text"
                     component: "Text"
@@ -2314,13 +2293,12 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "Em'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "Em'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2331,7 +2309,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2360,7 +2337,7 @@
   process_chunk:
     - input: '<a2ui-json>['
       expect: []
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}]</a2ui-json>'
       expect:
@@ -2372,7 +2349,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2435,7 +2411,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Text", "text": {"path": "/user'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "/user'
       expect: []
     - input: '/profile"}}}}]}]</a2ui-json>'
       expect:
@@ -2443,7 +2419,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2539,7 +2514,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2550,7 +2524,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "root"
                     component: "Text"
@@ -2604,7 +2577,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -2676,15 +2648,14 @@
               createSurface:
                 surfaceId: "default"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "default", "root": "item-list", "components": [{"id": "item-list", "component": "List", "children": {"componentId": "template-name", "path": "/items"}}, {"id": "template-name", "component": "Text", "text": {"path": "/name"}}]}}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "default", "components": [{"id": "root", "component": "List", "children": {"componentId": "template-name", "path": "/items"}}, {"id": "template-name", "component": "Text", "text": {"path": "/name"}}]}}, '
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "default"
-                root: "item-list"
                 components:
-                  - id: "item-list"
+                  - id: "root"
                     component: "List"
                     children: {componentId: "template-name", path: "/items"}
                   - id: "template-name"
@@ -2887,7 +2858,7 @@
             - {$ref: "#/components/Row"}
           discriminator: {propertyName: "component"}
   process_chunk:
-    - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "default"}},{"version": "v0.9", "updateComponents": {"surfaceId": "default", "root": "root-column", "components": [{"id": "root-column", "component": "Column", "children": ["item-list"]},{"id": "item-list", "component": "List", "direction": "vertical", "children": {'
+    - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "default"}},{"version": "v0.9", "updateComponents": {"surfaceId": "default", "components": [{"id": "root", "component": "Column", "children": ["item-list"]},{"id": "item-list", "component": "List", "direction": "vertical", "children": {'
       expect:
         - a2ui:
             - version: "v0.9"
@@ -2897,9 +2868,8 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "default"
-                root: "root-column"
                 components:
-                  - id: "root-column"
+                  - id: "root"
                     component: "Column"
                     children: ["loading_item-list"]
                   - id: "loading_item-list"
@@ -2945,7 +2915,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "root", "components": [{"id": "root", "component": "Column", "children": {'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Column", "children": {'
       expect: []
     - input: '"componentId": "c1", "path": "/items"}}, {"id": "c1", "component": "Text", "text": "Child 1"}]}}'
       expect:
@@ -2953,7 +2923,6 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "root"
                 components:
                   - id: "c1"
                     component: "Text"
@@ -2991,7 +2960,7 @@
               createSurface:
                 surfaceId: "s1"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "root": "c1", "components": [{"id": "c1", "component": "AudioPlayer", "description": "almost ready"'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "AudioPlayer", "description": "almost ready"'
       expect: []
     - input: ', "url": "http://audio.mp3"}]}}'
       expect:
@@ -2999,9 +2968,8 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "s1"
-                root: "c1"
                 components:
-                  - id: "c1"
+                  - id: "root"
                     component: "AudioPlayer"
                     description: "almost ready"
                     url: "http://audio.mp3"
@@ -3057,15 +3025,14 @@
               createSurface:
                 surfaceId: "surface2"
                 catalogId: "test_catalog"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "surface1", "root": "root1", "components": [{"id": "root1", "component": "Card", "child": "c1"}, '
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "surface1", "components": [{"id": "root", "component": "Card", "child": "c1"}, '
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "surface1"
-                root: "root1"
                 components:
-                  - id: "root1"
+                  - id: "root"
                     component: "Card"
                     child: "loading_c1"
                   - id: "loading_c1"
@@ -3077,26 +3044,24 @@
             - version: "v0.9"
               updateComponents:
                 surfaceId: "surface1"
-                root: "root1"
                 components:
                   - id: "c1"
                     component: "Text"
                     text: "hello s1"
-                  - id: "root1"
+                  - id: "root"
                     component: "Card"
                     child: "c1"
-    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "surface2", "root": "root2", "components": [{"id": "root2", "component": "Card", "child": "c2"}, {"id": "c2", "component": "Text", "text": "hello s2"}]}}'
+    - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "surface2", "components": [{"id": "root", "component": "Card", "child": "c2"}, {"id": "c2", "component": "Text", "text": "hello s2"}]}}'
       expect:
         - a2ui:
             - version: "v0.9"
               updateComponents:
                 surfaceId: "surface2"
-                root: "root2"
                 components:
                   - id: "c2"
                     component: "Text"
                     text: "hello s2"
-                  - id: "root2"
+                  - id: "root"
                     component: "Card"
                     child: "c2"
 

@@ -388,3 +388,67 @@ def test_streaming_msg_type_deduplication(mock_catalog):
 
   # After completion, msg_types is reset
   assert not parser.msg_types
+
+
+def test_v09_path_heuristic_relative_path(mock_catalog):
+  """Tests that v0.9 allows relative paths (no leading slash)."""
+  parser = A2uiStreamParser(catalog=mock_catalog)
+  # Disable validation to avoid needing full catalog for this test
+  parser._validator = None
+
+  # 1. Create surface
+  chunk_cs = (
+      A2UI_OPEN_TAG
+      + '[{"version": "v0.9", "createSurface": {"surfaceId": "s1", "catalogId": "c1"}}]'
+      + A2UI_CLOSE_TAG
+  )
+  list(parser.process_chunk(chunk_cs))
+
+  # 2. Update components with a relative path
+  chunk_uc = (
+      A2UI_OPEN_TAG
+      + '[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components":'
+      ' [{"id": "root", "component": "Text", "text": {"path":'
+      ' "some/relative/path"}}]}}]'
+      + A2UI_CLOSE_TAG
+  )
+
+  messages = []
+  for part in parser.process_chunk(chunk_uc):
+    if part.a2ui_json:
+      messages.extend(part.a2ui_json)
+
+  assert len(messages) > 0
+  comp = messages[0][MSG_TYPE_UPDATE_COMPONENTS]["components"][0]
+  assert comp["text"]["path"] == "some/relative/path"
+
+
+def test_v09_path_heuristic_absolute_path(mock_catalog):
+  """Tests that v0.9 still supports absolute paths (leading slash)."""
+  parser = A2uiStreamParser(catalog=mock_catalog)
+  parser._validator = None
+
+  # 1. Create surface
+  chunk_cs = (
+      A2UI_OPEN_TAG
+      + '[{"version": "v0.9", "createSurface": {"surfaceId": "s1", "catalogId": "c1"}}]'
+      + A2UI_CLOSE_TAG
+  )
+  list(parser.process_chunk(chunk_cs))
+
+  # 2. Update components with an absolute path
+  chunk_uc = (
+      A2UI_OPEN_TAG
+      + '[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components":'
+      ' [{"id": "root", "component": "Text", "text": {"path": "/absolute/path"}}]}}]'
+      + A2UI_CLOSE_TAG
+  )
+
+  messages = []
+  for part in parser.process_chunk(chunk_uc):
+    if part.a2ui_json:
+      messages.extend(part.a2ui_json)
+
+  assert len(messages) > 0
+  comp = messages[0][MSG_TYPE_UPDATE_COMPONENTS]["components"][0]
+  assert comp["text"]["path"] == "/absolute/path"

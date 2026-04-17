@@ -21,4 +21,4 @@ If you need help, consider asking for advice on the [discussion board].
 [CLA]: https://cla.developers.google.com/
 [Contributors Guide]: ../CONTRIBUTING.md
 [discussion board]: https://github.com/google/A2UI/discussions
-[Style Guide]: ../STYLE_GUIDE.md
+[Style Guide]: ../CONTRIBUTING.md#coding-style

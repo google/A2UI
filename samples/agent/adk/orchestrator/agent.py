@@ -98,12 +98,12 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
                 SubagentRouteManager.get_route_to_subagent_name(sid, context.state)
                 for sid in surface_ids_to_check
             ])
-            
+
             filtered_surfaces = {}
-            for i, surface_id in enumerate(surface_ids_to_check):              
+            for i, surface_id in enumerate(surface_ids_to_check):
               if owner_agents[i] == agent_card.name:
                 filtered_surfaces[surface_id] = current_surfaces[surface_id]
-            
+
             message["metadata"]["a2uiClientDataModel"]["surfaces"] = filtered_surfaces
             logger.info(
                 f"Stripped data model for {agent_card.name}. "
@@ -111,7 +111,9 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
             )
           else:
             message["metadata"]["a2uiClientDataModel"]["surfaces"] = {}
-            logger.warning("No agent card or name provided. Stripped all surfaces from data model.")
+            logger.warning(
+                "No agent card or name provided. Stripped all surfaces from data model."
+            )
 
     return request_payload, http_kwargs
 

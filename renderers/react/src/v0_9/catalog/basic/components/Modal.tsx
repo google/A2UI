@@ -17,8 +17,10 @@
 import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {useBasicCatalogStyles} from '../utils';
 
 export const Modal = createComponentImplementation(ModalApi, ({props, buildChild}) => {
+  useBasicCatalogStyles();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -34,7 +36,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: 'var(--a2ui-modal-overlay-color, rgba(0, 0, 0, 0.5))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -44,14 +46,15 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
         >
           <div
             style={{
-              backgroundColor: '#fff',
-              padding: '24px',
-              borderRadius: '8px',
+              backgroundColor: 'var(--a2ui-color-surface, #fff)',
+              padding: 'var(--a2ui-modal-padding, var(--a2ui-spacing-l, 24px))',
+              borderRadius: 'var(--a2ui-modal-border-radius, var(--a2ui-border-radius, 8px))',
               maxWidth: '90%',
               maxHeight: '90%',
               overflow: 'auto',
               display: 'flex',
               flexDirection: 'column',
+              color: 'var(--a2ui-color-on-surface, inherit)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -61,9 +64,10 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
                 style={{
                   border: 'none',
                   background: 'none',
-                  fontSize: '20px',
+                  fontSize: 'var(--a2ui-font-size-xl, 1.5rem)',
                   cursor: 'pointer',
-                  padding: '4px',
+                  padding: 'var(--a2ui-spacing-xs, 4px)',
+                  color: 'var(--a2ui-color-on-surface, inherit)',
                 }}
               >
                 &times;

@@ -17,6 +17,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, input, signal } from '@angular/core';
 import { ButtonComponent } from './button.component';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
@@ -32,7 +33,7 @@ describe('ButtonComponent', () => {
     mockSurface = {
       dispatchAction: jasmine.createSpy('dispatchAction'),
       componentsModel: new Map([
-        ['child1', { id: 'child1', type: 'Text', properties: { text: 'Child Content' } }],
+        ['child1', new ComponentModel('child1', 'Text', { text: 'Child Content' })],
       ]),
       catalog: {
         id: 'test-catalog',

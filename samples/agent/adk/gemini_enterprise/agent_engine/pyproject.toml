@@ -21,8 +21,5 @@ requires-python = ">=3.13"
 dependencies = [
     "a2a-sdk>=0.3.4",
     "google-cloud-aiplatform[adk,agent-engines]>=1.128.0",
-    "a2ui-agent-sdk",
+    "a2ui-agent-sdk>=0.1.2",
 ]
-
-[tool.uv.sources]
-a2ui-agent-sdk = { path = "../../../../agent_sdks/python", editable = true }

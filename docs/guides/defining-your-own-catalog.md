@@ -31,7 +31,7 @@ It is recommended to create catalogs that directly map to your existing componen
 
     To implement your own catalog on the web:
     -   Create a JSON Schema containing your component definitions.
-    -   Register your components with the `@a2ui/web` client.
+- Create your own `Component` objects and `Catalog` object within your chosen web renderer.
     -   Provide the schema or reference ID to the agent.
 
     *Detailed guides for each framework coming soon.*

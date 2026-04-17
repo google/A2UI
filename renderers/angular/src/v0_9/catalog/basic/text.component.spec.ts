@@ -31,9 +31,7 @@ describe('TextComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TextComponent],
-      providers: [
-        { provide: MarkdownRenderer, useValue: mockMarkdownRenderer },
-      ],
+      providers: [{ provide: MarkdownRenderer, useValue: mockMarkdownRenderer }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextComponent);
@@ -142,4 +140,3 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('');
   });
 });
-

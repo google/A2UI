@@ -7,7 +7,7 @@ These are sample implementations of A2UI in Angular.
 1. [nodejs](https://nodejs.org/en)
 2. [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
-NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
+NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/python/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
 
 ## Running
 
@@ -28,21 +28,15 @@ Here are the instructions if you want to do each step manually.
 1. Build the shared dependencies by running `npm install && npm run build` in the `renderers/web_core` and `renderers/markdown` directory
 2. Install the dependencies: `npm install`
 3. Run the relevant A2A server:
-
-- [For the restaurant app](../../agent/adk/restaurant_finder/)
-- [For the contact app](../../agent/adk/contact_lookup/)
-- [For the rizzcharts app](../../agent/adk/rizzcharts/)
-- [For the orchestrator app](../../agent/adk/orchestrator/)
-
+  * [For the restaurant app](../../agent/adk/restaurant_finder/)
+  * [For the rizzcharts app](../../agent/adk/rizzcharts/python/)
+  * [For the orchestrator app](../../agent/adk/orchestrator/)
 4. Run the relevant app:
-
-- `npm start -- restaurant`
-- `npm start -- contact`
-- `npm start -- rizzcharts`
-- `npm start -- orchestrator`
-- `npm run build:sandbox && npm start -- mcp_calculator`
-- `npm start -- gallery` (Client-only, no server required)
-
+  * `npm start -- restaurant`
+  * `npm start -- rizzcharts`
+  * `npm start -- orchestrator`
+  * `npm run build:sandbox && npm start -- mcp_calculator`
+  * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 
 ## Streaming
@@ -51,7 +45,7 @@ By default, the Angular client uses the non-streaming API to communicate with th
 
 ```bash
 export ENABLE_STREAMING=true
-npm start -- contact
+npm start -- restaurant
 ```
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.

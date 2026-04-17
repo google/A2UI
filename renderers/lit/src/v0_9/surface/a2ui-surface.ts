@@ -69,6 +69,7 @@ export class A2uiSurface extends LitElement {
         const sub = this.surface.componentsModel.onCreated.subscribe((comp) => {
           if (comp.id === "root") {
             this._hasRoot = true;
+            this.requestUpdate();
             this.unsubscribe?.();
             this.unsubscribe = undefined;
           }

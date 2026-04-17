@@ -22,6 +22,7 @@ import { ImageComponent } from './image.component';
 import { IconComponent } from './icon.component';
 import { VideoComponent } from './video.component';
 import { AudioPlayerComponent } from './audio-player.component';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
 import { CardComponent } from './card.component';
 import { BoundProperty } from '../../core/types';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
@@ -36,29 +37,20 @@ describe('Simple Components', () => {
       surfaceGroup: {
         getSurface: jasmine.createSpy('getSurface').and.returnValue({
           componentsModel: new Map([
-            [
-              'child-1',
-              { id: 'child-1', type: 'Text', properties: { text: { value: 'Child 1' } } },
-            ],
-            [
-              'child-2',
-              { id: 'child-2', type: 'Text', properties: { text: { value: 'Child 2' } } },
-            ],
+            ['child-1', new ComponentModel('child-1', 'Text', { text: { value: 'Child 1' } })],
+            ['child-2', new ComponentModel('child-2', 'Text', { text: { value: 'Child 2' } })],
             [
               'content-1',
-              { id: 'content-1', type: 'Text', properties: { text: { value: 'Content 1' } } },
+              new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } }),
             ],
             [
               'content-2',
-              { id: 'content-2', type: 'Text', properties: { text: { value: 'Content 2' } } },
+              new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } }),
             ],
-            [
-              'trigger-btn',
-              { id: 'trigger-btn', type: 'Text', properties: { text: { value: 'Open' } } },
-            ],
+            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', { text: { value: 'Open' } })],
             [
               'modal-content',
-              { id: 'modal-content', type: 'Text', properties: { text: { value: 'Modal' } } },
+              new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } }),
             ],
           ]),
           catalog: {
@@ -187,7 +179,14 @@ describe('Simple Components', () => {
     });
 
     it('should support all specified variants', () => {
-      const variants = ['icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header'];
+      const variants = [
+        'icon',
+        'avatar',
+        'smallFeature',
+        'mediumFeature',
+        'largeFeature',
+        'header',
+      ];
       for (const variant of variants) {
         fixture.componentRef.setInput('props', {
           url: createBoundProperty('https://example.com/image.png'),
@@ -199,7 +198,6 @@ describe('Simple Components', () => {
       }
     });
   });
-
 
   describe('IconComponent', () => {
     let component: IconComponent;
@@ -234,6 +232,51 @@ describe('Simple Components', () => {
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
       expect(icon.textContent.trim()).toBe('search');
+    });
+
+    it('should convert camelCase icon names to snake_case', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('shoppingCart'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('shopping_cart');
+    });
+
+    it('should map "play" to "play_arrow"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('play'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('play_arrow');
+    });
+
+    it('should map "rewind" to "fast_rewind"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('rewind'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('fast_rewind');
+    });
+
+    it('should map "favoriteOff" to "favorite_border"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('favoriteOff'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('favorite_border');
+    });
+
+    it('should map "starOff" to "star_border"', () => {
+      fixture.componentRef.setInput('props', {
+        name: createBoundProperty('starOff'),
+      });
+      fixture.detectChanges();
+      const icon = fixture.nativeElement.querySelector('.a2ui-icon');
+      expect(icon.textContent.trim()).toBe('star_border');
     });
 
     it('should render path icon', () => {
