@@ -90,6 +90,12 @@ export default function App() {
 }
 ```
 
+Running this example should display a heading "Hello from A2UI!" followed by a description paragraph. The example also demonstrates three message types:
+
+- [`createSurface`](../../specification/v0_9/docs/a2ui_protocol.md#createsurface) initializes the rendering surface.
+- [`updateComponents`](../../specification/v0_9/docs/a2ui_protocol.md#updatecomponents) defines the UI tree. Here, a `Column` containing two `Text` components.
+- [`updateDataModel`](../../specification/v0_9/docs/a2ui_protocol.md#updatedatamodel) provides the data that the components reference via [`path` bindings](../../specification/v0_9/docs/a2ui_protocol.md#path-resolution--scope) (e.g. `{ path: '/title' }` resolves to the `title` field in the data model).
+
 ## Defining Custom Components
 
 A2UI v0.9 strictly separates a component's API (Schema) from its implementation.
