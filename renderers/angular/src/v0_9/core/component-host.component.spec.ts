@@ -84,9 +84,9 @@ describe('ComponentHostComponent', () => {
       fixture.detectChanges(); // Triggers ngOnInit
 
       // @ts-ignore - Accessing protected property
-      expect(component.componentType).toBe(TestChildComponent);
+      expect(component.componentType()).toBe(TestChildComponent);
       // @ts-ignore - Accessing protected property
-      expect(component.props).toEqual({
+      expect(component.props()).toEqual({
         text: jasmine.objectContaining({ value: jasmine.any(Function) }) as any,
       });
 
@@ -111,15 +111,15 @@ describe('ComponentHostComponent', () => {
       fixture.detectChanges(); // Trigger ngOnInit
       const compModel = mockSurface.componentsModel.get('comp1')!;
       // @ts-ignore - Accessing protected property
-      expect(component.props.text.value()).toBe('Hello');
+      expect(component.props().text.value()).toBe('Hello');
 
       // This properties assignment triggers the update.
       compModel.properties = { text: 'Hello', newProp: 'new value' };
 
       // @ts-ignore - Accessing protected property
-      expect(component.props.text.value()).toBe('Hello');
+      expect(component.props().text.value()).toBe('Hello');
       // @ts-ignore - Accessing protected property
-      expect(component.props.newProp.value()).toBe('new value');
+      expect(component.props().newProp.value()).toBe('new value');
     });
 
     it('should warn and return if surface not found', () => {
@@ -129,7 +129,7 @@ describe('ComponentHostComponent', () => {
       fixture.detectChanges();
 
       // @ts-ignore
-      expect(component.componentType).toBeNull();
+      expect(component.componentType()).toBeNull();
       expect(consoleWarnSpy).toHaveBeenCalledWith('Surface surf1 not found');
     });
 
@@ -140,7 +140,7 @@ describe('ComponentHostComponent', () => {
       fixture.detectChanges();
 
       // @ts-ignore
-      expect(component.componentType).toBeNull();
+      expect(component.componentType()).toBeNull();
       expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1. Waiting for it...');
     });
 
@@ -151,7 +151,7 @@ describe('ComponentHostComponent', () => {
       fixture.detectChanges();
 
       // @ts-ignore
-      expect(component.componentType).toBeNull();
+      expect(component.componentType()).toBeNull();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Component type "TestType" not found in catalog "test-catalog"',
       );
