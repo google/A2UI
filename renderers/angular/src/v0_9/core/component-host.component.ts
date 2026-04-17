@@ -16,13 +16,13 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   Type,
   inject,
   input,
   effect,
-  signal,
 } from '@angular/core';
 import {NgComponentOutlet} from '@angular/common';
 import {ComponentContext, ComponentModel, SurfaceModel, Subscription} from '@a2ui/web_core/v0_9';
@@ -48,12 +48,12 @@ import {BoundProperty} from './types';
     'style': 'display: contents;'
   },
   template: `
-    @if (componentType()) {
+    @if (componentType) {
       <ng-container
         *ngComponentOutlet="
-          componentType();
+          componentType;
           inputs: {
-            props: props(),
+            props: props,
             surfaceId: surfaceId(),
             componentId: resolvedComponentId,
             dataContextPath: resolvedDataContextPath,
@@ -74,9 +74,10 @@ export class ComponentHostComponent {
   private readonly rendererService = inject(A2uiRendererService);
   private readonly binder = inject(ComponentBinder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  protected componentType = signal<Type<any> | null>(null);
-  protected props = signal<Record<string, BoundProperty>>({});
+  protected componentType: Type<any> | null = null;
+  protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
 
   protected resolvedComponentId: string = '';
@@ -153,18 +154,21 @@ export class ComponentHostComponent {
       console.error(`Component type "${componentModel.type}" not found in catalog "${catalog.id}"`);
       return;
     }
-    this.componentType.set(api.component);
+    this.componentType = api.component;
 
     // Create context
     this.context = new ComponentContext(surface, id, basePath);
-    this.props.set(this.binder.bind(this.context));
+    this.props = this.binder.bind(this.context);
     this.resolvedDataContextPath = this.context.dataContext.path;
 
     // Subscribes to updates to the component model properties, to get the
     // component to react when a new prop is added after creation.
     this.propsSub = componentModel.onUpdated.subscribe(() => {
-      this.props.set(this.binder.bind(this.context!));
+      this.props = this.binder.bind(this.context!);
+      this.cdr.markForCheck();
     });
+
+    this.cdr.markForCheck();
   }
 
   /**
@@ -176,8 +180,9 @@ export class ComponentHostComponent {
     this.propsSub?.unsubscribe();
     this.createSub?.unsubscribe();
 
-    this.componentType.set(null);
-    this.props.set({});
+    this.componentType = null;
+    this.props = {};
     this.resolvedDataContextPath = '/';
+    this.cdr.markForCheck();
   }
 }
