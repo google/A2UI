@@ -4,17 +4,18 @@ Customize the look and feel of A2UI components to match your brand.
 
 ## The A2UI Styling Philosophy
 
-A2UI follows a **renderer-controlled styling** approach:
+A2UI follows a **renderer-controlled styling** approach by default, but allows for flexibility through catalogs:
 
 - **Agents describe *what* to show** (components and structure)
 - **Renderers decide *how* it looks** (colors, fonts, spacing)
 
-A renderer-controlled approach provides the following benefits:
+However, the protocol is flexible enough to allow agents to influence styling when needed.
 
-- **Brand consistency**: All UIs match your app's design system.
-- **Security**: Agents cannot inject arbitrary CSS or styling.
-- **Accessibility**: You control contrast, focus states, and ARIA attributes.
-- **Platform-native feel**: Web apps look like web, mobile looks like mobile.
+### Protocol-Level Theme Support
+
+The A2UI protocol allows for an arbitrary `theme` property in the `createSurface` message. This property is defined as `z.any().optional()` in the Zod schema, meaning the agent can pass any JSON structure that the client renderer and catalog understand.
+
+See the schema definition in [server-to-client.ts](file:///work/google/a2ui/renderers/web_core/src/v0_9/schema/server-to-client.ts#L31).
 
 ## Styling Layers
 
@@ -23,8 +24,8 @@ A2UI styling works in layers:
 ```mermaid
 flowchart TD
     A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration<br/>Developer configures<br/>(colors, fonts, spacing)"]
-    C["3. Component Overrides<br/>Developer customizes<br/>(CSS/styles for specific components)"]
+    B["2. Catalog Theming<br/>Catalog interprets theme data<br/>or uses defaults"]
+    C["3. CSS Overrides<br/>Developer customizes<br/>(CSS variables or stylesheets)"]
     D["4. Rendered Output<br/>Native platform widgets"]
 
     A --> B --> C --> D
@@ -53,32 +54,29 @@ Agents provide semantic hints (not visual styles) to guide rendering:
 
 The client renderer maps these semantic hints to actual visual styles based on your theme and design system.
 
-## Layer 2: Theme Configuration
+## Layer 2: Catalog Theming
 
-Each renderer provides a way to configure your design system globally, including:
+Theming is a responsibility of the catalog implementation. Each catalog can have whatever theming solution it deems appropriate.
 
-- **Colors**: Primary, secondary, background, surface, error, success, etc.
-- **Typography**: Font families, sizes, weights, line heights
-- **Spacing**: Base units and scale (xs, sm, md, lg, xl)
-- **Shapes**: Border radius values
-- **Elevation**: Shadow styles for depth
+When a catalog is created, it can optionally define a `themeSchema` using Zod to validate the `theme` property received from the agent. This allows the catalog to enforce a specific structure for theme overrides sent by the agent.
 
-TODO: Add platform-specific theming guides:
+See the `Catalog` class and `themeSchema` in [catalog/types.ts](file:///work/google/a2ui/renderers/web_core/src/v0_9/catalog/types.ts#L147).
 
-**Web (Lit):**
+### The Basic Catalog Theming
 
-- How to configure theme via renderer initialization
-- Available theme properties
+The *basic catalog* provided by the default A2UI renderers supports theming via a simple CSS stylesheet with overrides.
 
-**Angular:**
+It injects a default stylesheet with CSS variables. These variables use the `:where()` CSS selector to ensure zero specificity. This means developers can easily override these variables in their application's global CSS without fighting specificity issues.
 
-- Integration with Angular Material theming
-- Standalone A2UI theme configuration
+For example, to override the primary color, you can simply add this to your app's CSS:
 
-**Flutter:**
+```css
+:root {
+  --a2ui-color-primary: #ff5722;
+}
+```
 
-- How A2UI uses Flutter's `ThemeData`
-- Custom theme properties
+See the default styles in [default.ts](file:///work/google/a2ui/renderers/web_core/src/v0_9/basic_catalog/styles/default.ts).
 
 **See working examples:**
 
