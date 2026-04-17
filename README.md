@@ -134,24 +134,28 @@ The best way to understand A2UI is to run the samples.
     Open a new terminal window:
 
     ```bash
-    # Install and build the Markdown renderer
-    cd renderers/markdown/markdown-it
+    # 1. Install and build the Web Core library (REQUIRED FIRST)
+    cd renderers/web_core
     npm install
     npm run build
 
-    # Install and build the Web Core library
-    cd ../../web_core
+    # 2. Install and build the Markdown renderer
+    cd ../markdown/markdown-it
     npm install
     npm run build
 
-    # Install and build the Lit renderer
-    cd ../lit
+    # 3. Install and build the Lit renderer
+    cd ../../lit
     npm install
     npm run build
 
-    # Install and run the shell client
+    # 4. Install and run the shell client
     cd ../../samples/client/lit/shell
     npm install
+   
+    # Note for Windows users: If you see "Cannot find module '@rollup/rollup-win32-x64-msvc'", run:
+    # npm install @rollup/rollup-win32-x64-msvc
+   
     npm run dev
     ```
 
