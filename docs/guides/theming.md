@@ -48,14 +48,18 @@ Agents provide semantic hints (not visual styles) to guide rendering. In the *ba
 - Text: `h1`, `h2`, `h3`, `h4`, `h5`, `body`, `caption`
 - Other components have their own hints (see [Component Reference](../reference/components.md))
 
-The client renderer maps these semantic hints to actual visual styles based on your theme and design system.
+The catalog elements map these semantic hints to actual components on the target platform, and styles them.
 
 ### `theme` property
 
-The A2UI protocol allows for an arbitrary `theme` property in the `createSurface` message. This property is defined as `z.any().optional()` in the Zod schema, meaning the agent can pass any JSON structure that the client renderer and catalog understand.
+The A2UI protocol allows for an arbitrary `theme` property in the `createSurface` message. For now, this property is
+defined as `z.any().optional()` in the Zod schema, meaning the agent can pass any JSON structure that the client
+renderer and catalog understand.
 
 * See the schema definition in [server-to-client.ts](../../renderers/web_core/src/v0_9/schema/server-to-client.ts).
 * See the `Catalog` class and `themeSchema` in [catalog/types.ts](../../renderers/web_core/src/v0_9/catalog/types.ts).
+
+**Note:** The *basic catalog* components are not wired to use the `theme` coming from the agent.
 
 _Want to influence this design? Chime in here: [#1118](https://github.com/google/A2UI/issues/1118)._
 
