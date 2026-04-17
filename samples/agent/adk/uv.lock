@@ -50,7 +50,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
 ]
@@ -87,7 +87,7 @@ requires-dist = [
     { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "fastapi", specifier = ">=0.123.10" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
@@ -117,7 +117,7 @@ requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
     { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
@@ -649,7 +649,7 @@ wheels = [
 
 [[package]]
 name = "google-adk"
-version = "1.28.0"
+version = "1.28.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiosqlite" },
@@ -698,9 +698,9 @@ dependencies = [
     { name = "watchdog" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b7/2b/6f3e87faa3d3b11d585524ee8e1c088472f9d3783879b360db32b96bd2de/google_adk-1.28.0.tar.gz", hash = "sha256:3c7ef1a518296641b992cc68ae4795987da48765f9788af37da1acc39db0f362", size = 2317884, upload-time = "2026-03-26T22:48:26.755Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/83/bd/ce670dca7a32b1bc46410edece7781d8db06aa5a48d7323f1c2aa30384b6/google_adk-1.28.1.tar.gz", hash = "sha256:76e6ec4a13f981bd9c2c7782e8b37b0e973b570b699b750a52444998e8886ced", size = 2318960, upload-time = "2026-04-02T22:21:02.796Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/1a/a76004c1660118a37836bf6355628506601f9fa27b7490c47160b723465e/google_adk-1.28.0-py3-none-any.whl", hash = "sha256:8470c2e5a97bcef9a54283148be9f4ffaa88b3eefe3f55f269183f715d8830b6", size = 2728054, upload-time = "2026-03-26T22:48:24.947Z" },
+    { url = "https://files.pythonhosted.org/packages/7e/51/1926ef771b3223fcd0ff0568c9f5429d45239cdc6f09d9ecbb7a4cc69c1f/google_adk-1.28.1-py3-none-any.whl", hash = "sha256:ee7cdf90ba05737be3a2aa4867804324a02f2918bd810e746fe6416184e11511", size = 2729150, upload-time = "2026-04-02T22:21:01.096Z" },
 ]
 
 [[package]]
@@ -1676,7 +1676,7 @@ requires-dist = [
     { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "anyio" },
     { name = "click", specifier = ">=8.1.8" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
@@ -2030,7 +2030,7 @@ requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
     { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
@@ -2631,7 +2631,7 @@ requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
     { name = "a2ui-agent-sdk", editable = "../../../agent_sdks/python" },
     { name = "click", specifier = ">=8.1.8" },
-    { name = "google-adk", specifier = ">=1.28.0" },
+    { name = "google-adk", specifier = ">=1.28.1" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
