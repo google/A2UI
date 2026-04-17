@@ -280,7 +280,9 @@ export class MessageProcessor<T extends ComponentApi> {
     }
 
     if (this.model.getSurface(surfaceId)) {
-      console.warn(`[A2UI] createSurface: surface "${surfaceId}" already exists, ignoring.`);
+      console.warn(
+        `[A2UI] createSurface: surface "${surfaceId}" already exists, ignoring.`,
+      );
       return;
     }
 
