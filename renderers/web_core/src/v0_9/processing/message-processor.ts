@@ -280,7 +280,7 @@ export class MessageProcessor<T extends ComponentApi> {
     }
 
     if (this.model.getSurface(surfaceId)) {
-      throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
+      return;
     }
 
     const surface = new SurfaceModel<T>(

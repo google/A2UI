@@ -36,7 +36,7 @@ import { useState, useEffect } from 'react';
 import { MessageProcessor } from '@a2ui/web_core/v0_9';
 import { A2uiSurface, basicCatalog } from '@a2ui/react/v0_9';
 
-function App() {
+export default function App() {
   // 1. Initialize the MessageProcessor with your catalogs
   const [processor] = useState(() => new MessageProcessor([basicCatalog]));
   const [surface, setSurface] = useState(null);
@@ -49,12 +49,32 @@ function App() {
     });
 
     // 3. Process messages from your agent (e.g., via WebSocket or SSE)
-    // For demo purposes, we manually process a creation message:
+    // For demo purposes, we manually process some static messages:
     processor.processMessages([{
       version: 'v0.9',
       createSurface: { 
         surfaceId: 'main-chat', 
         catalogId: basicCatalog.id // 'https://a2ui.org/specification/v0_9/basic_catalog.json'
+      }
+    }, {
+      version: 'v0.9',
+      updateComponents: {
+        surfaceId: 'main-chat',
+        components: [
+          { id: 'root', component: 'Column', children: ['greeting', 'description'] },
+          { id: 'greeting', component: 'Text', variant: 'h1', text: { path: '/title' } },
+          { id: 'description', component: 'Text', text: { path: '/body' } },
+        ],
+      }
+    }, {
+      version: 'v0.9',
+      updateDataModel: {
+        surfaceId: 'main-chat',
+        path: '/',
+        value: {
+          title: 'Hello from A2UI!',
+          body: 'This surface was rendered from static messages. Replace these with real agent responses to build interactive UIs.',
+        },
       }
     }]);
 
