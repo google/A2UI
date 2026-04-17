@@ -45,7 +45,7 @@ TODO: Add a detailed guide.
 
 [AG UI](https://ag-ui.com/) translates A2UI messages to AG UI events and handles transport and state sync automatically. It is the recommended transport for React / Next.js clients.
 
-**See:** [Use A2UI with Any Agent Framework (Using AG-UI)](../guides/a2ui-with-any-agent-framework.md) — end-to-end guide covering catalog setup, A2UI operations, and fixed vs dynamic schema patterns.
+**See:** [Use A2UI with Any Agent Framework (Using AG-UI)](../guides/a2ui-with-any-agent-framework.md) — guide to setting up CopilotKit with your agent framework of choice and enabling A2UI rendering.
 
 ## Custom Transports
 
