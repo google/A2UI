@@ -17,7 +17,6 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import * as Primitives from "@a2ui/web_core/types/primitives";
 import * as Types from "@a2ui/web_core/types/types";
 import { Events } from "@a2ui/web_core";
@@ -76,22 +75,10 @@ export class TextField extends Root {
   ];
 
   #setBoundValue(value: string) {
-    if (!this.text || !this.processor) {
+    if (!this.text || !("path" in this.text) || !this.text.path) {
       return;
     }
-    if (!("path" in this.text)) {
-      return;
-    }
-    if (!this.text.path) {
-      return;
-    }
-
-    this.processor.setData(
-      this.component,
-      this.text.path,
-      value,
-      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
-    );
+    this.updateBoundData(this.text.path, value);
   }
 
   #renderField(value: string | number, label: string) {
