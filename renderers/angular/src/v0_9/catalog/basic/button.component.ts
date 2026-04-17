@@ -77,7 +77,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         background-color: var(--a2ui-color-primary, #17e);
         --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
         color: var(--_a2ui-text-color);
-        border-color: var(--a2ui-color-primary-hover, #0069d9);
+        border: none;
       }
       .a2ui-button.borderless {
         background: none;

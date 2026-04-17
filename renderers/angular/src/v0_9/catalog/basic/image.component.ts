@@ -48,12 +48,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         display: block;
         max-width: 100%;
         height: auto;
-      }
-      .a2ui-image.circle {
-        border-radius: 50%;
-        aspect-ratio: 1 / 1;
-      }
-      .a2ui-image.rounded {
         border-radius: var(--a2ui-image-border-radius, var(--a2ui-border-radius, 8px));
       }
       .a2ui-image.icon {
@@ -68,16 +62,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       .a2ui-image.smallFeature {
         max-width: var(--a2ui-image-small-feature-size, 100px);
       }
-      .a2ui-image.mediumFeature {
-        max-width: 300px;
-        height: auto;
-      }
       .a2ui-image.largeFeature {
-        width: 100%;
         max-height: var(--a2ui-image-large-feature-size, 400px);
       }
       .a2ui-image.header {
-        width: 100%;
         height: var(--a2ui-image-header-size, 200px);
       }
     `,
