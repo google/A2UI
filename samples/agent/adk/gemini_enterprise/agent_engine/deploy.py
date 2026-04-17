@@ -34,9 +34,7 @@ from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
 def _get_bearer_token():
   """Gets a bearer token for authenticating with Google Cloud."""
   try:
-    credentials, _ = default(
-        scopes=["https://www.googleapis.com/auth/cloud-platform"]
-    )
+    credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     request = Request()
     credentials.refresh(request)
     return credentials.token
@@ -86,9 +84,7 @@ def _register_agent_on_gemini_enterprise(
   }
 
   if agent_authorization:
-    payload["authorization_config"] = {
-        "agent_authorization": agent_authorization
-    }
+    payload["authorization_config"] = {"agent_authorization": agent_authorization}
 
   # Get access token
   bearer_token = _get_bearer_token()
@@ -215,9 +211,7 @@ def main():
   remote_engine_resource = remote_agent.api_resource.name
   print(f"✓ Remote agent created. {remote_engine_resource}")
 
-  a2a_endpoint = (
-      f"https://{api_endpoint}/v1beta1/{remote_engine_resource}/a2a/v1/card"
-  )
+  a2a_endpoint = f"https://{api_endpoint}/v1beta1/{remote_engine_resource}/a2a/v1/card"
   bearer_token = _get_bearer_token()
   headers = {
       "Authorization": f"Bearer {bearer_token}",
@@ -256,9 +250,7 @@ def main():
       agent_card=a2ui_agent_card_str,
       agent_name="a2ui_contact_card_agent",
       display_name="A2UI Contact Card Agent",
-      description=(
-          "A helpful assistant agent that uses A2UI to render contact cards."
-      ),
+      description="A helpful assistant agent that uses A2UI to render contact cards.",
       agent_authorization=os.environ.get("AGENT_AUTHORIZATION"),
   )
 

@@ -49,9 +49,7 @@ class ContactAgentExecutor(AgentExecutor):
     ui_event_part = None
     action = None
 
-    print(
-        f"--- Client requested extensions: {context.requested_extensions} ---"
-    )
+    print(f"--- Client requested extensions: {context.requested_extensions} ---")
     print(f"--- Agent card: {self._agent.agent_card} ---")
     # active_ui_version = try_activate_a2ui_extension(
     #     context, self._agent.agent_card
@@ -65,10 +63,7 @@ class ContactAgentExecutor(AgentExecutor):
           f" (v{active_ui_version}). Using UI runner. ---"
       )
     else:
-      print(
-          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text"
-          " runner. ---"
-      )
+      print("--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---")
 
     if context.message and context.message.parts:
       print(
