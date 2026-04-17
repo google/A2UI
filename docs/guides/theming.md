@@ -57,7 +57,7 @@ The A2UI protocol allows for an arbitrary `theme` property in the `createSurface
 * See the schema definition in [server-to-client.ts](../../renderers/web_core/src/v0_9/schema/server-to-client.ts).
 * See the `Catalog` class and `themeSchema` in [catalog/types.ts](../../renderers/web_core/src/v0_9/catalog/types.ts).
 
-_This may change in the near future! Chime in here: [#1118](https://github.com/google/A2UI/issues/1118)._
+_Want to influence this design? Chime in here: [#1118](https://github.com/google/A2UI/issues/1118)._
 
 ## Catalog theming
 
