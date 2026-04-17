@@ -5,6 +5,8 @@
 - **BREAKING CHANGE**: Removed `minimalCatalog`.
 - (v0_9) Re-style the v0_9 catalog components using the default theme from
   `web_core`. [#1205](https://github.com/google/A2UI/pull/1205)
+- (v0_9) Use `@a2ui/markdown-it` as the default `MarkdownContext` value so
+  `Text` renders markdown out of the box. [#1227](https://github.com/google/A2UI/pull/1227)
 
 ## 0.8.1
 
