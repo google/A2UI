@@ -104,8 +104,8 @@ Pick the path that matches where you want to start:
 
 | Path | What you get | Time |
 |------|--------------|------|
-| 🍜 **[Restaurant Finder demo](docs/quickstart.md)** | Full-stack A2UI running locally with a Gemini agent and Lit renderer. Best for learning the protocol end-to-end. | ~5 min |
-| ⚛️ **[A2UI + AG-UI (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | Set up CopilotKit with your agent framework of choice, then enable A2UI rendering. Best for shipping A2UI in a React app. | ~5 min |
+| 🍜 **[Quickstart Restaurant Finder Demo](https://a2ui.org/quickstart/)** | Full-stack A2UI running locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case. | ~5 min |
+| ⚛️ **[A2UI + AG-UI (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | Set up CopilotKit with your agent framework of choice, then enable A2UI rendering. Ready to ship A2UI in a React app. | ~5 min |
 | 🎨 **[A2UI Composer](https://a2ui-composer.ag-ui.com/)** · **[Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)** | Generate A2UI JSON from a visual editor and paste it into any agent prompt — no install required. | ~1 min |
 
 ### Restaurant Finder demo — TL;DR

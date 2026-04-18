@@ -72,11 +72,11 @@ This repository contains:
 
 <div class="grid cards" markdown>
 
-- :material-clock-fast:{ .lg .middle } **[Restaurant Finder Demo](quickstart.md)**
+- :material-clock-fast:{ .lg .middle } **[Quickstart Restaurant Finder Demo](quickstart.md)**
 
     ---
 
-    Run the full-stack demo locally with a Gemini agent and Lit renderer. Best for learning the protocol end-to-end.
+    Run the full-stack demo locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case.
 
     [:octicons-arrow-right-24: Run the demo](quickstart.md)
 
@@ -84,7 +84,7 @@ This repository contains:
 
     ---
 
-    Scaffold a Next.js app wired to any agent framework via AG-UI. Best for shipping A2UI in a React application.
+    Scaffold a Next.js app wired to any agent framework via AG-UI. This is a React + A2UI app, ready to ship.
 
     [:octicons-arrow-right-24: Use with any agent](guides/a2ui-with-any-agent-framework.md)
 
