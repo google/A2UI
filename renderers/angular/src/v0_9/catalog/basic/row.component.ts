@@ -17,7 +17,7 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
-import { mapJustify, mapAlign } from '@a2ui/web_core/v0_9';
+import { mapJustify, mapAlign } from '@a2ui/web_core/v0_9/basic_catalog';
 import { getNormalizedPath } from '../../core/utils';
 
 /**

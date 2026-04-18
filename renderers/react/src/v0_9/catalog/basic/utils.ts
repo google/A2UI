@@ -28,7 +28,7 @@ export const STANDARD_BORDER = '1px solid #ccc';
 /** Standard border radius. */
 export const STANDARD_RADIUS = '8px';
 
-export {mapJustify, mapAlign} from '@a2ui/web_core/v0_9';
+export {mapJustify, mapAlign} from '@a2ui/web_core/v0_9/basic_catalog';
 
 export const getBaseLeafStyle = (): React.CSSProperties => ({
   margin: LEAF_MARGIN,

@@ -16,7 +16,8 @@
 
 import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
-import {CommonSchemas, mapJustify, mapAlign} from '@a2ui/web_core/v0_9';
+import {CommonSchemas} from '@a2ui/web_core/v0_9';
+import {mapJustify, mapAlign} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 
 export const RowSchema = z.object({

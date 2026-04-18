@@ -18,8 +18,7 @@ import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { mapJustify, mapAlign } from "@a2ui/web_core/v0_9";
+import { RowApi, mapJustify, mapAlign } from "@a2ui/web_core/v0_9/basic_catalog";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-row")
