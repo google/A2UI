@@ -62,10 +62,124 @@ import { myCustomTheme } from "@copilotkit/a2ui-renderer";
 
 ### Custom components (BYOC)
 
-To extend the built-in A2UI catalog with your own React components, see
-CopilotKit's [Custom Components (BYOC) section](https://docs.copilotkit.ai/adk/generative-ui/a2ui#custom-components-byoc)
-— define Zod schemas, map them to React renderers, and pass the catalog
-through the provider's `a2ui` prop.
+A2UI ships with a built-in catalog (Text, Image, Card, …) that gets you a
+working surface immediately. The real power is extending it with _your_
+React components — your design system, your data shapes — so the agent
+can compose interfaces from primitives you already trust. A catalog has
+three pieces:
+
+1. **Definitions** — Zod schemas plus a natural-language description. This
+   is what the agent sees in its system prompt.
+2. **Renderers** — typed React components, one per definition. This is
+   what the user sees.
+3. **Registration** — pass the catalog through the provider so the A2UI
+   renderer knows how to draw your components.
+
+#### 1. Define component schemas
+
+Create platform-agnostic definitions with Zod. The `description` field
+gets injected into the agent's prompt so the LLM knows when to reach for
+each component; the schema validates the props the agent sends.
+
+```ts title="lib/a2ui/definitions.ts"
+import { z } from "zod";
+
+export const myDefinitions = {
+  StatusBadge: {
+    description: "A colored status badge.",
+    props: z.object({
+      text: z.string(),
+      variant: z.enum(["success", "warning", "error"]).optional(),
+    }),
+  },
+  Metric: {
+    description: "A key metric with label and value.",
+    props: z.object({
+      label: z.string(),
+      value: z.string(),
+      trend: z.enum(["up", "down"]).optional(),
+    }),
+  },
+};
+
+export type MyDefinitions = typeof myDefinitions;
+```
+
+#### 2. Create React renderers
+
+Map each definition to a React component. `createCatalog` is generic over
+the definitions type, so the props your renderer receives are type-checked
+against the Zod schema — a typo in `props.text` is a compile error.
+
+{% raw %}
+```tsx title="lib/a2ui/renderers.tsx"
+"use client";
+
+import { createCatalog, type CatalogRenderers } from "@copilotkit/a2ui-renderer";
+import { myDefinitions, type MyDefinitions } from "./definitions";
+
+const myRenderers: CatalogRenderers<MyDefinitions> = {
+  StatusBadge: ({ props }) => {
+    const colors = {
+      success: { bg: "#dcfce7", text: "#166534" },
+      warning: { bg: "#fef3c7", text: "#92400e" },
+      error: { bg: "#fee2e2", text: "#991b1b" },
+    };
+    const c = colors[props.variant ?? "success"];
+    return (
+      <span style={{ padding: "2px 8px", borderRadius: 9999, fontSize: "0.75rem", background: c.bg, color: c.text }}>
+        {props.text}
+      </span>
+    );
+  },
+
+  Metric: ({ props }) => (
+    <div>
+      <div style={{ fontSize: "0.75rem", color: "#6b7280" }}>{props.label}</div>
+      <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>
+        {props.value} {props.trend === "up" ? "↑" : props.trend === "down" ? "↓" : ""}
+      </div>
+    </div>
+  ),
+};
+
+export const myCatalog = createCatalog(myDefinitions, myRenderers, {
+  catalogId: "my-app-catalog",
+  includeBasicCatalog: true, // merges with built-in components
+});
+```
+{% endraw %}
+
+`catalogId` is the stable handle the agent uses to target this catalog;
+`includeBasicCatalog: true` keeps the built-in components available
+alongside your own (omit it to render _only_ your components).
+
+#### 3. Pass the catalog to CopilotKit
+
+{% raw %}
+```tsx title="app/layout.tsx"
+"use client";
+
+import { CopilotKitProvider } from "@copilotkit/react-core/v2";
+import "@copilotkit/react-core/v2/styles.css";
+import { myCatalog } from "@/lib/a2ui/renderers";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <CopilotKitProvider runtimeUrl="/api/copilotkit" a2ui={{ catalog: myCatalog }}>
+      {children}
+    </CopilotKitProvider>
+  );
+}
+```
+{% endraw %}
+
+Agents will now see your custom components alongside the built-ins and
+can use them in any A2UI surface they emit.
+
+For the full BYOC reference (multiple catalogs, theming hooks, advanced
+patterns), see CopilotKit's
+[Custom Components (BYOC) section](https://docs.copilotkit.ai/adk/generative-ui/a2ui#custom-components-byoc).
 
 ## 3. Advanced usage
 
