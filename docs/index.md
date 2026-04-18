@@ -96,6 +96,14 @@ This repository contains:
 
     [:octicons-arrow-right-24: Open the composer](https://a2ui-composer.ag-ui.com/)
 
+- :material-play-circle-outline:{ .lg .middle } **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)**
+
+    ---
+
+    Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers. See the protocol in motion before writing code.
+
+    [:octicons-arrow-right-24: Open the playground](https://a2ui-composer.ag-ui.com/theater)
+
 - :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
 
     ---
