@@ -460,8 +460,8 @@ describe('Complex Components', () => {
     it('should render tabs and switch content', () => {
       fixture.componentRef.setInput('props', {
         tabs: createBoundProperty([
-          { label: 'Tab 1', content: 'content-1' },
-          { label: 'Tab 2', content: 'content-2' },
+          { title: 'Tab 1', child: 'content-1' },
+          { title: 'Tab 2', child: 'content-2' },
         ]),
       });
       fixture.detectChanges();

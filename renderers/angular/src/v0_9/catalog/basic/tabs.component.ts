@@ -45,14 +45,14 @@ import { BasicCatalogComponent } from './basic-catalog-component';
             [class.active]="activeTabIndex() === i"
             (click)="setActiveTab(i)"
           >
-            {{ tab.label }}
+            {{ tab.title }}
           </button>
         }
       </div>
-      @if (normalizedActiveTabContent()) {
+      @if (normalizedActiveTabChild()) {
         <div class="a2ui-tab-content">
           <a2ui-v09-component-host
-            [componentKey]="normalizedActiveTabContent()!"
+            [componentKey]="normalizedActiveTabChild()!"
             [surfaceId]="surfaceId()"
           >
           </a2ui-v09-component-host>
@@ -100,13 +100,13 @@ export class TabsComponent extends BasicCatalogComponent {
   readonly tabs = computed(() => this.props()['tabs']?.value() || []);
   readonly activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
 
-  protected readonly normalizedActiveTabContent = computed(() => {
-    const content = this.activeTab()?.content;
-    if (!content) return null;
-    if (typeof content === 'object' && content !== null && 'id' in content) {
-      return content as { id: string; basePath: string };
+  protected readonly normalizedActiveTabChild = computed(() => {
+    const child = this.activeTab()?.child;
+    if (!child) return null;
+    if (typeof child === 'object' && child !== null && 'id' in child) {
+      return child as { id: string; basePath: string };
     }
-    return { id: content as string, basePath: this.dataContextPath() };
+    return { id: child as string, basePath: this.dataContextPath() };
   });
 
   setActiveTab(index: number) {
