@@ -23,6 +23,11 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
    # Edit .env with your actual API key (do not commit .env)
    ```
 
+   **Tip:** You can quickly set the key from your terminal:
+   ```bash
+   sed -i '' "s/your_gemini_api_key_here/$GEMINI_API_KEY/" .env
+   ```
+
 3. Run an agent:
 
    ```bash

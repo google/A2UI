@@ -10,8 +10,14 @@ These are sample implementations of A2UI in Angular.
 ## Running
 
 1. Update the `src/environments/environment.ts` file with your Google Maps API key. 
-2. Build the shared dependencies by running `npm i`, then `npm run build` in the `renderers/web_core` directory
-3. Install the dependencies: `npm i`
+2. Build the shared renderer dependencies:
+   ```bash
+   npm run build:renderer
+   ```
+3. Install the project dependencies:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 4. Run the A2A server for the [rizzcharts agent](../../../../agent/adk/rizzcharts/)
 5. Run the relevant app:
   * `npm start -- rizzcharts`

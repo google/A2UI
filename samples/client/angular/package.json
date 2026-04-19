@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prestart": "npm run build:renderer",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -11,9 +12,15 @@
     "serve:ssr:restaurant": "node dist/restaurant/server/server.mjs",
     "serve:ssr:rizzcharts": "node dist/rizzcharts/server/server.mjs",
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
-    "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it'; do (cd \"$dir\" && npm install && npm run build); done",
+    "build:renderer": "cd ../../../renderers && (cd web_core && npm install && npm run build) && (cd markdown/markdown-it && npm install && npm run build) && (cd lit && npm install && npm run build)",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "serve:agent:rizzcharts": "cd ../../agent/adk/rizzcharts && uv run .",
+    "serve:agent:contact": "cd ../../agent/adk/contact_lookup && uv run .",
+    "serve:agent:orchestrator": "cd ../../agent/adk/orchestrator && uv run .",
+    "demo:restaurant": "concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "demo:rizzcharts": "concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:rizzcharts\" \"npm start -- rizzcharts\"",
+    "demo:contact": "concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:contact\" \"npm start -- contact\"",
+    "demo:orchestrator": "concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:orchestrator\" \"npm start -- orchestrator\"",
     "build:sandbox": "esbuild ../shared/mcp_apps_inner_iframe/sandbox.ts --bundle --outfile=projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.js --format=esm --platform=browser --alias:@modelcontextprotocol/ext-apps/app-bridge=./node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js && cp ../shared/mcp_apps_inner_iframe/sandbox.html projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.html"
   },
   "prettier": {

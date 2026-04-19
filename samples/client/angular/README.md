@@ -7,39 +7,38 @@ These are sample implementations of A2UI in Angular.
 1. [nodejs](https://nodejs.org/en)
 2. [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
-NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
+## Quickstart
 
-## Running
-
-Here is the quickstart for the restaurant app:
+To run any demo with its corresponding agent automatically:
 
 ```bash
-# Set up your Gemini API key
-cp ../../agent/adk/restaurant_finder/.env.example ../../agent/adk/restaurant_finder/.env
-# Edit the .env file with your actual API key (do not commit .env)
+# 1. Set up your Gemini API key (for Rizzcharts as an example)
+cp ../../agent/adk/rizzcharts/.env.example ../../agent/adk/rizzcharts/.env
+# Edit the .env file with your actual API key
 
-# Start the restaurant app frontend
-npm install 
-npm run demo:restaurant 
+# 2. Install dependencies (Automatic via .npmrc)
+npm install
+
+# 3. Run the demo (Automatically builds renderers via prestart)
+npm run demo:rizzcharts
 ```
 
-Here are the instructions if you want to do each step manually. 
+Available demo commands:
+- `npm run demo:restaurant`
+- `npm run demo:rizzcharts`
+- `npm run demo:contact`
+- `npm run demo:orchestrator`
 
-1. Build the shared dependencies by running `npm install && npm run build` in the `renderers/lit` directory
-2. Install the dependencies: `npm install`
-3. Run the relevant A2A server:
-  * [For the restaurant app](../../agent/adk/restaurant_finder/)
-  * [For the contact app](../../agent/adk/contact_lookup/)
-  * [For the rizzcharts app](../../agent/adk/rizzcharts/)
-  * [For the orchestrator app](../../agent/adk/orchestrator/)
-4. Run the relevant app:
-  * `npm start -- restaurant`
-  * `npm start -- contact`
-  * `npm start -- rizzcharts`
-  * `npm start -- orchestrator`
-  * `npm run build:sandbox && npm start -- mcp_calculator`
-  * `npm start -- gallery` (Client-only, no server required)
-5. Open http://localhost:4200/
+## Manual Setup
+
+If you prefer to run the steps individually:
+
+1. **Install dependencies:** `npm install` (The included `.npmrc` handles peer dependency issues).
+2. **Build renderers:** `npm run build:renderer` (This is also handled automatically by `npm start`).
+3. **Run agent:** Navigate to the agent directory in `samples/agent/adk/` and run `uv run .`.
+4. **Run frontend:** `npm start -- <project-name>` (e.g., `npm start -- rizzcharts`).
+5. **Open:** http://localhost:4200/
+
 
 ## Streaming
 
