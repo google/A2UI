@@ -73,7 +73,14 @@ import { ActionDispatcher } from './action-dispatcher.service';
       <!-- Inspect Panel -->
       <div class="inspect-area">
         <div class="inspect-section surface-section" [class.folded]="isSurfaceMessageFolded">
-          <div class="section-header" (click)="toggleSurfaceMessage()" style="cursor: pointer;">
+          <div class="section-header" 
+               (click)="toggleSurfaceMessage()" 
+               (keydown.enter)="toggleSurfaceMessage()"
+               (keydown.space)="toggleSurfaceMessage(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isSurfaceMessageFolded">
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isSurfaceMessageFolded">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -100,7 +107,14 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
 
         <div class="inspect-section data-section" [class.folded]="isDataModelFolded">
-          <div class="section-header" (click)="toggleDataModel()" style="cursor: pointer;">
+          <div class="section-header" 
+               (click)="toggleDataModel()" 
+               (keydown.enter)="toggleDataModel()"
+               (keydown.space)="toggleDataModel(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isDataModelFolded">
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isDataModelFolded">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -127,7 +141,14 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
 
         <div class="inspect-section events-section" [class.folded]="isEventsLogFolded">
-          <div class="section-header" (click)="toggleEventsLog()" style="cursor: pointer;">
+          <div class="section-header" 
+               (click)="toggleEventsLog()" 
+               (keydown.enter)="toggleEventsLog()"
+               (keydown.space)="toggleEventsLog(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isEventsLogFolded">
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isEventsLogFolded">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -529,17 +550,19 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
 
     // Subscribe to DataModel updates
-    const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
-    if (surface) {
-      // Subscribe to root changes
-      this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
-        this.currentDataModel = data as Record<string, unknown>;
-        this.currentDataModelJson = JSON.stringify(data, null, 2);
-        this.cdr.detectChanges();
-      });
-      // Set initial data model
-      this.currentDataModel = surface.dataModel.get('/');
-      this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+    if (this.surfaceId) {
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
+      if (surface) {
+        // Subscribe to root changes
+        this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
+          this.currentDataModel = data as Record<string, unknown>;
+          this.currentDataModelJson = JSON.stringify(data, null, 2);
+          this.cdr.detectChanges();
+        });
+        // Set initial data model
+        this.currentDataModel = surface.dataModel.get('/');
+        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+      }
     }
 
     // Subscribe to Actions for Events log
