@@ -550,17 +550,10 @@ export class DemoComponent implements OnInit, OnDestroy {
 
     this.cdr.detectChanges();
 
-    // Subscribe to DataModel updates
+    // Set initial surface and  data model
     if (this.surfaceId) {
       const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
       if (surface) {
-        // Subscribe to root changes
-        this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
-          this.currentDataModel = data as Record<string, unknown>;
-          this.currentDataModelJson = JSON.stringify(data, null, 2);
-          this.cdr.detectChanges();
-        });
-        // Set initial data model
         this.currentDataModel = surface.dataModel.get('/');
         this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
       }
