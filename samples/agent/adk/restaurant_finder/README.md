@@ -40,7 +40,20 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
     * send a message to the agent:
 
         ```bash
-        curl localhost:10002 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"role":"user","parts":[{"text":"Find me an Italian restaurant"}],"messageId":"1"}}}'
+        curl http://localhost:10002 \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "message/send",
+            "params": {
+              "message": {
+                "role": "user",
+                "parts": [{"text": "Find me an Italian restaurant"}],
+                "messageId": "1"
+              }
+            }
+          }'
         ```
 
 ## Disclaimer
