@@ -168,4 +168,13 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     expect(button.nativeElement.disabled).toBeTrue();
   });
+
+  it('should override the button default background color when primary color is set', () => {
+    mockSurface.theme = { primaryColor: 'red' };
+    fixture.detectChanges();
+    const button = fixture.debugElement.query(By.css('button'));
+    const computedStyle = window.getComputedStyle(button.nativeElement);
+
+    expect(computedStyle.backgroundColor).toBe('rgb(255, 0, 0)'); // 'red' is evaluated to rgb in computed style
+  });
 });
