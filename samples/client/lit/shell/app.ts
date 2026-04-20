@@ -23,14 +23,13 @@ import {
   nothing,
 } from "lit";
 import { customElement, state, query } from "lit/decorators.js";
-import { theme as uiTheme } from "./theme/default-theme.js";
 import {
   SnackbarAction,
   SnackbarMessage,
   SnackbarUUID,
   SnackType,
-} from "./types/types.js";
-import { type Snackbar } from "./ui/snackbar.js";
+} from "../custom-components-example/types/types.js";
+import { type Snackbar } from "../custom-components-example/ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 
 // A2UI
@@ -304,6 +303,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     replaceAll: boolean;
   }> = [];
 
+  #error: string | undefined;
+
   #maybeRenderError() {
     if (!this.#error) return nothing;
 
@@ -317,10 +318,15 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     const urlParams = new URLSearchParams(window.location.search);
     const appKey = urlParams.get("app");
     if (appKey && !configs[appKey]) {
-      this.snackbar(
-        `App "${appKey}" is not available. Falling back to Restaurant Finder.`,
-        SnackType.WARNING
-      );
+      this.#pendingSnackbarMessages.push({
+        message: {
+          id: crypto.randomUUID(),
+          message: `App "${appKey}" is not available. Falling back to Restaurant Finder.`,
+          type: SnackType.WARNING,
+          persistent: false,
+        },
+        replaceAll: false,
+      });
     }
     this.config = (appKey && configs[appKey]) || restaurantConfig;
 
