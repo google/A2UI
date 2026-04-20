@@ -258,7 +258,6 @@ import { ActionDispatcher } from './action-dispatcher.service';
         margin: 4px 0 0;
         font-size: 0.85rem;
         color: #94a3b8;
-        margin-top: 4px;
       }
       .canvas-frame {
         flex: 1;
