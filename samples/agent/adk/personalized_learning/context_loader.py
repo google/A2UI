@@ -31,7 +31,7 @@ GCS_BUCKET = os.getenv("GCS_CONTEXT_BUCKET", "a2ui-demo-context")
 GCS_PREFIX = os.getenv("GCS_CONTEXT_PREFIX", "learner_context/")
 
 # Local fallback path (relative to sample root)
-LOCAL_CONTEXT_PATH = Path(__file__).parent.parent / "learner_context"
+LOCAL_CONTEXT_PATH = Path(__file__).parent / "learner_context"
 
 
 def _load_from_gcs(filename: str) -> Optional[str]:
