@@ -102,6 +102,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
             <textarea
               [value]="currentCreateSurfaceMessageJson"
               (input)="onSurfaceMessageChange($event)"
+              (blur)="onSurfaceMessageBlur()"
             ></textarea>
           </div>
         </div>
@@ -136,6 +137,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
             <textarea
               [value]="currentDataModelJson"
               (input)="onDataModelChange($event)"
+              (blur)="onDataModelBlur()"
             ></textarea>
           </div>
         </div>
@@ -632,6 +634,15 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSurfaceMessageBlur() {
+    try {
+      const parsed = JSON.parse(this.currentCreateSurfaceMessageJson);
+      this.currentCreateSurfaceMessageJson = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // Ignore if invalid, don't format
+    }
+  }
+
   /**
    * Handles user input in the data model editor.
    * Updates the surface data model live.
@@ -654,6 +665,15 @@ export class DemoComponent implements OnInit, OnDestroy {
     } catch (e) {
       this.dataModelError = e instanceof Error ? e.message : 'Invalid JSON';
       console.error(e);
+    }
+  }
+
+  onDataModelBlur() {
+    try {
+      const parsed = JSON.parse(this.currentDataModelJson);
+      this.currentDataModelJson = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // Ignore if invalid, don't format
     }
   }
 
