@@ -21,7 +21,7 @@
         },
         "createSurface": {
           "type": "object",
-          "description": "Signals the client to create a new surface and begin rendering it. When this message is sent, the client will expect 'updateComponents' and/or 'updateDataModel' messages for the same surfaceId that define the component tree.",
+          "description": "Signals the client to create a new surface and begin rendering it. It is an error to send createSurface for a surfaceId that already exists. When this message is sent, the client will expect 'updateComponents' and/or 'updateDataModel' messages for the same surfaceId that define the component tree.",
           "properties": {
             "surfaceId": {
               "type": "string",
