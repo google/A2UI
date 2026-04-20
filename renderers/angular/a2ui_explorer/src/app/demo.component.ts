@@ -603,26 +603,26 @@ export class DemoComponent implements OnInit, OnDestroy {
       // Re-initialize the demo with the updated messages
       this.agentStub.initializeDemo(updatedMessages);
 
-      // Update surfaceId if it changed
       const newSurfaceId = parsed.createSurface.surfaceId;
-      if (newSurfaceId !== this.surfaceId) {
-        this.surfaceId = newSurfaceId;
 
-        // Re-subscribe to data model for the new surfaceId
-        if (this.dataModelSub) {
-          this.dataModelSub.unsubscribe();
-        }
+      if (this.dataModelSub) {
+        this.dataModelSub.unsubscribe();
+      }
 
-        const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
-        if (surface) {
-          this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
-            this.currentDataModel = data as Record<string, unknown>;
-            this.currentDataModelJson = JSON.stringify(data, null, 2);
-            this.cdr.detectChanges();
-          });
-          this.currentDataModel = surface.dataModel.get('/');
-          this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
-        }
+      // Force recreation of the surface component by nulling the ID temporarily
+      this.surfaceId = null;
+      this.cdr.detectChanges();
+
+      this.surfaceId = newSurfaceId;
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
+      if (surface) {
+        this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
+          this.currentDataModel = data as Record<string, unknown>;
+          this.currentDataModelJson = JSON.stringify(data, null, 2);
+          this.cdr.detectChanges();
+        });
+        this.currentDataModel = surface.dataModel.get('/');
+        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
       }
 
       this.cdr.detectChanges();
