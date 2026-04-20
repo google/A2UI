@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import { BoundProperty } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, input } from '@angular/core';
 import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
 
 @Component({
@@ -38,7 +38,13 @@ import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
   `,
   template: `<section></section>`,
 })
-export class Canvas extends DynamicComponent<Types.CustomNode> implements OnInit {
+export class Canvas implements OnInit {
+  /** Reactive properties resolved from the A2UI ComponentModel. */
+  props = input<Record<string, BoundProperty>>({});
+  surfaceId = input.required<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>('/');
+
   private readonly canvasService = inject(CanvasService);
 
   readonly isCanvasOpened = computed(() => this.canvasService.surfaceId() === this.surfaceId());
@@ -52,9 +58,7 @@ export class Canvas extends DynamicComponent<Types.CustomNode> implements OnInit
   }
 
   protected openCanvas() {
-    this.canvasService.openSurfaceInCanvas(
-      this.surfaceId()!,
-      this.component().properties['children'] as Types.AnyComponentNode[],
-    );
+    const children = this.props()['children']?.value() as Types.AnyComponentNode[];
+    this.canvasService.openSurfaceInCanvas(this.surfaceId(), children ?? []);
   }
 }

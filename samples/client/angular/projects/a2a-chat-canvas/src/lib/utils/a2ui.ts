@@ -15,36 +15,52 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import * as Types from '@a2ui/web_core/types/types';
+import {
+  A2uiMessage,
+  CreateSurfaceMessage,
+  UpdateComponentsMessage,
+  UpdateDataModelMessage,
+  DeleteSurfaceMessage,
+} from '@a2ui/web_core/v0_9';
 import { isA2aDataPart } from './type-guards';
 
 /**
- * Extracts A2UI ServerToClientMessages from an array of A2A Parts.
- * It filters for parts that are A2A DataParts and checks for the presence of A2UI message keys
- * (beginRendering, surfaceUpdate, dataModelUpdate, deleteSurface).
+ * Extracts A2UI messages from an array of A2A Parts.
+ * It filters for parts that are A2A DataParts and maps them to A2UI v0.9 messages
+ * based on the presence of specific operation keys (e.g., 'createSurface', 'updateComponents').
  *
  * @param parts An array of A2A Parts.
- * @returns An array of A2UI Types.ServerToClientMessage objects.
+ * @returns An array of A2uiMessage objects.
  */
-export function extractA2uiDataParts(parts: Part[]) {
-  return parts.reduce<Types.ServerToClientMessage[]>((messages, part) => {
+export function extractA2uiDataParts(parts: Part[]): A2uiMessage[] {
+  return parts.reduce<A2uiMessage[]>((messages, part) => {
     if (isA2aDataPart(part)) {
       if (part.data && typeof part.data === 'object') {
-        if ('beginRendering' in part.data) {
+        // Indexed access is used in the branches below because the payload types are defined inline
+        // in the message interfaces (e.g., CreateSurfaceMessage) and do not have separate named exports.
+        if ('createSurface' in part.data) {
           messages.push({
-            beginRendering: part.data['beginRendering'] as Types.BeginRenderingMessage,
+            version: 'v0.9',
+            createSurface: part.data['createSurface'] as CreateSurfaceMessage['createSurface'],
           });
-        } else if ('surfaceUpdate' in part.data) {
+        } else if ('updateComponents' in part.data) {
           messages.push({
-            surfaceUpdate: part.data['surfaceUpdate'] as Types.SurfaceUpdateMessage,
+            version: 'v0.9',
+            updateComponents: part.data[
+              'updateComponents'
+            ] as UpdateComponentsMessage['updateComponents'],
           });
-        } else if ('dataModelUpdate' in part.data) {
+        } else if ('updateDataModel' in part.data) {
           messages.push({
-            dataModelUpdate: part.data['dataModelUpdate'] as Types.DataModelUpdate,
+            version: 'v0.9',
+            updateDataModel: part.data[
+              'updateDataModel'
+            ] as UpdateDataModelMessage['updateDataModel'],
           });
         } else if ('deleteSurface' in part.data) {
           messages.push({
-            deleteSurface: part.data['deleteSurface'] as Types.DeleteSurfaceMessage,
+            version: 'v0.9',
+            deleteSurface: part.data['deleteSurface'] as DeleteSurfaceMessage['deleteSurface'],
           });
         }
       }

@@ -14,38 +14,28 @@
  * limitations under the License.
  */
 
-import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import { BASIC_COMPONENTS, AngularCatalog, AngularComponentImplementation } from '@a2ui/angular';
+import { z } from 'zod';
+import { Canvas } from './canvas';
+import { Chart } from './chart';
+import { GoogleMap } from './google-map';
+import { YouTube } from './youtube';
 
-export const RIZZ_CHARTS_CATALOG = {
-  ...DEFAULT_CATALOG,
-  Canvas: () => import('./canvas').then((r) => r.Canvas),
-  Chart: {
-    type: () => import('./chart').then((r) => r.Chart),
-    bindings: ({ properties }) => [
-      inputBinding('type', () => ('type' in properties && properties['type']) || undefined),
-      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
-      inputBinding(
-        'chartData',
-        () => ('chartData' in properties && properties['chartData']) || undefined,
-      ),
-    ],
-  },
-  GoogleMap: {
-    type: () => import('./google-map').then((r) => r.GoogleMap),
-    bindings: ({ properties }) => [
-      inputBinding('zoom', () => ('zoom' in properties && properties['zoom']) || 8),
-      inputBinding('center', () => ('center' in properties && properties['center']) || undefined),
-      inputBinding('pins', () => ('pins' in properties && properties['pins']) || undefined),
-      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
-    ],
-  },
-  YouTube: {
-    type: () => import('./youtube').then((r) => r.YouTube),
-    bindings: ({ properties }) => [
-      inputBinding('videoId', () => ('videoId' in properties && properties['videoId']) || undefined),
-      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
-      inputBinding('autoplay', () => ('autoplay' in properties && properties['autoplay']) || undefined),
-    ],
-  },
-} as Catalog;
+const customComponents: AngularComponentImplementation[] = [
+  { name: 'Canvas', schema: z.object({}), component: Canvas },
+  { name: 'Chart', schema: z.object({}), component: Chart },
+  { name: 'GoogleMap', schema: z.object({}), component: GoogleMap },
+  { name: 'YouTube', schema: z.object({}), component: YouTube },
+];
+
+/**
+ * The Angular catalog for RizzCharts components.
+ *
+ * This catalog combines the standard A2UI components with custom components
+ * specific to this project (Canvas, Chart, GoogleMap, YouTube). It is identified
+ * by a unique URI that matches the catalog definition in the agent.
+ */
+export const RIZZ_CHARTS_CATALOG = new AngularCatalog(
+  'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
+  [...BASIC_COMPONENTS, ...customComponents],
+);

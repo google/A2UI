@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
-import * as Primitives from '@a2ui/web_core/types/primitives';
-import * as Types from '@a2ui/web_core/types/types';
+import { BoundProperty } from '@a2ui/angular';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatIconButton } from '@angular/material/button';
@@ -29,10 +27,6 @@ interface Pin {
   name: string;
   description: string | null;
   pinElement: google.maps.marker.PinElement;
-}
-
-export interface CustomProperties {
-  path: string;
 }
 
 @Component({
@@ -133,8 +127,13 @@ export interface CustomProperties {
     }
   `,
 })
-export class GoogleMap extends DynamicComponent<Types.CustomNode> {
-  private readonly maxPinCount = 100;
+export class GoogleMap {
+  /** Reactive properties resolved from the A2UI ComponentModel. */
+  props = input<Record<string, BoundProperty>>({});
+  surfaceId = input.required<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>('/');
+
   private readonly defaultCenter: google.maps.LatLngLiteral = {
     lat: 34.0626,
     lng: -118.3759,
@@ -142,91 +141,50 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
 
   mapId = '4506f1f5f5e6e8e2';
 
-  readonly title = input<Primitives.StringValue | null>();
-  protected resolvedTitle = computed(() => super.resolvePrimitive(this.title() ?? null));
+  protected resolvedTitle = computed(() => this.props()['title']?.value() as string | null);
+  protected resolvedZoom = computed(() => this.props()['zoom']?.value() as number | null);
 
-  readonly zoom = input.required<Primitives.NumberValue | null>();
-  protected resolvedZoom = computed(() => super.resolvePrimitive(this.zoom()));
+  protected resolvedCenter = computed(() => {
+    const center = this.props()['center']?.value();
+    if (center && typeof center === 'object') {
+      return {
+        lat: center.lat,
+        lng: center.lng,
+      };
+    }
+    return this.defaultCenter;
+  });
 
-  readonly center = input.required<CustomProperties | null>();
-  protected resolvedCenter = computed(() => this.resolveLatLng(this.center()));
-
-  readonly pins = input<CustomProperties>();
-  protected readonly resolvedPins = computed(() => this.resolveLocations(this.pins()));
-
-  constructor() {
-    super();
-  }
-
-  private resolveLocations(value: CustomProperties | undefined): Pin[] {
+  protected readonly resolvedPins = computed(() => {
+    const pinsArray = this.props()['pins']?.value() as any[];
     const locations: Pin[] = [];
-    if (value?.path) {
-      for (let index: number = 0; index < this.maxPinCount; index++) {
-        const locationPath = `${value.path}[${index}]`;
-        const pin = this.resolveLocation(locationPath);
-        // Stop iterating if no more locations can be found at the `locationPath`.
-        if (!pin) {
-          break;
+    if (Array.isArray(pinsArray)) {
+      for (const item of pinsArray) {
+        const lat = item.lat;
+        const lng = item.lng;
+        const name = item.name;
+        const description = item.description;
+        const background = item.background;
+        const borderColor = item.borderColor;
+        const glyphColor = item.glyphColor;
+
+        if (lat == null || lng == null || name == null) {
+          continue;
         }
-        locations.push(pin);
+
+        locations.push({
+          lat,
+          lng,
+          name,
+          description,
+          pinElement: new google.maps.marker.PinElement({
+            background,
+            borderColor,
+            glyphColor,
+          }),
+        });
       }
     }
     return locations;
-  }
-
-  private resolveLocation(value: string | null): Pin | null {
-    if (!value) {
-      return null;
-    }
-
-    const latValue: Primitives.NumberValue = { path: `${value}.lat` };
-    const lngValue: Primitives.NumberValue = { path: `${value}.lng` };
-    const nameValue: Primitives.StringValue = { path: `${value}.name` };
-    const descriptionValue: Primitives.StringValue = { path: `${value}.description` };
-    const backgroundValue: Primitives.StringValue = { path: `${value}.background` };
-    const borderColorValue: Primitives.StringValue = { path: `${value}.borderColor` };
-    const glyphColorValue: Primitives.StringValue = { path: `${value}.glyphColor` };
-
-    const lat = this.resolvePrimitive(latValue);
-    const lng = this.resolvePrimitive(lngValue);
-    const name = this.resolvePrimitive(nameValue);
-    const description = this.resolvePrimitive(descriptionValue);
-    const background = this.resolvePrimitive(backgroundValue);
-    const borderColor = this.resolvePrimitive(borderColorValue);
-    const glyphColor = this.resolvePrimitive(glyphColorValue);
-
-    // TODO: This logic should be implemented in the `guard.ts` by making the data model typed upstream.
-    if (lat === null || lng === null || name === null) {
-      // The location is invalid.
-      return null;
-    }
-
-    return {
-      lat,
-      lng,
-      name,
-      // TODO: Description is currently not used in the Maps.
-      description,
-      pinElement: new google.maps.marker.PinElement({
-        background,
-        borderColor,
-        glyphColor,
-      }),
-    };
-  }
-
-  private resolveLatLng(value: CustomProperties | null): google.maps.LatLngLiteral {
-    if (value?.path) {
-      const latValue: Primitives.NumberValue = { path: `${value.path}.lat` };
-      const lngValue: Primitives.NumberValue = { path: `${value.path}.lng` };
-      const lat = this.resolvePrimitive(latValue)!;
-      const lng = this.resolvePrimitive(lngValue)!;
-      return {
-        lat,
-        lng,
-      };
-    }
-
-    return this.defaultCenter;
-  }
+  });
 }

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
-import * as Primitives from '@a2ui/web_core/types/primitives';
-import * as Types from '@a2ui/web_core/types/types';
+import { BoundProperty } from '@a2ui/angular';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,18 +26,8 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {
-  ChartData,
-  ChartEvent,
-  Chart as ChartJS,
-  ChartOptions,
-  ChartType,
-  LegendItem,
-} from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ChartData, ChartEvent, ChartOptions, ChartType, LegendItem } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-
-ChartJS.register(ChartDataLabels);
 
 @Component({
   selector: 'a2ui-chart',
@@ -131,26 +119,26 @@ ChartJS.register(ChartDataLabels);
     </div>
   `,
 })
-export class Chart extends DynamicComponent<Types.CustomNode> {
-  readonly type = input.required<string>();
-  protected readonly chartType = computed(() => this.type() as ChartType);
+export class Chart {
+  /** Reactive properties resolved from the A2UI ComponentModel. */
+  props = input<Record<string, BoundProperty>>({});
+  surfaceId = input.required<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>('/');
 
-  readonly title = input<Primitives.StringValue | null>();
-  protected readonly resolvedTitle: Signal<string | null> = computed(() =>
-    super.resolvePrimitive(this.title() ?? null),
+  protected readonly chartType = computed(() => this.props()['type']?.value() as ChartType);
+  protected readonly resolvedTitle = computed(
+    () => this.props()['title']?.value() as string | null,
   );
 
-  readonly chartData = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedPieChartData: Signal<
-    Map<string, ChartData<'pie', number[], string>> | undefined
-  > = computed(() => {
-    const chartDataPathPrefix = this.chartData();
+  protected readonly resolvedPieChartData = computed(() => {
+    const dataArray = this.props()['chartData']?.value() as any[];
     const chartType = this.chartType();
-    if (chartDataPathPrefix === null) {
+    if (!dataArray) {
       return undefined;
     }
     if (chartType === 'pie' || chartType === 'doughnut') {
-      return this.resolvePieChartData(chartDataPathPrefix);
+      return this.resolvePieChartData(dataArray);
     }
     console.error('Unsupported chart type specified:', chartType);
     return undefined;
@@ -170,7 +158,7 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
   );
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-  protected chartOptions: ChartOptions = {
+  protected chartOptions: any = {
     responsive: true,
     plugins: {
       legend: {
@@ -201,54 +189,45 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
   };
 
   private resolvePieChartData(
-    pathPrefix: Primitives.StringValue,
+    dataArray: any[],
   ): Map<string, ChartData<'pie', number[], string>> | undefined {
     const dataMap = new Map<string, ChartData<'pie', number[], string>>();
     const labels: string[] = [];
     const data: number[] = [];
-    if (pathPrefix?.path) {
-      for (let index: number = 0; index < 500; index++) {
-        const itemPrefix = `${pathPrefix.path}[${index}]`;
-        const labelPath: Primitives.StringValue = { path: `${itemPrefix}.label` };
-        const valuePath: Primitives.NumberValue = { path: `${itemPrefix}.value` };
-        const label = super.resolvePrimitive(labelPath);
-        const value = super.resolvePrimitive(valuePath);
-        if (label === null || value === null) {
-          break;
-        }
-        labels.push(label);
-        data.push(value);
 
-        const drilldownLabels: string[] = [];
-        const drilldownData: number[] = [];
-        const drilldownPathPrefix = `${itemPrefix}.drillDown`;
-        for (let jindex: number = 0; jindex < 500; jindex++) {
-          const drilldownItemPrefix = `${drilldownPathPrefix}[${jindex}]`;
-          const drilldownLabelPath: Primitives.StringValue = {
-            path: `${drilldownItemPrefix}.label`,
-          };
-          const drilldownValuePath: Primitives.NumberValue = {
-            path: `${drilldownItemPrefix}.value`,
-          };
-          const drilldownLabel = super.resolvePrimitive(drilldownLabelPath);
-          const drilldownValue = super.resolvePrimitive(drilldownValuePath);
-          if (drilldownLabel === null || drilldownValue === null) {
-            break;
-          }
-          drilldownLabels.push(drilldownLabel);
-          drilldownData.push(drilldownValue);
-        }
-
-        const drilldownChartData: ChartData<'pie', number[], string> = {
-          labels: drilldownLabels,
-          datasets: [
-            {
-              data: drilldownData,
-            },
-          ],
-        };
-        dataMap.set(label, drilldownChartData);
+    for (const item of dataArray) {
+      const label = item.label;
+      const value = item.value;
+      if (label == null || value == null) {
+        continue;
       }
+      labels.push(label);
+      data.push(value);
+
+      const drilldownLabels: string[] = [];
+      const drilldownData: number[] = [];
+      const drilldown = item.drillDown;
+      if (Array.isArray(drilldown)) {
+        for (const ddItem of drilldown) {
+          const ddLabel = ddItem.label;
+          const ddValue = ddItem.value;
+          if (ddLabel == null || ddValue == null) {
+            continue;
+          }
+          drilldownLabels.push(ddLabel);
+          drilldownData.push(ddValue);
+        }
+      }
+
+      const drilldownChartData: ChartData<'pie', number[], string> = {
+        labels: drilldownLabels,
+        datasets: [
+          {
+            data: drilldownData,
+          },
+        ],
+      };
+      dataMap.set(label, drilldownChartData);
     }
 
     const rootData: ChartData<'pie', number[], string> = {
