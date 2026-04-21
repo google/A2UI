@@ -1,3 +1,3 @@
-# Eval
+# Dart and Flutter Eval
 
-Tests that evaluate genui against real AI models.
+Tests that evaluate Dart GenUI.
