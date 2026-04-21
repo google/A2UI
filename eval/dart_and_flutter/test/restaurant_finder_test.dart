@@ -25,9 +25,13 @@ void main() {
     await restaurantFinderClient.startAndVerify();
   });
 
+  tearDown(() {
+    print('Teared down the test.');
+  });
+
   test('GanUI SDK can work with restaurant finder.', () async {
     final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
-    await chatSession.sendMessage('Hello, how can you help me?');
+    await chatSession.sendTextToAgent('Hello, how can you help me?');
   });
 }
 
@@ -61,12 +65,14 @@ class Session extends ChangeNotifier {
     _surfaceController.handleMessage(
       const CreateSurface(catalogId: 'basic', surfaceId: 'main'),
     );
-    _a2uiSubscription = _connector.stream.listen(_handleAgentUiStream);
+    _a2uiSubscription = _connector.stream.listen(_handleUiStreamFromAgent);
 
-    _textSubscription = _connector.textStream.listen(_handleAgentTextStream);
+    _textSubscription = _connector.textStream.listen(
+      _handleTextStreamFromAgent,
+    );
 
     _submitSubscription = _surfaceController.onSubmit.listen(
-      _handleSubmitFromRendererToAgent,
+      _sendMessageToAgent,
     );
 
     _errorSubscription = _connector.errorStream.listen(_handleError);
@@ -75,26 +81,29 @@ class Session extends ChangeNotifier {
   String? _currentAiMessage;
 
   void _handleError(Object error) {
-    _logger.severe('A2A error', error);
+    print('Received error from agent: $error');
     notifyListeners();
   }
 
-  void _handleAgentUiStream(A2uiMessage message) {
+  void _handleUiStreamFromAgent(A2uiMessage message) {
+    print('Received UI stream from agent: $message');
     _surfaceController.handleMessage(message);
   }
 
-  void _handleAgentTextStream(String chunk) {
+  void _handleTextStreamFromAgent(String chunk) {
+    print('Received text chunk from agent: $chunk');
     _currentAiMessage = (_currentAiMessage ?? '') + chunk;
     notifyListeners();
   }
 
-  Future<void> sendMessage(String text) async {
+  Future<void> sendTextToAgent(String text) async {
     if (text.isEmpty) return;
     _currentAiMessage = null;
-    await _handleSubmitFromRendererToAgent(ChatMessage.user(text));
+    await _sendMessageToAgent(ChatMessage.user(text));
   }
 
-  Future<void> _handleSubmitFromRendererToAgent(ChatMessage message) async {
+  Future<void> _sendMessageToAgent(ChatMessage message) async {
+    print('Sending text to agent: $message');
     _isProcessing = true;
     notifyListeners();
     try {
