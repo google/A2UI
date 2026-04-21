@@ -50,16 +50,22 @@ export default function App() {
     return p;
   });
 
-  // 2. Re-render when the agent creates a surface.
+  // 2. Re-render when the agent creates or deletes a surface.
   const [surfaces, setSurfaces] = useState(() =>
     Array.from(processor.model.surfacesMap.values())
   );
 
   useEffect(() => {
-    const surfaceCreatedSub = processor.onSurfaceCreated(() =>
-      setSurfaces(Array.from(processor.model.surfacesMap.values()))
-    );
-    return () => surfaceCreatedSub.unsubscribe();
+    const sync = () =>
+      setSurfaces(Array.from(processor.model.surfacesMap.values()));
+
+    const createdSub = processor.onSurfaceCreated(sync);
+    const deletedSub = processor.onSurfaceDeleted(sync);
+
+    return () => {
+      createdSub.unsubscribe();
+      deletedSub.unsubscribe();
+    };
   }, [processor]);
 
   // 3. Render every surface the agent has created.
