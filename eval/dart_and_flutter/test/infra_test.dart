@@ -8,24 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'test_infra/ai_client.dart';
 import 'test_infra/api_key.dart';
-import 'test_infra/shell_utils.dart';
-
-const _restaurantFinderCurlMessage = r'''
-curl http://localhost:10002 \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "message/send",
-    "params": {
-      "message": {
-        "role": "user",
-        "parts": [{"text": "Find me an Italian restaurant"}],
-        "messageId": "1"
-      }
-    }
-  }'
-''';
+import 'test_infra/restaurant_finder.dart';
 
 void main() {
   test('test can read api key "$geminiApiKeyName"', () {
@@ -44,29 +27,12 @@ void main() {
                 .toList())
             .join(' ');
     expect(result, isNotEmpty);
-    print('Result: $result');
+    print('Joke from AI:\n\n$result\n\n');
   });
 
-  /// Tests [start instructions](../../samples/agent/adk/restaurant_finder/README.md)
   test('test can start restaurant_finder', () async {
-    final process = await startService(
-      '(cd ../../samples/agent/adk/restaurant_finder && uv run .)',
-      [
-        ShellProbe(
-          command: 'curl http://localhost:10002/.well-known/agent-card.json',
-          responseChecker: (response) {
-            expect(response, contains('capabilities'));
-            expect(response, contains('A2UI'));
-          },
-        ),
-        ShellProbe(
-          command: _restaurantFinderCurlMessage,
-          responseChecker: (response) {
-            expect(response, contains('"parts":[{"kind":'));
-          },
-        ),
-      ],
-    );
-    addTearDown(process.kill);
+    final restaurantFinderClient = TestRestaurantFinderClient();
+    addTearDown(restaurantFinderClient.dispose);
+    await restaurantFinderClient.startAndVerify();
   });
 }

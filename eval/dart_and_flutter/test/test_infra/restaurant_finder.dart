@@ -1,0 +1,65 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+
+import 'shell_utils.dart';
+
+const _restaurantFinderCurlMessage = r'''
+curl http://localhost:10002 \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "message/send",
+    "params": {
+      "message": {
+        "role": "user",
+        "parts": [{"text": "How can you help me?"}],
+        "messageId": "1"
+      }
+    }
+  }'
+''';
+
+final class TestRestaurantFinderClient {
+  Process? _process;
+
+  /// Tests [start instructions](../../samples/agent/adk/restaurant_finder/README.md).
+  ///
+  /// If the client is already running, it will be restarted.
+  Future<void> startAndVerify() async {
+    if (_process != null) {
+      _process?.kill();
+    }
+
+    _process = await startService(
+      '(cd ../../samples/agent/adk/restaurant_finder && uv run .)',
+      [
+        ShellProbe(
+          command: 'curl http://localhost:10002/.well-known/agent-card.json',
+          responseChecker: (response) {
+            expect(response, contains('capabilities'));
+            expect(response, contains('A2UI'));
+          },
+        ),
+        ShellProbe(
+          command: _restaurantFinderCurlMessage,
+          responseChecker: (response) {
+            expect(response, contains('"parts":[{"kind":'));
+          },
+        ),
+      ],
+    );
+  }
+
+  void stop() {
+    _process?.kill();
+    _process = null;
+  }
+
+  void dispose() {
+    stop();
+  }
+
+  void sendMessage(String message) {}
+}
