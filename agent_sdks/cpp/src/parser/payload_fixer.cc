@@ -34,13 +34,7 @@ std::string remove_trailing_commas(const std::string& json_str) {
     // Fix trailing commas: identifying commas followed by optional whitespace and a closing bracket (]) or brace (}).
     std::regex pattern(R"(,(?=\s*[\]}]))");
     std::string fixed = std::regex_replace(json_str, pattern, "");
-    
-    if (fixed != json_str) {
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "Detected trailing commas in LLM output; applied autofix.\n";
-        debug_file.close();
-    }
-    
+
     return fixed;
 }
 
@@ -48,16 +42,10 @@ static nlohmann::json _parse(const std::string& payload) {
     try {
         nlohmann::json a2ui_json = nlohmann::json::parse(payload);
         if (!a2ui_json.is_array()) {
-            std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-            debug_file << "Received a single JSON object, wrapping in a list for validation.\n";
-            debug_file.close();
             a2ui_json = nlohmann::json::array({a2ui_json});
         }
         return a2ui_json;
     } catch (const std::exception& e) {
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "Failed to parse JSON: " << e.what() << "\n";
-        debug_file.close();
         throw std::runtime_error("Failed to parse JSON: " + std::string(e.what()));
     }
 }
@@ -67,10 +55,6 @@ nlohmann::json parse_and_fix(const std::string& payload) {
     try {
         return _parse(normalized_payload);
     } catch (const std::exception& e) {
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "Initial A2UI payload validation failed: " << e.what() << "\n";
-        debug_file.close();
-        
         std::string updated_payload = remove_trailing_commas(normalized_payload);
         return _parse(updated_payload);
     }

@@ -101,19 +101,8 @@ protected:
         }
 
         if (obj.contains(MSG_TYPE_SURFACE_UPDATE) || obj.contains(MSG_TYPE_DELETE_SURFACE)) {
-            std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-            debug_file << "Checking buffering for " << sid << "\n";
-            debug_file << "  yielded_start: " << (yielded_start_messages_.find(sid) != yielded_start_messages_.end()) << "\n";
-            debug_file << "  buffered_start: " << buffered_start_message_.has_value() << "\n";
-            debug_file.close();
-
             if (yielded_start_messages_.find(sid) == yielded_start_messages_.end()
                 && !buffered_start_message_.has_value()) {
-                
-                std::ofstream debug_file2("/tmp/debug.txt", std::ios::app);
-                debug_file2 << "  Buffering message for " << sid << "\n";
-                debug_file2.close();
-                
                 pending_messages_[sid].push_back(obj);
                 return true;
             }

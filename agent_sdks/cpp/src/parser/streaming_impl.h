@@ -264,12 +264,6 @@ protected:
                                 try {
                                     nlohmann::json obj = nlohmann::json::parse(obj_buffer);
                                     if (obj.is_object()) {
-                                        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                                        debug_file << "Parsed object keys: ";
-                                        for (auto it = obj.begin(); it != obj.end(); ++it) debug_file << it.key() << " ";
-                                        debug_file << "\n";
-                                        debug_file.close();
-
                                         found_valid_json_in_block_ = true;
                                         
                                         bool is_protocol = in_top_level_list_ && is_protocol_msg(obj);
@@ -280,9 +274,6 @@ protected:
                                             handle_partial_component(obj, messages);
                                         } else if (is_top_level || is_protocol) {
                                             if (!handle_complete_object(obj, surface_id_, messages)) {
-                                                std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                                                debug_file << "Fallback success, obj: " << obj.dump() << "\n";
-                                                debug_file.close();
                                                 yield_messages({obj}, messages);
                                             }
                                         }
@@ -295,11 +286,9 @@ protected:
                                         }
                                     }
                                  } catch (const nlohmann::json::parse_error& e) {
-                                    std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                                    debug_file << "Parse failed in process_json_chunk: " << e.what() << "\n";
-                                    debug_file << "Buffer: " << obj_buffer << "\n";
-                                    debug_file.close();
-                                }
+                                      // Ignore parse errors during streaming as the JSON may be incomplete.
+                                      // We will throw if no valid JSON is found by the end of the block.
+                                 }
                             }
                         }
                     }
@@ -372,9 +361,6 @@ protected:
             try {
                 nlohmann::json obj = nlohmann::json::parse(fixed_fragment);
                 if (obj.is_object() && obj.contains("id") && obj.contains("component")) {
-                    std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                    debug_file << "Sniffed component in V09: " << obj.dump() << "\n";
-                    debug_file.close();
                     handle_partial_component(obj, messages);
                 }
             } catch (...) {
@@ -446,9 +432,6 @@ protected:
     }
 
     void sniff_partial_data_model(std::vector<ResponsePart>& messages) {
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "sniff_partial_data_model called, buffer: " << json_buffer_ << "\n";
-        debug_file.close();
 
         std::string msg_type = get_data_model_msg_type();
         if (json_buffer_.find("\"" + msg_type + "\"") == std::string::npos) {
@@ -460,17 +443,10 @@ protected:
             std::string raw_fragment = json_buffer_.substr(it->second);
             if (raw_fragment.empty()) continue;
 
-            std::ofstream debug_file2("/tmp/debug.txt", std::ios::app);
-            debug_file2 << "Found { at " << it->second << ", fragment: " << raw_fragment << "\n";
-            debug_file2.close();
-
             std::string fixed_fragment = fix_json(raw_fragment);
             nlohmann::json obj;
             try {
                 obj = nlohmann::json::parse(fixed_fragment);
-                std::ofstream debug_file3("/tmp/debug.txt", std::ios::app);
-                debug_file3 << "Parsed fixed fragment: " << obj.dump() << "\n";
-                debug_file3.close();
             } catch (...) {
                 std::string trimmed = raw_fragment;
                 size_t last_comma = trimmed.rfind(',');
@@ -479,9 +455,6 @@ protected:
                     try {
                         std::string fixed_trimmed = fix_json(trimmed);
                         obj = nlohmann::json::parse(fixed_trimmed);
-                        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                        debug_file << "Fallback success, obj: " << obj.dump() << "\n";
-                        debug_file.close();
                         break;
                     } catch (...) {
                         last_comma = trimmed.rfind(',');
@@ -511,10 +484,6 @@ protected:
                                         {"value", delta}
                                     }}
                                 };
-                                
-                                std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                                debug_file << "sniff_partial_data_model yielding v0.9: " << delta_msg.dump() << "\n";
-                                debug_file.close();
                                 
                                 yield_messages({delta_msg}, messages, false);
                                 
@@ -566,11 +535,6 @@ protected:
                             nlohmann::json delta_msg = {
                                 {msg_type, delta_msg_payload}
                             };
-                            
-                            std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                            debug_file << "sniff_partial_data_model yielding: " << delta_msg.dump() << "\n";
-                            debug_file.close();
-                            
                             yield_messages({delta_msg}, messages, false);
                             
                             for (auto dit = delta.begin(); dit != delta.end(); ++dit) {
@@ -693,16 +657,6 @@ protected:
             }
         }
 
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "yield_reachable called for " << surface_id_ << "\n";
-        debug_file << "  available_reachable: ";
-        for (const auto& id : available_reachable) debug_file << id << " ";
-        debug_file << "\n";
-        debug_file << "  yielded_ids: ";
-        for (const auto& id : yielded_ids_[surface_id_]) debug_file << id << " ";
-        debug_file << "\n";
-        debug_file << "  should_yield: " << should_yield << "\n";
-        debug_file.close();
 
         if (should_yield) {
             nlohmann::json msg_payload = {
@@ -851,10 +805,6 @@ protected:
                 try {
                     validator_->validate(m, surface_id_, strict_integrity);
                 } catch (const std::exception& e) {
-                    std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                    debug_file << "Validation failed in yield_messages: " << e.what() << " (strict=" << strict_integrity << ")\n";
-                    debug_file.close();
-                    
                     if (strict_integrity) {
                         throw;
                     } else {

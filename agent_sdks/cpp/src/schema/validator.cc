@@ -181,22 +181,12 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
         }
     }
 
-    std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-    debug_file << "check_component_integrity called with " << ids.size() << " ids: ";
-    for (const auto& id : ids) debug_file << id << " ";
-    debug_file << "\n";
-    debug_file.close();
-
     if (!skip_root_check && root_id.has_value() && ids.find(*root_id) == ids.end()) {
         throw std::runtime_error("Missing root component: No component has id='" + *root_id + "'");
     }
 
     for (const auto& comp : components) {
         if (!comp.is_object()) continue;
-        
-        std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-        debug_file << "Component in check_component_integrity: " << comp.dump() << "\n";
-        debug_file.close();
         
         if (comp.contains("component") && comp["component"].is_object()) {
             auto comp_def = comp["component"];
@@ -217,11 +207,6 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
 
         if (comp.contains("component") && comp["component"].is_string()) {
             std::string comp_type = comp["component"].get<std::string>();
-            
-            std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-            debug_file << "Checking component type in V09: " << comp_type << " for comp " << comp.value("id", "") << "\n";
-            debug_file.close();
-            
             auto catalog_schema = catalog_.catalog_schema();
             if (catalog_schema.contains("components")) {
                 auto comps = catalog_schema["components"];
@@ -233,10 +218,6 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
 
         if (!skip_root_check && root_id.has_value()) {
             auto check_ref = [&](const std::string& ref_id, const std::string& field_name) {
-                std::ofstream debug_file("/tmp/debug.txt", std::ios::app);
-                debug_file << "Checking ref " << ref_id << " in field " << field_name << " for comp " << comp.value("id", "") << "\n";
-                debug_file.close();
-                
                 if (ids.find(ref_id) == ids.end()) {
                      throw std::runtime_error("Component '" + comp.value("id", "") + "' references non-existent component '" + ref_id + "' in field '" + field_name + "'");
                 }
