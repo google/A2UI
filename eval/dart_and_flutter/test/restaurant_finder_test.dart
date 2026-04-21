@@ -15,7 +15,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:genui/genui.dart';
-// import 'package:genui_a2a/genui_a2a.dart';
+import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
 void main() {
@@ -70,17 +70,14 @@ class ChatSession extends ChangeNotifier {
     });
   }
 
-  Message? _currentAiMessage;
+  String? _currentAiMessage;
 
   void _handleA2uiMessage(A2uiMessage message) {
     _surfaceController.handleMessage(message);
   }
 
   void _updateAiMessage(String chunk) {
-    if (_currentAiMessage == null) {
-      _currentAiMessage = Message(isUser: false, text: '');
-    }
-    _currentAiMessage!.text = (_currentAiMessage!.text ?? '') + chunk;
+    _currentAiMessage = (_currentAiMessage ?? '') + chunk;
     notifyListeners();
   }
 

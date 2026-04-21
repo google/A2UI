@@ -26,6 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   genui: ^0.8.0
+  genui_a2a: ^0.8.0
 
 
 dev_dependencies:
