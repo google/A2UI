@@ -7,18 +7,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_infra/restaurant_finder.dart';
-
-void main() {
-  setUpAll(() async {
-    final restaurantFinderClient = TestRestaurantFinderClient();
-    addTearDown(restaurantFinderClient.dispose);
-    await restaurantFinderClient.startAndVerify();
-  });
-
-  test('Restaurant finder can answer questions.', () {});
-}
-
-
 // Copyright 2025 The Flutter Authors.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -30,7 +18,15 @@ import 'package:genui/genui.dart';
 import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
-import 'message.dart';
+void main() {
+  setUpAll(() async {
+    final restaurantFinderClient = TestRestaurantFinderClient();
+    addTearDown(restaurantFinderClient.dispose);
+    await restaurantFinderClient.startAndVerify();
+  });
+
+  test('Restaurant finder can answer questions.', () {});
+}
 
 /// A class that manages the chat session state and logic.
 class ChatSession extends ChangeNotifier {
