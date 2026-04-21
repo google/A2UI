@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:io';
 
 /// A function that checks the response of the service.
@@ -53,8 +54,39 @@ Future<Process> startAndVerifyService(
   String command,
   List<ShellProbe> probes, {
   bool printCommandOutput = true,
+  Duration quietPeriod = const Duration(seconds: 2),
 }) async {
   final process = await Process.start('bash', ['-c', command]);
+
+  final outputLines = <String>[];
+  final quietCompleter = Completer<void>();
+  Timer? quietTimer;
+
+  void resetQuietTimer() {
+    quietTimer?.cancel();
+    quietTimer = Timer(quietPeriod, () {
+      if (!quietCompleter.isCompleted) quietCompleter.complete();
+    });
+  }
+
+  resetQuietTimer();
+
+  process.stdout.transform(SystemEncoding().decoder).listen(
+    (chunk) {
+      outputLines.add(chunk);
+      resetQuietTimer();
+    },
+    onDone: () {
+      quietTimer?.cancel();
+      if (!quietCompleter.isCompleted) quietCompleter.complete();
+    },
+  );
+
+  await quietCompleter.future;
+
+  if (printCommandOutput && outputLines.isNotEmpty) {
+    print(outputLines.join());
+  }
 
   for (final probe in probes) {
     probe.validate();
