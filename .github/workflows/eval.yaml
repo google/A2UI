@@ -6,7 +6,7 @@ name: eval-workflow
 
 on:
   push: 
-    # Workflow runs on push to any branch.
+    # Workflow runs on push to any branch in the repo (not forks).
   schedule:
     - cron: "0 * * * *" # hourly
 
@@ -14,7 +14,7 @@ jobs:
   eval-job:
     # Do not run on forked branches,
     # because the test does not have access to secrets in forks.
-    if: github.repository == 'flutter/genui'
+    if: github.repository == 'google/a2ui'
     runs-on: ubuntu-latest
     environment: eval
     steps:
