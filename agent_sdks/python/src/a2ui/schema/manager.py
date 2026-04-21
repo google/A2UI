@@ -233,4 +233,6 @@ class A2uiSchemaManager(InferenceStrategy):
       if examples_str:
         parts.append(f"### Examples:\n{examples_str}")
 
-    return "\n\n".join(parts)
+    s = "\n\n".join(parts)
+    print("System prompt: \n" + s)
+    return s
