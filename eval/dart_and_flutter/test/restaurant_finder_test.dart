@@ -15,7 +15,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:genui/genui.dart';
-import 'package:genui_a2a/genui_a2a.dart';
+// import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
 void main() {
