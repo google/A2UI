@@ -19,18 +19,21 @@ import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
 void main() {
-  setUpAll(() async {
+  setUp(() async {
     final restaurantFinderClient = TestRestaurantFinderClient();
     addTearDown(restaurantFinderClient.dispose);
     await restaurantFinderClient.startAndVerify();
   });
 
-  test('Restaurant finder can answer questions.', () {});
+  test('GanUI SDK can work with restaurant finder.', () async {
+    final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
+    await chatSession.sendMessage('Hello, how can you help me?');
+  });
 }
 
 /// A class that manages the chat session state and logic.
-class ChatSession extends ChangeNotifier {
-  ChatSession({required String agentUrl}) {
+class Session extends ChangeNotifier {
+  Session({required String agentUrl}) {
     _connector = A2uiAgentConnector(url: Uri.parse(agentUrl));
     _surfaceController = SurfaceController(
       catalogs: [BasicCatalogItems.asCatalog()],
@@ -58,25 +61,29 @@ class ChatSession extends ChangeNotifier {
     _surfaceController.handleMessage(
       const CreateSurface(catalogId: 'basic', surfaceId: 'main'),
     );
-    _a2uiSubscription = _connector.stream.listen(_handleA2uiMessage);
+    _a2uiSubscription = _connector.stream.listen(_handleAgentUiStream);
 
-    _textSubscription = _connector.textStream.listen(_updateAiMessage);
+    _textSubscription = _connector.textStream.listen(_handleAgentTextStream);
 
-    _submitSubscription = _surfaceController.onSubmit.listen(_sendChatMessage);
+    _submitSubscription = _surfaceController.onSubmit.listen(
+      _handleSubmitFromRendererToAgent,
+    );
 
-    _errorSubscription = _connector.errorStream.listen((error) {
-      _logger.severe('A2A error', error);
-      notifyListeners();
-    });
+    _errorSubscription = _connector.errorStream.listen(_handleError);
   }
 
   String? _currentAiMessage;
 
-  void _handleA2uiMessage(A2uiMessage message) {
+  void _handleError(Object error) {
+    _logger.severe('A2A error', error);
+    notifyListeners();
+  }
+
+  void _handleAgentUiStream(A2uiMessage message) {
     _surfaceController.handleMessage(message);
   }
 
-  void _updateAiMessage(String chunk) {
+  void _handleAgentTextStream(String chunk) {
     _currentAiMessage = (_currentAiMessage ?? '') + chunk;
     notifyListeners();
   }
@@ -84,10 +91,10 @@ class ChatSession extends ChangeNotifier {
   Future<void> sendMessage(String text) async {
     if (text.isEmpty) return;
     _currentAiMessage = null;
-    await _sendChatMessage(ChatMessage.user(text));
+    await _handleSubmitFromRendererToAgent(ChatMessage.user(text));
   }
 
-  Future<void> _sendChatMessage(ChatMessage message) async {
+  Future<void> _handleSubmitFromRendererToAgent(ChatMessage message) async {
     _isProcessing = true;
     notifyListeners();
     try {

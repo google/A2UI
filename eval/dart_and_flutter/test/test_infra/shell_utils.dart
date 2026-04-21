@@ -35,7 +35,10 @@ String runCommandSync(String command) {
   return result.stdout as String;
 }
 
-Future<Process> startService(String command, List<ShellProbe> probes) async {
+Future<Process> startAndVerifyService(
+  String command,
+  List<ShellProbe> probes,
+) async {
   final process = await Process.start('bash', ['-c', command]);
   for (final probe in probes) {
     probe.validate();
