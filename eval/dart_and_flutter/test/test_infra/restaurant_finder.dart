@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'shell_utils.dart';
 
-const _restaurantFinderDefaultUrl = 'http://localhost:10002';
+const _restaurantFinderDefaultUrl = 'http://127.0.0.1:10002';
 
 const _restaurantFinderCurlMessage =
     '''
