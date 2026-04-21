@@ -50,11 +50,10 @@ export default function App() {
     return p;
   });
 
-  // 2. Re-render when the agent creates or deletes a surface.
+  // 2. Set up listeners to keep the UI up to date as messages arrive.
   const [surfaces, setSurfaces] = useState(() =>
     Array.from(processor.model.surfacesMap.values())
   );
-
   useEffect(() => {
     const sync = () =>
       setSurfaces(Array.from(processor.model.surfacesMap.values()));
