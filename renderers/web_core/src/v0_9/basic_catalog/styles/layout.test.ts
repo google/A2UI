@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import assert from 'node:assert';
 import {describe, it} from 'node:test';
+import * as assert from 'node:assert';
+
 import {mapAlign, mapJustify} from './layout.js';
 
 describe('mapJustify', () => {
@@ -40,11 +41,14 @@ describe('mapJustify', () => {
   it('maps stretch to stretch', () => {
     assert.strictEqual(mapJustify('stretch'), 'stretch');
   });
-  it('returns flex-start for undefined input', () => {
-    assert.strictEqual(mapJustify(undefined), 'flex-start');
+  it('returns undefined for undefined input so consumers leave the style unset', () => {
+    assert.strictEqual(mapJustify(undefined), undefined);
   });
-  it('returns flex-start for unknown string input', () => {
-    assert.strictEqual(mapJustify('unknown'), 'flex-start');
+  it('passes through unknown values unchanged', () => {
+    assert.strictEqual(mapJustify('unknown'), 'unknown');
+  });
+  it('passes through empty string unchanged', () => {
+    assert.strictEqual(mapJustify(''), '');
   });
 });
 
@@ -61,10 +65,13 @@ describe('mapAlign', () => {
   it('maps stretch to stretch', () => {
     assert.strictEqual(mapAlign('stretch'), 'stretch');
   });
-  it('returns stretch for undefined input', () => {
-    assert.strictEqual(mapAlign(undefined), 'stretch');
+  it('returns undefined for undefined input so consumers leave the style unset', () => {
+    assert.strictEqual(mapAlign(undefined), undefined);
   });
-  it('returns stretch for unknown string input', () => {
-    assert.strictEqual(mapAlign('unknown'), 'stretch');
+  it('passes through unknown values unchanged (e.g. "baseline")', () => {
+    assert.strictEqual(mapAlign('baseline'), 'baseline');
+  });
+  it('passes through empty string unchanged', () => {
+    assert.strictEqual(mapAlign(''), '');
   });
 });

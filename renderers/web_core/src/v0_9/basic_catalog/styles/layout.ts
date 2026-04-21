@@ -20,16 +20,13 @@
  * Maps A2UI layout enum values (e.g., `spaceBetween`) to their corresponding
  * CSS values (e.g., `space-between`). These functions are shared across all
  * web renderers (React, Lit, Angular) to ensure consistent behavior.
+ *
+ * Contract: nullish input returns `undefined` so consumers leave the CSS
+ * property unset (inherits from cascade / CSS variables). Unknown keys are
+ * passed through as-is so that future enum additions or spec mismatches
+ * remain visible to the browser rather than silently coerced to a default.
  */
 
-/**
- * Maps an A2UI justify enum value to its CSS `justify-content` equivalent.
- *
- * @param value - An A2UI justify value such as `'start'`, `'center'`,
- *   `'spaceBetween'`, etc.
- * @returns The corresponding CSS `justify-content` value. Defaults to
- *   `'flex-start'` for unrecognized or undefined input.
- */
 const justifyMap: Record<string, string> = {
   center: 'center',
   end: 'flex-end',
@@ -40,18 +37,19 @@ const justifyMap: Record<string, string> = {
   stretch: 'stretch',
 };
 
-export function mapJustify(value?: string): string {
-  return (value && justifyMap[value]) || 'flex-start';
+/**
+ * Maps an A2UI justify enum value to its CSS `justify-content` equivalent.
+ *
+ * @param value - An A2UI justify value such as `'start'`, `'center'`,
+ *   `'spaceBetween'`, etc.
+ * @returns The mapped CSS value, the raw input if the key is unknown, or
+ *   `undefined` if the input is nullish.
+ */
+export function mapJustify(value?: string): string | undefined {
+  if (value === undefined || value === null) return undefined;
+  return justifyMap[value] ?? value;
 }
 
-/**
- * Maps an A2UI align enum value to its CSS `align-items` equivalent.
- *
- * @param value - An A2UI align value such as `'start'`, `'center'`, `'end'`,
- *   or `'stretch'`.
- * @returns The corresponding CSS `align-items` value. Defaults to `'stretch'`
- *   for unrecognized or undefined input.
- */
 const alignMap: Record<string, string> = {
   center: 'center',
   end: 'flex-end',
@@ -59,6 +57,15 @@ const alignMap: Record<string, string> = {
   stretch: 'stretch',
 };
 
-export function mapAlign(value?: string): string {
-  return (value && alignMap[value]) || 'stretch';
+/**
+ * Maps an A2UI align enum value to its CSS `align-items` equivalent.
+ *
+ * @param value - An A2UI align value such as `'start'`, `'center'`, `'end'`,
+ *   or `'stretch'`.
+ * @returns The mapped CSS value, the raw input if the key is unknown, or
+ *   `undefined` if the input is nullish.
+ */
+export function mapAlign(value?: string): string | undefined {
+  if (value === undefined || value === null) return undefined;
+  return alignMap[value] ?? value;
 }
