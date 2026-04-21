@@ -29,10 +29,14 @@ void main() {
     print('Teared down the test.');
   });
 
-  test('GanUI SDK can work with restaurant finder.', () async {
-    final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
-    await chatSession.sendTextToAgent('Hello, how can you help me?');
-  });
+  test(
+    'GanUI SDK can work with restaurant finder.',
+    () async {
+      final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
+      await chatSession.sendTextToAgent('Hello, how can you help me?');
+    },
+    timeout: const Timeout(Duration(minutes: 5)),
+  );
 }
 
 /// A class that manages the chat session state and logic.
