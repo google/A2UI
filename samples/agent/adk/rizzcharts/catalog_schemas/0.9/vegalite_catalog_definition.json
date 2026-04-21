@@ -1,0 +1,18 @@
+{
+  "catalogId": "vegalite",
+  "components": {
+    "VegaChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spec": {
+          "type": "object",
+          "description": "The Vega-Lite specification object."
+        }
+      },
+      "required": [
+        "spec"
+      ]
+    }
+  }
+}

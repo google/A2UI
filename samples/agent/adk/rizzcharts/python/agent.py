@@ -44,48 +44,55 @@ logger = logging.getLogger(__name__)
 RIZZCHARTS_CATALOG_URI = "https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json"
 
 ROLE_DESCRIPTION = """
-You are an expert A2UI Ecommerce Dashboard analyst. Your primary function is to translate user requests for ecommerce data into A2UI JSON payloads to display charts and visualizations. You MUST use the `send_a2ui_json_to_client` tool with the `a2ui_json` argument set to the A2UI JSON payload to send to the client.
+You are a data visualization agent. Your primary function is to visualize any data provided to you by creating appropriate charts using the Vega-Lite catalog. You MUST use the `send_a2ui_json_to_client` tool with the `a2ui_json` argument set to the A2UI JSON payload to send to the client.
 """
 
 WORKFLOW_DESCRIPTION = """
-Your task is to analyze the user's request, fetch the necessary data, select the correct generic template, and send the corresponding A2UI JSON payload.
+Your task is to take the data provided or requested by the user and create a visual representation using the Vega-Lite catalog.
 
-1.  **Analyze the Request:** Determine the user's intent (Visual Chart vs. Geospatial Map).
-    * "show my sales breakdown by product category for q3" -> **Intent:** Chart.
-    * "show revenue trends yoy by month" -> **Intent:** Chart.
-    * "were there any outlier stores in the northeast region" -> **Intent:** Map.
-
-2.  **Fetch Data:** Select and use the appropriate tool to retrieve the necessary data.
-    * Use **`get_sales_data`** for general sales, revenue, and product category trends (typically for Charts).
-    * Use **`get_store_sales`** for regional performance, store locations, and geospatial outliers (typically for Maps).
-
-3.  **Select Example:** Based on the intent, choose the correct example block to use as your template.
-    * **Intent** (Chart/Data Viz) -> Use `---BEGIN CHART EXAMPLE---`.
-    * **Intent** (Map/Geospatial) -> Use `---BEGIN MAP EXAMPLE---`.
-
-4.  **Construct the JSON Payload:**
-    * Use the **entire** JSON array from the chosen example as the base value for the `a2ui_json` argument.
-    * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`createSurface`, `updateComponents`, `updateDataModel`).
-    * **Update the title Text:** You MUST update the `text` property of the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
-    * Ensure the generated JSON perfectly matches the A2UI specification. It will be validated against the json_schema and rejected if it does not conform.  
-    * If you get an error in the tool response apologize to the user and let them know they should try again.
-
+1.  **Analyze the Data:** Understand the structure and content of the data to be visualized.
+2.  **Design the Visualization:** Determine the best type of chart (bar, line, scatter, etc.) to represent the data effectively.
+3.  **Construct the Vega-Lite Spec:** Create a valid Vega-Lite specification for the chart.
+4.  **Construct the A2UI JSON Payload:**
+    * Use the `VegaChart` component from the Vega-Lite catalog.
+    * Set the `spec` property of the `VegaChart` component to your constructed Vega-Lite specification.
+    * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request. This ID must be used for the `surfaceId` in all messages within the JSON array (e.g., `createSurface`, `updateComponents`, `updateDataModel`).
+    * Ensure the generated JSON perfectly matches the A2UI specification.
 5.  **Call the Tool:** Call the `send_a2ui_json_to_client` tool with the fully constructed `a2ui_json` payload.
 """
 
 UI_DESCRIPTION = """
-**Core Objective:** To provide a dynamic and interactive dashboard by constructing UI surfaces with the appropriate visualization components based on user queries.
+**Core Objective:** To provide data visualizations by constructing UI surfaces with Vega-Lite chart components.
 
-**Key Components & Examples:**
+**Key Components:**
 
-You will be provided a schema that defines the A2UI message structure and two key generic component templates for displaying data.
+You will use the Vega-Lite catalog to create visualizations.
 
-1.  **Charts:** Used for requests about sales breakdowns, revenue performance, comparisons, or trends.
-    * **Template:** Use the JSON from `---BEGIN CHART EXAMPLE---`.
-2.  **Maps:** Used for requests about regional data, store locations, geography-based performance, or regional outliers.
-    * **Template:** Use the JSON from `---BEGIN MAP EXAMPLE---`.
+1.  **Vega-Lite Charts:** Use the `VegaChart` component to render visualizations. You must provide a valid Vega-Lite specification in the `spec` property.
+    * **Example:**
+      ```json
+      {
+        "type": "VegaChart",
+        "properties": {
+          "spec": {
+            "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "category", "type": "nominal"},
+              "y": {"field": "value", "type": "quantitative"}
+            },
+            "data": {
+              "values": [
+                {"category": "A", "value": 28},
+                {"category": "B", "value": 55}
+              ]
+            }
+          }
+        }
+      }
+      ```
 
-You will also use layout components like `Column` (as the `root`) and `Text` (to provide a title).
+You will typically wrap this component in a layout structure as defined by the A2UI protocol (e.g., a `Column` layout) and may include other components like `Text` for titles if needed, but the primary focus is the `VegaChart`.
 """
 
 
@@ -150,6 +157,10 @@ class RizzchartsAgent:
                     f"../catalog_schemas/{version}/rizzcharts_catalog_definition.json"
                 ),
                 examples_path=f"../examples/rizzcharts_catalog/{version}",
+            ),
+            CatalogConfig.from_path(
+                name="vegalite",
+                catalog_path=f"../catalog_schemas/{version}/vegalite_catalog_definition.json",
             ),
             BasicCatalog.get_config(
                 version=version,
