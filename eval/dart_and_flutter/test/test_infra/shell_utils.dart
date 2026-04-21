@@ -57,39 +57,26 @@ Future<Process> startAndVerifyService(
   Duration quietPeriod = const Duration(seconds: 2),
 }) async {
   final process = await Process.start('bash', ['-c', command]);
-
-  final outputLines = <String>[];
-  final quietCompleter = Completer<void>();
-  Timer? quietTimer;
-
-  void resetQuietTimer() {
-    quietTimer?.cancel();
-    quietTimer = Timer(quietPeriod, () {
-      if (!quietCompleter.isCompleted) quietCompleter.complete();
-    });
-  }
-
-  resetQuietTimer();
+  final output = StringBuffer();
+  final done = Completer<void>();
+  Timer? timer;
 
   process.stdout.transform(SystemEncoding().decoder).listen(
     (chunk) {
-      outputLines.add(chunk);
-      resetQuietTimer();
+      output.write(chunk);
+      timer?.cancel();
+      timer = Timer(quietPeriod, done.complete);
     },
     onDone: () {
-      quietTimer?.cancel();
-      if (!quietCompleter.isCompleted) quietCompleter.complete();
+      timer?.cancel();
+      if (!done.isCompleted) done.complete();
     },
   );
 
-  await quietCompleter.future;
+  timer = Timer(quietPeriod, done.complete);
+  await done.future;
 
-  if (printCommandOutput && outputLines.isNotEmpty) {
-    print(outputLines.join());
-  }
-
-  for (final probe in probes) {
-    probe.validate();
-  }
+  if (printCommandOutput && output.isNotEmpty) print(output);
+  for (final probe in probes) probe.validate();
   return process;
 }
