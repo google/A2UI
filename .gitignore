@@ -5,10 +5,8 @@ dist
 .env
 .idx
 .vscode
-.idea
-__pycache__
+.idea/
 *.pyc
-.angular
 
 # MkDocs build output
 site/
@@ -29,3 +27,81 @@ samples/client/angular/projects/mcp_calculator/public/mcp_apps_inner_iframe/
 samples/agent/mcp/a2ui-in-mcpapps/server/apps/dist
 samples/agent/mcp/a2ui-in-mcpapps/server/apps/public
 
+# Local-only scratch files.
+.local/
+
+# Diagrams, produced by https://pub.dev/packages/layerlens.
+DEPS.md
+
+# Firebase
+google-services.json
+**/lib/firebase_options.dart
+firebase.json
+GoogleService-Info.plist
+.firebase
+.firebaserc
+
+# This package's specific logs.
+*.log.*
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+ENV/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==============================================================================
+#
+# STANDARD FLUTTER GITIGNORE
+#
+# ==============================================================================
+
+# Miscellaneous
+*.class
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+pubspec.lock
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release

@@ -1,0 +1,1 @@
+This folder contains evaluation tests that are executed continuously on GitHub Actions.
