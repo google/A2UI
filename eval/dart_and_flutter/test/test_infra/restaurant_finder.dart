@@ -43,7 +43,7 @@ final class TestRestaurantFinderClient {
 
   String get url => _restaurantFinderDefaultUrl;
 
-  /// Tests [start instructions](../../samples/agent/adk/restaurant_finder/README.md).
+  /// Tests [start instructions](../../../../samples/agent/adk/restaurant_finder/README.md).
   ///
   /// If the client is already running, it will be restarted.
   Future<void> startAndVerify() async {
@@ -52,7 +52,8 @@ final class TestRestaurantFinderClient {
     }
 
     _process = await startAndVerifyService(
-      '(cd ../../samples/agent/adk/restaurant_finder && uv run .)',
+      'uv run .',
+      '../../samples/agent/adk/restaurant_finder',
       [
         ShellProbe(
           command:

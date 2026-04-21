@@ -52,31 +52,41 @@ String runCommandSync(String command) {
 
 Future<Process> startAndVerifyService(
   String command,
+  String workingDirectory,
   List<ShellProbe> probes, {
-  bool printCommandOutput = true,
   Duration quietPeriod = const Duration(seconds: 2),
 }) async {
-  final process = await Process.start('bash', ['-c', command]);
-  final output = StringBuffer();
-  final done = Completer<void>();
+  print('Starting service: `$command` in $workingDirectory');
+  final process = await Process.start('bash', [
+    '-c',
+    command,
+  ], workingDirectory: workingDirectory);
+
+  final serviceStabilizedOutput = Completer<void>();
   Timer? timer;
+  StreamSubscription<String>? subscription;
 
-  process.stdout.transform(SystemEncoding().decoder).listen(
-    (chunk) {
-      output.write(chunk);
-      timer?.cancel();
-      timer = Timer(quietPeriod, done.complete);
-    },
-    onDone: () {
-      timer?.cancel();
-      if (!done.isCompleted) done.complete();
-    },
-  );
+  void onTimer() {
+    serviceStabilizedOutput.complete();
+    subscription?.cancel();
+  }
 
-  timer = Timer(quietPeriod, done.complete);
-  await done.future;
+  void restartTimer(String chunk) {
+    stdout.write(chunk);
+    timer?.cancel();
+    timer = Timer(quietPeriod, onTimer);
+  }
 
-  if (printCommandOutput && output.isNotEmpty) print(output);
+  subscription = process.stdout
+      .transform(SystemEncoding().decoder)
+      .listen(
+        restartTimer,
+        onDone: () => stdout.writeln('Service process reported "done".'),
+      );
+
+  restartTimer('Started timer.\n');
+  await serviceStabilizedOutput.future;
+
   for (final probe in probes) probe.validate();
   return process;
 }

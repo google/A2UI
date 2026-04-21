@@ -17,5 +17,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+
+
 cd "$(dirname "$0")/dart_and_flutter"
 flutter test --concurrency=1 --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
