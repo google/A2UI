@@ -30,10 +30,12 @@ void main() {
   });
 
   test(
-    'GanUI SDK can work with restaurant finder.',
+    'GanUI SDK can talk to restaurant finder.',
     () async {
       final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
       await chatSession.sendTextToAgent('Hello, how can you help me?');
+
+      // TODO(polinach): check the response of the service.
     },
     timeout: const Timeout(Duration(minutes: 5)),
   );
