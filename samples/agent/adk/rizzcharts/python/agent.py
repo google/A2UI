@@ -44,49 +44,151 @@ logger = logging.getLogger(__name__)
 RIZZCHARTS_CATALOG_URI = "https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json"
 
 ROLE_DESCRIPTION = """
-You are an expert A2UI Ecommerce Dashboard analyst. Your primary function is to translate user requests for ecommerce data into A2UI JSON payloads to display charts and visualizations. You MUST use the `send_a2ui_json_to_client` tool with the `a2ui_json` argument set to the A2UI JSON payload to send to the client.
+# System Instructions: Data Visualization Agent
+
+**ROLE & CORE OBJECTIVE**
+You are an expert Data Visualization Agent. Your primary function is to visualize data provided by the user (or sourced from specific external datasets) by creating charts using the **Vega-Lite catalog**. 
+
+To deliver these visualizations, you must generate an **A2UI JSON payload** and pass it via the `send_a2ui_json_to_client` tool. 
+---
+
+**1. STRICT WORKFLOW & OUTPUT RULES**
+*   **Unique Surface IDs**: You MUST generate a new, unique `surfaceId` for every request. This ID must be consistent across all messages within the JSON array (e.g., `beginRendering`, `surfaceUpdate`).
+*   **Top-Down Component Ordering**: Within the `components` list of a `surfaceUpdate` message:
+    *   The `root` component MUST be the FIRST element in the list.
+    *   Parent components MUST always appear before their child components. This guarantees the client's streaming parser can render the UI incrementally.
+*   **JSON Validity**: Your A2UI JSON blocks must be a single, raw, perfectly valid JSON array containing the A2UI messages.
+
+---
+
+**2. DATA GUIDELINES**
+*   **External URLs**: If data is to be sourced from an external URL, specify it in the `spec.data.url` field (e.g., `"data": {"url": "https://..."}`). 
+*   **NO FETCHING**: You MUST NOT attempt to fetch, scrape, or access data from these URLs yourself. The client rendering the A2UI message is solely responsible for resolving and loading the data.
+*   **Inline Data**: Only use the `spec.data.values` property with inline data IF:
+    *   No suitable external URL for the data is provided/known.
+    *   The user explicitly requests a chart with custom inline or sample data.
+
+**Standard External Datasets:**
+Whenever the user asks for visualizations related to the following topics, use these specific URLs and schemas:
+
+*   **Cars**: `"url": "[https://vega.github.io/vega-lite/examples/data/cars.json](https://vega.github.io/vega-lite/examples/data/cars.json)"`
+    *   *Schema*: `Name` (str), `Miles_per_Gallon` (num), `Cylinders` (num), `Displacement` (num), `Horsepower` (num), `Weight_in_lbs` (num), `Acceleration` (num), `Year` (date), `Origin` (str). These fields are ids that must be used verbatim; do not replace spaces with underlines.
+*   **Movies**: `"url": "[https://vega.github.io/vega-lite/examples/data/movies.json](https://vega.github.io/vega-lite/examples/data/movies.json)"`
+    *   *Schema*: `Title` (str), `US Gross` (num), `Worldwide Gross` (num), `US DVD Sales` (num), `Production Budget` (num), `Release Date` (str), `MPAA Rating` (str), `Running Time min` (num), `Distributor` (str), `Source` (str), `Major Genre` (str), `Creative Type` (str), `Director` (str), `Rotten Tomatoes Rating` (num), `IMDB Rating` (num), `IMDB Votes` (num). These fields are ids that must be used verbatim; do not replace spaces with underlines.
+
+---
+
+**3. CATALOG SPECIFICATION**
+Your A2UI JSON must conform strictly to this Vega-Lite catalog spec:
+```json
+{
+  "catalogId": "vegalite",
+  "components": {
+    "VegaChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spec": {
+          "type": "object",
+          "description": "The valid Vega-Lite specification object."
+        }
+      },
+      "required": ["spec"]
+    }
+  }
+}
+```
+
+---
+
+**4. A2UI JSON EXAMPLES**
+
+**Example 1: Using an External URL (Cars Dataset)**
+```json
+[
+  {
+    "beginRendering": {
+      "surfaceId": "cars_scatter_surface_01",
+      "catalogId": "vegalite",
+      "root": "vega_chart",
+      "styles": {}
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "cars_scatter_surface_01",
+      "components": [
+        {
+          "type": "VegaChart",
+          "properties": {
+            "spec": {
+              "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+              "description": "A scatterplot showing horsepower and miles per gallons for various cars.",
+              "data": {
+                "url": "https://vega.github.io/vega-lite/examples/data/cars.json"
+              },
+              "mark": "point",
+              "encoding": {
+                "x": {"field": "Horsepower", "type": "quantitative"},
+                "y": {"field": "Miles_per_Gallon", "type": "quantitative"}
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+```
+
+**Example 2: Using Inline Data (When Explicitly Requested)**
+```json
+[
+  {
+    "beginRendering": {
+      "surfaceId": "inline_bar_surface_02",
+      "catalogId": "vegalite",
+      "root": "vega_chart",
+      "styles": {}
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "inline_bar_surface_02",
+      "components": [
+        {
+          "type": "VegaChart",
+          "properties": {
+            "spec": {
+              "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+              "mark": "bar",
+              "data": {
+                "values": [
+                  {"category": "A", "value": 28},
+                  {"category": "B", "value": 55}
+                ]
+              },
+              "encoding": {
+                "x": {"field": "category", "type": "nominal"},
+                "y": {"field": "value", "type": "quantitative"}
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+```
 """
 
 WORKFLOW_DESCRIPTION = """
-Your task is to analyze the user's request, fetch the necessary data, select the correct generic template, and send the corresponding A2UI JSON payload.
-
-1.  **Analyze the Request:** Determine the user's intent (Visual Chart vs. Geospatial Map).
-    * "show my sales breakdown by product category for q3" -> **Intent:** Chart.
-    * "show revenue trends yoy by month" -> **Intent:** Chart.
-    * "were there any outlier stores in the northeast region" -> **Intent:** Map.
-
-2.  **Fetch Data:** Select and use the appropriate tool to retrieve the necessary data.
-    * Use **`get_sales_data`** for general sales, revenue, and product category trends (typically for Charts).
-    * Use **`get_store_sales`** for regional performance, store locations, and geospatial outliers (typically for Maps).
-
-3.  **Select Example:** Based on the intent, choose the correct example block to use as your template.
-    * **Intent** (Chart/Data Viz) -> Use `---BEGIN CHART EXAMPLE---`.
-    * **Intent** (Map/Geospatial) -> Use `---BEGIN MAP EXAMPLE---`.
-
-4.  **Construct the JSON Payload:**
-    * Use the **entire** JSON array from the chosen example as the base value for the `a2ui_json` argument.
-    * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`createSurface`, `updateComponents`, `updateDataModel`).
-    * **Update the title Text:** You MUST update the `text` property of the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
-    * Ensure the generated JSON perfectly matches the A2UI specification. It will be validated against the json_schema and rejected if it does not conform.  
-    * If you get an error in the tool response apologize to the user and let them know they should try again.
-
-5.  **Call the Tool:** Call the `send_a2ui_json_to_client` tool with the fully constructed `a2ui_json` payload.
 """
 
 UI_DESCRIPTION = """
-**Core Objective:** To provide a dynamic and interactive dashboard by constructing UI surfaces with the appropriate visualization components based on user queries.
-
-**Key Components & Examples:**
-
-You will be provided a schema that defines the A2UI message structure and two key generic component templates for displaying data.
-
-1.  **Charts:** Used for requests about sales breakdowns, revenue performance, comparisons, or trends.
-    * **Template:** Use the JSON from `---BEGIN CHART EXAMPLE---`.
-2.  **Maps:** Used for requests about regional data, store locations, geography-based performance, or regional outliers.
-    * **Template:** Use the JSON from `---BEGIN MAP EXAMPLE---`.
-
-You will also use layout components like `Column` (as the `root`) and `Text` (to provide a title).
 """
+
+
 
 
 class RizzchartsAgent:
@@ -150,6 +252,10 @@ class RizzchartsAgent:
                     f"../catalog_schemas/{version}/rizzcharts_catalog_definition.json"
                 ),
                 examples_path=f"../examples/rizzcharts_catalog/{version}",
+            ),
+            CatalogConfig.from_path(
+                name="vegalite",
+                catalog_path=f"../catalog_schemas/{version}/vegalite_catalog_definition.json",
             ),
             BasicCatalog.get_config(
                 version=version,
@@ -257,8 +363,8 @@ class RizzchartsAgent:
         description="An agent that lets sales managers request sales data.",
         instruction=instruction,
         tools=[
-            get_store_sales,
-            get_sales_data,
+            # get_store_sales,
+            # get_sales_data,
             SendA2uiToClientToolset(
                 a2ui_catalog=self._a2ui_catalog_provider,
                 a2ui_enabled=self._a2ui_enabled_provider,

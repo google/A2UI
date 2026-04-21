@@ -20,6 +20,12 @@ import { inputBinding } from '@angular/core';
 export const RIZZ_CHARTS_CATALOG = {
   ...DEFAULT_CATALOG,
   Canvas: () => import('./canvas').then((r) => r.Canvas),
+  VegaChart: {
+    type: () => import('./vega-chart').then((r) => r.A2uiVegaChartComponent),
+    bindings: ({ properties }) => [
+      inputBinding('spec', () => ('spec' in properties && properties['spec']) || undefined),
+    ],
+  },
   Chart: {
     type: () => import('./chart').then((r) => r.Chart),
     bindings: ({ properties }) => [

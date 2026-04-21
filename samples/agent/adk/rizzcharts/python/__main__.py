@@ -50,7 +50,7 @@ def main(host, port):
             " is not TRUE."
         )
 
-    lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+    lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-3-flash-preview")
 
     base_url = f"http://{host}:{port}"
 

@@ -12,7 +12,11 @@
     "serve:ssr:rizzcharts": "node dist/rizzcharts/server/server.mjs",
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it' 'angular'; do (cd \"$dir\" && npm install && npm run build); done",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
+    "serve:agent:rizzcharts": "cd ../../agent/adk/rizzcharts/python && uv run .",
     "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "demo:rizzcharts": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:rizzcharts\" \"npm start -- rizzcharts\"",
+    "run:rizzcharts": "concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:rizzcharts\" \"npm start -- rizzcharts\"",
+    "postinstall": "npm run build:renderer",
     "build:sandbox": "esbuild ../shared/mcp_apps_inner_iframe/sandbox.ts --bundle --outfile=projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.js --format=esm --platform=browser --alias:@modelcontextprotocol/ext-apps/app-bridge=./node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js && cp ../shared/mcp_apps_inner_iframe/sandbox.html projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.html"
   },
   "prettier": {
@@ -53,6 +57,9 @@
     "ng2-charts": "^8.0.0",
     "tslib": "^2.3.0",
     "uuid": "^13.0.0",
+    "vega": "^6.2.0",
+    "vega-embed": "^7.1.0",
+    "vega-lite": "^6.4.2",
     "zod": "^3.25.76",
     "zone.js": "~0.15.0"
   },

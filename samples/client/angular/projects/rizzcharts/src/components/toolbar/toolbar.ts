@@ -54,10 +54,14 @@ export class Toolbar {
         'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
       viewValue: 'Rizzcharts Custom',
     },
+    {
+      value: 'vegalite',
+      viewValue: 'Vega-Lite',
+    },
   ];
 
   ngOnInit() {
-    this.selectedCatalogs = this.catalogs.map((c) => c.value);
+    this.selectedCatalogs = ['vegalite'];
     this.updateCatalogService();
   }
 

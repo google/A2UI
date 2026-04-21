@@ -32,6 +32,10 @@ if __name__ == "__main__":
               catalog_path="rizzcharts_catalog_definition.json",
               examples_path=f"../examples/rizzcharts_catalog/{version}",
           ),
+          CatalogConfig.from_path(
+              name="vegalite",
+              catalog_path="vegalite_catalog_definition.json",
+          ),
           BasicCatalog.get_config(
               version=version,
               examples_path=f"../examples/standard_catalog/{version}",

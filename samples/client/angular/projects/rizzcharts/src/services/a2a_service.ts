@@ -47,6 +47,7 @@ export class A2aService implements A2aServiceInterface {
       if (json.contextId || json.result?.contextId) {
         this.contextId = json.contextId || json.result?.contextId;
       }
+      console.log("Received response: " + JSON.stringify(json, null, 2));
       return json;
     }
 
