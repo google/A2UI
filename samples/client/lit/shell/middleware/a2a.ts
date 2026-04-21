@@ -29,7 +29,7 @@ const A2UI_MIME_TYPE = "application/json+a2ui";
 
 const fetchWithCustomHeader: typeof fetch = async (url, init) => {
   const headers = new Headers(init?.headers);
-  headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
+  headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.9");
 
   const newInit = { ...init, headers };
   return fetch(url, newInit);

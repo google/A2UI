@@ -31,15 +31,14 @@ A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
 and is in active development [on GitHub](https://github.com/google/A2UI).
 
-The problem A2UI solves is: **how can AI agents safely send rich UIs across trust boundaries?**
+A2UI solves the following problem: **how can AI agents safely send rich UIs across trust boundaries?**
 
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
-In this repo you will find
-[A2UI specifications](specification/v0.8-a2ui.md) (v0.8 stable, v0.9 draft),
-implementations for
-[renderers](reference/renderers.md) (Angular, Flutter, Lit, Markdown, etc.) on the client side,
-and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI messages between agents and clients.
+This repository contains:
+- **[A2UI specifications](specification/v0.8-a2ui.md)** (v0.8 stable, v0.9 draft).
+- **Implementations for [renderers](reference/renderers.md)** (Angular, Flutter, Lit, Markdown, etc.) on the client side.
+- **Transports like [A2A](concepts/transports.md)** which communicate A2UI messages between agents and clients.
 
 <div class="grid cards" markdown>
 
@@ -73,13 +72,37 @@ and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI mess
 
 <div class="grid cards" markdown>
 
-- :material-clock-fast:{ .lg .middle } **[Quickstart Guide](quickstart.md)**
+- :material-clock-fast:{ .lg .middle } **[Quickstart Restaurant Finder Demo](quickstart.md)**
 
     ---
 
-    Run the restaurant finder demo and see A2UI in action with Gemini-powered agents.
+    Run the full-stack demo locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case.
 
-    [:octicons-arrow-right-24: Get started](quickstart.md)
+    [:octicons-arrow-right-24: Run the demo](quickstart.md)
+
+- :material-react:{ .lg .middle } **[A2UI + AG-UI (React)](guides/a2ui-with-any-agent-framework.md)**
+
+    ---
+
+    Scaffold a Next.js app wired to any agent framework via AG-UI. This is a React + A2UI app, ready to ship.
+
+    [:octicons-arrow-right-24: Use with any agent](guides/a2ui-with-any-agent-framework.md)
+
+- :material-palette-outline:{ .lg .middle } **[A2UI Composer](https://a2ui-composer.ag-ui.com/)**
+
+    ---
+
+    Generate A2UI JSON from a visual editor — no install required. Paste the output into any agent prompt.
+
+    [:octicons-arrow-right-24: Open the composer](https://a2ui-composer.ag-ui.com/)
+
+- :material-play-circle-outline:{ .lg .middle } **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)**
+
+    ---
+
+    Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers. See the protocol in motion before writing code.
+
+    [:octicons-arrow-right-24: Open the playground](https://a2ui-composer.ag-ui.com/theater)
 
 - :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
 
@@ -108,6 +131,8 @@ and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI mess
 </div>
 
 ## How It Works
+
+The typical interaction flow consists of these steps:
 
 1. **User sends a message** to an AI agent
 2. **Agent generates A2UI messages** describing the UI (structure + data)

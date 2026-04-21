@@ -39,10 +39,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build markdown-it dependency
+        working-directory: ./renderers/markdown/markdown-it
         run: |
           npm ci
           npm run build
@@ -68,10 +74,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build markdown-it dependency
+        working-directory: ./renderers/markdown/markdown-it
         run: |
           npm ci
           npm run build
@@ -97,10 +109,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build markdown-it dependency
+        working-directory: ./renderers/markdown/markdown-it
         run: |
           npm ci
           npm run build

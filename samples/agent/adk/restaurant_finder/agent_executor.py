@@ -31,7 +31,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class RestaurantAgentExecutor(AgentExecutor):
 
     if ui_event_part:
       logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-      action = ui_event_part.get("actionName")
+      action = ui_event_part.get("name")
       ctx = ui_event_part.get("context", {})
 
       if action == "book_restaurant":
@@ -124,10 +124,14 @@ class RestaurantAgentExecutor(AgentExecutor):
     async for item in self._agent.stream(query, task.context_id, active_ui_version):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
-        await updater.update_status(
-            TaskState.working,
-            new_agent_text_message(item["updates"], task.context_id, task.id),
-        )
+        message = None
+        if "parts" in item:
+          message = new_agent_parts_message(item["parts"], task.context_id, task.id)
+        elif "updates" in item:
+          message = new_agent_text_message(item["updates"], task.context_id, task.id)
+
+        if message:
+          await updater.update_status(TaskState.working, message)
         continue
 
       final_state = (

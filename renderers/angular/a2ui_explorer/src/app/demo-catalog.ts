@@ -18,7 +18,6 @@ import { Injectable } from '@angular/core';
 import { z } from 'zod';
 import { BasicCatalogBase, BASIC_FUNCTIONS } from '@a2ui/angular/v0_9';
 import { CustomSliderComponent } from './custom-slider.component';
-import { CardComponent } from './card.component';
 import { AngularComponentImplementation } from '@a2ui/angular/v0_9';
 import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_core/v0_9';
 
@@ -41,19 +40,11 @@ export class DemoCatalog extends BasicCatalogBase {
       component: CustomSliderComponent,
     };
 
-    const cardApi: AngularComponentImplementation = {
-      name: 'Card',
-      schema: z.object({
-        child: z.string().optional(),
-      }) as any,
-      component: CardComponent,
-    };
-
     const capitalizeImplementation: FunctionImplementation = createFunctionImplementation(
       {
         name: 'capitalize',
         returnType: 'string',
-        schema: z.object({ value: z.string().optional() }),
+        schema: z.object({ value: z.string().optional() }) as any,
       },
       (args) => {
         const value = String(args.value || '');
@@ -66,9 +57,7 @@ export class DemoCatalog extends BasicCatalogBase {
 
     super({
       id: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
-      components: {
-        card: cardApi,
-      },
+      components: {},
       extraComponents: [customSliderApi],
       functions,
     });

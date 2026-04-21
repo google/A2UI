@@ -14,34 +14,60 @@
  * limitations under the License.
  */
 
+// SignalKinds and WritableSignalKinds are declared in such a way that
+// downstream library impls can dynamically provide their Signal implementations
+// in a type-safe way. Usage downstream might look something like:
+//
+// declare module '../reactivity/signals' {
+//   interface SignalKinds<T> {
+//     preact: Signal<T>;
+//   }
+//   interface WritableSignalKinds<T> {
+//     preact: Signal<T>;
+//   }
+// }
+//
+// This <T>, while unused, is required to pass through to a given Signal impl.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface SignalKinds<T> {}
+
+// This <T>, while unused, is required to pass through to a given Signal impl.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface WritableSignalKinds<T> {}
+
 /**
  * A generic representation of a Signal that could come from any framework.
  * For any library building on top of A2UI's web core lib, this must be
  * implemented for their associated signals implementation.
  */
-export interface FrameworkSignal<SignalType, WriteableSignalType = SignalType> {
+export interface FrameworkSignal<K extends keyof SignalKinds<any>> {
   /**
    * Create a computed signal for this framework.
    */
-  computed<T>(fn: () => T): SignalType;
+  computed<T>(fn: () => T): SignalKinds<T>[K];
+
+  /**
+   * Run a reactive effect.
+   */
+  effect(fn: () => void, cleanupCallback?: () => void): () => void;
 
   /**
    * Check if an arbitrary object is a framework signal.
    */
-  isSignal(val: unknown): val is SignalType;
+  isSignal(val: unknown): val is SignalKinds<any>[K];
 
   /**
    * Wrap the value in a signal.
    */
-  wrap<T>(val: T): WriteableSignalType;
+  wrap<T>(val: T): WritableSignalKinds<T>[K];
 
   /**
    * Extract the value from a signal.
    */
-  unwrap<T>(val: SignalType): T;
+  unwrap<T>(val: SignalKinds<T>[K]): T;
 
   /**
    * Sets the value of the provided framework signal.
    */
-  set<T>(signal: WriteableSignalType, value: T): void;
+  set<T>(signal: WritableSignalKinds<T>[K], value: T): void;
 }

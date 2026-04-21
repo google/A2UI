@@ -18,6 +18,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { WidgetEditor } from './widget-editor';
 import { useWidgets } from '@/contexts/widgets-context';
+import type { Widget } from '@/types/widget';
 import { useFrontendTool } from '@copilotkit/react-core/v2';
 import React from 'react';
 
@@ -57,9 +58,10 @@ vi.mock('@/contexts/widgets-context', () => ({
 }));
 
 describe('WidgetEditor', () => {
-  const mockWidget = {
+  const mockWidget: Widget = {
     id: '1',
     name: 'Test Widget',
+    specVersion: '0.8',
     root: 'root',
     components: [],
     dataStates: [{ name: 'default', data: {} }],

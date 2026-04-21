@@ -14,13 +14,61 @@
  * limitations under the License.
  */
 
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement } from "lit/decorators.js";
+import { consume } from "@lit/context";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
+import { A2uiController, Context } from "@a2ui/lit/v0_9";
+import * as Types from "@a2ui/web_core/types/types";
+
+import { markdown } from "../../../directives/directives.js";
 
 @customElement("a2ui-basic-text")
-export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
+export class A2uiBasicTextElement extends BasicCatalogA2uiLitElement<typeof TextApi> {
+  /**
+   * The styles of the text component can be customized by redefining the following
+   * CSS variables:
+   *
+   * - `--a2ui-text-color-text`: The color of the text. Defaults to `--a2ui-color-on-background`.
+   * - `--a2ui-text-caption-color`: The color for caption text. Defaults to `light-dark(#666, #aaa)`.
+   *
+   * It also supports `--_a2ui-text-color` override from parent components (like Button).
+   */
+  static styles = css`
+    :host {
+      display: inline-block;
+      color: var(--_a2ui-text-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background)));
+    }
+    p, h1, h2, h3, h4, h5, h6, ol, ul, li, blockquote, pre {
+      margin: var(--_a2ui-text-margin, 0);
+    }
+    h1, h2, h3, h4, h5 {
+      font-family: var(--a2ui-font-family-title, inherit);
+      line-height: var(--a2ui-line-height-headings, 1.2);
+    }
+    h1 { font-size: var(--a2ui-font-size-2xl); }
+    h2 { font-size: var(--a2ui-font-size-xl); }
+    h3 { font-size: var(--a2ui-font-size-l); }
+    p, h4 { font-size: var(--a2ui-font-size-m); }
+    h5 { font-size: var(--a2ui-font-size-s); }
+    p, ol, ul, li, blockquote, .a2ui-caption {
+      line-height: var(--a2ui-line-height-body, 1.5);
+    }
+    .a2ui-caption, .a2ui-caption > *, .a2ui-caption ::slotted(*) {
+      font-size: var(--a2ui-font-size-xs);
+      color: var(--a2ui-text-caption-color, light-dark(#666, #aaa));
+    }
+    a {
+      color: var(--a2ui-text-a-color, inherit);
+      font-weight: var(--a2ui-text-a-font-weight, inherit);
+    }
+  `;
+
+  // Retrieve a MarkdownRenderer provided by the application.
+  @consume({ context: Context.markdown, subscribe: true })
+  accessor markdownRenderer: Types.MarkdownRenderer | undefined;
+
   protected createController() {
     return new A2uiController(this, TextApi);
   }
@@ -29,23 +77,35 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const variant = props.variant ?? "body";
-    switch (variant) {
+    // Use props.variant to convert props.text to markdown
+    let markdownText = typeof props.text === "string" ? props.text : String(props.text ?? "");
+    switch (props.variant) {
       case "h1":
-        return html`<h1>${props.text}</h1>`;
+        markdownText = `# ${markdownText}`;
+        break;
       case "h2":
-        return html`<h2>${props.text}</h2>`;
+        markdownText = `## ${markdownText}`;
+        break;
       case "h3":
-        return html`<h3>${props.text}</h3>`;
+        markdownText = `### ${markdownText}`;
+        break;
       case "h4":
-        return html`<h4>${props.text}</h4>`;
+        markdownText = `#### ${markdownText}`;
+        break;
       case "h5":
-        return html`<h5>${props.text}</h5>`;
-      case "caption":
-        return html`<span class="a2ui-caption">${props.text}</span>`;
+        markdownText = `##### ${markdownText}`;
+        break;
       default:
-        return html`<p>${props.text}</p>`;
+        break; // body and caption.
     }
+
+    const renderedMarkdown = markdown(markdownText, this.markdownRenderer);
+    // There's not a good way to handle the caption variant in markdown, so we
+    // tag it with a class so it can be tweaked via CSS.
+    if (props.variant === "caption") {
+      return html`<span class="a2ui-caption">${renderedMarkdown}</span>`;
+    }
+    return html`${renderedMarkdown}`;
   }
 }
 

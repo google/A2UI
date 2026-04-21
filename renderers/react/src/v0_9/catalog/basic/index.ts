@@ -37,6 +37,8 @@ import {ChoicePicker} from './components/ChoicePicker';
 import {Slider} from './components/Slider';
 import {DateTimeInput} from './components/DateTimeInput';
 
+export * from './context/MarkdownContext';
+
 const basicComponents: ReactComponentImplementation[] = [
   Text,
   Image,

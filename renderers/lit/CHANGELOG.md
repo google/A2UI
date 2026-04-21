@@ -1,3 +1,16 @@
+## Unreleased
+
+- (v0_9) Re-style the v0_9 catalog components using the default theme from
+  `web_core`. [#1079](https://github.com/google/A2UI/pull/1079)
+- (v0_9) Add missing features to ChoicePicker and CheckBox. [#1145](https://github.com/google/A2UI/pull/1145)
+
+## 0.9.0
+
+- (v0_9) Modify Text widget from the basic catalog to support markdown.
+- (v0_9) Add `Context.markdown` to the public API
+- (CI) Fix post-build script. This pins the dependency on `@a2ui/web_core` to
+  the latest available in the repo when publishing.
+
 ## 0.8.4
 
 - Add a `v0_9` renderer. Import from `@a2ui/lit/v0_9`.

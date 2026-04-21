@@ -48,7 +48,7 @@ def main(port: int, transport: str) -> int:
   async def read_resource(uri: str) -> str | bytes:
     if str(uri) == "ui://calculator/app":
       try:
-        return (pathlib.Path(__file__).parent / "apps" / "calculator.html").read_text()
+        return (pathlib.Path(__file__).parent / "apps" / "public" / "calculator.html").read_text()
       except FileNotFoundError:
         raise ValueError(f"Resource file not found for uri: {uri}")
     raise ValueError(f"Unknown resource: {uri}")

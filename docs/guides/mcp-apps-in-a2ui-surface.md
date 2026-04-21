@@ -2,9 +2,13 @@
 
 This guide explains how **Model Context Protocol (MCP) Applications** are integrated and displayed within the **A2UI** surface, along with the security model and testing guidelines.
 
+> NOTE: Looking for the core A2UI-over-MCP protocol? See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
+
 ## Overview
 
 The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.
+
+<img src="../assets/mcp-apps-calculator-demo.gif" alt="MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent" width="640">
 
 ## Double-Iframe Isolation Pattern
 
@@ -19,7 +23,7 @@ To prevent this, A2UI strictly excludes `allow-same-origin` for the inner iframe
 ### The Architecture
 
 1.  **[Sandbox Proxy (`sandbox.html`)](https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html)**: An intermediate `iframe` served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.
-    -   Permissions: **Do not sandbox** in the host template (e.g., [`mcp-app.ts`](https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts) or [`mcp-apps-component.ts`](https://github.com/google/A2UI/blob/main/samples/client/lit/contact/ui/custom-components/mcp-apps-component.ts)).
+    -   Permissions: **Do not sandbox** in the host template (e.g., [`mcp-app.ts`](https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts) or [`mcp-apps-component.ts`](https://github.com/google/A2UI/blob/main/samples/client/lit/custom-components-example/ui/custom-components/mcp-apps-component.ts)).
     -   Host origin validation: Validates that messages come from the expected host origin.
 2.  **Embedded App (Inner Iframe)**: The innermost `iframe`. Injected dynamically via `srcdoc` with restricted permissions.
     -   Permissions: `sandbox="allow-scripts allow-forms allow-popups allow-modals"` (**MUST NOT** include `allow-same-origin`).
@@ -68,7 +72,7 @@ export const DEMO_CATALOG = {
 
 ### 2. Usage in A2UI Message
 
-In the Host or Agent context, you send an A2UI message that translates to this custom node.
+In the Host or Agent context, send an A2UI message that translates to this custom node.
 
 ```json
 {
@@ -111,51 +115,175 @@ Because `allow-same-origin` is strictly omitted for the innermost iframe, the fo
 ## Prerequisites
 
 To run the samples, ensure you have the following installed:
--   **Python (uv)** (version 3.12 or higher suggested)
--   **Node.js (npm)** (version 18 or higher recommended)
+
+-   **Python 3.10+** — Required for the agent and MCP server backends
+-   **[uv](https://docs.astral.sh/uv/)** — Fast Python package manager (used to run all Python samples)
+-   **Node.js 18+** and **npm** — Required for building and running the client apps
+-   **A `GEMINI_API_KEY`** — Required by all ADK-based agents. Get one from [Google AI Studio](https://aistudio.google.com/apikey)
+
+> ⚠️ **Environment variable setup**: You can either export `GEMINI_API_KEY` in your shell or create a `.env` file in each agent directory. The agents use `dotenv` to load `.env` files automatically.
+>
+> ```bash
+> # Option 1: Export in shell
+> export GEMINI_API_KEY="your-api-key-here"
+>
+> # Option 2: Create .env file in the agent directory
+> echo 'GEMINI_API_KEY=your-api-key-here' > .env
+> ```
 
 ## Samples
 
-There are two primary samples demonstrating MCP Apps integration:
+There are two primary samples demonstrating MCP Apps integration. Each sample requires running **multiple terminals** — one for each backend service and one for the client.
 
-### 1. Contact Multi-Surface Sample (Lit & ADK Agent)
+---
+
+### 1. MCP App Standalone Sample (Lit & ADK Agent)
 
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
 -   **A2A Agent Server**:
-    -   Path: [`samples/agent/adk/contact_multiple_surfaces/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_multiple_surfaces/)
+    -   Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
     -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 -   **Lit Client App**:
-    -   Path: [`samples/client/lit/contact/`](https://github.com/google/A2UI/tree/main/samples/client/lit/contact/)
-    -   Command: `npm run dev` (requires building the Lit renderer first)
+    -   Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
+    -   Command: `npm install && npm run dev` (requires building the Lit renderer first)
     -   URL: `http://localhost:5173/`
 
-**What to expect**: A contact page where actions prompt an app interface on specific interactions.
+**What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
 
-### 2. MCP Apps (Calculator) (Angular)
+### 2. MCP Apps (Calculator + Pong) (Angular)
 
-This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
+#### Step 3: Open in Browser
 
--   **MCP Server (Calculator)**:
-    -   Path: [`samples/agent/mcp/mcp-apps-calculator/`](https://github.com/google/A2UI/tree/main/samples/agent/mcp/mcp-apps-calculator/)
-    -   Command: `uv run .` (runs on port 8000)
--   **MCP Apps Proxy Agent**:
-    -   Path: [`samples/agent/adk/mcp_app_proxy/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp_app_proxy/)
-    -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
--   **Angular Client App**:
-    -   Path: [`samples/client/angular/`](https://github.com/google/A2UI/tree/main/samples/client/angular/)
-    -   Command: `npm start -- mcp_calculator` (requires `npm run build:sandbox` and `npm install`)
-    -   URL: `http://localhost:4200/?disable_security_self_test=true`
+Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
 
-**What to expect**: A basic calculator will be rendered. You can execute arithmetic calculations cleanly through the sandbox.
+**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
+
+---
+
+### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
+
+This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
+
+#### Step 1: Start the MCP Server (Calculator)
+
+```bash
+cd samples/agent/mcp/mcp-apps-calculator/
+uv run .
+```
+=======
+```bash
+cd samples/client/lit/mcp-apps-in-a2ui-sample
+npm install
+npm run dev
+```
+
+The client starts at `http://localhost:5173/`.
+
+#### Step 2: Start the Agent
+
+In a separate terminal, navigate to the agent directory and start the agent:
+
+```bash
+cd samples/agent/adk/mcp-apps-in-a2ui-sample
+uv run agent.py
+```
+
+The agent will run on `http://localhost:8000`.
+
+#### Step 3: Open in Browser
+
+Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
+
+**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
+
+---
+
+### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
+
+This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
+
+#### Step 1: Start the MCP Server (Calculator)
+
+```bash
+cd samples/agent/mcp/mcp-apps-calculator/
+uv run .
+```
+>>>>>>> e3c17f1f (docs: add npm install step to MCP guide)
+
+The MCP server starts on `http://localhost:8000` using SSE transport.
+
+#### Step 2: Start the MCP Apps Proxy Agent
+
+In a **new terminal**:
+
+```bash
+cd samples/agent/adk/mcp_app_proxy/
+export GEMINI_API_KEY="your-key"  # or use a .env file
+uv run .
+```
+
+The proxy agent starts on `http://localhost:10006` by default.
+
+#### Step 3: Build and Start the Angular Client
+
+In a **new terminal**:
+
+```bash
+cd samples/client/angular/
+
+# Build the renderers (required — Angular depends on local renderer packages)
+npm run build:renderer
+
+npm install --include=dev
+npm run build:sandbox
+npm start -- mcp_calculator
+```
+
+> ⚠️ **`--include=dev` is required**: The Angular CLI (`@angular/cli`) is a dev dependency. Without `--include=dev`, `ng serve` won't be available.
+>
+> ⚠️ **`build:renderer` and `build:sandbox` are both required**: `build:renderer` compiles the A2UI renderer packages that the Angular app depends on. `build:sandbox` bundles the sandbox proxy into the Angular project's public assets. Without either, the app won't work.
+
+The client starts at `http://localhost:4200/`.
+
+#### Step 4: Open in Browser
+
+Navigate to:
+
+```
+http://localhost:4200/?disable_security_self_test=true
+```
+
+**What to expect**: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.
+
+| Calculator App | Pong App |
+| :---: | :---: |
+| ![An animated GIF of the calculator app being used to perform multiplications.](../assets/calculator_demo.gif) | ![An animated GIF of the pong app being played.](../assets/pong_demo.gif) |
+
+---
 
 ## URL Options for Testing
 
 For testing purposes, you can opt-out of the security self-test by using specific URL query parameters.
 
-`disable_security_self_test=true`
+### `disable_security_self_test=true`
 
-This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments.
+This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments where the double-iframe setup may not pass strict origin checks (e.g., `localhost` development).
 
 Example usage:
-`http://localhost:4200/?disable_security_self_test=true`
+```
+http://localhost:4200/?disable_security_self_test=true
+```
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `GEMINI_API_KEY environment variable not set` | Export the key or add a `.env` file in the agent directory |
+| Python version error on `contact_lookup` agent | Install Python 3.13+ (required by that sample's `pyproject.toml`) |
+| `npm run build:renderer` fails | Make sure you ran `npm install` first in `samples/client/lit/` |
+| Angular client shows blank page | Ensure you ran `npm run build:sandbox` before `npm start` |
+| MCP app iframe doesn't load | Check that both the MCP server (port 8000) and proxy agent (port 10006) are running |
+| `ng serve` not found | Run `npm install --include=dev` to install dev dependencies including `@angular/cli` |
+| "URL with hostname not allowed" | Angular 21 restricts allowed hosts. Use `localhost` (the default) — do not pass `--host 0.0.0.0` |
+| Security self-test fails in dev | Add `?disable_security_self_test=true` to the URL |

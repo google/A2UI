@@ -14,82 +14,78 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { mapJustify, mapAlign } from '@a2ui/web_core/v0_9/basic_catalog';
+import { ComponentHostComponent } from '../../core/component-host.component';
 import { getNormalizedPath } from '../../core/utils';
+import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
  * Angular implementation of the A2UI Column component (v0.9).
  *
  * Arranges child components in a vertical flex layout. Supports both static
  * lists of children and repeating templates bound to a data collection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-column-gap`: Controls the gap between items in the column. Defaults to `--a2ui-spacing-m` (16px).
  */
 @Component({
   selector: 'a2ui-v09-column',
   standalone: true,
   imports: [ComponentHostComponent],
+  host: {
+    '[style.display]': '"flex"',
+    '[style.flex-direction]': '"column"',
+    '[style.width]': '"100%"',
+    '[style.gap]': '"var(--a2ui-column-gap, var(--a2ui-spacing-m, 16px))"',
+    '[style.justify-content]': 'justify()',
+    '[style.align-items]': 'align()',
+  },
   template: `
-    <div
-      class="a2ui-column"
-      [style.justify-content]="justify()"
-      [style.align-items]="align()"
-      style="display: flex; flex-direction: column; width: 100%; gap: 4px;"
-    >
-      @if (!isRepeating()) {
-        @for (childId of children(); track childId) {
-          <a2ui-v09-component-host
-            [componentId]="childId"
-            [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (!isRepeating()) {
+      @for (child of normalizedChildren(); track child.id) {
+        <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
+        </a2ui-v09-component-host>
       }
+    }
 
-      @if (isRepeating()) {
-        @for (item of children(); track item; let i = $index) {
-          <a2ui-v09-component-host
-            [componentId]="templateId()!"
-            [surfaceId]="surfaceId()"
-            [dataContextPath]="getNormalizedPath(i)"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (isRepeating()) {
+      @for (item of children(); track item; let i = $index) {
+        <a2ui-v09-component-host
+          [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
+          [surfaceId]="surfaceId()"
+        >
+        </a2ui-v09-component-host>
       }
-    </div>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColumnComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `children`: A list of component IDs OR a repeating collection definition.
-   * - `justify`: Flexbox justify-content value (e.g., 'flex-start', 'center').
-   * - `align`: Flexbox align-items value (e.g., 'flex-start', 'center').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
+export class ColumnComponent extends BasicCatalogComponent {
+  protected readonly justify = computed(() => mapJustify(this.props()['justify']?.value()));
+  protected readonly align = computed(() => mapAlign(this.props()['align']?.value()));
 
-  protected justify = computed(() => mapJustify(this.props()['justify']?.value()));
-  protected align = computed(() => mapAlign(this.props()['align']?.value()));
-
-  protected children = computed(() => {
+  protected readonly children = computed(() => {
     const raw = this.props()['children']?.value() || [];
     return Array.isArray(raw) ? raw : [];
   });
 
-  protected isRepeating = computed(() => {
+  protected readonly isRepeating = computed(() => {
     return !!this.props()['children']?.raw?.componentId;
   });
 
-  protected templateId = computed(() => {
+  protected readonly templateId = computed(() => {
     return this.props()['children']?.raw?.componentId;
+  });
+
+  protected readonly normalizedChildren = computed(() => {
+    if (this.isRepeating()) return [];
+    return this.children().map((child) => {
+      if (typeof child === 'object' && child !== null && 'id' in child) {
+        return child as { id: string; basePath: string };
+      }
+      return { id: child as string, basePath: this.dataContextPath() };
+    });
   });
 
   protected getNormalizedPath(index: number) {
