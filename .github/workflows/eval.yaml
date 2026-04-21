@@ -41,10 +41,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Install dependencies
-        working-directory: examples/eval
-        run: dart pub get
+        run: flutter pub get
       - name: Run eval tests
-        working-directory: examples/eval
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
         run: flutter test --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
