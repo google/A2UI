@@ -35,7 +35,7 @@ void main() {
       final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
       await chatSession.sendTextToAgent('Hello, how can you help me?');
 
-      // TODO(polinach): check the response of the service.
+      // TODO(polina-c): check the response of the service.
     },
     timeout: const Timeout(Duration(minutes: 5)),
   );
