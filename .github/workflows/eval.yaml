@@ -45,7 +45,7 @@ jobs:
       - name: Run eval tests
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
-        run: flutter test --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
+        run: ./eval/run.sh
       - name: Cache dependencies
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
