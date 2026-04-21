@@ -44,8 +44,14 @@ describe('mapJustify', () => {
   it('returns undefined for undefined input so consumers leave the style unset', () => {
     assert.strictEqual(mapJustify(undefined), undefined);
   });
+  it('returns undefined for null input', () => {
+    assert.strictEqual(mapJustify(null), undefined);
+  });
   it('passes through unknown values unchanged', () => {
     assert.strictEqual(mapJustify('unknown'), 'unknown');
+  });
+  it('does not resolve Object.prototype keys such as toString', () => {
+    assert.strictEqual(mapJustify('toString'), 'toString');
   });
   it('passes through empty string unchanged', () => {
     assert.strictEqual(mapJustify(''), '');
@@ -65,11 +71,20 @@ describe('mapAlign', () => {
   it('maps stretch to stretch', () => {
     assert.strictEqual(mapAlign('stretch'), 'stretch');
   });
+  it('maps baseline to baseline', () => {
+    assert.strictEqual(mapAlign('baseline'), 'baseline');
+  });
   it('returns undefined for undefined input so consumers leave the style unset', () => {
     assert.strictEqual(mapAlign(undefined), undefined);
   });
-  it('passes through unknown values unchanged (e.g. "baseline")', () => {
-    assert.strictEqual(mapAlign('baseline'), 'baseline');
+  it('returns undefined for null input', () => {
+    assert.strictEqual(mapAlign(null), undefined);
+  });
+  it('passes through unknown values unchanged', () => {
+    assert.strictEqual(mapAlign('unknown'), 'unknown');
+  });
+  it('does not resolve Object.prototype keys such as toString', () => {
+    assert.strictEqual(mapAlign('toString'), 'toString');
   });
   it('passes through empty string unchanged', () => {
     assert.strictEqual(mapAlign(''), '');

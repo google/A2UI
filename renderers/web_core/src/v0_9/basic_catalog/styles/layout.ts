@@ -25,17 +25,20 @@
  * property unset (inherits from cascade / CSS variables). Unknown keys are
  * passed through as-is so that future enum additions or spec mismatches
  * remain visible to the browser rather than silently coerced to a default.
+ *
+ * The maps use `Map` rather than plain objects to avoid prototype-chain
+ * lookups (e.g. `mapJustify('toString')` must not hit `Object.prototype`).
  */
 
-const justifyMap: Record<string, string> = {
-  center: 'center',
-  end: 'flex-end',
-  spaceAround: 'space-around',
-  spaceBetween: 'space-between',
-  spaceEvenly: 'space-evenly',
-  start: 'flex-start',
-  stretch: 'stretch',
-};
+const justifyMap = new Map<string, string>([
+  ['center', 'center'],
+  ['end', 'flex-end'],
+  ['spaceAround', 'space-around'],
+  ['spaceBetween', 'space-between'],
+  ['spaceEvenly', 'space-evenly'],
+  ['start', 'flex-start'],
+  ['stretch', 'stretch'],
+]);
 
 /**
  * Maps an A2UI justify enum value to its CSS `justify-content` equivalent.
@@ -45,27 +48,28 @@ const justifyMap: Record<string, string> = {
  * @returns The mapped CSS value, the raw input if the key is unknown, or
  *   `undefined` if the input is nullish.
  */
-export function mapJustify(value?: string): string | undefined {
+export function mapJustify(value?: string | null): string | undefined {
   if (value === undefined || value === null) return undefined;
-  return justifyMap[value] ?? value;
+  return justifyMap.get(value) ?? value;
 }
 
-const alignMap: Record<string, string> = {
-  center: 'center',
-  end: 'flex-end',
-  start: 'flex-start',
-  stretch: 'stretch',
-};
+const alignMap = new Map<string, string>([
+  ['baseline', 'baseline'],
+  ['center', 'center'],
+  ['end', 'flex-end'],
+  ['start', 'flex-start'],
+  ['stretch', 'stretch'],
+]);
 
 /**
  * Maps an A2UI align enum value to its CSS `align-items` equivalent.
  *
  * @param value - An A2UI align value such as `'start'`, `'center'`, `'end'`,
- *   or `'stretch'`.
+ *   `'stretch'`, or `'baseline'`.
  * @returns The mapped CSS value, the raw input if the key is unknown, or
  *   `undefined` if the input is nullish.
  */
-export function mapAlign(value?: string): string | undefined {
+export function mapAlign(value?: string | null): string | undefined {
   if (value === undefined || value === null) return undefined;
-  return alignMap[value] ?? value;
+  return alignMap.get(value) ?? value;
 }
