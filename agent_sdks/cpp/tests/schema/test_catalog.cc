@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "a2ui/schema/catalog.h"
 #include "a2ui/schema/manager.h"
+#include "a2ui/basic_catalog/provider.h"
 #include "a2ui/schema/common_modifiers.h"
 #include "a2ui/schema/utils.h"
 #include <filesystem>
@@ -44,6 +45,16 @@ TEST(CatalogTest, ResolveExamplesPath) {
     EXPECT_EQ(resolved, "path/to/examples");
     
     EXPECT_THROW(a2ui::resolve_examples_path("http://example.com"), std::runtime_error);
+}
+
+TEST(CatalogTest, BasicCatalogConfig) {
+    auto config = a2ui::basic_catalog::BasicCatalog::get_config("0.9");
+    EXPECT_EQ(config.name, "basic");
+    ASSERT_TRUE(config.provider != nullptr);
+    
+    nlohmann::json schema = config.provider->load();
+    EXPECT_TRUE(schema.contains("catalogId"));
+    EXPECT_TRUE(schema.contains("components"));
 }
 
 

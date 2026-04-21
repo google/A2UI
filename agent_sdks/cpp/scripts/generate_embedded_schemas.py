@@ -12,6 +12,8 @@ def main():
     v08_s2c = os.path.join(repo_root, "specification/v0_8/json/server_to_client.json")
     v09_s2c = os.path.join(repo_root, "specification/v0_9/json/server_to_client.json")
     v09_common = os.path.join(repo_root, "specification/v0_9/json/common_types.json")
+    v08_catalog = os.path.join(repo_root, "specification/v0_8/json/standard_catalog_definition.json")
+    v09_catalog = os.path.join(repo_root, "specification/v0_9/json/basic_catalog.json")
     
     def read_file(path):
         with open(path, 'r') as f:
@@ -20,6 +22,8 @@ def main():
     v08_s2c_content = read_file(v08_s2c)
     v09_s2c_content = read_file(v09_s2c)
     v09_common_content = read_file(v09_common)
+    v08_catalog_content = read_file(v08_catalog)
+    v09_catalog_content = read_file(v09_catalog)
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -32,6 +36,8 @@ def main():
         f.write('const char* SERVER_TO_CLIENT_SCHEMA_V08 = R"(' + v08_s2c_content + ')";\n\n')
         f.write('const char* SERVER_TO_CLIENT_SCHEMA_V09 = R"(' + v09_s2c_content + ')";\n\n')
         f.write('const char* COMMON_TYPES_SCHEMA_V09 = R"(' + v09_common_content + ')";\n\n')
+        f.write('const char* BASIC_CATALOG_V08 = R"(' + v08_catalog_content + ')";\n\n')
+        f.write('const char* BASIC_CATALOG_V09 = R"(' + v09_catalog_content + ')";\n\n')
         
         f.write('} // namespace internal\n')
         f.write('} // namespace a2ui\n')

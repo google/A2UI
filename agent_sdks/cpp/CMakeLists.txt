@@ -69,6 +69,7 @@ add_library(a2ui_sdk
   src/parser/streaming.cc
   src/parser/payload_fixer.cc
   src/template/manager.cc
+  src/basic_catalog/provider.cc
   "${GENERATED_SCHEMAS_FILE}"
 )
 
