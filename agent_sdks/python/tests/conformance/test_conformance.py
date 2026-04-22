@@ -96,11 +96,7 @@ def test_parser_conformance(name, test_case):
       with pytest.raises(ValueError, match=step["expect_error"]):
         parser.process_chunk(step["input"])
     else:
-      print(f"\n--- Test: {name}")
-      print(f"--- Step Input: {step['input']}")
       parts = parser.process_chunk(step["input"])
-      print(f"--- Step Output: {parts}")
-      print(f"--- Step Expect: {step['expect']}")
       assert_parts_match(parts, step["expect"])
 
 
@@ -121,3 +117,54 @@ def test_validator_conformance(name, test_case):
         validator.validate(case["payload"])
     else:
       validator.validate(case["payload"])
+
+
+cases_catalog = get_conformance_cases("catalog.yaml")
+
+
+@pytest.mark.parametrize(
+    "name, test_case", cases_catalog, ids=[c[0] for c in cases_catalog]
+)
+def test_catalog_conformance(name, test_case):
+  catalog_config = test_case["catalog"]
+  catalog = setup_catalog(catalog_config)
+
+  action = test_case["action"]
+  args = test_case.get("args", {})
+
+  if action == "prune":
+    allowed_components = args.get("allowed_components", [])
+    allowed_messages = args.get("allowed_messages", [])
+    pruned = catalog.with_pruning(allowed_components, allowed_messages)
+
+    expected = test_case["expect"]
+    if "catalog_schema" in expected:
+      assert pruned.catalog_schema == expected["catalog_schema"]
+    if "s2c_schema" in expected:
+      assert pruned.s2c_schema == expected["s2c_schema"]
+    if "common_types_schema" in expected:
+      assert pruned.common_types_schema == expected["common_types_schema"]
+
+  elif action == "render":
+    output = catalog.render_as_llm_instructions()
+    assert output.strip() == test_case["expect_output"].strip()
+
+  elif action == "load":
+    path = args.get("path")
+    if path:
+      # Resolve path relative to conformance directory
+      full_path = os.path.join(
+          os.path.dirname(__file__), "../../../conformance", path
+      )
+    else:
+      full_path = None
+
+
+    validate = args.get("validate", False)
+
+    if "expect_error" in test_case:
+      with pytest.raises(ValueError, match=test_case["expect_error"]):
+        catalog.load_examples(full_path, validate=validate)
+    else:
+      output = catalog.load_examples(full_path, validate=validate)
+      assert output.strip() == test_case["expect_output"].strip()
