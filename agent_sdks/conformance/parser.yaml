@@ -70,3 +70,28 @@
   description: Tests that invalid JSON raises error.
   input: "<a2ui-json>\ninvalid_json\n</a2ui-json>"
   expect_error: "Failed to parse"
+
+- name: test_fix_payload_trailing_comma_list
+  description: Tests removing trailing comma in list.
+  action: fix_payload
+  input: '[{"type": "Text", "text": "Hello"},]'
+  expect: [{"type": "Text", "text": "Hello"}]
+
+- name: test_fix_payload_trailing_comma_object
+  description: Tests removing trailing comma in object.
+  action: fix_payload
+  input: '{"type": "Text", "text": "Hello",}'
+  expect: [{"type": "Text", "text": "Hello"}]
+
+- name: test_fix_payload_auto_wrap
+  description: Tests auto-wrapping single object in list.
+  action: fix_payload
+  input: '{"type": "Text", "text": "Hello"}'
+  expect: [{"type": "Text", "text": "Hello"}]
+
+- name: test_fix_payload_smart_quotes
+  description: Tests normalizing smart quotes.
+  action: fix_payload
+  input: '{"type": “Text”, "other": "Value’s"}'
+  expect: [{"type": "Text", "other": "Value's"}]
+

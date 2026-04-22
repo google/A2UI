@@ -128,19 +128,31 @@ cases_parser_non_streaming = get_conformance_cases("parser.yaml")
 )
 def test_parser_non_streaming_conformance(name, test_case):
   from a2ui.parser.parser import parse_response
+  from a2ui.parser.payload_fixer import parse_and_fix
 
+  action = test_case.get("action", "parse_full")
   content = test_case["input"]
 
-  if "expect_error" in test_case:
-    with pytest.raises(ValueError, match=test_case["expect_error"]):
-      parse_response(content)
-  else:
-    parts = parse_response(content)
-    expected = test_case["expect"]
-    assert len(parts) == len(expected)
-    for actual, exp in zip(parts, expected):
-      assert actual.text.strip() == exp.get("text", "").strip()
-      assert actual.a2ui_json == exp.get("a2ui")
+  if action == "parse_full":
+    if "expect_error" in test_case:
+      with pytest.raises(ValueError, match=test_case["expect_error"]):
+        parse_response(content)
+    else:
+      parts = parse_response(content)
+      expected = test_case["expect"]
+      assert len(parts) == len(expected)
+      for actual, exp in zip(parts, expected):
+        assert actual.text.strip() == exp.get("text", "").strip()
+        assert actual.a2ui_json == exp.get("a2ui")
+
+  elif action == "fix_payload":
+    if "expect_error" in test_case:
+      with pytest.raises(ValueError, match=test_case["expect_error"]):
+        parse_and_fix(content)
+    else:
+      result = parse_and_fix(content)
+      assert result == test_case["expect"]
+
 
 
 # --- Validator Conformance ---
