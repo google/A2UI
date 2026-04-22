@@ -49,9 +49,9 @@ import { TextFieldApi } from '@a2ui/web_core/v0_9/basic_catalog';
         [value]="value()"
         (input)="handleInput($event)"
         [placeholder]="placeholder()"
-        [class.invalid]="props().isValid.value() === false"
+        [class.invalid]="props()['isValid']?.value() === false"
       />
-      @for (message of props().validationErrors.value(); track message) {
+      @for (message of props()['validationErrors']?.value(); track message) {
         <div class="a2ui-error-message">{{ message }}</div>
       }
     </div>
