@@ -31,7 +31,7 @@ jobs:
           echo "GEMINI_API_KEY has ${#GEMINI_API_KEY} characters"
       - name: Start restaurant finder agent
         run: uv run .
-        working-directory: samples/agent/adk/restaurant_finder
+        working-directory: ./samples/agent/adk/restaurant_finder
       - name: Verify restaurant finder agent
         run: curl http://localhost:10002/.well-known/agent-card.json
       - name: Install Flutter
