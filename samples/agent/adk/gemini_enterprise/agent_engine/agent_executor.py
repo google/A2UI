@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-from a2ui.schema.constants import VERSION_0_8
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
@@ -30,7 +29,8 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a.extension import try_activate_a2ui_extension
+from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.core.schema.constants import VERSION_0_8
 from agent import ContactAgent
 
 
@@ -49,13 +49,9 @@ class ContactAgentExecutor(AgentExecutor):
     ui_event_part = None
     action = None
 
-<<<<<<< HEAD
     print(
         f"--- Client requested extensions: {context.requested_extensions} ---"
     )
-=======
-    print(f"--- Client requested extensions: {context.requested_extensions} ---")
->>>>>>> origin/main
     print(f"--- Agent card: {self._agent.agent_card} ---")
     # active_ui_version = try_activate_a2ui_extension(
     #     context, self._agent.agent_card
@@ -69,14 +65,10 @@ class ContactAgentExecutor(AgentExecutor):
           f" (v{active_ui_version}). Using UI runner. ---"
       )
     else:
-<<<<<<< HEAD
       print(
           "--- AGENT_EXECUTOR: A2UI extension is not active. Using text"
           " runner. ---"
       )
-=======
-      print("--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---")
->>>>>>> origin/main
 
     if context.message and context.message.parts:
       print(

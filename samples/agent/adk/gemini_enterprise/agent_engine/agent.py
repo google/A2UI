@@ -24,13 +24,15 @@ from a2a.types import (
     Part,
     TextPart,
 )
-from a2ui.a2a.extension import get_a2ui_agent_extension
-from a2ui.a2a.parts import parse_response_to_parts
+from a2ui.a2a import (
+    get_a2ui_agent_extension,
+    parse_response_to_parts,
+)
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.parser.parser import parse_response
-from a2ui.schema.common_modifiers import remove_strict_validation
-from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
-from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response
+from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
 import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
@@ -42,7 +44,6 @@ from google.genai import types
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
 from tools import get_contact_info
-
 
 SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
@@ -215,13 +216,9 @@ class ContactAgent:
     current_query_text = query
 
     # Ensure catalog schema was loaded
-<<<<<<< HEAD
     if ui_version and (
         not selected_catalog or not selected_catalog.catalog_schema
     ):
-=======
-    if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
->>>>>>> origin/main
       print(
           "--- ContactAgent.fetch_response: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -263,7 +260,6 @@ class ContactAgent:
             new_message=current_message,
         ):
           if event.is_final_response():
-<<<<<<< HEAD
             if (
                 event.content
                 and event.content.parts
@@ -272,10 +268,6 @@ class ContactAgent:
               full_content_list.extend(
                   [p.text for p in event.content.parts if p.text]
               )
-=======
-            if event.content and event.content.parts and event.content.parts[0].text:
-              full_content_list.extend([p.text for p in event.content.parts if p.text])
->>>>>>> origin/main
       except Exception as e:
         print(
             "--- ContactAgent.fetch_response: Exception caught while running"
@@ -361,14 +353,10 @@ class ContactAgent:
               f"--- ContactAgent.fetch_response: A2UI validation failed: {e}"
               f" (Attempt {attempt}) ---"
           )
-<<<<<<< HEAD
           print(
               "--- Failed response content:"
               f" {final_response_content[:500]}... ---"
           )
-=======
-          print(f"--- Failed response content: {final_response_content[:500]}... ---")
->>>>>>> origin/main
           error_message = f"Validation failed: {e}."
 
       else:  # Not using UI, so text is always "valid"

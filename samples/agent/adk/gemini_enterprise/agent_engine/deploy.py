@@ -186,11 +186,11 @@ def main():
           "google-genai>=1.27.0",
           "python-dotenv>=1.1.0",
           "uvicorn",
-          "a2a-sdk>=0.3.4",
+          "a2a-sdk==0.3.25",
           "cloudpickle>=3.1.2",
           "pydantic",
           "jsonschema>=4.0.0",
-          "a2ui-agent-sdk>=0.1.2",
+          "a2ui-agent-sdk==0.1.2",
       ],
       "http_options": {
           "api_version": "v1beta1",
