@@ -67,7 +67,7 @@ public:
     const nlohmann::json& catalog_schema() const { return catalog_schema_; }
 
     A2uiCatalog with_pruning(const std::vector<std::string>& allowed_components = {},
-                             const std::vector<std::string>& allowed_messages = {}) const;
+                             const std::vector<std::string>& allowed_messages = {}) &&;
 
     std::string render_as_llm_instructions() const;
     std::string load_examples(const std::string& path, bool validate = false) const;
@@ -79,9 +79,9 @@ private:
     nlohmann::json common_types_schema_;
     nlohmann::json catalog_schema_;
 
-    A2uiCatalog with_pruned_components(const std::vector<std::string>& allowed_components) const;
-    A2uiCatalog with_pruned_messages(const std::vector<std::string>& allowed_messages) const;
-    A2uiCatalog with_pruned_common_types() const;
+    A2uiCatalog with_pruned_components(const std::vector<std::string>& allowed_components) &&;
+    A2uiCatalog with_pruned_messages(const std::vector<std::string>& allowed_messages) &&;
+    A2uiCatalog with_pruned_common_types() &&;
     void validate_example(const std::string& full_path, const std::string& content) const;
 };
 

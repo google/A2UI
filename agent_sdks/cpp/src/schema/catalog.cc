@@ -209,99 +209,94 @@ nlohmann::json prune_defs_by_reachability(
 
 A2uiCatalog A2uiCatalog::with_pruning(
     const std::vector<std::string>& allowed_components,
-    const std::vector<std::string>& allowed_messages) const {
+    const std::vector<std::string>& allowed_messages) && {
     
-    A2uiCatalog catalog = *this;
     if (!allowed_components.empty()) {
-        catalog = catalog.with_pruned_components(allowed_components);
+        *this = std::move(*this).with_pruned_components(allowed_components);
     }
     if (!allowed_messages.empty()) {
-        catalog = catalog.with_pruned_messages(allowed_messages);
+        *this = std::move(*this).with_pruned_messages(allowed_messages);
     }
-    return catalog.with_pruned_common_types();
+    return std::move(*this).with_pruned_common_types();
 }
 
-A2uiCatalog A2uiCatalog::with_pruned_components(const std::vector<std::string>& allowed_components) const {
-    nlohmann::json schema_copy = catalog_schema_;
-    
-    if (schema_copy.contains(CATALOG_COMPONENTS_KEY) && schema_copy[CATALOG_COMPONENTS_KEY].is_object()) {
+A2uiCatalog A2uiCatalog::with_pruned_components(const std::vector<std::string>& allowed_components) && {
+    if (catalog_schema_.contains(CATALOG_COMPONENTS_KEY) && catalog_schema_[CATALOG_COMPONENTS_KEY].is_object()) {
         nlohmann::json filtered_comps = nlohmann::json::object();
         for (const auto& comp : allowed_components) {
-            if (schema_copy[CATALOG_COMPONENTS_KEY].contains(comp)) {
-                filtered_comps[comp] = schema_copy[CATALOG_COMPONENTS_KEY][comp];
+            if (catalog_schema_[CATALOG_COMPONENTS_KEY].contains(comp)) {
+                filtered_comps[comp] = std::move(catalog_schema_[CATALOG_COMPONENTS_KEY][comp]);
             }
         }
-        schema_copy[CATALOG_COMPONENTS_KEY] = filtered_comps;
+        catalog_schema_[CATALOG_COMPONENTS_KEY] = std::move(filtered_comps);
     }
 
     // Filter anyComponent oneOf if it exists
-    if (schema_copy.contains("$defs") && schema_copy["$defs"].contains("anyComponent")) {
-        auto& any_comp = schema_copy["$defs"]["anyComponent"];
+    if (catalog_schema_.contains("$defs") && catalog_schema_["$defs"].contains("anyComponent")) {
+        auto& any_comp = catalog_schema_["$defs"]["anyComponent"];
         if (any_comp.contains("oneOf") && any_comp["oneOf"].is_array()) {
             nlohmann::json filtered_one_of = nlohmann::json::array();
-            for (const auto& item : any_comp["oneOf"]) {
+            for (auto& item : any_comp["oneOf"]) {
                 if (item.contains("$ref")) {
                     std::string ref = item["$ref"].get<std::string>();
                     std::string prefix = "#/" + CATALOG_COMPONENTS_KEY + "/";
                     if (ref.rfind(prefix, 0) == 0) {
                         std::string comp_name = ref.substr(prefix.length());
                         if (std::find(allowed_components.begin(), allowed_components.end(), comp_name) != allowed_components.end()) {
-                            filtered_one_of.push_back(item);
+                            filtered_one_of.push_back(std::move(item));
                         }
                     }
                 }
             }
-            any_comp["oneOf"] = filtered_one_of;
+            any_comp["oneOf"] = std::move(filtered_one_of);
         }
     }
 
-    return A2uiCatalog(version_, name_, s2c_schema_, common_types_schema_, schema_copy);
+    return std::move(*this);
 }
 
-A2uiCatalog A2uiCatalog::with_pruned_messages(const std::vector<std::string>& allowed_messages) const {
-    nlohmann::json s2c_schema_copy = s2c_schema_;
-    
+A2uiCatalog A2uiCatalog::with_pruned_messages(const std::vector<std::string>& allowed_messages) && {
     if (version_ == VERSION_0_8) {
-        if (s2c_schema_copy.contains("properties") && s2c_schema_copy["properties"].is_object()) {
-            s2c_schema_copy["properties"] = prune_defs_by_reachability(
-                s2c_schema_copy["properties"],
+        if (s2c_schema_.contains("properties") && s2c_schema_["properties"].is_object()) {
+            s2c_schema_["properties"] = prune_defs_by_reachability(
+                s2c_schema_["properties"],
                 allowed_messages,
                 "#/properties/"
             );
         }
     } else {
-        if (s2c_schema_copy.contains("oneOf") && s2c_schema_copy["oneOf"].is_array()) {
+        if (s2c_schema_.contains("oneOf") && s2c_schema_["oneOf"].is_array()) {
             nlohmann::json filtered_one_of = nlohmann::json::array();
-            for (const auto& item : s2c_schema_copy["oneOf"]) {
+            for (auto& item : s2c_schema_["oneOf"]) {
                 if (item.contains("$ref")) {
                     std::string ref = item["$ref"].get<std::string>();
                     std::string prefix = "#/$defs/";
                     if (ref.rfind(prefix, 0) == 0) {
                         std::string msg_name = ref.substr(prefix.length());
                         if (std::find(allowed_messages.begin(), allowed_messages.end(), msg_name) != allowed_messages.end()) {
-                            filtered_one_of.push_back(item);
+                            filtered_one_of.push_back(std::move(item));
                         }
                     }
                 }
             }
-            s2c_schema_copy["oneOf"] = filtered_one_of;
+            s2c_schema_["oneOf"] = std::move(filtered_one_of);
         }
 
-        if (s2c_schema_copy.contains("$defs") && s2c_schema_copy["$defs"].is_object()) {
-            s2c_schema_copy["$defs"] = prune_defs_by_reachability(
-                s2c_schema_copy["$defs"],
+        if (s2c_schema_.contains("$defs") && s2c_schema_["$defs"].is_object()) {
+            s2c_schema_["$defs"] = prune_defs_by_reachability(
+                s2c_schema_["$defs"],
                 allowed_messages,
                 "#/$defs/"
             );
         }
     }
 
-    return A2uiCatalog(version_, name_, s2c_schema_copy, common_types_schema_, catalog_schema_);
+    return std::move(*this);
 }
 
-A2uiCatalog A2uiCatalog::with_pruned_common_types() const {
+A2uiCatalog A2uiCatalog::with_pruned_common_types() && {
     if (common_types_schema_.empty() || !common_types_schema_.contains("$defs")) {
-        return *this;
+        return std::move(*this);
     }
 
     std::vector<std::string> external_refs;
@@ -316,14 +311,13 @@ A2uiCatalog A2uiCatalog::with_pruned_common_types() const {
         }
     }
 
-    nlohmann::json new_common_types_schema = common_types_schema_;
-    new_common_types_schema["$defs"] = prune_defs_by_reachability(
+    common_types_schema_["$defs"] = prune_defs_by_reachability(
         common_types_schema_["$defs"],
         root_common_types,
         "#/$defs/"
     );
 
-    return A2uiCatalog(version_, name_, s2c_schema_, new_common_types_schema, catalog_schema_);
+    return std::move(*this);
 }
 
 } // namespace a2ui

@@ -171,7 +171,9 @@ void A2uiValidator::validate_0_8_custom(const nlohmann::json& messages, const st
 void A2uiValidator::check_component_integrity(const std::optional<std::string>& root_id, const nlohmann::json& components, bool skip_root_check) {
     std::set<std::string> ids;
     for (const auto& comp : components) {
-        if (!comp.is_object()) continue;
+        if (!comp.is_object()) {
+            throw std::runtime_error("Validation failed: Component is not an object");
+        }
         if (comp.contains("id") && comp["id"].is_string()) {
             std::string id = comp["id"].get<std::string>();
             if (ids.find(id) != ids.end()) {
@@ -186,8 +188,6 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
     }
 
     for (const auto& comp : components) {
-        if (!comp.is_object()) continue;
-        
         if (comp.contains("component") && comp["component"].is_object()) {
             auto comp_def = comp["component"];
             if (!comp_def.empty()) {

@@ -173,10 +173,9 @@ public:
             std::vector<nlohmann::json> deduped_msgs;
             std::set<std::string> seen_su;
             
-            auto msgs = *part.a2ui_json;
-            std::reverse(msgs.begin(), msgs.end());
+            std::reverse(part.a2ui_json->begin(), part.a2ui_json->end());
             
-            for (const auto& m : msgs) {
+            for (const auto& m : *part.a2ui_json) {
                 bool is_su = false;
                 std::string sid;
                 std::string su_key = get_active_msg_type_for_components();

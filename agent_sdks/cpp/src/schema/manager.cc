@@ -114,7 +114,7 @@ A2uiCatalog A2uiSchemaManager::get_selected_catalog(
     const std::optional<std::vector<std::string>>& allowed_messages
 ) {
     A2uiCatalog catalog = select_catalog(client_ui_capabilities);
-    return catalog.with_pruning(
+    return std::move(catalog).with_pruning(
         allowed_components.value_or(std::vector<std::string>{}),
         allowed_messages.value_or(std::vector<std::string>{})
     );
