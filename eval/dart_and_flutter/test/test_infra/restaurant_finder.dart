@@ -47,9 +47,9 @@ final class TestRestaurantFinderClient {
   ///
   /// If the client is already running, it will be restarted.
   Future<void> startAndVerify() async {
-    if (_process != null) {
-      _process?.kill();
-    }
+    _process?.kill();
+    _process = null;
+    killProcessesOnPort(10002);
 
     _process = await startAndVerifyService(
       'uv run .',

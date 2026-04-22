@@ -49,6 +49,16 @@ class ShellProbe {
   }
 }
 
+/// Kills any processes currently listening on [port].
+///
+/// Safe to call when no process is on the port — exits silently.
+void killProcessesOnPort(int port) {
+  Process.runSync('bash', [
+    '-c',
+    'lsof -ti tcp:$port | xargs kill -9 2>/dev/null || true',
+  ]);
+}
+
 String runCommandSync(String command) {
   final result = Process.runSync('bash', ['-c', command]);
   if (result.exitCode != 0) {
@@ -93,7 +103,6 @@ Future<Process> startAndVerifyService(
         onDone: () => stdout.writeln('Service process reported "done".'),
       );
 
-  process.stdout.transform(SystemEncoding().decoder).listen(restartTimer);
   process.stderr.transform(SystemEncoding().decoder).listen(restartTimer);
 
   restartTimer('Started timer.\n');
