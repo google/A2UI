@@ -83,27 +83,31 @@ Future<Process> startAndVerifyService(
 
   final serviceStabilizedOutput = Completer<void>();
   Timer? timer;
-  StreamSubscription<String>? subscription;
+  StreamSubscription<String>? stdoutSub;
+  StreamSubscription<String>? stderrSub;
 
   void onTimer() {
     serviceStabilizedOutput.complete();
-    subscription?.cancel();
+    stdoutSub?.cancel();
+    stderrSub?.cancel();
+    timer?.cancel();
   }
 
   void restartTimer(String chunk) {
     stdout.write(chunk);
     timer?.cancel();
-    timer = Timer(quietPeriod, onTimer);
+    if (!serviceStabilizedOutput.isCompleted) {
+      timer = Timer(quietPeriod, onTimer);
+    }
   }
 
-  subscription = process.stdout
+  stdoutSub = process.stdout
       .transform(SystemEncoding().decoder)
-      .listen(
-        restartTimer,
-        onDone: () => stdout.writeln('Service process reported "done".'),
-      );
+      .listen(restartTimer, onDone: onTimer);
 
-  process.stderr.transform(SystemEncoding().decoder).listen(restartTimer);
+  stderrSub = process.stderr
+      .transform(SystemEncoding().decoder)
+      .listen(restartTimer, onDone: onTimer);
 
   restartTimer('Started timer.\n');
   await serviceStabilizedOutput.future;
