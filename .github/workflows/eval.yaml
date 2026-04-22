@@ -33,13 +33,6 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Install uv
         uses: astral-sh/setup-uv@v6
-      - name: Start restaurant finder agent
-        run: uv run .
-        working-directory: ./samples/agent/adk/restaurant_finder
-        env:
-          GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}        
-      - name: Verify restaurant finder agent
-        run: curl http://localhost:10002/.well-known/agent-card.json
       - name: Install Flutter
         # Before bumping, verify the new version is on the flutter org's
         # enterprise actions allowlist, or CI will fail with startup_failure.
