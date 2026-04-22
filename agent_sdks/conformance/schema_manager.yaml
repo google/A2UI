@@ -20,8 +20,11 @@
   args:
     supported_catalogs:
       - catalogId: id_basic
+        components: {}
       - catalogId: id_custom1
+        components: {}
       - catalogId: id_custom2
+        components: {}
     client_capabilities: {}
   expect_selected: id_basic
 
@@ -31,8 +34,11 @@
   args:
     supported_catalogs:
       - catalogId: id_basic
+        components: {}
       - catalogId: id_custom1
+        components: {}
       - catalogId: id_custom2
+        components: {}
     client_capabilities:
       supportedCatalogIds: ["id_custom2", "id_custom1"]
   expect_selected: id_custom2
@@ -43,8 +49,11 @@
   args:
     supported_catalogs:
       - catalogId: id_basic
+        components: {}
       - catalogId: id_custom1
+        components: {}
       - catalogId: id_custom2
+        components: {}
     client_capabilities:
       supportedCatalogIds: ["id_custom1", "id_custom2"]
   expect_selected: id_custom1
@@ -55,10 +64,13 @@
   args:
     supported_catalogs:
       - catalogId: id_basic
+        components: {}
       - catalogId: id_custom1
+        components: {}
     client_capabilities:
       supportedCatalogIds: ["id_not_exists"]
   expect_error: "No client-supported catalog found"
+
 
 - name: test_select_catalog_inline
   description: Inline catalog loading (merges onto base).

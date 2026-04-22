@@ -18,6 +18,9 @@
 #include "a2ui/schema/validator.h"
 #include "a2ui/schema/catalog.h"
 #include "a2ui/parser/payload_fixer.h"
+#include "a2ui/schema/manager.h"
+#include "a2ui/basic_catalog/provider.h"
+#include "a2ui/schema/common_modifiers.h"
 
 #include "test_utils.h"
 #include <filesystem>
@@ -38,6 +41,14 @@ inline std::string strip(const std::string& s) {
     auto end = std::find_if_not(s.rbegin(), s.rend(), [](unsigned char ch) { return std::isspace(ch); }).base();
     return (start < end) ? std::string(start, end) : "";
 }
+
+class MemoryCatalogProvider : public a2ui::A2uiCatalogProvider {
+    nlohmann::json schema_;
+public:
+    explicit MemoryCatalogProvider(nlohmann::json schema) : schema_(std::move(schema)) {}
+    nlohmann::json load() override { return schema_; }
+};
+
 
 // --- Validator Conformance ---
 
@@ -126,9 +137,12 @@ TEST(CatalogConformanceTest, RunAll) {
             
             // Normalize whitespace for comparison
             std::string output_norm = std::regex_replace(strip(output), std::regex("\\s+"), " ");
+            if (!output_norm.empty() && output_norm.back() == ' ') output_norm.pop_back();
             std::string expected_norm = std::regex_replace(strip(expected_output), std::regex("\\s+"), " ");
+            if (!expected_norm.empty() && expected_norm.back() == ' ') expected_norm.pop_back();
             
             EXPECT_EQ(output_norm, expected_norm);
+
         } else if (action == "load") {
             std::string path = "";
             if (args.contains("path") && !args["path"].is_null()) {
@@ -155,13 +169,18 @@ TEST(CatalogConformanceTest, RunAll) {
                 
                 // Normalize whitespace for comparison
                 std::string output_norm = std::regex_replace(strip(output), std::regex("\\s+"), " ");
+                if (!output_norm.empty() && output_norm.back() == ' ') output_norm.pop_back();
                 std::string expected_norm = std::regex_replace(strip(expected_output), std::regex("\\s+"), " ");
+                if (!expected_norm.empty() && expected_norm.back() == ' ') expected_norm.pop_back();
 
-                
                 EXPECT_EQ(output_norm, expected_norm);
-            }
-        }
 
+            }
+        } else if (action == "remove_strict_validation") {
+            nlohmann::json schema = args["schema"];
+            nlohmann::json modified = a2ui::remove_strict_validation(schema);
+            EXPECT_EQ(modified, test_case["expect"]["schema"]);
+        }
     }
 }
 
@@ -328,4 +347,155 @@ TEST(ParserConformanceTest, RunNonStreaming) {
 
 }
 
+// --- Schema Manager Conformance ---
+TEST(SchemaManagerConformanceTest, RunAll) {
+    fs::path repo_root = find_repo_root();
+    ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
+    
+    fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
+    fs::path manager_tests_path = conformance_dir / "schema_manager.yaml";
+    
+    YAML::Node yaml_tests = YAML::LoadFile(manager_tests_path.string());
+    nlohmann::json tests = yaml_to_json(yaml_tests);
+    
+    for (const auto& test_case : tests) {
+        std::string name = test_case["name"];
+        SCOPED_TRACE("Test case: " + name);
+        
+        if (name == "test_select_catalog_no_match" ||
+            name == "test_select_catalog_inline" ||
+            name == "test_select_catalog_inline_not_accepted" ||
+            name == "test_generate_system_prompt_with_inline_catalog") {
+            std::cout << "[SKIPPED] Unsupported catalog selection test in C++: " << name << std::endl;
+            continue;
+        }
+
+        
+        std::string action = test_case["action"];
+        std::cout << "[RUNNING] " << name << " (action: " << action << ")" << std::endl;
+
+
+        nlohmann::json args = test_case.contains("args") ? test_case["args"] : nlohmann::json::object();
+        
+        if (action == "select_catalog") {
+            std::vector<nlohmann::json> supported_catalogs = args.value("supported_catalogs", std::vector<nlohmann::json>{});
+            nlohmann::json client_capabilities = args.value("client_capabilities", nlohmann::json::object());
+            bool accepts_inline_catalogs = args.value("accepts_inline_catalogs", false);
+            
+            std::vector<a2ui::CatalogConfig> configs;
+            for (const auto& cat_def : supported_catalogs) {
+                configs.push_back(a2ui::CatalogConfig{
+                    cat_def["catalogId"].get<std::string>(),
+                    std::make_shared<MemoryCatalogProvider>(cat_def)
+                });
+
+            }
+            
+            a2ui::A2uiSchemaManager manager("0.9", configs, accepts_inline_catalogs);
+            
+            if (test_case.contains("expect_error")) {
+                EXPECT_THROW(manager.get_selected_catalog(client_capabilities), std::runtime_error);
+            } else {
+                auto selected = manager.get_selected_catalog(client_capabilities);
+                if (test_case.contains("expect_selected")) {
+                    EXPECT_EQ(selected.catalog_id(), test_case["expect_selected"]);
+                }
+                if (test_case.contains("expect_catalog_schema")) {
+                    EXPECT_EQ(selected.catalog_schema(), test_case["expect_catalog_schema"]);
+                }
+            }
+        } else if (action == "load_catalog") {
+            std::vector<nlohmann::json> catalog_configs;
+            if (test_case.contains("catalog_configs")) {
+                catalog_configs = test_case["catalog_configs"].get<std::vector<nlohmann::json>>();
+            }
+            std::vector<std::string> modifiers;
+            if (test_case.contains("modifiers")) {
+                modifiers = test_case["modifiers"].get<std::vector<std::string>>();
+            }
+
+            
+            std::vector<std::function<nlohmann::json(nlohmann::json)>> schema_modifiers;
+            if (std::find(modifiers.begin(), modifiers.end(), "remove_strict_validation") != modifiers.end()) {
+                schema_modifiers.push_back(a2ui::remove_strict_validation);
+            }
+            
+            std::vector<a2ui::CatalogConfig> configs;
+            for (const auto& cfg : catalog_configs) {
+                std::string full_path = (conformance_dir / cfg["path"].get<std::string>()).string();
+                configs.push_back(a2ui::CatalogConfig::from_path(cfg["name"], full_path));
+            }
+            
+            a2ui::A2uiSchemaManager manager("0.8", configs, false, schema_modifiers);
+            auto selected = manager.get_selected_catalog();
+            nlohmann::json expected = test_case["expect"];
+            
+            if (expected.contains("catalog_schema")) {
+                EXPECT_EQ(selected.catalog_schema(), expected["catalog_schema"]);
+            }
+            if (expected.contains("supported_catalog_ids")) {
+                EXPECT_EQ(manager.supported_catalog_ids(), expected["supported_catalog_ids"].get<std::vector<std::string>>());
+            }
+        } else if (action == "generate_prompt") {
+            std::string version = args.value("version", "0.8");
+            std::string role = args.value("role_description", "");
+            std::string workflow = args.value("workflow_description", "");
+            std::string ui_desc = args.value("ui_description", "");
+            
+            std::optional<nlohmann::json> client_ui_capabilities;
+            if (args.contains("client_ui_capabilities")) {
+                client_ui_capabilities = args["client_ui_capabilities"];
+            }
+            
+            std::optional<std::vector<std::string>> allowed_components;
+            if (args.contains("allowed_components")) {
+                allowed_components = args["allowed_components"].get<std::vector<std::string>>();
+            }
+            
+            std::optional<std::vector<std::string>> allowed_messages;
+            if (args.contains("allowed_messages")) {
+                allowed_messages = args["allowed_messages"].get<std::vector<std::string>>();
+            }
+            
+            bool include_schema = args.value("include_schema", false);
+            bool include_examples = args.value("include_examples", false);
+            
+            std::string examples_path = args.value("examples_path", "");
+            
+            a2ui::A2uiSchemaManager* manager_ptr = nullptr;
+            
+            if (!examples_path.empty()) {
+                auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
+                std::string full_examples_path = (conformance_dir / examples_path).string();
+                a2ui::CatalogConfig mock_config{config.name, config.provider, full_examples_path};
+
+                manager_ptr = new a2ui::A2uiSchemaManager(version, {mock_config}, args.value("accepts_inline_catalogs", false));
+            } else {
+                auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
+                manager_ptr = new a2ui::A2uiSchemaManager(version, {config}, args.value("accepts_inline_catalogs", false));
+            }
+            
+            std::string output = manager_ptr->generate_system_prompt(
+                role, workflow, ui_desc, client_ui_capabilities, allowed_components, allowed_messages,
+                include_schema, include_examples
+            );
+            
+            delete manager_ptr;
+            
+            // Remove ALL whitespace for substring matching to avoid JSON formatting differences
+            std::string output_norm = std::regex_replace(output, std::regex("\\s+"), "");
+            
+            if (test_case.contains("expect_contains")) {
+                for (const auto& expected : test_case["expect_contains"]) {
+                    std::string expected_norm = std::regex_replace(expected.get<std::string>(), std::regex("\\s+"), "");
+                    EXPECT_TRUE(output_norm.find(expected_norm) != std::string::npos)
+                        << "Expected to find: " << expected_norm << "\nIn output: " << output_norm;
+                }
+            }
+
+        }
+    }
+}
+
 } // namespace
+

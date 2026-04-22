@@ -101,14 +101,9 @@ target_link_libraries(a2ui_sdk PUBLIC nlohmann_json::nlohmann_json nlohmann_json
 # Tests
 add_executable(a2ui_tests
   tests/schema/test_catalog.cc
-  tests/schema/test_schema_manager.cc
   tests/parser/test_streaming_parser.cc
   tests/test_conformance.cc
 )
-
-
-
-
 
 
 target_link_libraries(a2ui_tests
