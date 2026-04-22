@@ -18,8 +18,12 @@ import pytest
 from a2ui.schema.catalog import A2uiCatalog
 from a2ui.parser.streaming import A2uiStreamParser
 from a2ui.schema.validator import A2uiValidator
+from a2ui.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
 
 import json
+
 
 
 def _get_conformance_path(filename):
@@ -126,45 +130,77 @@ cases_catalog = get_conformance_cases("catalog.yaml")
     "name, test_case", cases_catalog, ids=[c[0] for c in cases_catalog]
 )
 def test_catalog_conformance(name, test_case):
-  catalog_config = test_case["catalog"]
-  catalog = setup_catalog(catalog_config)
-
   action = test_case["action"]
-  args = test_case.get("args", {})
 
-  if action == "prune":
-    allowed_components = args.get("allowed_components", [])
-    allowed_messages = args.get("allowed_messages", [])
-    pruned = catalog.with_pruning(allowed_components, allowed_messages)
+  if action != "load_catalog":
+    catalog_config = test_case["catalog"]
+    catalog = setup_catalog(catalog_config)
+    args = test_case.get("args", {})
 
-    expected = test_case["expect"]
-    if "catalog_schema" in expected:
-      assert pruned.catalog_schema == expected["catalog_schema"]
-    if "s2c_schema" in expected:
-      assert pruned.s2c_schema == expected["s2c_schema"]
-    if "common_types_schema" in expected:
-      assert pruned.common_types_schema == expected["common_types_schema"]
+    if action == "prune":
+      allowed_components = args.get("allowed_components", [])
+      allowed_messages = args.get("allowed_messages", [])
+      pruned = catalog.with_pruning(allowed_components, allowed_messages)
 
-  elif action == "render":
-    output = catalog.render_as_llm_instructions()
-    assert output.strip() == test_case["expect_output"].strip()
+      expected = test_case["expect"]
+      if "catalog_schema" in expected:
+        assert pruned.catalog_schema == expected["catalog_schema"]
+      if "s2c_schema" in expected:
+        assert pruned.s2c_schema == expected["s2c_schema"]
+      if "common_types_schema" in expected:
+        assert pruned.common_types_schema == expected["common_types_schema"]
 
-  elif action == "load":
-    path = args.get("path")
-    if path:
-      # Resolve path relative to conformance directory
-      full_path = os.path.join(
-          os.path.dirname(__file__), "../../../conformance", path
-      )
-    else:
-      full_path = None
-
-
-    validate = args.get("validate", False)
-
-    if "expect_error" in test_case:
-      with pytest.raises(ValueError, match=test_case["expect_error"]):
-        catalog.load_examples(full_path, validate=validate)
-    else:
-      output = catalog.load_examples(full_path, validate=validate)
+    elif action == "render":
+      output = catalog.render_as_llm_instructions()
       assert output.strip() == test_case["expect_output"].strip()
+
+    elif action == "load":
+      path = args.get("path")
+      if path:
+        # Resolve path relative to conformance directory
+        full_path = os.path.join(
+            os.path.dirname(__file__), "../../../conformance", path
+        )
+      else:
+        full_path = None
+
+      validate = args.get("validate", False)
+
+      if "expect_error" in test_case:
+        with pytest.raises(ValueError, match=test_case["expect_error"]):
+          catalog.load_examples(full_path, validate=validate)
+      else:
+        output = catalog.load_examples(full_path, validate=validate)
+        assert output.strip() == test_case["expect_output"].strip()
+
+    elif action == "remove_strict_validation":
+      schema = args["schema"]
+      modified = remove_strict_validation(schema)
+      assert modified == test_case["expect"]["schema"]
+
+  elif action == "load_catalog":
+    catalog_configs = test_case.get("catalog_configs", [])
+    modifiers = test_case.get("modifiers", [])
+
+    schema_modifiers = []
+    if "remove_strict_validation" in modifiers:
+      schema_modifiers.append(remove_strict_validation)
+
+    configs = []
+    for cfg in catalog_configs:
+      full_path = os.path.join(
+          os.path.dirname(__file__), "../../../conformance", cfg["path"]
+      )
+      configs.append(
+          CatalogConfig.from_path(name=cfg["name"], catalog_path=full_path)
+      )
+
+    manager = A2uiSchemaManager(
+        version=VERSION_0_8, catalogs=configs, schema_modifiers=schema_modifiers
+    )
+
+    selected = manager.get_selected_catalog()
+    expected = test_case["expect"]
+    assert selected.catalog_schema == expected["catalog_schema"]
+
+

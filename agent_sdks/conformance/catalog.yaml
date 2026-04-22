@@ -365,3 +365,59 @@
     path: "/non/existent/path"
   expect_output: ""
 
+- name: test_remove_strict_validation
+  description: Tests the remove_strict_validation modifier.
+  catalog:
+    version: "0.8"
+  action: remove_strict_validation
+  args:
+    schema:
+      type: object
+      properties:
+        a: {type: string, additionalProperties: false}
+        b:
+          type: array
+          items: {type: object, additionalProperties: false}
+      additionalProperties: false
+  expect:
+    schema:
+      type: object
+      properties:
+        a: {type: string}
+        b:
+          type: array
+          items: {type: object}
+
+- name: test_manager_with_modifiers
+  description: Tests that A2uiSchemaManager applies modifiers during loading.
+  catalog_configs:
+    - name: test_strict
+      path: "test_data/load_examples/schema_with_strict/catalog.json"
+  modifiers: ["remove_strict_validation"]
+  action: load_catalog
+  expect:
+    catalog_schema:
+      catalogId: "test_strict"
+      components:
+        Text:
+          type: object
+          properties:
+            text: {type: string}
+
+- name: test_manager_no_modifiers
+  description: Tests that A2uiSchemaManager works fine without modifiers.
+  catalog_configs:
+    - name: test_strict
+      path: "test_data/load_examples/schema_with_strict/catalog.json"
+  action: load_catalog
+  expect:
+    catalog_schema:
+      catalogId: "test_strict"
+      components:
+        Text:
+          type: object
+          properties:
+            text: {type: string}
+          additionalProperties: false
+
+
