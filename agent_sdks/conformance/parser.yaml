@@ -95,3 +95,22 @@
   input: '{"type": “Text”, "other": "Value’s"}'
   expect: [{"type": "Text", "other": "Value's"}]
 
+- name: test_has_a2ui_parts_true
+  description: Tests that has_a2ui_parts returns true when tags are present.
+  action: has_parts
+  input: "Hello <a2ui-json>[]</a2ui-json> World"
+  expect: true
+
+- name: test_has_a2ui_parts_false_no_tags
+  description: Tests that has_a2ui_parts returns false when no tags are present.
+  action: has_parts
+  input: "Hello World"
+  expect: false
+
+- name: test_has_a2ui_parts_false_only_open
+  description: Tests that has_a2ui_parts returns false when only open tag is present.
+  action: has_parts
+  input: "Hello <a2ui-json> World"
+  expect: false
+
+

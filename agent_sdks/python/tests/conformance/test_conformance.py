@@ -153,6 +153,12 @@ def test_parser_non_streaming_conformance(name, test_case):
       result = parse_and_fix(content)
       assert result == test_case["expect"]
 
+  elif action == "has_parts":
+    from a2ui.parser.parser import has_a2ui_parts
+    result = has_a2ui_parts(content)
+    assert result == test_case["expect"]
+
+
 
 
 # --- Validator Conformance ---

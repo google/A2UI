@@ -98,50 +98,6 @@ TEST(ParserUnitTest, V09PathHeuristicAbsolutePath) {
     EXPECT_EQ(comp["text"]["path"], "/absolute/path");
 }
 
-TEST(ParserConformanceTest, RunV09) {
-    fs::path repo_root = find_repo_root();
-    ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
-    
-    fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path parser_tests_path = conformance_dir / "streaming_parser.yaml";
 
-    
-    YAML::Node yaml_tests = YAML::LoadFile(parser_tests_path.string());
-    nlohmann::json tests = yaml_to_json(yaml_tests);
-    
-    for (const auto& test_case : tests) {
-        std::string name = test_case["name"];
-        if (name.find("_v09") == std::string::npos) {
-            continue;
-        }
-        SCOPED_TRACE("Test case: " + name);
-        
-        nlohmann::json catalog_config = test_case["catalog"];
-        a2ui::A2uiCatalog catalog = setup_catalog(catalog_config, conformance_dir);
-        auto parser = a2ui::A2uiStreamParser::create(catalog);
-        
-        for (const auto& step : test_case["process_chunk"]) {
-            std::string input = step["input"];
-            
-            if (step.contains("expect_error")) {
-                EXPECT_THROW(parser->process_chunk(input), std::runtime_error);
-            } else {
-                auto parts = parser->process_chunk(input);
-                nlohmann::json expected = step["expect"];
-                
-                ASSERT_EQ(parts.size(), expected.size());
-                for (size_t i = 0; i < parts.size(); ++i) {
-                    EXPECT_EQ(parts[i].text, expected[i].value("text", ""));
-                    if (expected[i].contains("a2ui")) {
-                        ASSERT_TRUE(parts[i].a2ui_json.has_value());
-                        EXPECT_EQ(*parts[i].a2ui_json, expected[i]["a2ui"]);
-                    } else {
-                        EXPECT_FALSE(parts[i].a2ui_json.has_value());
-                    }
-                }
-            }
-        }
-    }
-}
 
 } // namespace
