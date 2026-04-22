@@ -31,12 +31,21 @@ class ShellProbe {
     this.timeout = const Duration(seconds: 10),
   });
 
-  /// Validates the response of the service.
+  /// Validates the response of the service, retrying until [timeout] elapses.
   ///
   /// Runs [command], checks the response and throws error if the response is not valid.
   void validate() {
-    final response = runCommandSync(command);
-    responseChecker(response);
+    final deadline = DateTime.now().add(timeout);
+    while (true) {
+      try {
+        final response = runCommandSync(command);
+        responseChecker(response);
+        return;
+      } catch (e) {
+        if (DateTime.now().isAfter(deadline)) rethrow;
+        sleep(const Duration(seconds: 1));
+      }
+    }
   }
 }
 
@@ -83,6 +92,9 @@ Future<Process> startAndVerifyService(
         restartTimer,
         onDone: () => stdout.writeln('Service process reported "done".'),
       );
+
+  process.stdout.transform(SystemEncoding().decoder).listen(restartTimer);
+  process.stderr.transform(SystemEncoding().decoder).listen(restartTimer);
 
   restartTimer('Started timer.\n');
   await serviceStabilizedOutput.future;
