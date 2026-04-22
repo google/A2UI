@@ -70,8 +70,11 @@ class RestaurantAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
-          if "userAction" in part.root.data:
-            logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
+          if part.root.data.get("version") == "v0.9" and "action" in part.root.data:
+            logger.info(f"  Part {i}: Found a2ui v0.9 action payload.")
+            ui_event_part = part.root.data["action"]
+          elif "userAction" in part.root.data:
+            logger.info(f"  Part {i}: Found a2ui v0.8 UI ClientEvent payload.")
             ui_event_part = part.root.data["userAction"]
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
