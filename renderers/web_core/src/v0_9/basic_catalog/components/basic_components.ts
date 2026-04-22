@@ -24,7 +24,7 @@ import {
   ComponentIdSchema,
   ActionSchema,
   AccessibilityAttributesSchema,
-  CheckableSchema,
+  ChecksSchema,
 } from '../../schema/common-types.js';
 import {ComponentApi} from '../../catalog/types.js';
 
@@ -368,7 +368,7 @@ export const ButtonApi = {
         )
         .optional(),
       action: ActionSchema,
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict(),
 } satisfies ComponentApi;
@@ -395,7 +395,7 @@ export const TextFieldApi = {
           'A regular expression used for client-side validation of the input.',
         )
         .optional(),
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict(),
 } satisfies ComponentApi;
@@ -411,7 +411,7 @@ export const CheckBoxApi = {
       value: DynamicBooleanSchema.describe(
         'The current state of the checkbox (true for checked, false for unchecked).',
       ),
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict(),
 } satisfies ComponentApi;
@@ -458,7 +458,7 @@ export const ChoicePickerApi = {
         .default(false)
         .describe('If true, displays a search input to filter the options.')
         .optional(),
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict()
     .describe(
@@ -481,7 +481,7 @@ export const SliderApi = {
         .optional(),
       max: z.number().describe('The maximum value of the slider.'),
       value: DynamicNumberSchema.describe('The current value of the slider.'),
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict(),
 } satisfies ComponentApi;
@@ -525,7 +525,7 @@ export const DateTimeInputApi = {
       label: DynamicStringSchema.describe(
         'The text label for the input field.',
       ).optional(),
-      checks: CheckableSchema.shape.checks,
+      checks: ChecksSchema,
     })
     .strict(),
 } satisfies ComponentApi;

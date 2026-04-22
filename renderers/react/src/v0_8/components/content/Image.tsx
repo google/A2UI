@@ -34,9 +34,7 @@ export const Image = memo(function Image({node, surfaceId}: A2UIComponentProps<T
   const props = node.properties;
 
   const url = resolveString(props.url);
-  const altText = resolveString(
-    (props as Record<string, unknown>).altText as Types.StringValue | undefined
-  );
+  const altText = resolveString(props.altText);
   const usageHint = props.usageHint as UsageHint | undefined;
   const fit = (props.fit as FitMode) ?? 'fill';
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import type { z } from "zod";
 import type {
-  StringValueSchema,
-  NumberValueSchema,
-  BooleanValueSchema,
+  StringValue as IStringValue,
+  NumberValue as INumberValue,
+  BooleanValue as IBooleanValue,
 } from "../schema/common-types.js";
 
-export declare interface StringValue extends z.infer<typeof StringValueSchema> {}
-export declare interface NumberValue extends z.infer<typeof NumberValueSchema> {}
-export declare interface BooleanValue extends z.infer<typeof BooleanValueSchema> {}
+export declare interface StringValue extends IStringValue {}
+export declare interface NumberValue extends INumberValue {}
+export declare interface BooleanValue extends IBooleanValue {}
