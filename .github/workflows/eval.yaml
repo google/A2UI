@@ -29,6 +29,11 @@ jobs:
             exit 1
           fi
           echo "GEMINI_API_KEY has ${#GEMINI_API_KEY} characters"
+      - name: Start restaurant finder agent
+        run: (npx kill-port 10002) || true
+        run: uv run .
+        run: curl http://localhost:10002/.well-known/agent-card.json
+        working-directory: ../../samples/agent/adk/restaurant_finder
       - name: Install Flutter
         # Before bumping, verify the new version is on the flutter org's
         # enterprise actions allowlist, or CI will fail with startup_failure.
