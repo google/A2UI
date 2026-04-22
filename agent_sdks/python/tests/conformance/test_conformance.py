@@ -15,6 +15,8 @@
 import os
 import yaml
 import pytest
+
+from a2ui.basic_catalog import BasicCatalog
 from a2ui.schema.catalog import A2uiCatalog
 from a2ui.parser.streaming import A2uiStreamParser
 from a2ui.schema.validator import A2uiValidator
@@ -23,7 +25,16 @@ from a2ui.schema.common_modifiers import remove_strict_validation
 from a2ui.schema.constants import VERSION_0_8, VERSION_0_9
 
 import json
+import re
 
+
+class MemoryCatalogProvider:
+
+  def __init__(self, schema):
+    self.schema = schema
+
+  def load(self):
+    return self.schema
 
 
 def _get_conformance_path(filename):
@@ -84,6 +95,7 @@ def get_conformance_cases(filename):
   return [(case["name"], case) for case in cases]
 
 
+# --- Parser Conformance ---
 cases_parser = get_conformance_cases("parser.yaml")
 
 
@@ -104,6 +116,7 @@ def test_parser_conformance(name, test_case):
       assert_parts_match(parts, step["expect"])
 
 
+# --- Validator Conformance ---
 cases_validator = get_conformance_cases("validator.yaml")
 
 
@@ -123,6 +136,7 @@ def test_validator_conformance(name, test_case):
       validator.validate(case["payload"])
 
 
+# --- Catalog Conformance ---
 cases_catalog = get_conformance_cases("catalog.yaml")
 
 
@@ -130,62 +144,98 @@ cases_catalog = get_conformance_cases("catalog.yaml")
     "name, test_case", cases_catalog, ids=[c[0] for c in cases_catalog]
 )
 def test_catalog_conformance(name, test_case):
+  catalog_config = test_case["catalog"]
+  catalog = setup_catalog(catalog_config)
   action = test_case["action"]
+  args = test_case.get("args", {})
 
-  if action != "load_catalog":
-    catalog_config = test_case["catalog"]
-    catalog = setup_catalog(catalog_config)
-    args = test_case.get("args", {})
+  if action == "prune":
+    allowed_components = args.get("allowed_components", [])
+    allowed_messages = args.get("allowed_messages", [])
+    pruned = catalog.with_pruning(allowed_components, allowed_messages)
+    expected = test_case["expect"]
+    if "catalog_schema" in expected:
+      assert pruned.catalog_schema == expected["catalog_schema"]
+    if "s2c_schema" in expected:
+      assert pruned.s2c_schema == expected["s2c_schema"]
+    if "common_types_schema" in expected:
+      assert pruned.common_types_schema == expected["common_types_schema"]
 
-    if action == "prune":
-      allowed_components = args.get("allowed_components", [])
-      allowed_messages = args.get("allowed_messages", [])
-      pruned = catalog.with_pruning(allowed_components, allowed_messages)
+  elif action == "render":
+    output = catalog.render_as_llm_instructions()
+    assert output.strip() == test_case["expect_output"].strip()
 
-      expected = test_case["expect"]
-      if "catalog_schema" in expected:
-        assert pruned.catalog_schema == expected["catalog_schema"]
-      if "s2c_schema" in expected:
-        assert pruned.s2c_schema == expected["s2c_schema"]
-      if "common_types_schema" in expected:
-        assert pruned.common_types_schema == expected["common_types_schema"]
-
-    elif action == "render":
-      output = catalog.render_as_llm_instructions()
+  elif action == "load":
+    path = args.get("path")
+    if path:
+      full_path = os.path.join(
+          os.path.dirname(__file__), "../../../conformance", path
+      )
+    else:
+      full_path = None
+    validate = args.get("validate", False)
+    if "expect_error" in test_case:
+      with pytest.raises(ValueError, match=test_case["expect_error"]):
+        catalog.load_examples(full_path, validate=validate)
+    else:
+      output = catalog.load_examples(full_path, validate=validate)
       assert output.strip() == test_case["expect_output"].strip()
 
-    elif action == "load":
-      path = args.get("path")
-      if path:
-        # Resolve path relative to conformance directory
-        full_path = os.path.join(
-            os.path.dirname(__file__), "../../../conformance", path
-        )
-      else:
-        full_path = None
+  elif action == "remove_strict_validation":
+    schema = args["schema"]
+    modified = remove_strict_validation(schema)
+    assert modified == test_case["expect"]["schema"]
 
-      validate = args.get("validate", False)
 
-      if "expect_error" in test_case:
-        with pytest.raises(ValueError, match=test_case["expect_error"]):
-          catalog.load_examples(full_path, validate=validate)
-      else:
-        output = catalog.load_examples(full_path, validate=validate)
-        assert output.strip() == test_case["expect_output"].strip()
+# --- Schema Manager Conformance ---
+cases_schema_manager = get_conformance_cases("schema_manager.yaml")
 
-    elif action == "remove_strict_validation":
-      schema = args["schema"]
-      modified = remove_strict_validation(schema)
-      assert modified == test_case["expect"]["schema"]
+
+@pytest.mark.parametrize(
+    "name, test_case",
+    cases_schema_manager,
+    ids=[c[0] for c in cases_schema_manager],
+)
+def test_schema_manager_conformance(name, test_case):
+  action = test_case["action"]
+  args = test_case.get("args", {})
+
+  if action == "select_catalog":
+    supported_catalogs = args.get("supported_catalogs", [])
+    client_capabilities = args.get("client_capabilities", {})
+    accepts_inline_catalogs = args.get("accepts_inline_catalogs", False)
+
+    configs = []
+    for cat_def in supported_catalogs:
+      configs.append(
+          CatalogConfig(
+              name=cat_def["catalogId"],
+              provider=MemoryCatalogProvider(cat_def),
+          )
+      )
+
+    manager = A2uiSchemaManager(
+        version=VERSION_0_9,
+        catalogs=configs,
+        accepts_inline_catalogs=accepts_inline_catalogs,
+    )
+
+    if "expect_error" in test_case:
+      with pytest.raises(ValueError, match=test_case["expect_error"]):
+        manager.get_selected_catalog(client_capabilities)
+    else:
+      selected = manager.get_selected_catalog(client_capabilities)
+      if "expect_selected" in test_case:
+        assert selected.catalog_id == test_case["expect_selected"]
+      if "expect_catalog_schema" in test_case:
+        assert selected.catalog_schema == test_case["expect_catalog_schema"]
 
   elif action == "load_catalog":
     catalog_configs = test_case.get("catalog_configs", [])
     modifiers = test_case.get("modifiers", [])
-
     schema_modifiers = []
     if "remove_strict_validation" in modifiers:
       schema_modifiers.append(remove_strict_validation)
-
     configs = []
     for cfg in catalog_configs:
       full_path = os.path.join(
@@ -194,13 +244,58 @@ def test_catalog_conformance(name, test_case):
       configs.append(
           CatalogConfig.from_path(name=cfg["name"], catalog_path=full_path)
       )
-
     manager = A2uiSchemaManager(
         version=VERSION_0_8, catalogs=configs, schema_modifiers=schema_modifiers
     )
-
     selected = manager.get_selected_catalog()
     expected = test_case["expect"]
-    assert selected.catalog_schema == expected["catalog_schema"]
+    if "catalog_schema" in expected:
+      assert selected.catalog_schema == expected["catalog_schema"]
+    if "supported_catalog_ids" in expected:
+      assert [c.catalog_id for c in manager._supported_catalogs] == expected[
+          "supported_catalog_ids"
+      ]
 
+  elif action == "generate_prompt":
+    version = args.get("version", VERSION_0_8)
+    role = args.get("role_description", "")
+    workflow = args.get("workflow_description", "")
+    ui_desc = args.get("ui_description", "")
 
+    examples_path = args.get("examples_path")
+    if examples_path:
+      examples_path = os.path.join(
+          os.path.dirname(__file__), "../../../conformance", examples_path
+      )
+
+    config = BasicCatalog.get_config(version)
+    if examples_path:
+      config = CatalogConfig(
+          name=config.name,
+          provider=config.provider,
+          examples_path=examples_path,
+      )
+
+    manager = A2uiSchemaManager(
+        version=version,
+        catalogs=[config],
+        accepts_inline_catalogs=args.get("accepts_inline_catalogs", False),
+    )
+
+    output = manager.generate_system_prompt(
+        role_description=role,
+        workflow_description=workflow,
+        ui_description=ui_desc,
+        include_schema=args.get("include_schema", False),
+        include_examples=args.get("include_examples", False),
+        client_ui_capabilities=args.get("client_ui_capabilities"),
+        allowed_components=args.get("allowed_components"),
+        allowed_messages=args.get("allowed_messages"),
+    )
+
+    output_normalized = re.sub(r"\s+", " ", output.strip())
+
+    if "expect_contains" in test_case:
+      for expected in test_case["expect_contains"]:
+        expected_normalized = re.sub(r"\s+", " ", expected.strip())
+        assert expected_normalized in output_normalized
