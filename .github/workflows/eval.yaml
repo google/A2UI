@@ -36,6 +36,8 @@ jobs:
       - name: Start restaurant finder agent
         run: uv run .
         working-directory: ./samples/agent/adk/restaurant_finder
+        env:
+          GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}        
       - name: Verify restaurant finder agent
         run: curl http://localhost:10002/.well-known/agent-card.json
       - name: Install Flutter
