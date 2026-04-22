@@ -18,4 +18,4 @@ set -e
 
 cd "$(dirname "$0")/dart_and_flutter"
 # Parallel tests are disabled to avoid conflicts on environment. 
-flutter test --concurrency=1 --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
+flutter test --concurrency=1 --dart-define=GEMINI_API_KEY="$GEMINI_API_KEY"
