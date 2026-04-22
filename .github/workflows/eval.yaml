@@ -29,6 +29,8 @@ jobs:
             exit 1
           fi
           echo "GEMINI_API_KEY has ${#GEMINI_API_KEY} characters"
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Start restaurant finder agent
         run: uv run .
         working-directory: ./samples/agent/adk/restaurant_finder
@@ -43,8 +45,6 @@ jobs:
           cache: true
       - name: Print Flutter version
         run: flutter --version
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Install dependencies
         run: flutter pub get
       - name: Run eval tests
