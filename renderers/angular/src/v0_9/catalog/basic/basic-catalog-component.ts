@@ -17,7 +17,8 @@
 import { Directive, computed, HostBinding, input, inject } from '@angular/core';
 import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentSchemaToProps } from '../../core/types';
+import { ComponentApiToProps } from '../../core/types';
+import { ComponentApi } from '@a2ui/web_core/v0_9';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
@@ -26,11 +27,11 @@ import { ComponentSchemaToProps } from '../../core/types';
  * Also binds the primary brand color to the host element.
  */
 @Directive()
-export abstract class BasicCatalogComponent<ComponentSchema extends {} = {}> {
+export abstract class BasicCatalogComponent<Api extends ComponentApi> {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
-  props = input<ComponentSchemaToProps<ComponentSchema>>({} as any);
+  props = input<ComponentApiToProps<Api>>({} as any);
 
   surfaceId = input.required<string>();
   componentId = input.required<string>();

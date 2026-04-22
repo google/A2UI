@@ -24,7 +24,7 @@ import {
 } from '@angular/core';
 import { MarkdownRenderer } from '../../core/markdown';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { TextSchema } from '@a2ui/web_core/v0_9/basic_catalog';
+import { TextApi } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Text component (v0.9).
@@ -111,7 +111,7 @@ import { TextSchema } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent extends BasicCatalogComponent<TextSchema> {
+export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   private markdownRenderer = inject(MarkdownRenderer);
 
   readonly variant = computed(() => this.props().variant?.value() || 'body');

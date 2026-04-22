@@ -16,7 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { CheckBoxSchema } from '@a2ui/web_core/v0_9/basic_catalog';
+import { CheckBoxApi } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI CheckBox component (v0.9).
@@ -81,7 +81,7 @@ import { CheckBoxSchema } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckBoxComponent extends BasicCatalogComponent<CheckBoxSchema> {
+export class CheckBoxComponent extends BasicCatalogComponent<typeof CheckBoxApi> {
   readonly value = computed(() => this.props().value?.value() === true);
   readonly label = computed(() => this.props().label?.value());
 

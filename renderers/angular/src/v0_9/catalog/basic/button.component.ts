@@ -18,7 +18,7 @@ import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { ButtonSchema } from '@a2ui/web_core/v0_9/basic_catalog';
+import { ButtonApi } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Button component (v0.9).
@@ -95,7 +95,7 @@ import { ButtonSchema } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent extends BasicCatalogComponent<ButtonSchema> {
+export class ButtonComponent extends BasicCatalogComponent<typeof ButtonApi> {
 
   readonly variant = computed(() => this.props().variant?.value() ?? 'default');
   readonly child = computed(() => this.props().child?.value());

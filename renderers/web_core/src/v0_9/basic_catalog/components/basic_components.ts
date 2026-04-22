@@ -54,7 +54,6 @@ export const TextApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type TextSchema = z.infer<typeof TextApi.schema>;
 
 export const ImageApi = {
   name: 'Image',
@@ -87,7 +86,6 @@ export const ImageApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type ImageSchema = z.infer<typeof ImageApi.schema>;
 
 const ICON_NAMES = [
   'accountCircle',
@@ -169,7 +167,6 @@ export const IconApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type IconSchema = z.infer<typeof IconApi.schema>;
 
 export const VideoApi = {
   name: 'Video',
@@ -180,7 +177,6 @@ export const VideoApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type VideoSchema = z.infer<typeof VideoApi.schema>;
 
 export const AudioPlayerApi = {
   name: 'AudioPlayer',
@@ -194,7 +190,6 @@ export const AudioPlayerApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type AudioPlayerSchema = z.infer<typeof AudioPlayerApi.schema>;
 
 export const RowApi = {
   name: 'Row',
@@ -232,7 +227,6 @@ export const RowApi = {
       'A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row.',
     ),
 } satisfies ComponentApi;
-export type RowSchema = z.infer<typeof RowApi.schema>;
 
 export const ColumnApi = {
   name: 'Column',
@@ -270,7 +264,6 @@ export const ColumnApi = {
       'A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column.',
     ),
 } satisfies ComponentApi;
-export type ColumnSchema = z.infer<typeof ColumnApi.schema>;
 
 export const ListApi = {
   name: 'List',
@@ -297,7 +290,6 @@ export const ListApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type ListSchema = z.infer<typeof ListApi.schema>;
 
 export const CardApi = {
   name: 'Card',
@@ -310,7 +302,6 @@ export const CardApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type CardSchema = z.infer<typeof CardApi.schema>;
 
 export const TabsApi = {
   name: 'Tabs',
@@ -335,7 +326,6 @@ export const TabsApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type TabsSchema = z.infer<typeof TabsApi.schema>;
 
 export const ModalApi = {
   name: 'Modal',
@@ -351,7 +341,6 @@ export const ModalApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type ModalSchema = z.infer<typeof ModalApi.schema>;
 
 export const DividerApi = {
   name: 'Divider',
@@ -366,7 +355,6 @@ export const DividerApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type DividerSchema = z.infer<typeof DividerApi.schema>;
 
 export const ButtonApi = {
   name: 'Button',
@@ -388,7 +376,6 @@ export const ButtonApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type ButtonSchema = z.infer<typeof ButtonApi.schema>;
 
 export const TextFieldApi = {
   name: 'TextField',
@@ -416,7 +403,6 @@ export const TextFieldApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type TextFieldSchema = z.infer<typeof TextFieldApi.schema>;
 
 export const CheckBoxApi = {
   name: 'CheckBox',
@@ -433,7 +419,6 @@ export const CheckBoxApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type CheckBoxSchema = z.infer<typeof CheckBoxApi.schema>;
 
 export const ChoicePickerApi = {
   name: 'ChoicePicker',
@@ -484,7 +469,6 @@ export const ChoicePickerApi = {
       'A component that allows selecting one or more options from a list.',
     ),
 } satisfies ComponentApi;
-export type ChoicePickerSchema = z.infer<typeof ChoicePickerApi.schema>;
 
 export const SliderApi = {
   name: 'Slider',
@@ -509,7 +493,6 @@ export const SliderApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type SliderSchema = z.infer<typeof SliderApi.schema>;
 
 export const DateTimeInputApi = {
   name: 'DateTimeInput',
@@ -554,7 +537,6 @@ export const DateTimeInputApi = {
     })
     .strict(),
 } satisfies ComponentApi;
-export type DateTimeInputSchema = z.infer<typeof DateTimeInputApi.schema>;
 
 export const BASIC_COMPONENTS: ComponentApi[] = [
   TextApi,

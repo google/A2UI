@@ -19,7 +19,7 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { getNormalizedPath } from '../../core/utils';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
-import { RowSchema } from '@a2ui/web_core/v0_9/basic_catalog';
+import { RowApi } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Row component (v0.9).
@@ -61,7 +61,7 @@ import { RowSchema } from '@a2ui/web_core/v0_9/basic_catalog';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RowComponent extends BasicCatalogComponent<RowSchema> {
+export class RowComponent extends BasicCatalogComponent<typeof RowApi> {
   protected readonly justify = computed(() => {
     const val = this.props().justify?.value();
     return val ? JUSTIFY_MAP[val] || val : undefined;
