@@ -16,6 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { VideoProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Video component (v0.9).
@@ -57,7 +58,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VideoComponent extends BasicCatalogComponent {
-  readonly url = computed(() => this.props()['url']?.value());
-  readonly posterUrl = computed(() => this.props()['posterUrl']?.value());
+export class VideoComponent extends BasicCatalogComponent<VideoProps> {
+  readonly url = computed(() => this.props().url?.value());
+  readonly posterUrl = computed(() => (this.props() as any).posterUrl?.value());
 }

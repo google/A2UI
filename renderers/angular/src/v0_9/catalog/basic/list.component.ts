@@ -18,12 +18,13 @@ import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { Child } from '../../core/component-binder.service';
+import { ListProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI List component (v0.9).
  *
  * Renders a list of child components with support for ordered, unordered,
- * and unstyled layouts in both vertical and horizontal orientations.
+ * and unstyled layouts in both vertical and horizontal directions.
  *
  * Supported CSS variables:
  * - `--a2ui-list-gap`: Controls the gap between items.
@@ -36,7 +37,7 @@ import { Child } from '../../core/component-binder.service';
   template: `
     @switch (listTag()) {
       @case ('ol') {
-        <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
+        <ol [class]="'a2ui-list ' + direction()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
@@ -46,7 +47,7 @@ import { Child } from '../../core/component-binder.service';
         </ol>
       }
       @case ('ul') {
-        <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
+        <ul [class]="'a2ui-list ' + direction()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
               <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
@@ -56,7 +57,7 @@ import { Child } from '../../core/component-binder.service';
         </ul>
       }
       @default {
-        <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
+        <div [class]="'a2ui-list ' + direction()" style="list-style-type: none;">
           @for (child of children(); track trackBy($index, child)) {
             <div class="a2ui-list-item-none">
               <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
@@ -93,11 +94,11 @@ import { Child } from '../../core/component-binder.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent extends BasicCatalogComponent {
-  readonly listStyle = computed(() => this.props()['listStyle']?.value());
-  readonly orientation = computed(() => this.props()['orientation']?.value() || 'vertical');
+export class ListComponent extends BasicCatalogComponent<ListProps> {
+  readonly listStyle = computed(() => this.props().listStyle?.value());
+  readonly direction = computed(() => this.props().direction?.value() || 'vertical');
   readonly children = computed(() => {
-    const raw = this.props()['children']?.value();
+    const raw = this.props().children?.value();
     return Array.isArray(raw) ? raw : [];
   });
 

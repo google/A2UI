@@ -24,6 +24,7 @@ import {
 } from '@angular/core';
 import { MarkdownRenderer } from '../../core/markdown';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { TextProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Text component (v0.9).
@@ -110,11 +111,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent extends BasicCatalogComponent {
+export class TextComponent extends BasicCatalogComponent<TextProps> {
   private markdownRenderer = inject(MarkdownRenderer);
 
-  readonly variant = computed(() => this.props()['variant']?.value() || 'body');
-  readonly text = computed(() => this.props()['text']?.value() || '');
+  readonly variant = computed(() => this.props().variant?.value() || 'body');
+  readonly text = computed(() => this.props().text?.value() || '');
 
   resolvedText = signal<string>('');
   private renderRequestId = 0;

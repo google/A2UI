@@ -16,6 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { IconProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   play: 'play_arrow',
@@ -82,9 +83,9 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IconComponent extends BasicCatalogComponent {
-  readonly color = computed(() => this.props()['color']?.value());
-  readonly iconNameRaw = computed(() => this.props()['name']?.value());
+export class IconComponent extends BasicCatalogComponent<IconProps> {
+  readonly color = computed(() => (this.props() as any).color?.value());
+  readonly iconNameRaw = computed(() => this.props().name?.value());
 
   readonly isPath = computed(() => {
     const name = this.iconNameRaw();

@@ -17,6 +17,7 @@
 import { Component, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { TabsProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Tabs component (v0.9).
@@ -94,10 +95,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabsComponent extends BasicCatalogComponent {
+export class TabsComponent extends BasicCatalogComponent<TabsProps> {
   activeTabIndex = signal(0);
 
-  readonly tabs = computed(() => this.props()['tabs']?.value() || []);
+  readonly tabs = computed(() => this.props().tabs?.value() || []);
   readonly activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
 
   protected readonly normalizedActiveTabChild = computed(() => {

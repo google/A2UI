@@ -16,6 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { TextFieldProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
@@ -48,9 +49,9 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         [value]="value()"
         (input)="handleInput($event)"
         [placeholder]="placeholder()"
-        [class.invalid]="props()['isValid']?.value() === false"
+        [class.invalid]="props().isValid.value() === false"
       />
-      @for (message of props()['validationErrors']?.value(); track message) {
+      @for (message of props().validationErrors.value(); track message) {
         <div class="a2ui-error-message">{{ message }}</div>
       }
     </div>
@@ -93,11 +94,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextFieldComponent extends BasicCatalogComponent {
-  readonly label = computed(() => this.props()['label']?.value());
-  readonly value = computed(() => this.props()['value']?.value() || '');
-  readonly placeholder = computed(() => this.props()['placeholder']?.value() || '');
-  readonly variant = computed(() => this.props()['variant']?.value());
+export class TextFieldComponent extends BasicCatalogComponent<TextFieldProps> {
+  readonly label = computed(() => this.props().label?.value());
+  readonly value = computed(() => this.props().value?.value() || '');
+  readonly placeholder = computed(() => (this.props() as any).placeholder?.value() || '');
+  readonly variant = computed(() => this.props().variant?.value());
 
   readonly inputType = computed(() => {
     switch (this.variant()) {
@@ -114,6 +115,6 @@ export class TextFieldComponent extends BasicCatalogComponent {
     const value = (event.target as HTMLInputElement).value;
     // Update the data path.  If anything is listening to this path, it will be
     // notified.
-    this.props()['value']?.onUpdate(value);
+    this.props().value?.onUpdate(value);
   }
 }

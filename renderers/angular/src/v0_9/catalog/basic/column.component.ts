@@ -20,6 +20,7 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { getNormalizedPath } from '../../core/utils';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
+import { ColumnProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Column component (v0.9).
@@ -62,27 +63,27 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColumnComponent extends BasicCatalogComponent {
+export class ColumnComponent extends BasicCatalogComponent<ColumnProps> {
   protected readonly justify = computed(() => {
-    const val = this.props()['justify']?.value();
+    const val = this.props().justify?.value();
     return val ? JUSTIFY_MAP[val] || val : undefined;
   });
   protected readonly align = computed(() => {
-    const val = this.props()['align']?.value();
+    const val = this.props().align?.value();
     return val ? ALIGN_MAP[val] || val : undefined;
   });
 
   protected readonly children = computed(() => {
-    const raw = this.props()['children']?.value() || [];
+    const raw = this.props().children?.value() || [];
     return Array.isArray(raw) ? raw : [];
   });
 
   protected readonly isRepeating = computed(() => {
-    return !!this.props()['children']?.raw?.componentId;
+    return !!this.props().children?.raw?.componentId;
   });
 
   protected readonly templateId = computed(() => {
-    return this.props()['children']?.raw?.componentId;
+    return this.props().children?.raw?.componentId;
   });
 
   protected readonly normalizedChildren = computed(() => {
@@ -96,6 +97,6 @@ export class ColumnComponent extends BasicCatalogComponent {
   });
 
   protected getNormalizedPath(index: number) {
-    return getNormalizedPath(this.props()['children']?.raw?.path, this.dataContextPath(), index);
+    return getNormalizedPath(this.props().children?.raw?.path, this.dataContextPath(), index);
   }
 }

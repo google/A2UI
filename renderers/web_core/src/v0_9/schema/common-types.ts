@@ -25,6 +25,7 @@ export const DataBindingSchema = z
   .describe(
     'REF:common_types.json#/$defs/DataBinding|A JSON Pointer path to a value in the data model.',
   );
+export type DataBindingType = z.infer<typeof DataBindingSchema>;
 
 export const FunctionCallSchema = z
   .object({
@@ -37,6 +38,7 @@ export const FunctionCallSchema = z
   .describe(
     'REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.',
   );
+export type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 
 export const DynamicBooleanSchema = z
   .union([z.boolean(), DataBindingSchema, FunctionCallSchema])

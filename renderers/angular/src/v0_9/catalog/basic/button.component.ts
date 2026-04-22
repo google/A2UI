@@ -18,6 +18,7 @@ import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { ButtonProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Button component (v0.9).
@@ -94,11 +95,11 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent extends BasicCatalogComponent {
+export class ButtonComponent extends BasicCatalogComponent<ButtonProps> {
 
-  readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
-  readonly child = computed(() => this.props()['child']?.value());
-  readonly action = computed(() => this.props()['action']?.value());
+  readonly variant = computed(() => this.props().variant?.value() ?? 'default');
+  readonly child = computed(() => this.props().child?.value());
+  readonly action = computed(() => this.props().action?.value());
 
   handleClick() {
     const action = this.action();

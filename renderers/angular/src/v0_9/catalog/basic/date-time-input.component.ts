@@ -16,6 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
+import { DateTimeInputProps } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI DateTimeInput component (v0.9).
@@ -97,12 +98,12 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DateTimeInputComponent extends BasicCatalogComponent {
-  readonly label = computed(() => this.props()['label']?.value());
-  readonly enableDate = computed(() => this.props()['enableDate']?.value() ?? true);
-  readonly enableTime = computed(() => this.props()['enableTime']?.value() ?? false);
+export class DateTimeInputComponent extends BasicCatalogComponent<DateTimeInputProps> {
+  readonly label = computed(() => this.props().label?.value());
+  readonly enableDate = computed(() => this.props().enableDate?.value() ?? true);
+  readonly enableTime = computed(() => this.props().enableTime?.value() ?? false);
 
-  private readonly rawValue = computed(() => this.props()['value']?.value() || '');
+  private readonly rawValue = computed(() => this.props().value?.value() || '');
 
   readonly dateValue = computed(() => {
     const val = this.rawValue();
@@ -121,9 +122,9 @@ export class DateTimeInputComponent extends BasicCatalogComponent {
     const current = this.rawValue();
     if (this.enableTime()) {
       const time = current.includes('T') ? current.split('T')[1] : '00:00:00';
-      this.props()['value']?.onUpdate(`${date}T${time}`);
+      this.props().value?.onUpdate(`${date}T${time}`);
     } else {
-      this.props()['value']?.onUpdate(date);
+      this.props().value?.onUpdate(date);
     }
   }
 
@@ -133,6 +134,6 @@ export class DateTimeInputComponent extends BasicCatalogComponent {
     const date = current.includes('T')
       ? current.split('T')[0]
       : current || new Date().toISOString().split('T')[0];
-    this.props()['value']?.onUpdate(`${date}T${time}:00`);
+    this.props().value?.onUpdate(`${date}T${time}:00`);
   }
 }
