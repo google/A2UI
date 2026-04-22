@@ -50,9 +50,11 @@ class Session extends ChangeNotifier {
   late final A2uiAgentConnector _connector;
   late final SurfaceController _surfaceController;
 
+  // ignore: unreachable_from_main
   SurfaceHost get surfaceController => _surfaceController;
 
   bool _isProcessing = false;
+  // ignore: unreachable_from_main
   bool get isProcessing => _isProcessing;
 
   final Logger _logger = Logger('ChatSession');
