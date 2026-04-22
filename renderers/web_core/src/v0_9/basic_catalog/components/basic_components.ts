@@ -164,6 +164,7 @@ export const IconApi = {
             .strict(),
         ])
         .describe('The name of the icon to display.'),
+      color: DynamicStringSchema.describe('The color of the icon.').optional(),
     })
     .strict(),
 } satisfies ComponentApi;
