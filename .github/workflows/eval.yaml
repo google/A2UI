@@ -42,18 +42,18 @@ jobs:
           cache: true
       - name: Print Flutter version
         run: flutter --version
+      - name: Cache pub dependencies
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
       - name: Install dependencies
         run: flutter pub get
       - name: Run eval tests
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
         run: ./eval/run.sh
-      - name: Cache dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
-        with:
-          path: ${{ env.PUB_CACHE }}
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-pub-
       
           
         
