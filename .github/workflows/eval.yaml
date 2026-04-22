@@ -39,7 +39,7 @@ jobs:
         uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e
         with:
           channel: beta
-          cache: true
+          cache: false
       - name: Print Flutter version
         run: flutter --version
       - name: Cache pub dependencies
