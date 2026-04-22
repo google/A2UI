@@ -59,6 +59,6 @@ import { VideoApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoComponent extends BasicCatalogComponent<typeof VideoApi> {
-  readonly url = computed(() => this.props().url?.value());
+  readonly url = computed(() => this.props()['url']?.value());
   readonly posterUrl = computed(() => (this.props() as any).posterUrl?.value());
 }

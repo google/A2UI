@@ -95,10 +95,10 @@ import { TextFieldApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextFieldComponent extends BasicCatalogComponent<typeof TextFieldApi> {
-  readonly label = computed(() => this.props().label?.value());
-  readonly value = computed(() => this.props().value?.value() || '');
+  readonly label = computed(() => this.props()['label']?.value());
+  readonly value = computed(() => this.props()['value']?.value() || '');
   readonly placeholder = computed(() => (this.props() as any).placeholder?.value() || '');
-  readonly variant = computed(() => this.props().variant?.value());
+  readonly variant = computed(() => this.props()['variant']?.value());
 
   readonly inputType = computed(() => {
     switch (this.variant()) {
@@ -115,6 +115,6 @@ export class TextFieldComponent extends BasicCatalogComponent<typeof TextFieldAp
     const value = (event.target as HTMLInputElement).value;
     // Update the data path.  If anything is listening to this path, it will be
     // notified.
-    this.props().value?.onUpdate(value);
+    this.props()['value']?.onUpdate(value);
   }
 }

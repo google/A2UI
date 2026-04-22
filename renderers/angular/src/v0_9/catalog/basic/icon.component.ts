@@ -85,7 +85,7 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
 })
 export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
   readonly color = computed(() => (this.props() as any).color?.value());
-  readonly iconNameRaw = computed(() => this.props().name?.value());
+  readonly iconNameRaw = computed(() => this.props()['name']?.value());
 
   readonly isPath = computed(() => {
     const name = this.iconNameRaw();

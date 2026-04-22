@@ -95,10 +95,10 @@ import { ListApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent extends BasicCatalogComponent<typeof ListApi> {
-  readonly listStyle = computed(() => this.props().listStyle?.value());
-  readonly direction = computed(() => this.props().direction?.value() || 'vertical');
+  readonly listStyle = computed(() => this.props()['listStyle']?.value());
+  readonly direction = computed(() => this.props()['direction']?.value() || 'vertical');
   readonly children = computed(() => {
-    const raw = this.props().children?.value();
+    const raw = this.props()['children']?.value();
     return Array.isArray(raw) ? raw : [];
   });
 

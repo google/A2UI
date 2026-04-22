@@ -127,12 +127,12 @@ import { ChoicePickerApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChoicePickerComponent extends BasicCatalogComponent<typeof ChoicePickerApi> {
-  readonly displayStyle = computed(() => this.props().displayStyle?.value());
+  readonly displayStyle = computed(() => this.props()['displayStyle']?.value());
   readonly options = computed(
-    () => this.props().options?.value() || this.props().options?.value() || [],
+    () => this.props()['options']?.value() || this.props()['options']?.value() || [],
   );
-  readonly variant = computed(() => this.props().variant?.value());
-  readonly selectedValue = computed(() => this.props().value?.value());
+  readonly variant = computed(() => this.props()['variant']?.value());
+  readonly selectedValue = computed(() => this.props()['value']?.value());
 
   isMultiple(): boolean {
     return this.variant() === 'multipleSelection';
@@ -165,10 +165,10 @@ export class ChoicePickerComponent extends BasicCatalogComponent<typeof ChoicePi
       } else {
         next = next.filter((v: any) => v !== value);
       }
-      this.props().value?.onUpdate(next);
+      this.props()['value']?.onUpdate(next);
     } else {
       if (active) {
-        this.props().value?.onUpdate([value]);
+        this.props()['value']?.onUpdate([value]);
       }
     }
   }

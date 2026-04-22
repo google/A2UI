@@ -74,8 +74,8 @@ import { ImageApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent extends BasicCatalogComponent<typeof ImageApi> {
-  readonly url = computed(() => this.props().url?.value());
-  readonly description = computed(() => this.props().description?.value() || '');
-  readonly fit = computed(() => this.props().fit?.value() || 'cover');
-  readonly variant = computed(() => this.props().variant?.value() || 'default');
+  readonly url = computed(() => this.props()['url']?.value());
+  readonly description = computed(() => this.props()['description']?.value() || '');
+  readonly fit = computed(() => this.props()['fit']?.value() || 'cover');
+  readonly variant = computed(() => this.props()['variant']?.value() || 'default');
 }

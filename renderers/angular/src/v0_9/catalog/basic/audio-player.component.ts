@@ -67,6 +67,6 @@ import { AudioPlayerApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioPlayerComponent extends BasicCatalogComponent<typeof AudioPlayerApi> {
-  readonly description = computed(() => this.props().description?.value());
-  readonly url = computed(() => this.props().url?.value());
+  readonly description = computed(() => this.props()['description']?.value());
+  readonly url = computed(() => this.props()['url']?.value());
 }

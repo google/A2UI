@@ -82,11 +82,11 @@ import { CheckBoxApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckBoxComponent extends BasicCatalogComponent<typeof CheckBoxApi> {
-  readonly value = computed(() => this.props().value?.value() === true);
-  readonly label = computed(() => this.props().label?.value());
+  readonly value = computed(() => this.props()['value']?.value() === true);
+  readonly label = computed(() => this.props()['label']?.value());
 
   handleChange(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.props().value?.onUpdate(checked);
+    this.props()['value']?.onUpdate(checked);
   }
 }

@@ -68,5 +68,5 @@ import { DividerApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DividerComponent extends BasicCatalogComponent<typeof DividerApi> {
-  readonly axis = computed(() => this.props().axis?.value() ?? 'horizontal');
+  readonly axis = computed(() => this.props()['axis']?.value() ?? 'horizontal');
 }

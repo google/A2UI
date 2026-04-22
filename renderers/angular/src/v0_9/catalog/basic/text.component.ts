@@ -114,8 +114,8 @@ import { TextApi } from '@a2ui/web_core/v0_9/basic_catalog';
 export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   private markdownRenderer = inject(MarkdownRenderer);
 
-  readonly variant = computed(() => this.props().variant?.value() || 'body');
-  readonly text = computed(() => this.props().text?.value() || '');
+  readonly variant = computed(() => this.props()['variant']?.value() || 'body');
+  readonly text = computed(() => this.props()['text']?.value() || '');
 
   resolvedText = signal<string>('');
   private renderRequestId = 0;

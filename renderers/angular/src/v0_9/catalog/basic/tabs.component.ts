@@ -98,7 +98,7 @@ import { TabsApi } from '@a2ui/web_core/v0_9/basic_catalog';
 export class TabsComponent extends BasicCatalogComponent<typeof TabsApi> {
   activeTabIndex = signal(0);
 
-  readonly tabs = computed(() => this.props().tabs?.value() || []);
+  readonly tabs = computed(() => this.props()['tabs']?.value() || []);
   readonly activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
 
   protected readonly normalizedActiveTabChild = computed(() => {

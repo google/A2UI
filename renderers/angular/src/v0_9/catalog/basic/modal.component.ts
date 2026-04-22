@@ -108,8 +108,8 @@ import { ModalApi } from '@a2ui/web_core/v0_9/basic_catalog';
 export class ModalComponent extends BasicCatalogComponent<typeof ModalApi> {
   isOpen = signal(false);
 
-  readonly trigger = computed(() => this.props().trigger?.value());
-  readonly content = computed(() => this.props().content?.value());
+  readonly trigger = computed(() => this.props()['trigger']?.value());
+  readonly content = computed(() => this.props()['content']?.value());
 
   openModal() {
     this.isOpen.set(true);

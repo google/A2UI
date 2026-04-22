@@ -97,9 +97,9 @@ import { ButtonApi } from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class ButtonComponent extends BasicCatalogComponent<typeof ButtonApi> {
 
-  readonly variant = computed(() => this.props().variant?.value() ?? 'default');
-  readonly child = computed(() => this.props().child?.value());
-  readonly action = computed(() => this.props().action?.value());
+  readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
+  readonly child = computed(() => this.props()['child']?.value());
+  readonly action = computed(() => this.props()['action']?.value());
 
   handleClick() {
     const action = this.action();

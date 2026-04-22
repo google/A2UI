@@ -65,25 +65,25 @@ import { ColumnApi } from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   protected readonly justify = computed(() => {
-    const val = this.props().justify?.value();
+    const val = this.props()['justify']?.value();
     return val ? JUSTIFY_MAP[val] || val : undefined;
   });
   protected readonly align = computed(() => {
-    const val = this.props().align?.value();
+    const val = this.props()['align']?.value();
     return val ? ALIGN_MAP[val] || val : undefined;
   });
 
   protected readonly children = computed(() => {
-    const raw = this.props().children?.value() || [];
+    const raw = this.props()['children']?.value() || [];
     return Array.isArray(raw) ? raw : [];
   });
 
   protected readonly isRepeating = computed(() => {
-    return !!this.props().children?.raw?.componentId;
+    return !!this.props()['children']?.raw?.componentId;
   });
 
   protected readonly templateId = computed(() => {
-    return this.props().children?.raw?.componentId;
+    return this.props()['children']?.raw?.componentId;
   });
 
   protected readonly normalizedChildren = computed(() => {
@@ -97,6 +97,6 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   });
 
   protected getNormalizedPath(index: number) {
-    return getNormalizedPath(this.props().children?.raw?.path, this.dataContextPath(), index);
+    return getNormalizedPath(this.props()['children']?.raw?.path, this.dataContextPath(), index);
   }
 }
