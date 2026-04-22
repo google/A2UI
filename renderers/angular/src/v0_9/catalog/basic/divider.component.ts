@@ -16,7 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { DividerProps } from '@a2ui/web_core/v0_9/basic_catalog';
+import { DividerSchema } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Divider component (v0.9).
@@ -67,6 +67,6 @@ import { DividerProps } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DividerComponent extends BasicCatalogComponent<DividerProps> {
+export class DividerComponent extends BasicCatalogComponent<DividerSchema> {
   readonly axis = computed(() => this.props().axis?.value() ?? 'horizontal');
 }

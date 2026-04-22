@@ -16,7 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { TextFieldProps } from '@a2ui/web_core/v0_9/basic_catalog';
+import { TextFieldSchema } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
@@ -94,7 +94,7 @@ import { TextFieldProps } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextFieldComponent extends BasicCatalogComponent<TextFieldProps> {
+export class TextFieldComponent extends BasicCatalogComponent<TextFieldSchema> {
   readonly label = computed(() => this.props().label?.value());
   readonly value = computed(() => this.props().value?.value() || '');
   readonly placeholder = computed(() => (this.props() as any).placeholder?.value() || '');

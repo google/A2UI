@@ -16,7 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { ChoicePickerProps } from '@a2ui/web_core/v0_9/basic_catalog';
+import { ChoicePickerSchema } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
@@ -126,7 +126,7 @@ import { ChoicePickerProps } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChoicePickerComponent extends BasicCatalogComponent<ChoicePickerProps> {
+export class ChoicePickerComponent extends BasicCatalogComponent<ChoicePickerSchema> {
   readonly displayStyle = computed(() => this.props().displayStyle?.value());
   readonly options = computed(
     () => this.props().options?.value() || this.props().options?.value() || [],

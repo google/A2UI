@@ -16,7 +16,7 @@
 
 import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
-import { ImageProps } from '@a2ui/web_core/v0_9/basic_catalog';
+import { ImageSchema } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Image component (v0.9).
@@ -73,7 +73,7 @@ import { ImageProps } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImageComponent extends BasicCatalogComponent<ImageProps> {
+export class ImageComponent extends BasicCatalogComponent<ImageSchema> {
   readonly url = computed(() => this.props().url?.value());
   readonly description = computed(() => this.props().description?.value() || '');
   readonly fit = computed(() => this.props().fit?.value() || 'cover');

@@ -18,7 +18,7 @@ import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { Child } from '../../core/component-binder.service';
-import { ListProps } from '@a2ui/web_core/v0_9/basic_catalog';
+import { ListSchema } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI List component (v0.9).
@@ -94,7 +94,7 @@ import { ListProps } from '@a2ui/web_core/v0_9/basic_catalog';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent extends BasicCatalogComponent<ListProps> {
+export class ListComponent extends BasicCatalogComponent<ListSchema> {
   readonly listStyle = computed(() => this.props().listStyle?.value());
   readonly direction = computed(() => this.props().direction?.value() || 'vertical');
   readonly children = computed(() => {

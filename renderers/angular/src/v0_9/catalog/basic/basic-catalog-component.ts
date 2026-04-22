@@ -16,35 +16,8 @@
 
 import { Directive, computed, HostBinding, input, inject } from '@angular/core';
 import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
-import { BoundProperty } from '../../core/types';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { Child } from '../../core/component-binder.service';
-import { DataBindingSchema, FunctionCallSchema } from '@a2ui/web_core/v0_9';
-import { z } from 'zod';
-
-export type DataBindingType = z.infer<typeof DataBindingSchema>;
-export type FunctionCallType = z.infer<typeof FunctionCallSchema>;
-
-interface CheckProps {
-  isValid: boolean;
-  validationErrors: any[];
-}
-
-export type DynamicValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
-
-/**
- * Simple utility type to convert an interface with props to another interface
- * where the values are wrapped in BoundProperty.
- */
-export type InterfaceToBoundProperties<InterfaceInput> = {
-  [K in keyof InterfaceInput]: K extends 'children' | 'child' | 'trigger' | 'content'
-    ? BoundProperty<Child>
-    : BoundProperty<DynamicValueToRaw<InterfaceInput[K]>>
-}
-
-/** Adds implicit properties to a Props interface */
-export type ExtendedProps<ComponentProps extends { [key: string]: any }> =
-  'checks' extends keyof ComponentProps ? ComponentProps & CheckProps : ComponentProps;
+import { ComponentSchemaToProps } from '../../core/types';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
@@ -53,11 +26,11 @@ export type ExtendedProps<ComponentProps extends { [key: string]: any }> =
  * Also binds the primary brand color to the host element.
  */
 @Directive()
-export abstract class BasicCatalogComponent<Props extends { [key: string]: any } = {}> {
+export abstract class BasicCatalogComponent<ComponentSchema extends {} = {}> {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
-  props = input<InterfaceToBoundProperties<ExtendedProps<Props>>>({} as any);
+  props = input<ComponentSchemaToProps<ComponentSchema>>({} as any);
 
   surfaceId = input.required<string>();
   componentId = input.required<string>();
