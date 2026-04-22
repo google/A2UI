@@ -34,7 +34,7 @@ class ShellProbe {
   /// Validates the response of the service, retrying until [timeout] elapses.
   ///
   /// Runs [command], checks the response and throws error if the response is not valid.
-  void validate() {
+  Future<void> validate() async {
     final deadline = DateTime.now().add(timeout);
     while (true) {
       try {
@@ -43,7 +43,7 @@ class ShellProbe {
         return;
       } catch (e) {
         if (DateTime.now().isAfter(deadline)) rethrow;
-        sleep(const Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
       }
     }
   }
