@@ -318,7 +318,7 @@ When a surface is created with `sendDataModel: true`, the client is responsible 
 3.  The **Transport Layer** (e.g., A2A, MCP) calls `getClientDataModel()` before sending any message to the server.
 4.  If a non-empty data model map is returned, it is included in the transport's metadata field (e.g., `a2uiClientDataModel` in A2A metadata).
 
-*   **Surface Lifecycle**: It is an error to receive a `createSurface` message for a `surfaceId` that is already active. The processor SHOULD throw an error or report a validation failure if this occurs.
+*   **Surface Lifecycle**: It is an error to receive a `createSurface` message for a `surfaceId` that is already active. The processor MUST throw an error or report a validation failure if this occurs.
 *   **Component Lifecycle**: If an `updateComponents` message provides an existing `id` but a *different* `type`, the processor MUST remove the old component and create a fresh one to ensure framework renderers correctly reset their internal state.
 
 #### Generating Client Capabilities and Schema Types
