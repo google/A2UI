@@ -4,19 +4,15 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:flutter_test/flutter_test.dart';
-
-import 'test_infra/restaurant_finder.dart';
-// Copyright 2025 The Flutter Authors.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
+
+import 'test_infra/restaurant_finder.dart';
 
 void main() {
   setUp(() async {

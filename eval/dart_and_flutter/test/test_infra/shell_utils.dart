@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
@@ -33,17 +35,18 @@ class ShellProbe {
 
   /// Validates the response of the service, retrying until [timeout] elapses.
   ///
-  /// Runs [command], checks the response and throws error if the response is not valid.
+  /// Runs [command], checks the response and throws error if the response
+  /// is not valid.
   Future<void> validate() async {
-    final deadline = DateTime.now().add(timeout);
+    final DateTime deadline = DateTime.now().add(timeout);
     while (true) {
       try {
-        final response = runCommandSync(command);
+        final String response = runCommandSync(command);
         responseChecker(response);
         return;
       } catch (e) {
         if (DateTime.now().isAfter(deadline)) rethrow;
-        await Future.delayed(const Duration(seconds: 1));
+        await Future<void>.delayed(const Duration(seconds: 1));
       }
     }
   }
@@ -60,10 +63,11 @@ void killProcessesOnPort(int port) {
 }
 
 String runCommandSync(String command) {
-  final result = Process.runSync('bash', ['-c', command]);
+  final ProcessResult result = Process.runSync('bash', ['-c', command]);
   if (result.exitCode != 0) {
     throw Exception(
-      'Command failed with exit code ${result.exitCode}: $command\n${result.stderr}',
+      'Command failed with exit code ${result.exitCode}: '
+      '$command\n${result.stderr}',
     );
   }
   return result.stdout as String;
@@ -76,7 +80,7 @@ Future<Process> startAndVerifyService(
   Duration quietPeriod = const Duration(seconds: 2),
 }) async {
   print('Starting service: `$command` in $workingDirectory');
-  final process = await Process.start('bash', [
+  final Process process = await Process.start('bash', [
     '-c',
     command,
   ], workingDirectory: workingDirectory);
@@ -102,16 +106,16 @@ Future<Process> startAndVerifyService(
   }
 
   stdoutSub = process.stdout
-      .transform(SystemEncoding().decoder)
+      .transform(const SystemEncoding().decoder)
       .listen(restartTimer, onDone: onTimer);
 
   stderrSub = process.stderr
-      .transform(SystemEncoding().decoder)
+      .transform(const SystemEncoding().decoder)
       .listen(restartTimer, onDone: onTimer);
 
   restartTimer('Started timer.\n');
   await serviceStabilizedOutput.future;
 
-  for (final probe in probes) probe.validate();
+  for (final probe in probes) await probe.validate();
   return process;
 }
