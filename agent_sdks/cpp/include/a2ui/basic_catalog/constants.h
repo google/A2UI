@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 
 namespace a2ui {
 namespace basic_catalog {
 
-const std::string BASIC_CATALOG_NAME = "basic";
+inline constexpr std::string_view BASIC_CATALOG_NAME = "basic";
 
 } // namespace basic_catalog
 } // namespace a2ui

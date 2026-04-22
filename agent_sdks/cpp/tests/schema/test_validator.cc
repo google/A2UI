@@ -23,19 +23,7 @@
 namespace fs = std::filesystem;
 
 namespace {
-fs::path find_repo_root() {
-    fs::path current = fs::current_path();
-    while (true) {
-        if (fs::is_directory(current / "specification")) {
-            return current;
-        }
-        fs::path parent = current.parent_path();
-        if (parent == current) {
-            return "";
-        }
-        current = parent;
-    }
-}
+
 
 nlohmann::json load_json_file(const fs::path& path) {
     std::ifstream file(path);
@@ -84,7 +72,7 @@ a2ui::A2uiCatalog setup_catalog(const nlohmann::json& catalog_config, const fs::
 }
 
 TEST(ValidatorConformanceTest, RunAll) {
-    fs::path repo_root = find_repo_root();
+    fs::path repo_root = a2ui::tests::find_repo_root();
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";

@@ -18,6 +18,12 @@
 #include <set>
 #include <fstream>
 #include <queue>
+#include <string>
+
+namespace {
+constexpr int kMaxGlobalDepth = 50;
+constexpr int kMaxFunctionCallDepth = 5;
+}
 #include <iostream>
 #include <map>
 #include <functional>
@@ -386,8 +392,8 @@ void A2uiValidator::check_topology(const std::optional<std::string>& root_id, co
     std::set<std::string> recursion_stack;
 
     std::function<void(const std::string&, int)> dfs = [&](const std::string& node_id, int depth) {
-        if (depth > 50) { // MAX_GLOBAL_DEPTH
-            throw std::runtime_error("Global recursion limit exceeded: logical depth > 50");
+        if (depth > kMaxGlobalDepth) {
+            throw std::runtime_error("Global recursion limit exceeded: logical depth > " + std::to_string(kMaxGlobalDepth));
         }
 
         visited.insert(node_id);
@@ -442,14 +448,14 @@ static bool is_valid_json_pointer(const std::string& path) {
 }
 
 void A2uiValidator::dfs_check_recursion(const nlohmann::json& j, int depth, int func_depth) {
-    if (depth > 50) {
-        throw std::runtime_error("Global recursion limit exceeded: logical depth > 50");
+    if (depth > kMaxGlobalDepth) {
+        throw std::runtime_error("Global recursion limit exceeded: logical depth > " + std::to_string(kMaxGlobalDepth));
     }
 
     if (j.is_object()) {
         if (j.contains("functionCall")) {
-            if (func_depth >= 5) {
-                throw std::runtime_error("Recursion limit exceeded: functionCall depth > 5");
+            if (func_depth >= kMaxFunctionCallDepth) {
+                throw std::runtime_error("Recursion limit exceeded: functionCall depth > " + std::to_string(kMaxFunctionCallDepth));
             }
             func_depth++;
         }

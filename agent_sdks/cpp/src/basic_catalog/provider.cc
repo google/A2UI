@@ -51,7 +51,7 @@ nlohmann::json BundledCatalogProvider::load() {
 
 CatalogConfig BasicCatalog::get_config(const std::string& version, const std::optional<std::string>& examples_path) {
     return CatalogConfig{
-        BASIC_CATALOG_NAME,
+        std::string(BASIC_CATALOG_NAME),
         std::make_shared<BundledCatalogProvider>(version),
         examples_path
     };

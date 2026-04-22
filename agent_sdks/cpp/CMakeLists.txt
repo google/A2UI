@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 # Fetch nlohmann/json
 FetchContent_Declare(
@@ -68,7 +69,7 @@ set(GENERATED_SCHEMAS_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_schem
 # Custom command to run Python script
 add_custom_command(
   OUTPUT "${GENERATED_SCHEMAS_FILE}"
-  COMMAND python3 "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_embedded_schemas.py" "${REPO_ROOT}" "${GENERATED_SCHEMAS_FILE}"
+  COMMAND Python3::Interpreter "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_embedded_schemas.py" "${REPO_ROOT}" "${GENERATED_SCHEMAS_FILE}"
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_embedded_schemas.py"
           "${REPO_ROOT}/specification/v0_8/json/server_to_client.json"
           "${REPO_ROOT}/specification/v0_9/json/server_to_client.json"
@@ -85,6 +86,9 @@ add_library(a2ui_sdk
   src/schema/utils.cc
   src/parser/parser.cc
   src/parser/streaming.cc
+  src/parser/streaming_impl.cc
+  src/parser/streaming_v08.cc
+  src/parser/streaming_v09.cc
   src/parser/payload_fixer.cc
   src/template/manager.cc
   src/basic_catalog/provider.cc
