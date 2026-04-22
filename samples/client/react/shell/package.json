@@ -12,6 +12,7 @@
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
     "@a2ui/react": "file:../../../../renderers/react",
+    "@a2ui/web_core": "file:../../../../renderers/web_core",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
