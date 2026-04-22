@@ -175,6 +175,7 @@ export const VideoApi = {
     .object({
       ...CommonProps,
       url: DynamicStringSchema.describe('The URL of the video to display.'),
+      posterUrl: DynamicStringSchema.describe('The URL of the poster image to display before the video plays.').optional(),
     })
     .strict(),
 } satisfies ComponentApi;
