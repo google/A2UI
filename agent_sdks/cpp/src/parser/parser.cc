@@ -72,7 +72,7 @@ static std::string sanitize_json_string(const std::string& json_string) {
 std::vector<ResponsePart> parse_response(const std::string& content) {
     std::vector<ResponsePart> response_parts;
     
-    std::regex pattern_dotall(A2UI_OPEN_TAG + "([\\s\\S]*?)" + A2UI_CLOSE_TAG);
+    static const std::regex pattern_dotall(std::string(A2UI_OPEN_TAG) + "([\\s\\S]*?)" + std::string(A2UI_CLOSE_TAG));
     
     auto words_begin = std::sregex_iterator(content.begin(), content.end(), pattern_dotall);
     auto words_end = std::sregex_iterator();

@@ -142,7 +142,7 @@ std::string A2uiSchemaManager::generate_system_prompt(
     std::stringstream ss;
     ss << role_description << "\n\n";
 
-    std::string workflow = DEFAULT_WORKFLOW_RULES;
+    std::string workflow = std::string(DEFAULT_WORKFLOW_RULES);
     if (!workflow_description.empty()) {
         workflow += "\n" + workflow_description;
     }

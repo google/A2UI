@@ -18,6 +18,7 @@
 
 #include "a2ui/schema/catalog.h"
 #include <string>
+#include <string_view>
 #include <vector>
 #include <optional>
 #include <nlohmann/json.hpp>
@@ -31,8 +32,8 @@ public:
     virtual ~A2uiStreamParser() = default;
     virtual std::vector<ResponsePart> process_chunk(const std::string& chunk) = 0;
 
-    virtual std::string get_active_msg_type_for_components() const = 0;
-    virtual std::string get_data_model_msg_type() const = 0;
+    virtual std::string_view get_active_msg_type_for_components() const = 0;
+    virtual std::string_view get_data_model_msg_type() const = 0;
     virtual bool deduplicate_data_model(const nlohmann::json& m, bool strict_integrity) = 0;
 
     // Factory function

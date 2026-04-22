@@ -16,35 +16,35 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <map>
 
 namespace a2ui {
 
-const std::string SERVER_TO_CLIENT_SCHEMA_KEY = "server_to_client";
-const std::string COMMON_TYPES_SCHEMA_KEY = "common_types";
-const std::string CATALOG_SCHEMA_KEY = "catalog";
-const std::string CATALOG_COMPONENTS_KEY = "components";
-const std::string CATALOG_ID_KEY = "catalogId";
-const std::string CATALOG_STYLES_KEY = "styles";
-const std::string SURFACE_ID_KEY = "surfaceId";
+inline constexpr std::string_view SERVER_TO_CLIENT_SCHEMA_KEY = "server_to_client";
+inline constexpr std::string_view COMMON_TYPES_SCHEMA_KEY = "common_types";
+inline constexpr std::string_view CATALOG_SCHEMA_KEY = "catalog";
+inline constexpr std::string_view CATALOG_COMPONENTS_KEY = "components";
+inline constexpr std::string_view CATALOG_ID_KEY = "catalogId";
+inline constexpr std::string_view CATALOG_STYLES_KEY = "styles";
+inline constexpr std::string_view SURFACE_ID_KEY = "surfaceId";
 
-const std::string SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds";
-const std::string INLINE_CATALOGS_KEY = "inlineCatalogs";
-const std::string A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities";
-const std::string BASE_SCHEMA_URL = "https://a2ui.org/";
-const std::string INLINE_CATALOG_NAME = "inline";
+inline constexpr std::string_view SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds";
+inline constexpr std::string_view INLINE_CATALOGS_KEY = "inlineCatalogs";
+inline constexpr std::string_view A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities";
+inline constexpr std::string_view BASE_SCHEMA_URL = "https://a2ui.org/";
+inline constexpr std::string_view INLINE_CATALOG_NAME = "inline";
 
-const std::string VERSION_0_8 = "0.8";
-const std::string VERSION_0_9 = "0.9";
+inline constexpr std::string_view VERSION_0_8 = "0.8";
+inline constexpr std::string_view VERSION_0_9 = "0.9";
 
-const std::string A2UI_OPEN_TAG = "<a2ui-json>";
-const std::string A2UI_CLOSE_TAG = "</a2ui-json>";
+inline constexpr std::string_view A2UI_OPEN_TAG = "<a2ui-json>";
+inline constexpr std::string_view A2UI_CLOSE_TAG = "</a2ui-json>";
 
-const std::string A2UI_SCHEMA_BLOCK_START = "---BEGIN A2UI JSON SCHEMA---";
-const std::string A2UI_SCHEMA_BLOCK_END = "---END A2UI JSON SCHEMA---";
+inline constexpr std::string_view A2UI_SCHEMA_BLOCK_START = "---BEGIN A2UI JSON SCHEMA---";
+inline constexpr std::string_view A2UI_SCHEMA_BLOCK_END = "---END A2UI JSON SCHEMA---";
 
-const std::string DEFAULT_WORKFLOW_RULES = R"(
+inline constexpr std::string_view DEFAULT_WORKFLOW_RULES = R"(
 The generated response MUST follow these rules:
 - The response can contain one or more A2UI JSON blocks.
 - Each A2UI JSON block MUST be wrapped in <a2ui-json> and </a2ui-json> tags.

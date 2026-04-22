@@ -98,7 +98,7 @@ std::string fix_json(const std::string& json_str) {
                         
                         size_t lookback_start = (prefix.length() > 200) ? prefix.length() - 200 : 0;
                         std::string lookback_str = prefix.substr(lookback_start);
-                        std::regex key_pattern(R"(\"key\"\s*:\s*\"([^\"]+)\")");
+                        static const std::regex key_pattern(R"(\"key\"\s*:\s*\"([^\"]+)\")");
                         std::smatch match;
                         std::string data_key = "";
                         auto words_begin = std::sregex_iterator(lookback_str.begin(), lookback_str.end(), key_pattern);

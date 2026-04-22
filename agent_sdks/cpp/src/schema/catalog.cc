@@ -239,7 +239,7 @@ A2uiCatalog A2uiCatalog::with_pruned_components(const std::vector<std::string>& 
             for (auto& item : any_comp["oneOf"]) {
                 if (item.contains("$ref")) {
                     std::string ref = item["$ref"].get<std::string>();
-                    std::string prefix = "#/" + CATALOG_COMPONENTS_KEY + "/";
+                    std::string prefix = "#/" + std::string(CATALOG_COMPONENTS_KEY) + "/";
                     if (ref.rfind(prefix, 0) == 0) {
                         std::string comp_name = ref.substr(prefix.length());
                         if (std::find(allowed_components.begin(), allowed_components.end(), comp_name) != allowed_components.end()) {

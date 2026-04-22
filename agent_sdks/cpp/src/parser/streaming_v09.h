@@ -33,28 +33,36 @@ public:
 
 protected:
     void sniff_metadata() override {
-        auto get_latest_value = [this](const std::string& key) -> std::string {
-            std::regex pattern(R"(\")" + key + R"(\"\s*:\s*\"([^\"]+)\")");
-            std::smatch match;
-            std::string search_str = json_buffer_;
-            std::string result = "";
-            while (std::regex_search(search_str, match, pattern)) {
-                result = match[1].str();
-                search_str = match.suffix().str();
+        static const std::regex sid_pattern(R"(\"surfaceId\"\s*:\s*\"([^\"]+)\")");
+        static const std::regex root_pattern(R"(\"root\"\s*:\s*\"([^\"]+)\")");
+
+        auto get_latest_value = [this](std::string_view key, const std::regex& pattern) -> std::string_view {
+            std::string pattern_str = "\"" + std::string(key) + "\"";
+            size_t pos = json_buffer_.rfind(pattern_str);
+            while (pos != std::string::npos) {
+                std::smatch match;
+                auto start = json_buffer_.cbegin() + pos;
+                auto end = json_buffer_.cend();
+                if (std::regex_search(start, end, match, pattern)) {
+                    return std::string_view(json_buffer_.data() + pos + match.position(1), match.length(1));
+                }
+                if (pos == 0) break;
+                pos = json_buffer_.rfind(pattern_str, pos - 1);
             }
-            return result;
+            return "";
         };
 
-        std::string sid = get_latest_value("surfaceId");
+        std::string_view sid = get_latest_value("surfaceId", sid_pattern);
         if (!sid.empty()) surface_id_ = sid;
 
-        std::string rid = get_latest_value("root");
+        std::string_view rid = get_latest_value("root", root_pattern);
         if (!rid.empty()) root_ids_[surface_id_] = rid;
 
-        auto check_msg_type = [this](const std::string& type) {
-            if (json_buffer_.find("\"" + type + "\":") != std::string::npos) {
+        auto check_msg_type = [this](std::string_view type) {
+            std::string search_str = "\"" + std::string(type) + "\":";
+            if (json_buffer_.find(search_str) != std::string::npos) {
                 if (std::find(msg_types_.begin(), msg_types_.end(), type) == msg_types_.end()) {
-                    msg_types_.push_back(type);
+                    msg_types_.push_back(std::string(type));
                 }
                 active_msg_type_ = type;
             }
@@ -146,7 +154,7 @@ protected:
         return obj.contains(MSG_TYPE_CREATE_SURFACE) || obj.contains(MSG_TYPE_UPDATE_COMPONENTS) || obj.contains(MSG_TYPE_UPDATE_DATA_MODEL);
     }
 
-    std::string get_active_msg_type_for_components() const override {
+    std::string_view get_active_msg_type_for_components() const override {
         if (!active_msg_type_.empty()) return active_msg_type_;
         for (const auto& mt : msg_types_) {
             if (mt == MSG_TYPE_UPDATE_COMPONENTS || mt == MSG_TYPE_CREATE_SURFACE) {
@@ -157,7 +165,7 @@ protected:
         return msg_types_.empty() ? "" : msg_types_[0];
     }
 
-    std::string get_data_model_msg_type() const override {
+    std::string_view get_data_model_msg_type() const override {
         return MSG_TYPE_UPDATE_DATA_MODEL;
     }
 

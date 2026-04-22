@@ -178,7 +178,7 @@ public:
             for (const auto& m : *part.a2ui_json) {
                 bool is_su = false;
                 std::string sid;
-                std::string su_key = get_active_msg_type_for_components();
+                std::string_view su_key = get_active_msg_type_for_components();
                 
                 if (m.is_object() && m.contains(su_key)) {
                     is_su = true;
@@ -343,7 +343,7 @@ protected:
     virtual bool handle_complete_object(const nlohmann::json& obj, const std::string& surface_id, std::vector<ResponsePart>& messages) = 0;
     virtual nlohmann::json create_placeholder_component(const std::string& id) const = 0;
     virtual bool is_protocol_msg(const nlohmann::json& obj) const = 0;
-    virtual std::string get_active_msg_type_for_components() const = 0;
+    virtual std::string_view get_active_msg_type_for_components() const = 0;
     virtual bool deduplicate_data_model(const nlohmann::json& m, bool strict_integrity) { return true; }
 
     void sniff_partial_component(std::vector<ResponsePart>& messages) {
@@ -432,8 +432,9 @@ protected:
 
     void sniff_partial_data_model(std::vector<ResponsePart>& messages) {
 
-        std::string msg_type = get_data_model_msg_type();
-        if (json_buffer_.find("\"" + msg_type + "\"") == std::string::npos) {
+        std::string_view msg_type = get_data_model_msg_type();
+        std::string search_pattern = "\"" + std::string(msg_type) + "\"";
+        if (json_buffer_.find(search_pattern) == std::string::npos) {
             return;
         }
 
@@ -600,8 +601,8 @@ protected:
         topology_dirty_ = true;
     }
 
-    void yield_reachable(std::vector<ResponsePart>& messages, const std::string& msg_type = "", bool check_root = false, bool raise_on_orphans = false) {
-        std::string active_msg_type = msg_type;
+    void yield_reachable(std::vector<ResponsePart>& messages, std::string_view msg_type = "", bool check_root = false, bool raise_on_orphans = false) {
+        std::string_view active_msg_type = msg_type;
         if (active_msg_type.empty()) active_msg_type = get_active_msg_type_for_components();
         if (surface_id_.empty() || active_msg_type.empty()) return;
 
