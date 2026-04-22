@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Directive, computed, HostBinding, input, inject } from '@angular/core';
+import { Directive, computed, HostBinding, inject } from '@angular/core';
 import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentApiToProps } from '../../core/types';
 import { ComponentApi } from '@a2ui/web_core/v0_9';
+import { BaseCatalogComponent } from '../../core/base_catalog_component';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
@@ -27,16 +27,7 @@ import { ComponentApi } from '@a2ui/web_core/v0_9';
  * Also binds the primary brand color to the host element.
  */
 @Directive()
-export abstract class BasicCatalogComponent<Api extends ComponentApi> {
-  /**
-   * Reactive properties resolved from the A2UI ComponentModel.
-   */
-  props = input<ComponentApiToProps<Api>>({} as any);
-
-  surfaceId = input.required<string>();
-  componentId = input.required<string>();
-  dataContextPath = input<string>('/');
-
+export abstract class BasicCatalogComponent<Api extends ComponentApi> extends BaseCatalogComponent<Api> {
   protected rendererService = inject(A2uiRendererService);
 
   readonly surface = computed(() => {
@@ -51,12 +42,10 @@ export abstract class BasicCatalogComponent<Api extends ComponentApi> {
     return this.theme()?.primaryColor;
   });
 
-  /**
-   * Computes the weight of the component from the properties.
-   */
   protected readonly weight = computed(() => (this.props() as any)['weight']?.value() ?? null);
 
   constructor() {
+    super();
     injectBasicCatalogStyles();
   }
 
