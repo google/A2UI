@@ -22,13 +22,6 @@ import { A2uiController } from "@a2ui/lit/v0_9";
 
 import { classMap } from "lit/directives/class-map.js";
 
-const ICON_MAP: Record<string, string> = {
-  favoriteOff: "favorite_border",
-  play: "play_arrow",
-  rewind: "fast_rewind",
-  starOff: "star_border",
-};
-
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   "play": "play_arrow",
   "rewind": "fast_rewind",
@@ -72,11 +65,6 @@ export class A2uiIconElement extends BasicCatalogA2uiLitElement<typeof IconApi> 
       font-variation-settings: var(--a2ui-icon-font-variation-settings, "FILL" 1);
     }
   `;
-
-  private getIconName(rawName: string): string {
-    if (ICON_MAP[rawName]) return ICON_MAP[rawName];
-    return rawName.replace(/[A-Z]/g, (letter: string) => `_${letter.toLowerCase()}`);
-  }
 
   protected createController() {
     return new A2uiController(this, IconApi);

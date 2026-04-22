@@ -4,17 +4,12 @@ Customize the look and feel of A2UI components to match your brand.
 
 ## The A2UI Styling Philosophy
 
-A2UI follows a **renderer-controlled styling** approach:
+A2UI follows a **renderer-controlled styling** approach by default, but allows for flexibility through catalogs:
 
 - **Agents describe *what* to show** (components and structure)
 - **Renderers decide *how* it looks** (colors, fonts, spacing)
 
-A renderer-controlled approach provides the following benefits:
-
-- **Brand consistency**: All UIs match your app's design system.
-- **Security**: Agents cannot inject arbitrary CSS or styling.
-- **Accessibility**: You control contrast, focus states, and ARIA attributes.
-- **Platform-native feel**: Web apps look like web, mobile looks like mobile.
+However, the protocol is flexible enough to allow agents to influence styling when needed.
 
 ## Styling Layers
 
@@ -22,17 +17,19 @@ A2UI styling works in layers:
 
 ```mermaid
 flowchart TD
-    A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration<br/>Developer configures<br/>(colors, fonts, spacing)"]
-    C["3. Component Overrides<br/>Developer customizes<br/>(CSS/styles for specific components)"]
-    D["4. Rendered Output<br/>Native platform widgets"]
+    A["Agent-provided styling<br/>Semantic hints and theme data<br/>(e.g., usageHint: 'h1')"]
+    B["Catalog Theming<br/>Catalog interprets theme data<br/>or uses defaults"]
+    C["Platform theming<br/>Developer customizes<br/>(CSS variables, stylesheets...)"]
+    D["Rendered Output"]
 
     A --> B --> C --> D
 ```
 
-## Layer 1: Semantic Hints
+## Agent-provided styling information
 
-Agents provide semantic hints (not visual styles) to guide rendering:
+### Semantic hints
+
+Agents provide semantic hints (not visual styles) to guide rendering. In the *basic catalog*:
 
 ```json
 {
@@ -51,93 +48,82 @@ Agents provide semantic hints (not visual styles) to guide rendering:
 - Text: `h1`, `h2`, `h3`, `h4`, `h5`, `body`, `caption`
 - Other components have their own hints (see [Component Reference](../reference/components.md))
 
-The client renderer maps these semantic hints to actual visual styles based on your theme and design system.
+The catalog elements map these semantic hints to actual components on the target platform, and styles them.
 
-## Layer 2: Theme Configuration
+### `theme` property
 
-Each renderer provides a way to configure your design system globally, including:
+The A2UI protocol allows for an arbitrary `theme` property in the `createSurface` message. For now, this property is
+defined as `z.any().optional()` in the Zod schema, meaning the agent can pass any JSON structure that the client
+renderer and catalog understand.
 
-- **Colors**: Primary, secondary, background, surface, error, success, etc.
-- **Typography**: Font families, sizes, weights, line heights
-- **Spacing**: Base units and scale (xs, sm, md, lg, xl)
-- **Shapes**: Border radius values
-- **Elevation**: Shadow styles for depth
+* See the schema definition in [server-to-client.ts](../../renderers/web_core/src/v0_9/schema/server-to-client.ts).
+* See the `Catalog` class and `themeSchema` in [catalog/types.ts](../../renderers/web_core/src/v0_9/catalog/types.ts).
 
-TODO: Add platform-specific theming guides:
+**Note:** The *basic catalog* components are not wired to use the `theme` coming from the agent.
 
-**Web (Lit):**
+_Want to influence this design? Chime in here: [#1118](https://github.com/google/A2UI/issues/1118)._
 
-- How to configure theme via renderer initialization
-- Available theme properties
+## Catalog theming
 
-**Angular:**
+Theming is a responsibility of the catalog implementation. Each catalog can provide whatever theming solution it wants.
+As an example, this is how the default *basic catalog* does it:
 
-- Integration with Angular Material theming
-- Standalone A2UI theme configuration
+### The Web Basic Catalog Theming
 
-**Flutter:**
+On the web, the *basic catalog* provided by the default A2UI renderers is themed by overriding CSS variables.
 
-- How A2UI uses Flutter's `ThemeData`
-- Custom theme properties
+Basic catalog components inject a small stylesheet with default values for these variables. The stylesheet targets
+`:where(:root)` so their specificity is minimal, and the host app can override them easily.
 
-**See working examples:**
+For example, to override the primary color, you can simply add this to your app's CSS:
 
-- [Lit samples](https://github.com/google/a2ui/tree/main/samples/client/lit)
-- [Angular samples](https://github.com/google/a2ui/tree/main/samples/client/angular)
-- [Flutter GenUI docs](https://docs.flutter.dev/ai/genui)
+```css
+:root {
+  --a2ui-color-primary: #ff5722;
+}
+```
 
-## Layer 3: Component Overrides
+See the default styles in [default.ts](../../renderers/web_core/src/v0_9/basic_catalog/styles/default.ts).
 
-Beyond global theming, you can override styles for specific components:
+**See some examples per-platform:**
 
-**Web renderers:**
+- [Lit samples](../../samples/client/lit)
+- [Angular samples](../../samples/client/angular)
+- [React samples](../../samples/client/react)
 
-- CSS custom properties (CSS variables) for fine-grained control
-- Standard CSS selectors for component-specific overrides
+### Per-component overrides
 
-**Flutter:**
+Beyond global theming, each component of the *basic catalog* exposes custom variables to further refine its appearance.
+For example, the `Card` component exposes a `--a2ui-card-background` variable.
 
-- Widget-specific theme overrides via `ThemeData`
-
-TODO: Add detailed component override examples for each platform.
+Check the documentation of each component to see what variables it exposes.
 
 ## Common Styling Features
 
 ### Dark Mode
 
-A2UI renderers typically support automatic dark mode based on system preferences:
+The default web renderers support automatic dark mode based on system preferences (`prefers-color-scheme`).
 
-- Auto-detect system theme (`prefers-color-scheme`)
-- Manual light/dark theme selection
-- Custom dark theme configuration
-
-TODO: Add dark mode configuration examples.
-
-### Responsive Design
-
-A2UI components are responsive by default. You can further customize responsive behavior:
-
-- Media queries for different screen sizes
-- Container queries for component-level responsiveness
-- Responsive spacing and typography scales
-
-TODO: Add responsive design examples.
+To always force dark or light mode (or to programmatically control switching), use the classnames `a2ui-light` or
+`a2ui-dark` in an ancestor element of the generated code.
 
 ### Custom Fonts
 
-Load and use custom fonts in your A2UI application:
+Fonts can be loaded as in any other web application. The *basic catalog* components attempt to inherit the font family
+of their container, but offer two overridable values: `--a2ui-font-family-title` and `--a2ui-font-family-monospace` to
+set a different font for headings and monospace text blocks.
 
-- Web fonts (Google Fonts, etc.)
-- Self-hosted fonts
-- Platform-specific font loading
+## Flutter
 
-TODO: Add custom font examples.
+Flutter has built-in theming support. See:
+
+* [Use themes to share colors and font styles](https://docs.flutter.dev/cookbook/design/themes) from the Flutter docs.
 
 ## Best Practices
 
 ### 1. Use Semantic Hints, Not Visual Properties
 
-Agents should provide semantic hints (`usageHint`), never visual styles:
+When defining your components, agents should provide semantic hints (`usageHint`), never visual styles:
 
 ```json
 // ✅ Good: Semantic hint

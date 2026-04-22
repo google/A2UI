@@ -18,7 +18,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ComponentHostComponent } from './component-host.component';
 import { A2uiRendererService } from './a2ui-renderer.service';
-import { ComponentContext, ComponentModel, SurfaceComponentsModel, SurfaceModel } from '@a2ui/web_core/v0_9';
+import { ComponentModel, SurfaceComponentsModel, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -79,47 +79,49 @@ describe('ComponentHostComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  describe('Component Initialization', () => {
     it('should resolve component type and bind props', () => {
-      fixture.detectChanges(); // Triggers ngOnInit
+      fixture.detectChanges(); // Triggers change detection
 
-      // @ts-ignore - Accessing protected property
-      expect(component.componentType).toBe(TestChildComponent);
-      // @ts-ignore - Accessing protected property
-      expect(component.props).toEqual({
-        text: jasmine.objectContaining({ value: jasmine.any(Function) }) as any,
-      });
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeTruthy();
+
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      expect(childInstance.props).toBeTruthy();
+      expect(childInstance.props.text.value()).toBe('Hello');
+      expect(childInstance.surfaceId).toBe('surf1');
+      expect(childInstance.componentId).toBe('comp1');
+      expect(childInstance.dataContextPath).toBe('/');
 
       expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
-
-      // @ts-ignore - Accessing private property
-      const context = component.context;
-      expect(context).toBeInstanceOf(ComponentContext);
-      expect(context!.componentModel.id).toBe('comp1');
-      expect(context!.dataContext.path).toBe('/');
     });
 
     it('should use provided dataContextPath for ComponentContext', () => {
       fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/nested/path' });
       fixture.detectChanges();
 
-      // @ts-ignore - Accessing private property
-      expect(component.context!.dataContext.path).toBe('/nested/path');
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeTruthy();
+
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      expect(childInstance.dataContextPath).toBe('/nested/path');
     });
 
     it('should update props when component model is updated', () => {
-      fixture.detectChanges(); // Trigger ngOnInit
-      const compModel = mockSurface.componentsModel.get('comp1')!;
-      // @ts-ignore - Accessing protected property
-      expect(component.props.text.value()).toBe('Hello');
+      fixture.detectChanges(); // Trigger change detection
+      
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      
+      expect(childInstance.props.text.value()).toBe('Hello');
 
+      const compModel = mockSurface.componentsModel.get('comp1')!;
       // This properties assignment triggers the update.
       compModel.properties = { text: 'Hello', newProp: 'new value' };
 
-      // @ts-ignore - Accessing protected property
-      expect(component.props.text.value()).toBe('Hello');
-      // @ts-ignore - Accessing protected property
-      expect(component.props.newProp.value()).toBe('new value');
+      fixture.detectChanges(); // Propagate changes
+
+      expect(childInstance.props.newProp.value()).toBe('new value');
     });
 
     it('should warn and return if surface not found', () => {
@@ -128,8 +130,8 @@ describe('ComponentHostComponent', () => {
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
       expect(consoleWarnSpy).toHaveBeenCalledWith('Surface surf1 not found');
     });
 
@@ -139,8 +141,8 @@ describe('ComponentHostComponent', () => {
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
       expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1. Waiting for it...');
     });
 
@@ -150,15 +152,15 @@ describe('ComponentHostComponent', () => {
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Component type "TestType" not found in catalog "test-catalog"',
       );
     });
 
     it('should trigger destroyRef on destroy', () => {
-      fixture.detectChanges(); // Trigger ngOnInit
+      fixture.detectChanges(); // Trigger change detection
 
       // Destroy fixture
       fixture.destroy();
@@ -170,7 +172,7 @@ describe('ComponentHostComponent', () => {
 
   describe('Template rendering', () => {
     it('should render the resolved component', () => {
-      fixture.detectChanges(); // Triggers ngOnInit and render
+      fixture.detectChanges(); // Triggers change detection and render
 
       const compiled = fixture.nativeElement;
       expect(compiled.innerHTML).toContain('Child Component');

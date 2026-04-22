@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -46,7 +45,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     `
       .a2ui-divider {
         border: 0;
-        border-top: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+        border-top: var(
+          --a2ui-divider-border,
+          var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
+        );
         margin: var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 16px)) 0;
         width: 100%;
       }
@@ -55,23 +57,15 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         height: 100%;
         margin: 0 var(--a2ui-divider-spacing, var(--a2ui-spacing-m, 16px));
         border-top: 0;
-        border-left: var(--a2ui-divider-border, var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc));
+        border-left: var(
+          --a2ui-divider-border,
+          var(--a2ui-border-width, 1px) solid var(--a2ui-color-border, #ccc)
+        );
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DividerComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `axis`: The orientation of the divider ('horizontal' (default) or 'vertical').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  axis = computed(() => this.props()['axis']?.value() ?? 'horizontal');
+  readonly axis = computed(() => this.props()['axis']?.value() ?? 'horizontal');
 }

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -49,12 +48,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         display: block;
         max-width: 100%;
         height: auto;
-      }
-      .a2ui-image.circle {
-        border-radius: 50%;
-        aspect-ratio: 1 / 1;
-      }
-      .a2ui-image.rounded {
         border-radius: var(--a2ui-image-border-radius, var(--a2ui-border-radius, 8px));
       }
       .a2ui-image.icon {
@@ -69,16 +62,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
       .a2ui-image.smallFeature {
         max-width: var(--a2ui-image-small-feature-size, 100px);
       }
-      .a2ui-image.mediumFeature {
-        max-width: 300px;
-        height: auto;
-      }
       .a2ui-image.largeFeature {
-        width: 100%;
         max-height: var(--a2ui-image-large-feature-size, 400px);
       }
       .a2ui-image.header {
-        width: 100%;
         height: var(--a2ui-image-header-size, 200px);
       }
     `,
@@ -86,22 +73,8 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `url`: The absolute URL of the image.
-   * - `description`: Accessibility text for the image.
-   * - `fit`: Object-fit mode ('cover', 'contain', 'fill', 'none', 'scale-down').
-   * - `variant`: Style variant ('default', 'circle', 'rounded', 'icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  url = computed(() => this.props()['url']?.value());
-  description = computed(() => this.props()['description']?.value() || '');
-  fit = computed(() => this.props()['fit']?.value() || 'cover');
-  variant = computed(() => this.props()['variant']?.value() || 'default');
+  readonly url = computed(() => this.props()['url']?.value());
+  readonly description = computed(() => this.props()['description']?.value() || '');
+  readonly fit = computed(() => this.props()['fit']?.value() || 'cover');
+  readonly variant = computed(() => this.props()['variant']?.value() || 'default');
 }

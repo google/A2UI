@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { Child } from '../../core/component-binder.service';
 
@@ -40,10 +39,7 @@ import { Child } from '../../core/component-binder.service';
         <ol [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </li>
           }
@@ -53,10 +49,7 @@ import { Child } from '../../core/component-binder.service';
         <ul [class]="'a2ui-list ' + orientation()" [style.list-style-type]="styleType()">
           @for (child of children(); track trackBy($index, child)) {
             <li>
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </li>
           }
@@ -66,10 +59,7 @@ import { Child } from '../../core/component-binder.service';
         <div [class]="'a2ui-list ' + orientation()" style="list-style-type: none;">
           @for (child of children(); track trackBy($index, child)) {
             <div class="a2ui-list-item-none">
-              <a2ui-v09-component-host
-                [componentKey]="child"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             </div>
           }
@@ -104,34 +94,21 @@ import { Child } from '../../core/component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `children`: A list of component IDs to render as list items.
-   * - `listStyle`: The type of list ('ordered', 'unordered', 'none').
-   * - `orientation`: The layout direction ('vertical', 'horizontal').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  listStyle = computed(() => this.props()['listStyle']?.value());
-  orientation = computed(() => this.props()['orientation']?.value() || 'vertical');
-  children = computed(() => {
+  readonly listStyle = computed(() => this.props()['listStyle']?.value());
+  readonly orientation = computed(() => this.props()['orientation']?.value() || 'vertical');
+  readonly children = computed(() => {
     const raw = this.props()['children']?.value();
     return Array.isArray(raw) ? raw : [];
   });
 
-  listTag = computed(() => {
+  readonly listTag = computed(() => {
     const style = this.listStyle();
     if (style === 'ordered') return 'ol';
     if (style === 'unordered') return 'ul';
     return 'div';
   });
 
-  styleType = computed(() => {
+  readonly styleType = computed(() => {
     const style = this.listStyle();
     if (style === 'none') return 'none';
     return '';

@@ -22,7 +22,14 @@ import {
   css,
   nothing,
 } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state, query } from "lit/decorators.js";
+import {
+  SnackbarAction,
+  SnackbarMessage,
+  SnackbarUUID,
+  SnackType,
+} from "../custom-components-example/types/types.js";
+import { type Snackbar } from "../custom-components-example/ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 
 // A2UI
@@ -34,6 +41,10 @@ import { renderMarkdown } from "@a2ui/markdown-it";
 import { A2UIClient } from "./client.js";
 import { restaurantConfig, AppConfig } from "./configs/configs.js";
 import { styleMap } from "lit/directives/style-map.js";
+
+const configs: Record<string, AppConfig> = {
+  restaurant: restaurantConfig,
+};
 
 @customElement("a2ui-shell")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
@@ -284,9 +295,40 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     },
   );
   #a2uiClient = new A2UIClient();
+  @query("ui-snackbar")
+  accessor #snackbar!: Snackbar;
+
+  #pendingSnackbarMessages: Array<{
+    message: SnackbarMessage;
+    replaceAll: boolean;
+  }> = [];
+
+  #error: string | undefined;
+
+  #maybeRenderError() {
+    if (!this.#error) return nothing;
+
+    return html`<div class="error">${this.#error}</div>`;
+  }
 
   connectedCallback() {
     super.connectedCallback();
+
+    // Load config from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const appKey = urlParams.get("app");
+    if (appKey && !configs[appKey]) {
+      this.#pendingSnackbarMessages.push({
+        message: {
+          id: crypto.randomUUID(),
+          message: `App "${appKey}" is not available. Falling back to Restaurant Finder.`,
+          type: SnackType.WARNING,
+          persistent: false,
+        },
+        replaceAll: false,
+      });
+    }
+    this.config = (appKey && configs[appKey]) || restaurantConfig;
 
     // Set the CSS Overrides for the given appKey.
     if (this.config.cssOverrides && !document.adoptedStyleSheets.includes(this.config.cssOverrides)) {
@@ -301,11 +343,22 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     this.#a2uiClient = new A2UIClient(this.config.serverUrl);
   }
 
+  protected firstUpdated() {
+    if (this.#pendingSnackbarMessages.length > 0) {
+      for (const { message, replaceAll } of this.#pendingSnackbarMessages) {
+        this.#snackbar.show(message, replaceAll);
+      }
+      this.#pendingSnackbarMessages = [];
+    }
+  }
+
   render() {
     return [
       this.#renderThemeToggle(),
       this.#maybeRenderForm(),
       this.#maybeRenderData(),
+      this.#maybeRenderError(),
+      html`<ui-snackbar></ui-snackbar>`,
     ];
   }
 

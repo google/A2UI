@@ -72,13 +72,37 @@ This repository contains:
 
 <div class="grid cards" markdown>
 
-- :material-clock-fast:{ .lg .middle } **[Quickstart Guide](quickstart.md)**
+- :material-clock-fast:{ .lg .middle } **[Quickstart Restaurant Finder Demo](quickstart.md)**
 
     ---
 
-    Run the restaurant finder demo and see A2UI in action with Gemini-powered agents.
+    Run the full-stack demo locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case.
 
-    [:octicons-arrow-right-24: Get started](quickstart.md)
+    [:octicons-arrow-right-24: Run the demo](quickstart.md)
+
+- :material-react:{ .lg .middle } **[A2UI + AG-UI (React)](guides/a2ui-with-any-agent-framework.md)**
+
+    ---
+
+    Scaffold a Next.js app wired to any agent framework via AG-UI. This is a React + A2UI app, ready to ship.
+
+    [:octicons-arrow-right-24: Use with any agent](guides/a2ui-with-any-agent-framework.md)
+
+- :material-palette-outline:{ .lg .middle } **[A2UI Composer](https://a2ui-composer.ag-ui.com/)**
+
+    ---
+
+    Generate A2UI JSON from a visual editor — no install required. Paste the output into any agent prompt.
+
+    [:octicons-arrow-right-24: Open the composer](https://a2ui-composer.ag-ui.com/)
+
+- :material-play-circle-outline:{ .lg .middle } **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)**
+
+    ---
+
+    Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers. See the protocol in motion before writing code.
+
+    [:octicons-arrow-right-24: Open the playground](https://a2ui-composer.ag-ui.com/theater)
 
 - :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
 

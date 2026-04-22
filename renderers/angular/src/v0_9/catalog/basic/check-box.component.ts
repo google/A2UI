@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -70,7 +69,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         border-radius: var(--a2ui-checkbox-border-radius, 4px);
       }
       .a2ui-check-box-text {
-        font-size: var(--a2ui-checkbox-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px)));
+        font-size: var(
+          --a2ui-checkbox-label-font-size,
+          var(--a2ui-label-font-size, var(--a2ui-font-size-s, 16px))
+        );
         font-weight: var(--a2ui-checkbox-label-font-weight, bold);
       }
     `,
@@ -78,20 +80,8 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckBoxComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `label`: The text to display next to the checkbox.
-   * - `value`: Boolean indicating whether the checkbox is checked.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  value = computed(() => this.props()['value']?.value() === true);
-  label = computed(() => this.props()['label']?.value());
+  readonly value = computed(() => this.props()['value']?.value() === true);
+  readonly label = computed(() => this.props()['label']?.value());
 
   handleChange(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;

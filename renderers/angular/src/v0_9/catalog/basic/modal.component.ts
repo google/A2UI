@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -39,10 +38,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
     <div class="a2ui-modal-wrapper">
       <div (click)="openModal()" class="a2ui-modal-trigger">
         @if (trigger()) {
-          <a2ui-v09-component-host
-            [componentKey]="trigger()!"
-            [surfaceId]="surfaceId()"
-          >
+          <a2ui-v09-component-host [componentKey]="trigger()!" [surfaceId]="surfaceId()">
           </a2ui-v09-component-host>
         }
       </div>
@@ -52,10 +48,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
           <div class="a2ui-modal-content" (click)="$event.stopPropagation()">
             <button class="a2ui-modal-close" (click)="closeModal()">&times;</button>
             @if (content()) {
-              <a2ui-v09-component-host
-                [componentKey]="content()!"
-                [surfaceId]="surfaceId()"
-              >
+              <a2ui-v09-component-host [componentKey]="content()!" [surfaceId]="surfaceId()">
               </a2ui-v09-component-host>
             }
           </div>
@@ -112,24 +105,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `trigger`: The ID of the component that opens the modal.
-   * - `content`: The ID of the component to display inside the modal.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
   isOpen = signal(false);
 
-  trigger = computed(() => this.props()['trigger']?.value());
-  content = computed(() => this.props()['content']?.value());
-
-
+  readonly trigger = computed(() => this.props()['trigger']?.value());
+  readonly content = computed(() => this.props()['content']?.value());
 
   openModal() {
     this.isOpen.set(true);

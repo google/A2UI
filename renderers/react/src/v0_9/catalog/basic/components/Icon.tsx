@@ -17,7 +17,7 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, useBasicCatalogStyles} from '../utils';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   play: 'play_arrow',
@@ -35,18 +35,26 @@ function toMaterialSymbol(str: string): string {
 }
 
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
+  useBasicCatalogStyles();
   const iconName =
     typeof props.name === 'string'
       ? toMaterialSymbol(props.name)
       : (props.name as {path?: string})?.path;
+
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
-    fontSize: '24px',
-    width: '24px',
-    height: '24px',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: 'var(--a2ui-icon-font-family, "Material Symbols Outlined", sans-serif)',
+    fontSize: 'var(--a2ui-icon-size, var(--a2ui-font-size-xl, 24px))',
+    color: 'var(--a2ui-icon-color, inherit)',
+    fontVariationSettings: 'var(--a2ui-icon-font-variation-settings, "FILL" 1)',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    lineHeight: 1,
+    letterSpacing: 'normal',
+    textTransform: 'none',
   };
 
   return (

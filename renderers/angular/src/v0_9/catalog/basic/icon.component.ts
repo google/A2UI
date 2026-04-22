@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
@@ -59,8 +58,11 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
         height: var(--a2ui-icon-size, 24px);
         font-size: var(--a2ui-icon-size, 24px);
         font-family: var(--a2ui-icon-font-family, 'Material Icons');
-        color: var(--a2ui-icon-color, var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333)));
-        font-variation-settings: var(--a2ui-icon-font-variation-settings, "FILL" 1);
+        color: var(
+          --a2ui-icon-color,
+          var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333))
+        );
+        font-variation-settings: var(--a2ui-icon-font-variation-settings, 'FILL' 1);
         line-height: 1;
         text-transform: none;
         letter-spacing: normal;
@@ -81,33 +83,20 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `name`: The name of the icon (e.g., 'home', 'settings') OR an object
-   *           with a `path` property for SVG icons.
-   * - `color`: The CSS color to apply to the icon.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
+  readonly color = computed(() => this.props()['color']?.value());
+  readonly iconNameRaw = computed(() => this.props()['name']?.value());
 
-  color = computed(() => this.props()['color']?.value());
-  iconNameRaw = computed(() => this.props()['name']?.value());
-
-  isPath = computed(() => {
+  readonly isPath = computed(() => {
     const name = this.iconNameRaw();
     return typeof name === 'object' && name !== null && 'path' in name;
   });
 
-  path = computed(() => {
+  readonly path = computed(() => {
     const name = this.iconNameRaw();
     return (name as any)?.path || '';
   });
 
-  iconName = computed(() => {
+  readonly iconName = computed(() => {
     const name = this.iconNameRaw();
     if (typeof name !== 'string') return '';
     if (ICON_NAME_OVERRIDES[name]) return ICON_NAME_OVERRIDES[name];

@@ -215,9 +215,13 @@ class ContactAgent:
     current_query_text = query
 
     # Ensure catalog schema was loaded
+<<<<<<< HEAD
     if ui_version and (
         not selected_catalog or not selected_catalog.catalog_schema
     ):
+=======
+    if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
+>>>>>>> origin/main
       print(
           "--- ContactAgent.fetch_response: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -259,6 +263,7 @@ class ContactAgent:
             new_message=current_message,
         ):
           if event.is_final_response():
+<<<<<<< HEAD
             if (
                 event.content
                 and event.content.parts
@@ -267,6 +272,10 @@ class ContactAgent:
               full_content_list.extend(
                   [p.text for p in event.content.parts if p.text]
               )
+=======
+            if event.content and event.content.parts and event.content.parts[0].text:
+              full_content_list.extend([p.text for p in event.content.parts if p.text])
+>>>>>>> origin/main
       except Exception as e:
         print(
             "--- ContactAgent.fetch_response: Exception caught while running"
@@ -352,10 +361,14 @@ class ContactAgent:
               f"--- ContactAgent.fetch_response: A2UI validation failed: {e}"
               f" (Attempt {attempt}) ---"
           )
+<<<<<<< HEAD
           print(
               "--- Failed response content:"
               f" {final_response_content[:500]}... ---"
           )
+=======
+          print(f"--- Failed response content: {final_response_content[:500]}... ---")
+>>>>>>> origin/main
           error_message = f"Validation failed: {e}."
 
       else:  # Not using UI, so text is always "valid"

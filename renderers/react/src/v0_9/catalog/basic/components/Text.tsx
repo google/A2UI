@@ -14,66 +14,62 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, getWeightStyle, useBasicCatalogStyles} from '../utils';
 import {useMarkdown} from '../hooks/useMarkdown';
 
-export const Text = createComponentImplementation(TextApi, ({props}) => {
-  const text = props.text ?? '';
-  let markdownText = text;
+// Import CSS Module
+import styles from './Text.module.css';
 
-  switch (props.variant) {
+/**
+ * Wraps the plain text with appropriate Markdown syntax based on the requested variant.
+ *
+ * @param text The plain text to be wrapped.
+ * @param variant The typography variant (e.g., 'h1', 'caption').
+ * @returns The text wrapped in Markdown syntax.
+ */
+const handleVariant = (text: string, variant?: string): string => {
+  switch (variant) {
     case 'h1':
-      markdownText = `# ${text}`;
-      break;
+      return `# ${text}`;
     case 'h2':
-      markdownText = `## ${text}`;
-      break;
+      return `## ${text}`;
     case 'h3':
-      markdownText = `### ${text}`;
-      break;
+      return `### ${text}`;
     case 'h4':
-      markdownText = `#### ${text}`;
-      break;
+      return `#### ${text}`;
     case 'h5':
-      markdownText = `##### ${text}`;
-      break;
+      return `##### ${text}`;
     case 'caption':
-      markdownText = `*${text}*`;
-      break;
+      return `*${text}*`;
+    default:
+      return text;
   }
+};
 
+export const Text = createComponentImplementation(TextApi, ({props}) => {
+  useBasicCatalogStyles();
+  const text = typeof props.text === 'string' ? props.text : String(props.text ?? '');
+  const markdownText = handleVariant(text, props.variant);
   const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
-    display: 'inline-block',
+    ...getWeightStyle(props.weight),
   };
 
+  const isCaption = props.variant === 'caption';
+  const classes = [styles.a2uiText, isCaption ? styles.a2uiCaption : props.variant || 'body'];
   if (renderedHtml === null) {
-    return (
-      <div className={`a2ui-text ${props.variant || 'body'} no-markdown-renderer`} style={style}>
-        {markdownText}
-      </div>
-    );
+    classes.push('no-markdown-renderer');
   }
+  const contentProps =
+    renderedHtml !== null
+      ? {dangerouslySetInnerHTML: {__html: renderedHtml}}
+      : {children: markdownText};
 
-  if (props.variant === 'caption') {
-    return (
-      <span
-        className="a2ui-caption"
-        style={{...style, color: '#666', textAlign: 'left', display: 'inline-block'}}
-        dangerouslySetInnerHTML={{__html: renderedHtml}}
-      />
-    );
+  if (isCaption) {
+    return <span className={classes.join(' ')} style={style} {...contentProps} />;
   }
-
-  return (
-    <div
-      className={`a2ui-text ${props.variant || 'body'}`}
-      style={style}
-      dangerouslySetInnerHTML={{__html: renderedHtml}}
-    />
-  );
+  return <div className={classes.join(' ')} style={style} {...contentProps} />;
 });

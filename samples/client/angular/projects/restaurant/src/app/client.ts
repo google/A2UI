@@ -40,6 +40,12 @@ export class Client {
     try {
       this.isLoading.set(true);
 
+      // Clear existing surfaces on interaction
+      const surfaceGroup = this.renderer.surfaceGroup;
+      for (const surfaceId of Array.from(surfaceGroup.surfacesMap.keys())) {
+        surfaceGroup.deleteSurface(surfaceId);
+      }
+
       const isString = typeof request === 'string';
       const bodyData = isString
         ? { query: request, contextId: this.contextId }

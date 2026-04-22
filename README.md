@@ -100,66 +100,40 @@ A2UI is designed to be a lightweight format, but it fits into a larger ecosystem
 
 ## Getting started
 
-The best way to understand A2UI is to run the samples.
+Pick the path that matches where you want to start:
 
-### Prerequisites
+| Path | What you get | Time |
+|------|--------------|------|
+| 🍜 **[Quickstart Restaurant Finder Demo](https://a2ui.org/quickstart/)** | Full-stack A2UI running locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case. | ~5 min |
+| ⚛️ **[A2UI + AG-UI (CopilotKit)](docs/guides/a2ui-with-any-agent-framework.md)** | Set up CopilotKit with your agent framework of choice, then enable A2UI rendering. Ready to ship A2UI in a React app. | ~5 min |
+| 🎨 **[A2UI Composer](https://a2ui-composer.ag-ui.com/)** · **[Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)** | Generate A2UI JSON from a visual editor and paste it into any agent prompt — no install required. | ~1 min |
+| 🎬 **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)** | Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers — no install required. | ~1 min |
 
-* Node.js (for web clients)
-* Python (for agent samples)
-* A valid [Gemini API Key](https://aistudio.google.com/) is required for the samples.
+### Restaurant Finder demo — TL;DR
 
-### Running the Restaurant Finder demo
+Prerequisites: Node.js 18+, [uv](https://docs.astral.sh/uv/), and a [Gemini API key](https://aistudio.google.com/apikey).
 
-1. **Clone the repository:**
+```bash
+git clone https://github.com/google/A2UI.git
+cd A2UI
+export GEMINI_API_KEY="your_gemini_api_key"
+cd samples/client/lit
+npm run demo:restaurant
+```
 
-    ```bash
-    git clone https://github.com/google/A2UI.git
-    cd A2UI
-    ```
+This one command installs dependencies, builds the renderers, starts the Python agent, and opens the client at `http://localhost:5173`. For step-by-step instructions, alternative demos, and troubleshooting see the **[full Quickstart](docs/quickstart.md)**.
 
-2. **Set your API key:**
+### A2UI + AG-UI — TL;DR
 
-    ```bash
-    export GEMINI_API_KEY="your_gemini_api_key"
-    ```
+```bash
+npx copilotkit@latest init
+```
 
-3. **Run the Agent (Backend):**
+Set up CopilotKit with your framework of choice (ADK, LangGraph, CrewAI, Mastra, …), then follow the **[AG-UI guide](docs/guides/a2ui-with-any-agent-framework.md)** to enable A2UI rendering. CopilotKit's [quickstart](https://docs.copilotkit.ai/quickstart) covers the initial install for any supported agent framework.
 
-    ```bash
-    cd samples/agent/adk/restaurant_finder
-    uv run .
-    ```
+### Other renderers
 
-4. **Run the Client (Frontend):**
-    Open a new terminal window:
-
-    ```bash
-    # Install and build the Markdown renderer
-    cd renderers/markdown/markdown-it
-    npm install
-    npm run build
-
-    # Install and build the Web Core library
-    cd ../../web_core
-    npm install
-    npm run build
-
-    # Install and build the Lit renderer
-    cd ../lit
-    npm install
-    npm run build
-
-    # Install and run the shell client
-    cd ../../samples/client/lit/shell
-    npm install
-    npm run dev
-    ```
-
-For Flutter developers, check out the [GenUI SDK](https://github.com/flutter/genui),
-which uses A2UI under the hood.
-
-CopilotKit has a public [A2UI Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)
-to try out as well.
+For Flutter, check out the [GenUI SDK](https://github.com/flutter/genui), which uses A2UI under the hood. See [docs/reference/renderers.md](docs/reference/renderers.md) for the full list of client implementations.
 
 ## Roadmap
 

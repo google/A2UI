@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -65,7 +64,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         margin: var(--a2ui-spacing-xs, 4px);
       }
       label {
-        font-size: var(--a2ui-textfield-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px)));
+        font-size: var(
+          --a2ui-textfield-label-font-size,
+          var(--a2ui-label-font-size, var(--a2ui-font-size-s, 14px))
+        );
         font-weight: var(--a2ui-textfield-label-font-weight, bold);
         color: var(--a2ui-text-color-text, var(--a2ui-color-on-background, #333));
       }
@@ -92,27 +94,12 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextFieldComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `value`: The current string value of the input.
-   * - `label`: Optional label text to display above the input.
-   * - `placeholder`: Hint text shown when the input is empty.
-   * - `variant`: Input type variant ('default', 'obscured' (password), 'number').
-   * - `checks`: Optional validation rules.
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
+  readonly label = computed(() => this.props()['label']?.value());
+  readonly value = computed(() => this.props()['value']?.value() || '');
+  readonly placeholder = computed(() => this.props()['placeholder']?.value() || '');
+  readonly variant = computed(() => this.props()['variant']?.value());
 
-  label = computed(() => this.props()['label']?.value());
-  value = computed(() => this.props()['value']?.value() || '');
-  placeholder = computed(() => this.props()['placeholder']?.value() || '');
-  variant = computed(() => this.props()['variant']?.value());
-
-  inputType = computed(() => {
+  readonly inputType = computed(() => {
     switch (this.variant()) {
       case 'obscured':
         return 'password';

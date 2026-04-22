@@ -39,10 +39,19 @@ describe('Simple Components', () => {
           componentsModel: new Map([
             ['child-1', new ComponentModel('child-1', 'Text', { text: { value: 'Child 1' } })],
             ['child-2', new ComponentModel('child-2', 'Text', { text: { value: 'Child 2' } })],
-            ['content-1', new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } })],
-            ['content-2', new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } })],
+            [
+              'content-1',
+              new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } }),
+            ],
+            [
+              'content-2',
+              new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } }),
+            ],
             ['trigger-btn', new ComponentModel('trigger-btn', 'Text', { text: { value: 'Open' } })],
-            ['modal-content', new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } })],
+            [
+              'modal-content',
+              new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } }),
+            ],
           ]),
           catalog: {
             id: 'mock-catalog',
@@ -170,7 +179,14 @@ describe('Simple Components', () => {
     });
 
     it('should support all specified variants', () => {
-      const variants = ['icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header'];
+      const variants = [
+        'icon',
+        'avatar',
+        'smallFeature',
+        'mediumFeature',
+        'largeFeature',
+        'header',
+      ];
       for (const variant of variants) {
         fixture.componentRef.setInput('props', {
           url: createBoundProperty('https://example.com/image.png'),
@@ -182,7 +198,6 @@ describe('Simple Components', () => {
       }
     });
   });
-
 
   describe('IconComponent', () => {
     let component: IconComponent;

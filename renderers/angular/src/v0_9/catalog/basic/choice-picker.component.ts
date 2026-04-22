@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BoundProperty } from '../../core/types';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -101,7 +100,10 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         gap: var(--a2ui-choicepicker-gap, var(--a2ui-spacing-xs, 0.25rem));
       }
       .a2ui-chip {
-        padding: var(--a2ui-choicepicker-chip-padding, var(--a2ui-spacing-s, 0.5rem) var(--a2ui-spacing-m, 1rem));
+        padding: var(
+          --a2ui-choicepicker-chip-padding,
+          var(--a2ui-spacing-s, 0.5rem) var(--a2ui-spacing-m, 1rem)
+        );
         border-radius: var(--a2ui-choicepicker-chip-border-radius, 100px);
         border: var(--a2ui-choicepicker-chip-border, 1px solid var(--a2ui-color-border, #ccc));
         background: var(--a2ui-choicepicker-chip-background, var(--a2ui-color-surface, #fff));
@@ -109,35 +111,27 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         transition: all 0.2s;
       }
       .a2ui-chip.active {
-        background-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
+        background-color: var(
+          --a2ui-choicepicker-chip-background-selected,
+          var(--a2ui-color-primary, #17e)
+        );
         color: var(--a2ui-color-on-primary, #fff);
-        border-color: var(--a2ui-choicepicker-chip-background-selected, var(--a2ui-color-primary, #17e));
+        border-color: var(
+          --a2ui-choicepicker-chip-background-selected,
+          var(--a2ui-color-primary, #17e)
+        );
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChoicePickerComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `value`: The currently selected value(s).
-   * - `choices` or `options`: List of choice objects (label and value).
-   * - `displayStyle`: How to render the choices ('default' or 'chips').
-   * - `variant`: Selection mode ('singleSelection' or 'multipleSelection').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  displayStyle = computed(() => this.props()['displayStyle']?.value());
-  choices = computed(
+  readonly displayStyle = computed(() => this.props()['displayStyle']?.value());
+  readonly choices = computed(
     () => this.props()['choices']?.value() || this.props()['options']?.value() || [],
   );
-  variant = computed(() => this.props()['variant']?.value());
-  selectedValue = computed(() => this.props()['value']?.value());
+  readonly variant = computed(() => this.props()['variant']?.value());
+  readonly selectedValue = computed(() => this.props()['value']?.value());
 
   isMultiple(): boolean {
     return this.variant() === 'multipleSelection';
