@@ -95,8 +95,9 @@ def get_conformance_cases(filename):
   return [(case["name"], case) for case in cases]
 
 
-# --- Parser Conformance ---
-cases_parser = get_conformance_cases("parser.yaml")
+# --- Streaming Parser Conformance ---
+cases_parser = get_conformance_cases("streaming_parser.yaml")
+
 
 
 @pytest.mark.parametrize(
@@ -116,7 +117,34 @@ def test_parser_conformance(name, test_case):
       assert_parts_match(parts, step["expect"])
 
 
+# --- Non-Streaming Parser Conformance ---
+cases_parser_non_streaming = get_conformance_cases("parser.yaml")
+
+
+@pytest.mark.parametrize(
+    "name, test_case",
+    cases_parser_non_streaming,
+    ids=[c[0] for c in cases_parser_non_streaming],
+)
+def test_parser_non_streaming_conformance(name, test_case):
+  from a2ui.parser.parser import parse_response
+
+  content = test_case["input"]
+
+  if "expect_error" in test_case:
+    with pytest.raises(ValueError, match=test_case["expect_error"]):
+      parse_response(content)
+  else:
+    parts = parse_response(content)
+    expected = test_case["expect"]
+    assert len(parts) == len(expected)
+    for actual, exp in zip(parts, expected):
+      assert actual.text.strip() == exp.get("text", "").strip()
+      assert actual.a2ui_json == exp.get("a2ui")
+
+
 # --- Validator Conformance ---
+
 cases_validator = get_conformance_cases("validator.yaml")
 
 

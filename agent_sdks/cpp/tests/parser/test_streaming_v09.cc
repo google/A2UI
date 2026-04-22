@@ -103,7 +103,8 @@ TEST(ParserConformanceTest, RunV09) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path parser_tests_path = conformance_dir / "parser.yaml";
+    fs::path parser_tests_path = conformance_dir / "streaming_parser.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(parser_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
