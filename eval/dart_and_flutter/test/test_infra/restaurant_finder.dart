@@ -61,12 +61,14 @@ final class TestRestaurantFinderClient {
           responseChecker: (response) {
             expect(response, contains('capabilities'));
             expect(response, contains('A2UI'));
+            print('Received agent card:\n$response');
           },
         ),
         ShellProbe(
           command: _restaurantFinderCurlMessage,
           responseChecker: (response) {
             expect(response, contains('"parts":[{"kind":'));
+            print('Received agent response:\n$response');
           },
         ),
       ],
