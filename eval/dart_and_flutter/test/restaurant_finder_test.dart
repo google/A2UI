@@ -28,7 +28,7 @@ void main() {
   test(
     'GanUI SDK can talk to restaurant finder.',
     () async {
-      final chatSession = Session(agentUrl: TestRestaurantFinderClient().url);
+      final chatSession = _Session(agentUrl: TestRestaurantFinderClient().url);
       await chatSession.sendTextToAgent('Hello, how can you help me?');
 
       // TODO(polina-c): check the response of the service.
@@ -38,8 +38,8 @@ void main() {
 }
 
 /// A class that manages the chat session state and logic.
-class Session extends ChangeNotifier {
-  Session({required String agentUrl}) {
+class _Session extends ChangeNotifier {
+  _Session({required String agentUrl}) {
     _connector = A2uiAgentConnector(url: Uri.parse(agentUrl));
     _surfaceController = SurfaceController(
       catalogs: [BasicCatalogItems.asCatalog()],
