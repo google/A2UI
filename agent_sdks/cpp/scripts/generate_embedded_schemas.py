@@ -47,11 +47,12 @@ def main():
         f.write('namespace a2ui {\n')
         f.write('namespace internal {\n\n')
         
-        f.write('const char* SERVER_TO_CLIENT_SCHEMA_V08 = R"(' + v08_s2c_content + ')";\n\n')
-        f.write('const char* SERVER_TO_CLIENT_SCHEMA_V09 = R"(' + v09_s2c_content + ')";\n\n')
-        f.write('const char* COMMON_TYPES_SCHEMA_V09 = R"(' + v09_common_content + ')";\n\n')
-        f.write('const char* BASIC_CATALOG_V08 = R"(' + v08_catalog_content + ')";\n\n')
-        f.write('const char* BASIC_CATALOG_V09 = R"(' + v09_catalog_content + ')";\n\n')
+        f.write('const char* SERVER_TO_CLIENT_SCHEMA_V08 = R"schema(' + v08_s2c_content + ')schema";\n\n')
+        f.write('const char* SERVER_TO_CLIENT_SCHEMA_V09 = R"schema(' + v09_s2c_content + ')schema";\n\n')
+        f.write('const char* COMMON_TYPES_SCHEMA_V09 = R"schema(' + v09_common_content + ')schema";\n\n')
+        f.write('const char* BASIC_CATALOG_V08 = R"schema(' + v08_catalog_content + ')schema";\n\n')
+        f.write('const char* BASIC_CATALOG_V09 = R"schema(' + v09_catalog_content + ')schema";\n\n')
+
         
         f.write('} // namespace internal\n')
         f.write('} // namespace a2ui\n')
