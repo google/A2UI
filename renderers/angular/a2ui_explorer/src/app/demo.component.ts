@@ -648,13 +648,8 @@ export class DemoComponent implements OnInit, OnDestroy {
     try {
       const parsed = JSON.parse(newValue);
       this.dataModelError = null;
-
       const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
-      if (surface) {
-        surface.dataModel.set('/', parsed);
-      }
-
-      this.cdr.detectChanges();
+      surface?.dataModel.set('/', parsed);
     } catch (e) {
       this.dataModelError = e instanceof Error ? e.message : 'Invalid JSON';
       console.error(e);
