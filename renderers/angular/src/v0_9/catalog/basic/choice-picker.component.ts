@@ -129,7 +129,7 @@ import { ChoicePickerApi } from '@a2ui/web_core/v0_9/basic_catalog';
 export class ChoicePickerComponent extends BasicCatalogComponent<typeof ChoicePickerApi> {
   readonly displayStyle = computed(() => this.props()['displayStyle']?.value());
   readonly options = computed(
-    () => this.props()['options']?.value() || this.props()['options']?.value() || [],
+    () => this.props()['options']?.value() || [],
   );
   readonly variant = computed(() => this.props()['variant']?.value());
   readonly selectedValue = computed(() => this.props()['value']?.value());
