@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -43,16 +45,17 @@ final class TestRestaurantFinderClient {
 
   String get url => _restaurantFinderDefaultUrl;
 
-  /// Tests [start instructions](../../samples/agent/adk/restaurant_finder/README.md).
+  /// Tests [start instructions](../../../../samples/agent/adk/restaurant_finder/README.md).
   ///
   /// If the client is already running, it will be restarted.
   Future<void> startAndVerify() async {
-    if (_process != null) {
-      _process?.kill();
-    }
+    _process?.kill();
+    _process = null;
+    killProcessesOnPort(10002);
 
     _process = await startAndVerifyService(
-      '(cd ../../samples/agent/adk/restaurant_finder && uv run .)',
+      'uv run .',
+      '../../samples/agent/adk/restaurant_finder',
       [
         ShellProbe(
           command:
@@ -60,12 +63,14 @@ final class TestRestaurantFinderClient {
           responseChecker: (response) {
             expect(response, contains('capabilities'));
             expect(response, contains('A2UI'));
+            print('\nReceived agent card:\n$response\n');
           },
         ),
         ShellProbe(
           command: _restaurantFinderCurlMessage,
           responseChecker: (response) {
             expect(response, contains('"parts":[{"kind":'));
+            print('\nReceived agent response:\n$response\n');
           },
         ),
       ],

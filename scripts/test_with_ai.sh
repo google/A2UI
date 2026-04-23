@@ -13,17 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# About this script:
-#
-# This script runs all the tests that use non-stubbed AI models and thus require API key.
-# It is invoked by GitHub Actions. But, it cannot be invoked by GitHub for fork branches.
-# If your PR is from forked branch, please, run this script locally before merging.
-#
-# To run script locally, you need to set API key as an environment variable.
-# Example: export GEMINI_API_KEY=your_api_key
-
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
 cd "$(dirname "$0")/dart_and_flutter"
-flutter test --concurrency=1 --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
+# Parallel tests are disabled to avoid conflicts on environment. 
+flutter test --concurrency=1 --dart-define=GEMINI_API_KEY="$GEMINI_API_KEY"

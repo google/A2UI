@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: avoid_print
+
+import 'dart:async';
 import 'dart:io';
 
 /// A function that checks the response of the service.
@@ -30,20 +33,41 @@ class ShellProbe {
     this.timeout = const Duration(seconds: 10),
   });
 
-  /// Validates the response of the service.
+  /// Validates the response of the service, retrying until [timeout] elapses.
   ///
-  /// Runs [command], checks the response and throws error if the response is not valid.
-  void validate() {
-    final response = runCommandSync(command);
-    responseChecker(response);
+  /// Runs [command], checks the response and throws error if the response
+  /// is not valid.
+  Future<void> validate() async {
+    final DateTime deadline = DateTime.now().add(timeout);
+    while (true) {
+      try {
+        final String response = runCommandSync(command);
+        responseChecker(response);
+        return;
+      } catch (e) {
+        if (DateTime.now().isAfter(deadline)) rethrow;
+        await Future<void>.delayed(const Duration(seconds: 1));
+      }
+    }
   }
 }
 
+/// Kills any processes currently listening on [port].
+///
+/// Safe to call when no process is on the port — exits silently.
+void killProcessesOnPort(int port) {
+  Process.runSync('bash', [
+    '-c',
+    'lsof -ti tcp:$port | xargs kill -9 2>/dev/null || true',
+  ]);
+}
+
 String runCommandSync(String command) {
-  final result = Process.runSync('bash', ['-c', command]);
+  final ProcessResult result = Process.runSync('bash', ['-c', command]);
   if (result.exitCode != 0) {
     throw Exception(
-      'Command failed with exit code ${result.exitCode}: $command\n${result.stderr}',
+      'Command failed with exit code ${result.exitCode}: '
+      '$command\n${result.stderr}',
     );
   }
   return result.stdout as String;
@@ -51,13 +75,47 @@ String runCommandSync(String command) {
 
 Future<Process> startAndVerifyService(
   String command,
+  String workingDirectory,
   List<ShellProbe> probes, {
-  bool printCommandOutput = true,
+  Duration quietPeriod = const Duration(seconds: 2),
 }) async {
-  final process = await Process.start('bash', ['-c', command]);
+  print('Starting service: `$command` in $workingDirectory');
+  final Process process = await Process.start('bash', [
+    '-c',
+    command,
+  ], workingDirectory: workingDirectory);
 
-  for (final probe in probes) {
-    probe.validate();
+  final serviceStabilizedOutput = Completer<void>();
+  Timer? timer;
+  StreamSubscription<String>? stdoutSub;
+  StreamSubscription<String>? stderrSub;
+
+  void onTimer() {
+    serviceStabilizedOutput.complete();
+    stdoutSub?.cancel();
+    stderrSub?.cancel();
+    timer?.cancel();
   }
+
+  void restartTimer(String chunk) {
+    stdout.write(chunk);
+    timer?.cancel();
+    if (!serviceStabilizedOutput.isCompleted) {
+      timer = Timer(quietPeriod, onTimer);
+    }
+  }
+
+  stdoutSub = process.stdout
+      .transform(const SystemEncoding().decoder)
+      .listen(restartTimer, onDone: onTimer);
+
+  stderrSub = process.stderr
+      .transform(const SystemEncoding().decoder)
+      .listen(restartTimer, onDone: onTimer);
+
+  restartTimer('Started timer.\n');
+  await serviceStabilizedOutput.future;
+
+  for (final probe in probes) await probe.validate();
   return process;
 }
