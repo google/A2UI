@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: eval
+name: restaurant_finder_e2e_test
 publish_to: "none"
 
 environment:
