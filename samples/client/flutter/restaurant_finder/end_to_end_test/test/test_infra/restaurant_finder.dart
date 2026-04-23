@@ -55,7 +55,7 @@ final class TestRestaurantFinderClient {
 
     _process = await startAndVerifyService(
       'uv run .',
-      '../../../../samples/agent/adk/restaurant_finder',
+      '../../../../../samples/agent/adk/restaurant_finder',
       [
         ShellProbe(
           command:
