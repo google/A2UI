@@ -95,18 +95,58 @@ A2uiCatalog A2uiSchemaManager::select_catalog(const std::optional<nlohmann::json
         }
     }
 
+    bool has_inline = client_ui_capabilities->contains("inlineCatalogs") && (*client_ui_capabilities)["inlineCatalogs"].is_array();
+
+    if (has_inline && !accepts_inline_catalogs_) {
+        throw std::runtime_error("Inline catalogs are not accepted");
+    }
+
+    A2uiCatalog selected_catalog = supported_catalogs_[0];
+    bool found = false;
+
     if (!client_supported_ids.empty()) {
         for (const auto& cscid : client_supported_ids) {
             for (const auto& c : supported_catalogs_) {
                 if (c.catalog_id() == cscid) {
-                    return c;
+                    selected_catalog = c;
+                    found = true;
+                    break;
                 }
             }
+            if (found) break;
+        }
+        if (!found && !has_inline) {
+            throw std::runtime_error("No client-supported catalog found");
         }
     }
 
-    return supported_catalogs_[0];
+    if (has_inline) {
+        nlohmann::json merged_schema = selected_catalog.catalog_schema();
+        for (const auto& inline_cat : (*client_ui_capabilities)["inlineCatalogs"]) {
+            nlohmann::json inline_schema = inline_cat;
+            for (const auto& modifier : schema_modifiers_) {
+                inline_schema = modifier(inline_schema);
+            }
+            
+            if (inline_schema.contains("components") && inline_schema["components"].is_object()) {
+                if (!merged_schema.contains("components")) {
+                    merged_schema["components"] = nlohmann::json::object();
+                }
+                merged_schema["components"].update(inline_schema["components"]);
+            }
+        }
+        return A2uiCatalog(
+            selected_catalog.version(),
+            "inline", // Match Python INLINE_CATALOG_NAME
+            selected_catalog.s2c_schema(),
+            selected_catalog.common_types_schema(),
+            merged_schema
+        );
+    }
+
+    return selected_catalog;
 }
+
 
 A2uiCatalog A2uiSchemaManager::get_selected_catalog(
     const std::optional<nlohmann::json>& client_ui_capabilities,
