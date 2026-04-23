@@ -27,16 +27,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
-
-interface HintedStyles {
-  h1: Record<string, string>;
-  h2: Record<string, string>;
-  h3: Record<string, string>;
-  h4: Record<string, string>;
-  h5: Record<string, string>;
-  body: Record<string, string>;
-  caption: Record<string, string>;
-}
+import { isHintedStyles } from "./hinted-styles.js";
 
 @customElement("a2ui-text")
 export class Text extends Root {
@@ -131,23 +122,14 @@ export class Text extends Root {
     )}`;
   }
 
-  #areHintedStyles(styles: unknown): styles is HintedStyles {
-    if (typeof styles !== "object") return false;
-    if (Array.isArray(styles)) return false;
-    if (!styles) return false;
-
-    const expected = ["h1", "h2", "h3", "h4", "h5", "h6", "caption", "body"];
-    return expected.every((v) => v in styles);
-  }
-
   #getAdditionalStyles() {
     let additionalStyles: Record<string, string> = {};
     const styles = this.theme.additionalStyles?.Text;
     if (!styles) return additionalStyles;
 
-    if (this.#areHintedStyles(styles)) {
+    if (isHintedStyles(styles)) {
       const hint = this.usageHint ?? "body";
-      additionalStyles = styles[hint] as Record<string, string>;
+      additionalStyles = styles[hint] ?? {};
     } else {
       additionalStyles = styles;
     }
