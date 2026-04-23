@@ -626,6 +626,13 @@ void A2uiStreamParserImpl::process_component_topology(nlohmann::json& comp, std:
         return "loading_" + id;
     };
 
+    std::set<std::string> extra_component_ids;
+    for (const auto& ec : extra_components) {
+        if (ec.contains("id")) {
+            extra_component_ids.insert(ec["id"].get<std::string>());
+        }
+    }
+
     std::function<void(nlohmann::json&)> traverse = [&](nlohmann::json& obj) {
         if (obj.is_object()) {
             if (version_ == VERSION_0_8 && obj.contains("path")) {
@@ -656,15 +663,9 @@ void A2uiStreamParserImpl::process_component_topology(nlohmann::json& comp, std:
                                     
                                     nlohmann::json placeholder_comp = create_placeholder_component(placeholder_id);
                                     
-                                    bool exists = false;
-                                    for (const auto& ec : extra_components) {
-                                        if (ec.contains("id") && ec["id"] == placeholder_id) {
-                                            exists = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!exists) {
+                                    if (extra_component_ids.find(placeholder_id) == extra_component_ids.end()) {
                                         extra_components.push_back(placeholder_comp);
+                                        extra_component_ids.insert(placeholder_id);
                                     }
                                 }
                             }
@@ -680,15 +681,9 @@ void A2uiStreamParserImpl::process_component_topology(nlohmann::json& comp, std:
                                         
                                         nlohmann::json placeholder_comp = create_placeholder_component(pid);
                                         
-                                        bool exists = false;
-                                        for (const auto& ec : extra_components) {
-                                            if (ec.contains("id") && ec["id"] == pid) {
-                                                exists = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!exists) {
+                                        if (extra_component_ids.find(pid) == extra_component_ids.end()) {
                                             extra_components.push_back(placeholder_comp);
+                                            extra_component_ids.insert(pid);
                                         }
                                     }
                                 }
@@ -703,15 +698,9 @@ void A2uiStreamParserImpl::process_component_topology(nlohmann::json& comp, std:
                             
                             nlohmann::json placeholder_comp = create_placeholder_component(placeholder_id);
                             
-                            bool exists = false;
-                            for (const auto& ec : extra_components) {
-                                if (ec.contains("id") && ec["id"] == placeholder_id) {
-                                    exists = true;
-                                    break;
-                                }
-                            }
-                            if (!exists) {
+                            if (extra_component_ids.find(placeholder_id) == extra_component_ids.end()) {
                                 extra_components.push_back(placeholder_comp);
+                                extra_component_ids.insert(placeholder_id);
                             }
                         }
                     }
@@ -730,6 +719,7 @@ void A2uiStreamParserImpl::process_component_topology(nlohmann::json& comp, std:
 
     traverse(comp);
 }
+
 
 void A2uiStreamParserImpl::yield_messages(const std::vector<nlohmann::json>& messages_to_yield, std::vector<ResponsePart>& messages, bool strict_integrity) {
     for (const auto& m : messages_to_yield) {
