@@ -17,7 +17,11 @@
 #
 # This script runs all the tests that use non-stubbed AI models and thus require API key.
 # It is invoked by GitHub Actions. But, it cannot be invoked by GitHub for fork branches.
+# 
 # If your PR is from forked branch, please, run this script locally before merging.
+# If the script fails both locally and
+# [on the main branch](https://github.com/flutter/genui/actions?query=event%3Aschedule+workflow%3Atest_with_ai_workflow),
+# file an issue and link in your PR. 
 #
 # To run script locally, you need to set API key as an environment variable.
 # Example: export GEMINI_API_KEY=your_api_key
