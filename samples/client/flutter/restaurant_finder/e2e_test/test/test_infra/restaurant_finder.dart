@@ -21,6 +21,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'shell_utils.dart';
 
 const _restaurantFinderDefaultUrl = 'http://127.0.0.1:10002';
+const _restaurantFinderAgentCardUrl =
+    '$_restaurantFinderDefaultUrl/.well-known/agent-card.json';
 
 const _restaurantFinderCurlMessage =
     '''
@@ -43,7 +45,8 @@ curl $_restaurantFinderDefaultUrl \\
 final class TestRestaurantFinderClient {
   Process? _process;
 
-  String get url => _restaurantFinderDefaultUrl;
+  String get baseUrl => _restaurantFinderDefaultUrl;
+  String get cardUrl => _restaurantFinderAgentCardUrl;
 
   /// Tests [start instructions](../../../../samples/agent/adk/restaurant_finder/README.md).
   ///
@@ -58,8 +61,7 @@ final class TestRestaurantFinderClient {
       '../../../../../samples/agent/adk/restaurant_finder',
       [
         ShellProbe(
-          command:
-              'curl $_restaurantFinderDefaultUrl/.well-known/agent-card.json',
+          command: 'curl $_restaurantFinderAgentCardUrl',
           responseChecker: (response) {
             expect(response, contains('capabilities'));
             expect(response, contains('A2UI'));

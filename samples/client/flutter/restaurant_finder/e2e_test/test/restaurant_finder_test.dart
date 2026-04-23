@@ -28,8 +28,12 @@ void main() {
   test(
     'GenUI SDK can talk to restaurant finder.',
     () async {
-      final chatSession = _Session(agentUrl: TestRestaurantFinderClient().url);
-      await chatSession.sendTextToAgent('Hello, how can you help me?');
+      final chatSession = _Session(
+        baseUrl: TestRestaurantFinderClient().baseUrl,
+      );
+      await chatSession.sendTextToAgent(
+        'Find me 3 italian restaurants in New York.',
+      );
 
       // TODO(polina-c): check the response of the service.
     },
@@ -39,14 +43,15 @@ void main() {
 
 /// A class that manages the chat session state and logic.
 class _Session extends ChangeNotifier {
-  _Session({required String agentUrl}) {
-    _connector = A2uiAgentConnector(url: Uri.parse(agentUrl), client: A2AClient.(
-    );
-    _surfaceController = SurfaceController(
-      catalogs: [BasicCatalogItems.asCatalog()],
-    );
+  _Session({required String baseUrl}) {
+    _connector = A2uiAgentConnector(url: Uri.parse(baseUrl));
+    final List<Catalog> catalogs = [BasicCatalogItems.asCatalog()];
+    _surfaceController = SurfaceController(catalogs: catalogs);
+    _clientCapabilities = A2UiClientCapabilities.fromCatalogs(catalogs);
     _init();
   }
+
+  late final A2UiClientCapabilities _clientCapabilities;
 
   late final A2uiAgentConnector _connector;
   late final SurfaceController _surfaceController;
@@ -112,7 +117,10 @@ class _Session extends ChangeNotifier {
     _isProcessing = true;
     notifyListeners();
     try {
-      await _connector.connectAndSend(message);
+      await _connector.connectAndSend(
+        message,
+        clientCapabilities: _clientCapabilities,
+      );
     } catch (error, stackTrace) {
       _logger.severe('Error sending message', error, stackTrace);
       notifyListeners();
