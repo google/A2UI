@@ -116,6 +116,8 @@ Future<Process> startAndVerifyService(
   restartTimer('Started timer.\n');
   await serviceStabilizedOutput.future;
 
-  for (final probe in probes) await probe.validate();
+  for (final probe in probes) {
+    await probe.validate();
+  }
   return process;
 }
