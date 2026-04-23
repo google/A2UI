@@ -165,12 +165,6 @@ TEST(CatalogConformanceTest, RunAll) {
             path = args["path"].get<std::string>();
         }
         
-        // Skip glob tests in C++ as it doesn't support them
-        if (path.find('*') != std::string::npos || path.find('[') != std::string::npos) {
-            std::cout << "[SKIPPED] Glob test in C++" << std::endl;
-            return;
-        }
-        
         std::string full_path = "";
         if (!path.empty()) {
             full_path = (conformance_dir / path).string();
