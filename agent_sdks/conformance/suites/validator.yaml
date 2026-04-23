@@ -2602,7 +2602,7 @@
   description: Tests that invalid child type (number instead of string) throws.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
