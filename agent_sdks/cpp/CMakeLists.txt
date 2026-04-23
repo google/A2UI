@@ -29,13 +29,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# Fetch json-schema-validator
-FetchContent_Declare(
-  json-schema-validator
-  GIT_REPOSITORY https://github.com/pboettch/json-schema-validator.git
-  GIT_TAG 2.4.0
-)
-FetchContent_MakeAvailable(json-schema-validator)
+
 
 # Fetch GoogleTest
 FetchContent_Declare(
@@ -96,7 +90,8 @@ add_library(a2ui_sdk
 )
 
 target_include_directories(a2ui_sdk PUBLIC include)
-target_link_libraries(a2ui_sdk PUBLIC nlohmann_json::nlohmann_json nlohmann_json_schema_validator)
+target_link_libraries(a2ui_sdk PUBLIC nlohmann_json::nlohmann_json)
+
 
 # Tests
 add_executable(a2ui_tests

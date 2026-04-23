@@ -28,6 +28,8 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include <regex>
+#include <memory>
+
 
 #include <cctype>
 
@@ -480,25 +482,23 @@ TEST(SchemaManagerConformanceTest, RunAll) {
             
             std::string examples_path = args.value("examples_path", "");
             
-            a2ui::A2uiSchemaManager* manager_ptr = nullptr;
+            std::unique_ptr<a2ui::A2uiSchemaManager> manager_ptr;
             
             if (!examples_path.empty()) {
                 auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
                 std::string full_examples_path = (conformance_dir / examples_path).string();
                 a2ui::CatalogConfig mock_config{config.name, config.provider, full_examples_path};
-
-                manager_ptr = new a2ui::A2uiSchemaManager(version, {mock_config}, args.value("accepts_inline_catalogs", false));
+                manager_ptr = std::make_unique<a2ui::A2uiSchemaManager>(version, std::vector<a2ui::CatalogConfig>{mock_config}, args.value("accepts_inline_catalogs", false));
             } else {
                 auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
-                manager_ptr = new a2ui::A2uiSchemaManager(version, {config}, args.value("accepts_inline_catalogs", false));
+                manager_ptr = std::make_unique<a2ui::A2uiSchemaManager>(version, std::vector<a2ui::CatalogConfig>{config}, args.value("accepts_inline_catalogs", false));
             }
             
             std::string output = manager_ptr->generate_system_prompt(
                 role, workflow, ui_desc, client_ui_capabilities, allowed_components, allowed_messages,
                 include_schema, include_examples
             );
-            
-            delete manager_ptr;
+
             
             // Remove ALL whitespace for substring matching to avoid JSON formatting differences
             std::string output_norm = std::regex_replace(output, std::regex("\\s+"), "");
