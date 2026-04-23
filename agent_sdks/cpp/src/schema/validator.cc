@@ -193,6 +193,12 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
         throw std::runtime_error("Missing root component: No component has id='" + *root_id + "'");
     }
 
+    auto check_ref = [&](const std::string& comp_id, const std::string& ref_id, const std::string& field_name) {
+        if (ids.find(ref_id) == ids.end()) {
+             throw std::runtime_error("Component '" + comp_id + "' references non-existent component '" + ref_id + "' in field '" + field_name + "'");
+        }
+    };
+
     for (const auto& comp : components) {
         if (comp.contains("component") && comp["component"].is_object()) {
             auto comp_def = comp["component"];
@@ -222,76 +228,134 @@ void A2uiValidator::check_component_integrity(const std::optional<std::string>& 
             }
         }
 
-        if (!skip_root_check && root_id.has_value()) {
-            auto check_ref = [&](const std::string& ref_id, const std::string& field_name) {
-                if (ids.find(ref_id) == ids.end()) {
-                     throw std::runtime_error("Component '" + comp.value("id", "") + "' references non-existent component '" + ref_id + "' in field '" + field_name + "'");
-                }
-            };
+        std::string comp_id = comp.value("id", "unknown");
 
-            if (comp.contains("child") && comp["child"].is_string()) {
-                check_ref(comp["child"].get<std::string>(), "child");
+        if (comp.contains("child")) {
+            if (!comp["child"].is_string()) {
+                throw std::runtime_error("Validation failed: 'child' must be a string");
             }
-            if (comp.contains("children")) {
-                const auto& children = comp["children"];
-                if (children.is_array()) {
-                    for (const auto& item : children) {
-                        if (item.is_string()) {
-                            check_ref(item.get<std::string>(), "children");
+            if (!skip_root_check && root_id.has_value()) {
+                check_ref(comp_id, comp["child"].get<std::string>(), "child");
+            }
+        }
+        if (comp.contains("children")) {
+            const auto& children = comp["children"];
+            if (children.is_array()) {
+                for (const auto& item : children) {
+                    if (item.is_string()) {
+                        if (!skip_root_check && root_id.has_value()) {
+                            check_ref(comp_id, item.get<std::string>(), "children");
                         }
-                    }
-                } else if (children.is_object()) {
-                    if (children.contains("explicitList") && children["explicitList"].is_array()) {
-                        for (const auto& item : children["explicitList"]) {
-                            if (item.is_string()) {
-                                check_ref(item.get<std::string>(), "children.explicitList");
-                            }
-                        }
-                    }
-                    if (children.contains("template") && children["template"].is_object()) {
-                        const auto& temp = children["template"];
-                        if (temp.contains("componentId") && temp["componentId"].is_string()) {
-                            check_ref(temp["componentId"].get<std::string>(), "children.template.componentId");
-                        }
-                    }
-                    if (children.contains("componentId") && children["componentId"].is_string()) {
-                        check_ref(children["componentId"].get<std::string>(), "children.componentId");
+                    } else {
+                        throw std::runtime_error("Validation failed: 'children' array items must be strings");
                     }
                 }
-            }
-            if (comp.contains("component") && comp["component"].is_object()) {
-                for (auto it = comp["component"].begin(); it != comp["component"].end(); ++it) {
-                    if (it.value().is_object()) {
-                        auto props = it.value();
-                        if (props.contains("child") && props["child"].is_string()) {
-                            check_ref(props["child"].get<std::string>(), "child");
+            } else if (children.is_object()) {
+                if (children.contains("explicitList")) {
+                    if (!children["explicitList"].is_array()) {
+                        throw std::runtime_error("Validation failed: 'explicitList' must be an array");
+                    }
+                    for (const auto& item : children["explicitList"]) {
+                        if (item.is_string()) {
+                            if (!skip_root_check && root_id.has_value()) {
+                                check_ref(comp_id, item.get<std::string>(), "children.explicitList");
+                            }
+                        } else {
+                            throw std::runtime_error("Validation failed: 'explicitList' array items must be strings");
                         }
-                        if (props.contains("children")) {
-                            const auto& children = props["children"];
-                            if (children.is_array()) {
-                                for (const auto& item : children) {
-                                    if (item.is_string()) {
-                                        check_ref(item.get<std::string>(), "children");
+                    }
+                }
+                if (children.contains("template")) {
+                    if (!children["template"].is_object()) {
+                        throw std::runtime_error("Validation failed: 'template' must be an object");
+                    }
+                    const auto& temp = children["template"];
+                    if (temp.contains("componentId")) {
+                        if (!temp["componentId"].is_string()) {
+                            throw std::runtime_error("Validation failed: 'componentId' must be a string");
+                        }
+                        if (!skip_root_check && root_id.has_value()) {
+                            check_ref(comp_id, temp["componentId"].get<std::string>(), "children.template.componentId");
+                        }
+                    }
+                }
+                if (children.contains("componentId")) {
+                    if (!children["componentId"].is_string()) {
+                        throw std::runtime_error("Validation failed: 'componentId' must be a string");
+                    }
+                    if (!skip_root_check && root_id.has_value()) {
+                        check_ref(comp_id, children["componentId"].get<std::string>(), "children.componentId");
+                    }
+                }
+            } else {
+                throw std::runtime_error("Validation failed: 'children' must be an array or object");
+            }
+        }
+
+        if (comp.contains("component") && comp["component"].is_object()) {
+            for (auto it = comp["component"].begin(); it != comp["component"].end(); ++it) {
+                if (it.value().is_object()) {
+                    auto props = it.value();
+                    if (props.contains("child")) {
+                        if (!props["child"].is_string()) {
+                            throw std::runtime_error("Validation failed: 'child' must be a string");
+                        }
+                        if (!skip_root_check && root_id.has_value()) {
+                            check_ref(comp_id, props["child"].get<std::string>(), "child");
+                        }
+                    }
+
+                    if (props.contains("children")) {
+                        const auto& children = props["children"];
+                        if (children.is_array()) {
+                            for (const auto& item : children) {
+                                if (item.is_string()) {
+                                    if (!skip_root_check && root_id.has_value()) {
+                                        check_ref(comp_id, item.get<std::string>(), "children");
                                     }
-                                }
-                            } else if (children.is_object()) {
-                                if (children.contains("explicitList") && children["explicitList"].is_array()) {
-                                    for (const auto& item : children["explicitList"]) {
-                                        if (item.is_string()) {
-                                            check_ref(item.get<std::string>(), "children.explicitList");
-                                        }
-                                    }
-                                }
-                                if (children.contains("template") && children["template"].is_object()) {
-                                    const auto& temp = children["template"];
-                                    if (temp.contains("componentId") && temp["componentId"].is_string()) {
-                                        check_ref(temp["componentId"].get<std::string>(), "children.template.componentId");
-                                    }
-                                }
-                                if (children.contains("componentId") && children["componentId"].is_string()) {
-                                    check_ref(children["componentId"].get<std::string>(), "children.componentId");
+                                } else {
+                                    throw std::runtime_error("Validation failed: 'children' array items must be strings");
                                 }
                             }
+                        } else if (children.is_object()) {
+                            if (children.contains("explicitList")) {
+                                if (!children["explicitList"].is_array()) {
+                                    throw std::runtime_error("Validation failed: 'explicitList' must be an array");
+                                }
+                                for (const auto& item : children["explicitList"]) {
+                                    if (item.is_string()) {
+                                        if (!skip_root_check && root_id.has_value()) {
+                                            check_ref(comp_id, item.get<std::string>(), "children.explicitList");
+                                        }
+                                    } else {
+                                        throw std::runtime_error("Validation failed: 'explicitList' array items must be strings");
+                                    }
+                                }
+                            }
+                            if (children.contains("template")) {
+                                if (!children["template"].is_object()) {
+                                    throw std::runtime_error("Validation failed: 'template' must be an object");
+                                }
+                                const auto& temp = children["template"];
+                                if (temp.contains("componentId")) {
+                                    if (!temp["componentId"].is_string()) {
+                                        throw std::runtime_error("Validation failed: 'componentId' must be a string");
+                                    }
+                                    if (!skip_root_check && root_id.has_value()) {
+                                        check_ref(comp_id, temp["componentId"].get<std::string>(), "children.template.componentId");
+                                    }
+                                }
+                            }
+                            if (children.contains("componentId")) {
+                                if (!children["componentId"].is_string()) {
+                                    throw std::runtime_error("Validation failed: 'componentId' must be a string");
+                                }
+                                if (!skip_root_check && root_id.has_value()) {
+                                    check_ref(comp_id, children["componentId"].get<std::string>(), "children.componentId");
+                                }
+                            }
+                        } else {
+                            throw std::runtime_error("Validation failed: 'children' must be an array or object");
                         }
                     }
                 }
