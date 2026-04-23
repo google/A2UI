@@ -26,9 +26,9 @@ dependencies:
   flutter:
     sdk: flutter
   genui:
-    path: ../../../../../genui/packages/genui
+    path: /Users/polina/_/genui/packages/genui
   genui_a2a:
-    path: ../../../../../genui/packages/genui_a2a
+    path: /Users/polina/_/genui/packages/genui_a2a
   logging: ^1.3.0
 
 
