@@ -146,7 +146,8 @@ std::string A2uiCatalog::load_examples(const std::string& path, bool validate) c
 
 void A2uiCatalog::validate_example(const std::string& full_path, const std::string& content) const {
     try {
-        nlohmann::json::parse(content);
+        auto parsed = nlohmann::json::parse(content);
+        (void)parsed;
     } catch (const std::exception& e) {
         throw std::runtime_error("Failed to parse example " + full_path + ": " + e.what());
     }
