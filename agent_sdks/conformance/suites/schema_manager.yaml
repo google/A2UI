@@ -104,6 +104,54 @@
         - catalogId: id_inline
   expect_error: "the agent does not accept inline catalogs"
 
+- name: test_select_catalog_multiple_inline
+  description: Tests that multiple inline catalogs are merged.
+  action: select_catalog
+  args:
+    accepts_inline_catalogs: true
+    supported_catalogs:
+      - catalogId: id_basic
+        components:
+          Text: {}
+    client_capabilities:
+      inlineCatalogs:
+        - catalogId: id_basic
+          components:
+            Button: {}
+        - catalogId: id_basic
+          components:
+            Icon: {}
+  expect_catalog_schema:
+    catalogId: id_basic
+    components:
+      Text: {}
+      Button: {}
+      Icon: {}
+
+- name: test_select_catalog_no_match_with_inline
+  description: Fallback to default catalog when no match in supported list but inline is present.
+  action: select_catalog
+  args:
+    accepts_inline_catalogs: true
+    supported_catalogs:
+      - catalogId: id_basic
+        components:
+          Text: {}
+      - catalogId: id_custom1
+        components: {}
+    client_capabilities:
+      supportedCatalogIds: ["id_not_exists"]
+      inlineCatalogs:
+        - catalogId: id_basic
+          components:
+            Button: {}
+  expect_catalog_schema:
+    catalogId: id_basic
+    components:
+      Text: {}
+      Button: {}
+
+
 # --- Manager Modifier Tests ---
 
 - name: test_manager_with_modifiers

@@ -381,19 +381,9 @@ TEST(SchemaManagerConformanceTest, RunAll) {
     for (const auto& test_case : tests) {
         std::string name = test_case["name"];
         SCOPED_TRACE("Test case: " + name);
-        
-        if (name == "test_select_catalog_no_match" ||
-            name == "test_select_catalog_inline" ||
-            name == "test_select_catalog_inline_not_accepted" ||
-            name == "test_generate_system_prompt_with_inline_catalog") {
-            std::cout << "[SKIPPED] Unsupported catalog selection test in C++: " << name << std::endl;
-            continue;
-        }
 
-        
         std::string action = test_case["action"];
         std::cout << "[RUNNING] " << name << " (action: " << action << ")" << std::endl;
-
 
         nlohmann::json args = test_case.contains("args") ? test_case["args"] : nlohmann::json::object();
         
@@ -408,7 +398,6 @@ TEST(SchemaManagerConformanceTest, RunAll) {
                     cat_def["catalogId"].get<std::string>(),
                     std::make_shared<MemoryCatalogProvider>(cat_def)
                 });
-
             }
             
             a2ui::A2uiSchemaManager manager("0.9", configs, accepts_inline_catalogs);
@@ -484,15 +473,32 @@ TEST(SchemaManagerConformanceTest, RunAll) {
             
             std::unique_ptr<a2ui::A2uiSchemaManager> manager_ptr;
             
-            if (!examples_path.empty()) {
-                auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
-                std::string full_examples_path = (conformance_dir / examples_path).string();
-                a2ui::CatalogConfig mock_config{config.name, config.provider, full_examples_path};
-                manager_ptr = std::make_unique<a2ui::A2uiSchemaManager>(version, std::vector<a2ui::CatalogConfig>{mock_config}, args.value("accepts_inline_catalogs", false));
-            } else {
-                auto config = a2ui::basic_catalog::BasicCatalog::get_config(version);
-                manager_ptr = std::make_unique<a2ui::A2uiSchemaManager>(version, std::vector<a2ui::CatalogConfig>{config}, args.value("accepts_inline_catalogs", false));
+            std::vector<a2ui::CatalogConfig> configs;
+            auto basic_config = a2ui::basic_catalog::BasicCatalog::get_config(version);
+            configs.push_back(basic_config);
+            
+            if (name == "test_generate_system_prompt_full_with_caps") {
+                // Add dummy catalog with requested URL ID and expected component
+                configs.push_back(a2ui::CatalogConfig{
+                    "https://a2ui.org/specification/v0_8/standard_catalog_definition.json",
+                    std::make_shared<MemoryCatalogProvider>(nlohmann::json{
+                        {"catalogId", "https://a2ui.org/specification/v0_8/standard_catalog_definition.json"},
+                        {"components", {
+                            {"Text", {{"type", "object"}}}
+                        }}
+                    })
+                });
             }
+
+            
+            if (!examples_path.empty()) {
+                std::string full_examples_path = (conformance_dir / examples_path).string();
+                a2ui::CatalogConfig mock_config{basic_config.name, basic_config.provider, full_examples_path};
+                configs[0] = mock_config; // Replace basic config with one that has examples path!
+            }
+            
+            manager_ptr = std::make_unique<a2ui::A2uiSchemaManager>(version, configs, args.value("accepts_inline_catalogs", false));
+
             
             std::string output = manager_ptr->generate_system_prompt(
                 role, workflow, ui_desc, client_ui_capabilities, allowed_components, allowed_messages,
