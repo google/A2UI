@@ -64,10 +64,9 @@
           }
         },
         "required": [
-          "version",
-          "s2c_schema",
-          "catalog_schema"
+          "version"
         ]
+
       },
       "process_chunk": {
         "type": "array",
@@ -177,20 +176,39 @@
       }
     },
     "required": [
-      "name",
-      "catalog"
+      "name"
     ],
-    "oneOf": [
+    "anyOf": [
       {
+
         "required": [
-          "process_chunk"
-        ]
+          "process_chunk",
+          "catalog"
+        ],
+        "properties": {
+          "catalog": {
+            "required": [
+              "s2c_schema",
+              "catalog_schema"
+            ]
+          }
+        }
       },
       {
         "required": [
-          "validate"
-        ]
+          "validate",
+          "catalog"
+        ],
+        "properties": {
+          "catalog": {
+            "required": [
+              "s2c_schema",
+              "catalog_schema"
+            ]
+          }
+        }
       },
+
       {
         "required": [
           "action"
@@ -214,5 +232,6 @@
         ]
       }
     ]
+
   }
 }
