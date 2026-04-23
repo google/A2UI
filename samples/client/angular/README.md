@@ -25,19 +25,22 @@ npm run demo:restaurant
 
 Here are the instructions if you want to do each step manually. 
 
-1. Build the shared dependencies by running `npm install && npm run build` in the `renderers/lit` directory
-2. Install the dependencies: `npm install`
-3. Run the relevant A2A server:
-  * [For the restaurant app](../../agent/adk/restaurant_finder/)
-  * [For the rizzcharts app](../../agent/adk/rizzcharts/python/)
-  * [For the orchestrator app](../../agent/adk/orchestrator/)
-4. Run the relevant app:
-  * `npm start -- restaurant`
-  * `npm start -- rizzcharts`
-  * `npm start -- orchestrator`
-  * `npm run build:sandbox && npm start -- mcp_calculator`
-  * `npm start -- gallery` (Client-only, no server required)
-5. Open http://localhost:4200/
+1. **Install dependencies:** `npm install`
+2. **Run the relevant client app (also requires running the relevant backend A2A service):**
+   * **Restaurant app:**
+     * Run backend server in [restaurant_finder](../../agent/adk/restaurant_finder/README.md)
+     * Run client: `npm start -- restaurant`
+   * **Rizzcharts app:**
+     * Run backend server in [rizzcharts](../../agent/adk/rizzcharts/python/README.md)
+     * Run client: `npm start -- rizzcharts`
+   * **Orchestrator app:**
+     * Run backend server in [orchestrator](../../agent/adk/orchestrator/README.md)
+     * Run client: `npm start -- orchestrator`
+   * **MCP Calculator app:**
+     * Run client: `npm run build:sandbox && npm start -- mcp_calculator`
+   * **Gallery app:** (Client-only, no server required)
+     * Run client: `npm start -- gallery`
+3. **Open** http://localhost:4200/
 
 ## Streaming
 

@@ -29,3 +29,6 @@ samples/client/angular/projects/mcp_calculator/public/mcp_apps_inner_iframe/
 samples/agent/mcp/a2ui-in-mcpapps/server/apps/dist
 samples/agent/mcp/a2ui-in-mcpapps/server/apps/public
 
+# C++ SDK build artifacts
+agent_sdks/cpp/build/
+

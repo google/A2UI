@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-from a2ui.schema.constants import VERSION_0_8
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
@@ -30,7 +29,8 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a.extension import try_activate_a2ui_extension
+from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.core.schema.constants import VERSION_0_8
 from agent import ContactAgent
 
 
