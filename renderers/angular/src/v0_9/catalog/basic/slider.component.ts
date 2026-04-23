@@ -82,7 +82,7 @@ import { SliderApi } from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class SliderComponent extends BasicCatalogComponent<typeof SliderApi> {
   readonly label = computed(() => this.props()['label']?.value());
-  readonly value = computed(() => this.props()['value'].value());
+  readonly value = computed(() => this.props()['value']?.value());
   readonly min = computed(() => this.props()['min']?.value() ?? 0);
   readonly max = computed(() => this.props()['max']?.value() ?? 100);
   readonly step = computed(() => this.props()['step']?.value() ?? 1);

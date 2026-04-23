@@ -14,8 +14,8 @@ export abstract class BaseCatalogComponent<Api extends ComponentApi> {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
-  protected readonly props = input<ComponentApiToProps<Api>>({} as any);
-  protected readonly surfaceId = input.required<string>();
-  protected readonly componentId = input.required<string>();
-  protected readonly dataContextPath = input<string>('/');
+  readonly props = input<ComponentApiToProps<Api>>({} as any);
+  readonly surfaceId = input.required<string>();
+  readonly componentId = input.required<string>();
+  readonly dataContextPath = input<string>('/');
 }

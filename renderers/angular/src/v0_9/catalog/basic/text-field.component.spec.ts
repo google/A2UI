@@ -98,7 +98,7 @@ describe('TextFieldComponent', () => {
     input.nativeElement.value = 'newuser';
     input.triggerEventHandler('input', { target: input.nativeElement });
 
-    expect(component.props()['value'].onUpdate).toHaveBeenCalledWith('newuser');
+    expect(component.props()['value']!.onUpdate).toHaveBeenCalledWith('newuser');
   });
 
   it('should show error messages when checks fail', async () => {
