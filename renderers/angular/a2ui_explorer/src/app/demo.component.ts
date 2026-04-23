@@ -680,8 +680,8 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   private selectExampleFromUrl(): void {
     const hash = window.location.hash.substring(1) || '';
-    const example: Example = this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
-    window.location.hash = this.slugify(example.name);
+    const example: Example | undefined = this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
+    if (!example) return;
     this.selectExample(example);
   }
 }
