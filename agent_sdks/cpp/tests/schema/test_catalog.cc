@@ -43,7 +43,8 @@ TEST(CatalogTest, LoadCatalog) {
     fs::path repo_root = find_repo_root();
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
-    fs::path catalog_path = repo_root / "agent_sdks" / "conformance" / "simplified_catalog_v08.json";
+    fs::path catalog_path = repo_root / "agent_sdks" / "conformance" / "test_data" / "simplified_catalog_v08.json";
+
     
     a2ui::CatalogConfig config = a2ui::CatalogConfig::from_path("test_catalog", catalog_path.string());
     nlohmann::json schema = config.provider->load();

@@ -57,7 +57,10 @@ TEST(ValidatorConformanceTest, RunAll) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path validator_tests_path = conformance_dir / "validator.yaml";
+
+
+    fs::path validator_tests_path = conformance_dir / "suites" / "validator.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(validator_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
@@ -88,7 +91,10 @@ TEST(CatalogConformanceTest, RunAll) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path catalog_tests_path = conformance_dir / "catalog.yaml";
+
+
+    fs::path catalog_tests_path = conformance_dir / "suites" / "catalog.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(catalog_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
@@ -191,7 +197,10 @@ TEST(StreamingParserConformanceTest, RunV08) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path parser_tests_path = conformance_dir / "streaming_parser.yaml";
+
+
+    fs::path parser_tests_path = conformance_dir / "suites" / "streaming_parser.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(parser_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
@@ -237,7 +246,10 @@ TEST(StreamingParserConformanceTest, RunV09) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path parser_tests_path = conformance_dir / "streaming_parser.yaml";
+
+
+    fs::path parser_tests_path = conformance_dir / "suites" / "streaming_parser.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(parser_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
@@ -283,7 +295,10 @@ TEST(ParserConformanceTest, RunNonStreaming) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path parser_tests_path = conformance_dir / "parser.yaml";
+
+
+    fs::path parser_tests_path = conformance_dir / "suites" / "parser.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(parser_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);
@@ -353,7 +368,10 @@ TEST(SchemaManagerConformanceTest, RunAll) {
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
     fs::path conformance_dir = repo_root / "agent_sdks" / "conformance";
-    fs::path manager_tests_path = conformance_dir / "schema_manager.yaml";
+
+
+    fs::path manager_tests_path = conformance_dir / "suites" / "schema_manager.yaml";
+
     
     YAML::Node yaml_tests = YAML::LoadFile(manager_tests_path.string());
     nlohmann::json tests = yaml_to_json(yaml_tests);

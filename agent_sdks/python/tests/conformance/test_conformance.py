@@ -50,8 +50,9 @@ def load_json_file(filename):
 
 
 def load_tests(filename):
-  path = _get_conformance_path(filename)
+  path = _get_conformance_path(os.path.join("suites", filename))
   with open(path, "r", encoding="utf-8") as f:
+
     return yaml.safe_load(f)
 
 
@@ -97,7 +98,6 @@ def get_conformance_cases(filename):
 
 # --- Streaming Parser Conformance ---
 cases_parser = get_conformance_cases("streaming_parser.yaml")
-
 
 
 @pytest.mark.parametrize(
@@ -155,10 +155,9 @@ def test_parser_non_streaming_conformance(name, test_case):
 
   elif action == "has_parts":
     from a2ui.parser.parser import has_a2ui_parts
+
     result = has_a2ui_parts(content)
     assert result == test_case["expect"]
-
-
 
 
 # --- Validator Conformance ---
@@ -214,9 +213,7 @@ def test_catalog_conformance(name, test_case):
   elif action == "load":
     path = args.get("path")
     if path:
-      full_path = os.path.join(
-          os.path.dirname(__file__), "../../../conformance", path
-      )
+      full_path = os.path.join(os.path.dirname(__file__), "../../../conformance", path)
     else:
       full_path = None
     validate = args.get("validate", False)
@@ -287,9 +284,7 @@ def test_schema_manager_conformance(name, test_case):
       full_path = os.path.join(
           os.path.dirname(__file__), "../../../conformance", cfg["path"]
       )
-      configs.append(
-          CatalogConfig.from_path(name=cfg["name"], catalog_path=full_path)
-      )
+      configs.append(CatalogConfig.from_path(name=cfg["name"], catalog_path=full_path))
     manager = A2uiSchemaManager(
         version=VERSION_0_8, catalogs=configs, schema_modifiers=schema_modifiers
     )

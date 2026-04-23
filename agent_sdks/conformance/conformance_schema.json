@@ -20,29 +20,54 @@
         "properties": {
           "version": {
             "type": "string",
-            "enum": ["0.8", "0.9"],
+            "enum": [
+              "0.8",
+              "0.9"
+            ],
             "description": "Protocol version."
           },
           "s2c_schema": {
             "oneOf": [
-              { "type": "string", "description": "Path to simplified schema file." },
-              { "type": "object", "description": "Inlined schema object." }
+              {
+                "type": "string",
+                "description": "Path to simplified schema file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined schema object."
+              }
             ]
           },
           "catalog_schema": {
             "oneOf": [
-              { "type": "string", "description": "Path to catalog file." },
-              { "type": "object", "description": "Inlined catalog object." }
+              {
+                "type": "string",
+                "description": "Path to catalog file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined catalog object."
+              }
             ]
           },
           "common_types_schema": {
             "oneOf": [
-              { "type": "string", "description": "Path to common types schema file." },
-              { "type": "object", "description": "Inlined common types schema object." }
+              {
+                "type": "string",
+                "description": "Path to common types schema file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined common types schema object."
+              }
             ]
           }
         },
-        "required": ["version", "s2c_schema", "catalog_schema"]
+        "required": [
+          "version",
+          "s2c_schema",
+          "catalog_schema"
+        ]
       },
       "process_chunk": {
         "type": "array",
@@ -60,8 +85,15 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "text": { "type": "string" },
-                  "a2ui": { "type": "array", "items": { "type": "object" } }
+                  "text": {
+                    "type": "string"
+                  },
+                  "a2ui": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
                 }
               }
             },
@@ -70,10 +102,20 @@
               "description": "Expected error message (regex) if this step should fail."
             }
           },
-          "required": ["input"],
+          "required": [
+            "input"
+          ],
           "oneOf": [
-            { "required": ["expect"] },
-            { "required": ["expect_error"] }
+            {
+              "required": [
+                "expect"
+              ]
+            },
+            {
+              "required": [
+                "expect_error"
+              ]
+            }
           ]
         }
       },
@@ -85,8 +127,15 @@
           "properties": {
             "payload": {
               "oneOf": [
-                { "type": "object" },
-                { "type": "array", "items": { "type": "object" } }
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
               ],
               "description": "Payload to validate (single message or list of messages)."
             },
@@ -95,14 +144,75 @@
               "description": "Expected error message (regex) if validation should fail."
             }
           },
-          "required": ["payload"]
+          "required": [
+            "payload"
+          ]
         }
+      },
+      "action": {
+        "type": "string",
+        "description": "Action for general conformance tests (e.g., prune, render, select_catalog)."
+      },
+      "args": {
+        "type": "object",
+        "description": "Arguments for the action."
+      },
+      "expect": {
+        "description": "Expected output for the action."
+      },
+      "expect_contains": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of substrings expected in the output."
+      },
+      "expect_output": {
+        "type": "string",
+        "description": "Expected raw string output."
+      },
+      "input": {
+        "type": "string",
+        "description": "Input for single-step tests."
       }
     },
-    "required": ["name", "catalog"],
+    "required": [
+      "name",
+      "catalog"
+    ],
     "oneOf": [
-      { "required": ["process_chunk"] },
-      { "required": ["validate"] }
+      {
+        "required": [
+          "process_chunk"
+        ]
+      },
+      {
+        "required": [
+          "validate"
+        ]
+      },
+      {
+        "required": [
+          "action"
+        ]
+      },
+      {
+        "required": [
+          "input"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "expect"
+            ]
+          },
+          {
+            "required": [
+              "expect_error"
+            ]
+          }
+        ]
+      }
     ]
   }
 }

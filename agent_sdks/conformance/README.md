@@ -3,9 +3,13 @@
 To ensure behavioral parity across all SDK implementations (Python, Kotlin, etc.), the project maintains a language-agnostic conformance suite in this directory.
 
 ## Suite Structure
-*   `parser.yaml`: Contains test cases for the `A2uiStreamParser`, verifying chunk buffering, incremental yielding, and edge cases like cut tokens.
+*   `streaming_parser.yaml`: Contains test cases for the `A2uiStreamParser` (streaming), verifying chunk buffering, incremental yielding, and edge cases like cut tokens.
+*   `parser.yaml`: Contains test cases for non-streaming parsing and payload fixing.
 *   `validator.yaml`: Contains test cases for the `A2uiValidator`, verifying structural integrity, cycle detection, and reachability.
 *   `conformance_schema.json`: The JSON schema that validates the structure of the YAML test files themselves.
+
+
+
 
 ## Usage in SDKs
 Each language SDK must implement a test harness that:

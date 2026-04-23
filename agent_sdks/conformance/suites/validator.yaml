@@ -16,7 +16,7 @@
   description: Tests that circular references are detected.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: test_catalog
       components:
@@ -46,8 +46,8 @@
   description: Tests validation of v0.9 messages.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components: {}
@@ -86,7 +86,7 @@
   description: Tests validation of v0.8 messages.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components: {}
@@ -112,7 +112,7 @@
   description: Tests validation with a custom catalog in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: custom
       components:
@@ -202,8 +202,8 @@
   description: Tests validation with a custom catalog in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: custom
       components:
@@ -333,7 +333,7 @@
   description: Tests that duplicate IDs are detected in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -367,8 +367,8 @@
   description: Tests that duplicate IDs are detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -412,7 +412,7 @@
   description: Tests that missing root component is detected in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -438,8 +438,8 @@
   description: Tests that missing root component is detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -477,7 +477,7 @@
   description: Tests that dangling references are detected in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -523,8 +523,8 @@
   description: Tests that dangling references are detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -589,7 +589,7 @@
   description: Tests that self-references are detected in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -615,8 +615,8 @@
   description: Tests that self-references are detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -654,7 +654,7 @@
   description: Tests that function call recursion limit is exceeded in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -701,8 +701,8 @@
   description: Tests that function call recursion limit is exceeded in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -762,7 +762,7 @@
   description: Tests that orphaned components are detected in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -792,8 +792,8 @@
   description: Tests that orphaned components are detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -834,7 +834,7 @@
   description: Tests template reachability in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -888,8 +888,8 @@
   description: Tests template reachability in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -968,7 +968,7 @@
   description: Tests custom root reachability in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1018,7 +1018,7 @@
   description: Tests invalid paths in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1040,8 +1040,8 @@
   description: Tests invalid paths in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1076,7 +1076,7 @@
   description: Tests that global recursion limit is exceeded in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1331,8 +1331,8 @@
   description: Tests that global recursion limit is exceeded in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1549,7 +1549,7 @@
   description: Tests that global recursion limit is valid in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1743,8 +1743,8 @@
   description: Tests that global recursion limit is valid in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -1915,8 +1915,8 @@
   description: Tests that global recursion limit is exceeded for data model in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: standard
       components: {}
@@ -2043,8 +2043,8 @@
   description: Tests that circular references are detected in v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2079,7 +2079,7 @@
   description: Tests that multiple surfaces with different root IDs validate correctly.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2128,7 +2128,7 @@
   description: Tests that missing root in one surface still fails validation.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2165,7 +2165,7 @@
   description: Incremental update without root component should pass.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2197,8 +2197,8 @@
   description: Incremental update without root component should pass (v0.9).
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: std
       components:
@@ -2246,7 +2246,7 @@
   description: Incremental update with 'orphaned' components should pass.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2273,7 +2273,7 @@
   description: Self-references should still be caught in incremental updates (v0.8).
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2297,8 +2297,8 @@
   description: Self-references should still be caught in incremental updates (v0.9).
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: std
       components:
@@ -2333,7 +2333,7 @@
   description: Cycles should still be caught in incremental updates (v0.8).
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2361,8 +2361,8 @@
   description: Cycles should still be caught in incremental updates (v0.9).
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: std
       components:
@@ -2400,7 +2400,7 @@
   description: Duplicate IDs should still be caught in incremental updates (v0.8).
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
@@ -2428,8 +2428,8 @@
   description: Duplicate IDs should still be caught in incremental updates (v0.9).
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: std
       components:
@@ -2467,7 +2467,7 @@
   description: Tests that global recursion limit is exceeded in v0.8.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: standard
       components:
