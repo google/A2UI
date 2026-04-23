@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-name: eval-workflow
+name: test_with_ai_workflow
 
 on:
   push: 
@@ -11,12 +11,11 @@ on:
     - cron: "0 * * * *" # hourly
 
 jobs:
-  eval-job:
+  test_with_ai_job:
     # Do not run on forked branches,
     # because the test does not have access to secrets in forks.
     if: github.repository == 'google/a2ui'
     runs-on: ubuntu-latest
-    environment: eval
     steps:
       - name: Check that REPO_GEMINI_API_KEY is set and available
         env:
@@ -50,7 +49,7 @@ jobs:
           restore-keys: ${{ runner.os }}-pub-
       - name: Install dependencies
         run: flutter pub get
-      - name: Run eval tests
+      - name: Run ./scripts/test_with_ai.sh
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
         run: ./scripts/test_with_ai.sh
