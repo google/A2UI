@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: eval
+name: restaurant_finder_e2e_test
 publish_to: "none"
 
 environment:
@@ -26,15 +26,9 @@ dependencies:
   flutter:
     sdk: flutter
   genui:
-    git:
-      url: https://github.com/polina-c/genui
-      path: packages/genui
-      ref: a2a-example
+    path: ../../../../../genui/packages/genui
   genui_a2a:
-    git:
-      url: https://github.com/polina-c/genui
-      path: packages/genui_a2a
-      ref: a2a-example
+    path: ../../../../../genui/packages/genui_a2a
   logging: ^1.3.0
 
 
