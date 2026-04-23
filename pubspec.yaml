@@ -25,3 +25,5 @@ workspace:
   
 flutter:
   uses-material-design: true
+dev_dependencies:
+  lints: ^6.1.0
