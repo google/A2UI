@@ -21,7 +21,7 @@ environment:
   flutter: ">=3.35.7 <4.0.0"
 
 workspace:
-  - eval/dart_and_flutter
+  - samples/client/flutter/restaurant_finder/end_to_end_test
   
 flutter:
   uses-material-design: true
