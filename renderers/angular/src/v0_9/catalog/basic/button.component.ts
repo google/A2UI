@@ -103,7 +103,7 @@ export class ButtonComponent extends BasicCatalogComponent {
   handleClick() {
     const action = this.action();
     if (action) {
-      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
+      const surface = this.surface();
       if (surface) {
         const dataContext = new DataContext(surface, this.dataContextPath());
         const resolvedAction = dataContext.resolveAction(action);
