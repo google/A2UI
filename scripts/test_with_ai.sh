@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
-
-cd "$(dirname "$0")/dart_and_flutter"
+cd "$(dirname "$0")/../samples/client/flutter/restaurant_finder/end_to_end_test"
 # Parallel tests are disabled to avoid conflicts on environment. 
 flutter test --concurrency=1 --dart-define=GEMINI_API_KEY="$GEMINI_API_KEY"

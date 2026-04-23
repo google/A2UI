@@ -1,3 +1,4 @@
-This folder contains evaluation tests (aka evals) that are executed continuously on GitHub Actions.
+This folder contains evaluation tests (aka evals).
 
-Evaluation test is a test that test prompts, making sure they produce expected results.
+**Evaluation test** is a test that tests a prompt, making sure it
+produces expected results.

@@ -53,7 +53,7 @@ jobs:
       - name: Run eval tests
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
-        run: ./eval/run.sh
+        run: ./scripts/test_with_ai.sh
       
           
         
