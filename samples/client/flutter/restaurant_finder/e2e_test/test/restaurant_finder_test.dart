@@ -26,7 +26,7 @@ void main() {
   });
 
   test(
-    'GanUI SDK can talk to restaurant finder.',
+    'GenUI SDK can talk to restaurant finder.',
     () async {
       final chatSession = _Session(agentUrl: TestRestaurantFinderClient().url);
       await chatSession.sendTextToAgent('Hello, how can you help me?');
