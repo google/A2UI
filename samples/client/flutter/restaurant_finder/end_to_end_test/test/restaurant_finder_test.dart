@@ -40,7 +40,8 @@ void main() {
 /// A class that manages the chat session state and logic.
 class _Session extends ChangeNotifier {
   _Session({required String agentUrl}) {
-    _connector = A2uiAgentConnector(url: Uri.parse(agentUrl));
+    _connector = A2uiAgentConnector(url: Uri.parse(agentUrl), client: A2AClient.(
+    );
     _surfaceController = SurfaceController(
       catalogs: [BasicCatalogItems.asCatalog()],
     );
