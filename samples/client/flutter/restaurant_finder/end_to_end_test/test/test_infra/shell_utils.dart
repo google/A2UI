@@ -80,6 +80,7 @@ Future<Process> startAndVerifyService(
   Duration quietPeriod = const Duration(seconds: 2),
 }) async {
   print('Starting service: `$command` in $workingDirectory');
+  print('Current directory: ${Directory.current}');
   final Process process = await Process.start('bash', [
     '-c',
     command,
