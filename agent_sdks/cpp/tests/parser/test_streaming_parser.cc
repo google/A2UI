@@ -101,7 +101,21 @@ public:
 };
 
 TEST(StreamingParserV09UnitTest, StreamingMsgTypeDeduplication) {
-    a2ui::A2uiCatalog catalog("0.9", "test_catalog", {{"type", "object"}}, {{"type", "object"}}, {{"catalogId", "test_catalog"}});
+    nlohmann::json catalog_schema = {
+        {"catalogId", "test_catalog"},
+        {"components", {
+            {"Text", {
+                {"type", "object"},
+                {"properties", {
+                    {"component", {{"const", "Text"}}},
+
+                    {"text", {{"type", "string"}}}
+                }},
+                {"required", {"component", "text"}}
+            }}
+        }}
+    };
+    a2ui::A2uiCatalog catalog("0.9", "test_catalog", {{"type", "object"}}, {{"type", "object"}}, catalog_schema);
     TestA2uiStreamParserV09 parser(catalog);
     
     std::string chunk1 = "<a2ui-json>[{\"version\": \"v0.9\", \"updateComponents\": {\"surfaceId\": \"s1\", \"components\": [";

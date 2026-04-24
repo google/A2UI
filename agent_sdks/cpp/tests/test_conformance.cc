@@ -198,11 +198,6 @@ TEST(CatalogConformanceTest, RunAll) {
         std::string name = test_case["name"];
         SCOPED_TRACE("Test case: " + name);
         
-        if (name == "test_load_examples_validation_fails_on_schema_error") {
-            std::cout << "[SKIPPED] Validation failure test in C++: " << name << std::endl;
-            continue;
-        }
-        
         nlohmann::json catalog_config = test_case["catalog"];
         a2ui::A2uiCatalog catalog = setup_catalog(catalog_config, conformance_dir);
         
