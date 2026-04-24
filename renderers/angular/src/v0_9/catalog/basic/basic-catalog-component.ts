@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import { Directive, computed, HostBinding, input } from '@angular/core';
+import { Directive, computed, HostBinding, input, inject } from '@angular/core';
 import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
 import { BoundProperty } from '../../core/types';
+import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
  *
  * Automatically injects the basic catalog styles when the component is instantiated.
+ * Also binds the primary brand color to the host element.
  */
 @Directive()
 export abstract class BasicCatalogComponent {
@@ -34,14 +36,28 @@ export abstract class BasicCatalogComponent {
   componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
-  constructor() {
-    injectBasicCatalogStyles();
-  }
+  protected rendererService = inject(A2uiRendererService);
+
+  readonly surface = computed(() => {
+    return this.rendererService.surfaceGroup.getSurface(this.surfaceId());
+  });
+
+  readonly theme = computed(() => {
+    return this.surface()?.theme;
+  });
+
+  readonly primaryColor = computed(() => {
+    return this.theme()?.primaryColor;
+  });
 
   /**
    * Computes the weight of the component from the properties.
    */
   protected readonly weight = computed(() => this.props()['weight']?.value() ?? null);
+
+  constructor() {
+    injectBasicCatalogStyles();
+  }
 
   /**
    * Binds the flex style to the host element based on the weight.
@@ -50,4 +66,10 @@ export abstract class BasicCatalogComponent {
   get flexStyle() {
     return this.weight() !== null ? `${this.weight()}` : null;
   }
+
+  @HostBinding('style.--a2ui-color-primary')
+  get primaryColorStyle(): string | null {
+    return this.primaryColor() || null;
+  }
 }
+
