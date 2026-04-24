@@ -11,7 +11,7 @@ on:
     - cron: "0 * * * *" # hourly
 
 jobs:
-  test_with_ai_job:
+  e2e_test:
     # Do not run on forked branches,
     # because the test does not have access to secrets in forks.
     if: github.repository == 'google/a2ui'
