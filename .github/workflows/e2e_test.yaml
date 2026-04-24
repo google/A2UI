@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-name: test_with_ai_workflow
+name: E2E Tests
 
 on:
   push: 
@@ -49,10 +49,10 @@ jobs:
           restore-keys: ${{ runner.os }}-pub-
       - name: Install dependencies
         run: flutter pub get
-      - name: Run ./scripts/test_with_ai.sh
+      - name: Run ./scripts/e2e_test.sh
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
-        run: ./scripts/test_with_ai.sh
+        run: ./scripts/e2e_test.sh
       
           
         
