@@ -53,10 +53,3 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
         run: ./scripts/e2e_test.sh
-      
-          
-        
-          
-          
-          
-
