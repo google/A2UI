@@ -12,7 +12,7 @@ _List which issues are fixed by this PR. For larger changes, raising an issue fi
 - [ ] I have added updates to the [CHANGELOG].
 - [ ] I updated/added relevant documentation.
 - [ ] My code changes (if any) have tests.
-- [ ] If my branch is on fork, I have verified that [scripts/test_with_ai.sh](../scripts/test_with_ai.sh) passes.
+- [ ] If my branch is on fork, I have verified that [scripts/e2e_test.sh](../scripts/e2e_test.sh) passes.
 
 If you need help, consider asking for advice on the [discussion board].
 
