@@ -24,13 +24,15 @@ from a2a.types import (
     Part,
     TextPart,
 )
-from a2ui.a2a.extension import get_a2ui_agent_extension
-from a2ui.a2a.parts import parse_response_to_parts
+from a2ui.a2a import (
+    get_a2ui_agent_extension,
+    parse_response_to_parts,
+)
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.parser.parser import parse_response
-from a2ui.schema.common_modifiers import remove_strict_validation
-from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
-from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response
+from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
 import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
@@ -42,7 +44,6 @@ from google.genai import types
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
 from tools import get_contact_info
-
 
 SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 

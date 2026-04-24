@@ -2597,3 +2597,28 @@
                                                                                                                           next:
                                                                                                                             level: 55
     expect_error: Global recursion limit exceeded
+
+- name: test_validate_invalid_child_type
+  description: Tests that invalid child type (number instead of string) throws.
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: standard
+      components:
+        Container:
+          type: object
+          properties:
+            child: {type: string}
+  validate:
+  - payload:
+    - surfaceUpdate:
+        surfaceId: s1
+        components:
+        - id: c1
+          component:
+            Container:
+              child: 123
+    expect_error: "string"
+
+

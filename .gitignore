@@ -56,6 +56,9 @@ build/
 .coverage
 htmlcov/
 
+# C++ SDK build artifacts
+agent_sdks/cpp/build/
+
 # ==============================================================================
 #
 # STANDARD FLUTTER GITIGNORE

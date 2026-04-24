@@ -72,23 +72,98 @@ import { ActionDispatcher } from './action-dispatcher.service';
 
       <!-- Inspect Panel -->
       <div class="inspect-area">
-        <div class="inspect-section data-section">
-          <div class="section-header">
-            <h4>Data Model</h4>
-            <span class="badge">Live</span>
+        <div class="inspect-section surface-section" [class.folded]="isSurfaceMessageFolded">
+          <div class="section-header" 
+               (click)="toggleSurfaceMessage()" 
+               (keydown.enter)="toggleSurfaceMessage()"
+               (keydown.space)="toggleSurfaceMessage(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isSurfaceMessageFolded">
+            <div class="header-left">
+              <span class="toggle-icon" [class.expanded]="!isSurfaceMessageFolded">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </span>
+              <h4>Create Surface Message</h4>
+            </div>
+            <div>
+              <span class="badge" *ngIf="!messageError">Live</span>
+              <span class="badge error-badge" *ngIf="messageError">Invalid</span>
+            </div>
           </div>
-          <div class="section-content">
-            <pre>{{ currentDataModel | json }}</pre>
-            <div *ngIf="!currentDataModel" class="empty-state">No data model loaded.</div>
+          <div class="section-content" *ngIf="!isSurfaceMessageFolded">
+            <div *ngIf="messageError" class="error-message">
+              <span class="error-icon">⚠️</span>
+              <span>{{ messageError }}</span>
+            </div>
+            <textarea
+              [value]="currentCreateSurfaceMessageJson"
+              (input)="onSurfaceMessageChange($event)"
+              (blur)="onSurfaceMessageBlur()"
+            ></textarea>
           </div>
         </div>
 
-        <div class="inspect-section events-section">
-          <div class="section-header">
-            <h4>Events Log</h4>
-            <button class="clear-btn" (click)="eventsLog = []">Clear</button>
+        <div class="inspect-section data-section" [class.folded]="isDataModelFolded">
+          <div class="section-header" 
+               (click)="toggleDataModel()" 
+               (keydown.enter)="toggleDataModel()"
+               (keydown.space)="toggleDataModel(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isDataModelFolded">
+            <div class="header-left">
+              <span class="toggle-icon" [class.expanded]="!isDataModelFolded">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </span>
+              <h4>Data Model</h4>
+            </div>
+            <div>
+              <span class="badge" *ngIf="!dataModelError">Live</span>
+              <span class="badge error-badge" *ngIf="dataModelError">Invalid</span>
+            </div>
           </div>
-          <div class="section-content">
+          <div class="section-content" *ngIf="!isDataModelFolded">
+            <div *ngIf="dataModelError" class="error-message">
+              <span class="error-icon">⚠️</span>
+              <span>{{ dataModelError }}</span>
+            </div>
+            <textarea
+              [value]="currentDataModelJson"
+              (input)="onDataModelChange($event)"
+              (blur)="onDataModelBlur()"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="inspect-section events-section" [class.folded]="isEventsLogFolded">
+          <div class="section-header" 
+               (click)="toggleEventsLog()" 
+               (keydown.enter)="toggleEventsLog()"
+               (keydown.space)="toggleEventsLog(); $event.preventDefault()"
+               style="cursor: pointer;"
+               role="button"
+               tabindex="0"
+               [attr.aria-expanded]="!isEventsLogFolded">
+            <div class="header-left">
+              <span class="toggle-icon" [class.expanded]="!isEventsLogFolded">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </span>
+              <h4>Events Log</h4>
+            </div>
+            <div>
+              <button class="clear-btn" (click)="eventsLog = []; $event.stopPropagation()">Clear</button>
+            </div>
+          </div>
+          <div class="section-content" *ngIf="!isEventsLogFolded">
             <div *ngFor="let ev of eventsLog" class="log-item">
               <div class="log-header">
                 <span class="log-time">{{ ev.timestamp | date: 'HH:mm:ss.SSS' }}</span>
@@ -220,18 +295,36 @@ import { ActionDispatcher } from './action-dispatcher.service';
         overflow: hidden;
       }
       .inspect-section {
-        flex: 1;
+        flex: 0 1 auto;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         min-height: 0;
       }
-      .data-section {
-        border-bottom: 1px solid #1e293b;
-        height: 50%;
+      .inspect-section.folded {
+        flex: 0 0 auto;
       }
-      .events-section {
-        height: 50%;
+      .data-section,
+      .surface-section {
+        border-bottom: 1px solid #1e293b;
+        flex: 0 0 auto;
+        max-height: 800px;
+        display: flex;
+        flex-direction: column;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        min-height: 100px;
+        box-sizing: border-box;
+        background-color: #0c111b;
+        color: #a7f3d0;
+        border: 1px solid #1e293b;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 8px;
+        resize: vertical;
       }
 
       .section-header {
@@ -241,6 +334,21 @@ import { ActionDispatcher } from './action-dispatcher.service';
         padding: 10px 16px;
         background-color: #1e293b;
         border-bottom: 1px solid #334155;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .toggle-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        transition: transform 0.2s ease;
+      }
+      .toggle-icon.expanded {
+        transform: rotate(90deg);
       }
       .section-header h4 {
         margin: 0;
@@ -265,6 +373,28 @@ import { ActionDispatcher } from './action-dispatcher.service';
         border-radius: 4px;
         font-weight: 600;
         text-transform: uppercase;
+      }
+      .error-badge {
+        background-color: #7f1d1d;
+        color: #fca5a5;
+      }
+      .error-message {
+        color: #fca5a5;
+        font-size: 0.75rem;
+        margin: 0 0 8px 0;
+        font-family: inherit;
+        background-color: #7f1d1d;
+        border: 1px solid #b91c1c;
+        border-radius: 6px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+      }
+      .error-icon {
+        font-size: 0.9rem;
       }
       .clear-btn {
         background: none;
@@ -355,11 +485,39 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   currentDataModel: Record<string, unknown> = {};
   eventsLog: Array<{ timestamp: Date; action: A2uiClientAction }> = [];
+  currentCreateSurfaceMessageJson: string = '';
+  messageError: string | null = null;
+  currentDataModelJson: string = '';
+  dataModelError: string | null = null;
+
+  isDataModelFolded = false;
+  isSurfaceMessageFolded = false;
+  isEventsLogFolded = false;
+
+  toggleDataModel() {
+    this.isDataModelFolded = !this.isDataModelFolded;
+    localStorage.setItem('isDataModelFolded', String(this.isDataModelFolded));
+  }
+
+  toggleSurfaceMessage() {
+    this.isSurfaceMessageFolded = !this.isSurfaceMessageFolded;
+    localStorage.setItem('isSurfaceMessageFolded', String(this.isSurfaceMessageFolded));
+  }
+
+  toggleEventsLog() {
+    this.isEventsLogFolded = !this.isEventsLogFolded;
+    localStorage.setItem('isEventsLogFolded', String(this.isEventsLogFolded));
+  }
 
   private actionSub?: { unsubscribe: () => void };
   private dataModelSub?: { unsubscribe: () => void };
 
   ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.isDataModelFolded = localStorage.getItem('isDataModelFolded') === 'true';
+      this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
+      this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
+    }
     if (this.examples.length > 0) {
       this.selectExample(this.examples[0]);
     }
@@ -388,19 +546,17 @@ export class DemoComponent implements OnInit, OnDestroy {
     // Look for the surfaceId in the first message or use default
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
+    this.currentCreateSurfaceMessageJson = createMsg ? JSON.stringify(createMsg, null, 2) : '';
 
     this.cdr.detectChanges();
 
-    // Subscribe to DataModel updates
-    const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
-    if (surface) {
-      // Subscribe to root changes
-      this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
-        this.currentDataModel = data as Record<string, unknown>;
-        this.cdr.detectChanges();
-      });
-      // Set initial data model
-      this.currentDataModel = surface.dataModel.get('/');
+    // Set initial surface and  data model
+    if (this.surfaceId) {
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
+      if (surface) {
+        this.currentDataModel = surface.dataModel.get('/');
+        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+      }
     }
 
     // Subscribe to Actions for Events log
@@ -418,6 +574,95 @@ export class DemoComponent implements OnInit, OnDestroy {
   /** Gets a display string for the action type. */
   getActionType(action: A2uiClientAction): string {
     return action.name || 'Action';
+  }
+
+  /**
+   * Handles user input in the message editor.
+   * Reloads the UI live on every valid input.
+   */
+  onSurfaceMessageChange(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+    const newValue = textarea.value;
+    this.currentCreateSurfaceMessageJson = newValue;
+
+    try {
+      const parsed = JSON.parse(newValue);
+      this.messageError = null;
+
+      if (!('createSurface' in parsed) || !this.selectedExample) return;
+
+      const updatedMessages = this.selectedExample.messages.map(m =>
+        'createSurface' in m ? parsed : m
+      );
+
+      // Re-initialize the demo with the updated messages
+      this.agentStub.initializeDemo(updatedMessages);
+
+      const newSurfaceId = parsed.createSurface.surfaceId;
+
+      if (this.dataModelSub) {
+        this.dataModelSub.unsubscribe();
+      }
+
+      // Force recreation of the surface component by nulling the ID temporarily
+      this.surfaceId = null;
+      this.cdr.detectChanges();
+
+      this.surfaceId = newSurfaceId;
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
+      if (surface) {
+        this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
+          this.currentDataModel = data as Record<string, unknown>;
+          this.currentDataModelJson = JSON.stringify(data, null, 2);
+          this.cdr.detectChanges();
+        });
+        this.currentDataModel = surface.dataModel.get('/');
+        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+      }
+
+      this.cdr.detectChanges();
+    } catch (e) {
+      this.messageError = e instanceof Error ? e.message : 'Invalid JSON';
+      console.error(e);
+    }
+  }
+
+  onSurfaceMessageBlur() {
+    try {
+      const parsed = JSON.parse(this.currentCreateSurfaceMessageJson);
+      this.currentCreateSurfaceMessageJson = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // Ignore if invalid, don't format
+    }
+  }
+
+  /**
+   * Handles user input in the data model editor.
+   * Updates the surface data model live.
+   */
+  onDataModelChange(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+    const newValue = textarea.value;
+    this.currentDataModelJson = newValue;
+
+    try {
+      const parsed = JSON.parse(newValue);
+      this.dataModelError = null;
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
+      surface?.dataModel.set('/', parsed);
+    } catch (e) {
+      this.dataModelError = e instanceof Error ? e.message : 'Invalid JSON';
+      console.error(e);
+    }
+  }
+
+  onDataModelBlur() {
+    try {
+      const parsed = JSON.parse(this.currentDataModelJson);
+      this.currentDataModelJson = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // Ignore if invalid, don't format
+    }
   }
 
   ngOnDestroy(): void {

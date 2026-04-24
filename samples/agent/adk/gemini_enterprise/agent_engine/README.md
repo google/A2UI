@@ -136,7 +136,7 @@ To run the script using `uv`:
     -   `uv venv`
     -   `source .venv/bin/activate`
 3.  **Install dependencies:**
-    -   `uv sync`
+    -   `uv sync --locked`
 4.  **Run the script:**
     -   `uv run deploy.py`
     -   It may take 5-10 minutes to finish.
