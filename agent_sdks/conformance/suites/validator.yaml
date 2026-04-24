@@ -49,9 +49,7 @@
     version: "0.9"
     common_types_schema: "test_data/simplified_common_types_v09.json"
     s2c_schema: "test_data/simplified_s2c_v09.json"
-    catalog_schema:
-      catalogId: standard
-      components: {}
+    catalog_schema: "test_data/simplified_catalog_v09.json"
   action: validate
   steps:
   - payload:
@@ -1950,9 +1948,7 @@
     version: "0.9"
     common_types_schema: "test_data/simplified_common_types_v09.json"
     s2c_schema: "test_data/simplified_s2c_v09.json"
-    catalog_schema:
-      catalogId: standard
-      components: {}
+    catalog_schema: "test_data/simplified_catalog_v09.json"
   action: validate
   payload:
   - version: v0.9

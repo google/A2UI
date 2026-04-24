@@ -29,7 +29,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-
+# Fetch jsoncons
+set(JSONCONS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+  jsoncons
+  GIT_REPOSITORY https://github.com/danielaparker/jsoncons.git
+  GIT_TAG v1.7.0
+)
+FetchContent_MakeAvailable(jsoncons)
 
 # Fetch GoogleTest
 FetchContent_Declare(
@@ -90,7 +97,7 @@ add_library(a2ui_sdk
 )
 
 target_include_directories(a2ui_sdk PUBLIC include)
-target_link_libraries(a2ui_sdk PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(a2ui_sdk PUBLIC nlohmann_json::nlohmann_json jsoncons)
 
 
 # Tests
