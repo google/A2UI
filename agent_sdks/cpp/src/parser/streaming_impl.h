@@ -40,10 +40,6 @@ namespace a2ui {
 
 // Helper functions
 std::string fix_json(const std::string& json_str);
-std::set<std::string> get_reachable_components(
-    const std::string& root_id,
-    const std::map<std::string, nlohmann::json>& seen_components
-);
 
 class A2uiStreamParserImpl : public A2uiStreamParser {
 protected:
@@ -79,6 +75,7 @@ protected:
     bool found_valid_json_in_block_ = false;
 
     std::map<std::string, std::set<std::string>> required_fields_map_;
+    std::map<std::string, std::vector<std::string>> component_ref_fields_;
     std::unique_ptr<A2uiValidator> validator_;
 
 public:
@@ -106,6 +103,17 @@ protected:
     void yield_reachable(std::vector<ResponsePart>& messages, std::string_view msg_type = "", bool check_root = false, bool raise_on_orphans = false);
     void process_component_topology(nlohmann::json& comp, std::vector<nlohmann::json>& extra_components, bool inline_resolved);
     void yield_messages(const std::vector<nlohmann::json>& messages_to_yield, std::vector<ResponsePart>& messages, bool strict_integrity = true);
+
+    std::set<std::string> get_reachable_components(
+        const std::string& root_id,
+        const std::map<std::string, nlohmann::json>& seen_components
+    );
+
+    void discover_reference_fields();
+    void extract_properties(const nlohmann::json& schema, std::vector<std::string>& ref_fields) const;
+    bool is_component_id_ref(const nlohmann::json& schema) const;
+
+    bool is_child_list_ref(const nlohmann::json& schema) const;
 };
 
 } // namespace a2ui
