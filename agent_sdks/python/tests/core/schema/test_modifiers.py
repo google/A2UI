@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 from unittest.mock import patch
 from a2ui.core.schema.constants import VERSION_0_8
 from a2ui.core.schema.manager import A2uiSchemaManager

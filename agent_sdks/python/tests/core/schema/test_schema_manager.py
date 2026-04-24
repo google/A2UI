@@ -11,9 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import io
 import pytest
-import json
-import os
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import patch, MagicMock
 from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
 from a2ui.basic_catalog import BasicCatalog
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME

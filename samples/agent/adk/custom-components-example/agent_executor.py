@@ -13,14 +13,12 @@
 # limitations under the License.
 
 import logging
-import time
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
 from a2a.types import (
     DataPart,
-    Part,
     Task,
     TaskState,
     TextPart,

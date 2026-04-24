@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
 import os
 from pathlib import Path
 from typing import Optional
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 
-import jsonschema
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +160,6 @@ def load_close_modal_example(version: Optional[str] = None) -> list[dict]:
 
 def load_send_message_example(contact_name: str, version: Optional[str] = None) -> str:
   """Constructs the JSON string for the send message confirmation."""
-  from pathlib import Path
 
   examples_dir = Path(os.path.dirname(__file__)) / "examples" / version
   action_file = examples_dir / "action_confirmation.json"

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from ..inference_strategy import InferenceStrategy
-from typing import List, Optional, Any
+from typing import List
 
 
 class A2uiTemplateManager(InferenceStrategy):

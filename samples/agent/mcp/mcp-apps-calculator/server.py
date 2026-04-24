@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pathlib
 from typing import Any
+
 import anyio
 import click
-import pathlib
 import mcp.types as types
 from mcp.server.lowlevel import Server
 from starlette.requests import Request
@@ -129,10 +130,10 @@ def main(port: int, transport: str) -> int:
   if transport == "sse":
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
-    from starlette.responses import Response
-    from starlette.routing import Mount, Route
     from starlette.middleware import Middleware
     from starlette.middleware.cors import CORSMiddleware
+    from starlette.responses import Response
+    from starlette.routing import Mount, Route
 
     sse = SseServerTransport("/messages/")
 

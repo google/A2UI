@@ -80,7 +80,7 @@ def validate_messages(root_schema, example_files, refs=None, temp_dir="temp_val"
             print(output.strip())
             success = False
         else:
-            print(f"    [PASS]")
+            print("    [PASS]")
 
     return success
 

@@ -12,22 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import copy
-from unittest.mock import MagicMock
 import pytest
 from a2ui.core.schema.constants import (
     A2UI_OPEN_TAG,
     A2UI_CLOSE_TAG,
     VERSION_0_9,
-    SURFACE_ID_KEY,
     CATALOG_COMPONENTS_KEY,
 )
 from a2ui.core.parser.constants import (
     MSG_TYPE_CREATE_SURFACE,
     MSG_TYPE_UPDATE_COMPONENTS,
-    MSG_TYPE_DELETE_SURFACE,
-    MSG_TYPE_DATA_MODEL_UPDATE,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
 from a2ui.core.parser.streaming import A2uiStreamParser

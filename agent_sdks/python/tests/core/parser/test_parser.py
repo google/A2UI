@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import pytest
-from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.core.parser.parser import parse_response
 from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 
 

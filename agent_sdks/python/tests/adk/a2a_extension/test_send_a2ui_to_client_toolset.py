@@ -13,14 +13,12 @@
 # limitations under the License.
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from a2a import types as a2a_types
 from a2ui.a2a import create_a2ui_part
-from google.adk.agents.invocation_context import InvocationContext
-from google.adk.events.event import Event
 
 from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import (
     A2uiEventConverter,

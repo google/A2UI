@@ -16,7 +16,6 @@ import json
 import logging
 import os
 from collections.abc import AsyncIterable
-from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import jsonschema
@@ -31,7 +30,6 @@ from a2a.types import (
     AgentCapabilities,
     AgentCard,
     AgentSkill,
-    DataPart,
     Part,
     TextPart,
 )
@@ -41,9 +39,9 @@ from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTI
 from tools import get_contact_info
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.core.parser.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
+from a2ui.a2a import get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 

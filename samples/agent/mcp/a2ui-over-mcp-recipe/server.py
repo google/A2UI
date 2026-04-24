@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+import pathlib
 from typing import Any
+
 import anyio
 import click
-import pathlib
 import jsonschema
-import json
 import mcp.types as types
+from a2ui.core.schema.utils import wrap_as_json_array
 from mcp.server.lowlevel import Server
 from starlette.requests import Request
-from a2ui.core.schema.utils import wrap_as_json_array
 
 
 def load_a2ui_schema() -> dict[str, Any]:
@@ -82,10 +83,10 @@ def main(port: int, transport: str) -> int:
       return {"events": recipe_a2ui_json}
 
     if name == "send_a2ui_user_action":
-      return {"response": f"Received A2UI user action", "args": arguments}
+      return {"response": "Received A2UI user action", "args": arguments}
 
     if name == "send_a2ui_error":
-      return {"response": f"Received A2UI error", "args": arguments}
+      return {"response": "Received A2UI error", "args": arguments}
 
     raise ValueError(f"Unknown tool: {name}")
 
@@ -123,10 +124,10 @@ def main(port: int, transport: str) -> int:
   if transport == "sse":
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
-    from starlette.responses import Response
-    from starlette.routing import Mount, Route
     from starlette.middleware import Middleware
     from starlette.middleware.cors import CORSMiddleware
+    from starlette.responses import Response
+    from starlette.routing import Mount, Route
 
     sse = SseServerTransport("/messages/")
 

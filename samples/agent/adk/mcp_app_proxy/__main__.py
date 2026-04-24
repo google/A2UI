@@ -15,27 +15,15 @@
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2ui.core.schema.constants import VERSION_0_8
-from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
 from agent import McpAppProxyAgent
-from agent_executor import McpAppProxyAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
+from agent_executor import McpAppProxyAgentExecutor
 from dotenv import load_dotenv
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.runners import Runner
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
-from google.adk.tools.tool_context import ToolContext
-from mcp import ClientSession
-from mcp.client.sse import sse_client
 from starlette.middleware.cors import CORSMiddleware
-import anyio
 import click
-import httpx
 import logging
 import os
 import traceback
-import urllib.parse
 
 load_dotenv()
 

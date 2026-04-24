@@ -12,22 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
-from pathlib import Path
-import pkgutil
 from typing import Any, ClassVar, Dict, Optional
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2ui.a2a import get_a2ui_agent_extension
-from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiCatalogProvider, A2uiExamplesProvider
+from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset
 from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
-from pydantic import PrivateAttr
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService

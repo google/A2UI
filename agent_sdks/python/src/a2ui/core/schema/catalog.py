@@ -17,8 +17,8 @@ import copy
 import json
 import logging
 import os
-from dataclasses import dataclass, field, replace
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from dataclasses import dataclass, replace
+from typing import Any, Dict, List, Optional
 
 from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
 from .constants import (

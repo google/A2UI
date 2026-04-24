@@ -70,7 +70,7 @@ def clone_repo(target_dir: str) -> bool:
     Returns:
         True if successful, False otherwise
     """
-    print(f"Cloning repository (shallow clone)...")
+    print("Cloning repository (shallow clone)...")
     print(f"  Source: {GITHUB_REPO}")
     print(f"  Target: {target_dir}")
 
@@ -285,7 +285,7 @@ def main():
         needed_modules = all_modules_set & available_modules
         missing_modules = all_modules_set - available_modules
 
-        print(f"\nModule status:")
+        print("\nModule status:")
         print(f"  Needed: {len(all_modules)}")
         print(f"  Available in repo: {len(needed_modules)}")
         if missing_modules:

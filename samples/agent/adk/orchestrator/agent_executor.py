@@ -23,7 +23,6 @@ from google.adk.events.event_actions import EventActions
 from a2a.server.agent_execution import RequestContext
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
-from a2a.server.events.event_queue import EventQueue
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -41,7 +40,6 @@ from google.adk.agents.invocation_context import InvocationContext
 from google.adk.a2a.converters import part_converter
 from subagent_route_manager import SubagentRouteManager
 
-from agent import OrchestratorAgent
 import part_converters
 
 logger = logging.getLogger(__name__)

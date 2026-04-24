@@ -150,7 +150,7 @@ def validate_jsonl_example(jsonl_path):
         return 0, 1
 
     print(f"\nValidating JSONL example: {os.path.basename(jsonl_path)}")
-    print(f"Target Schema: server_to_client.json")
+    print("Target Schema: server_to_client.json")
 
     passed = 0
     failed = 0

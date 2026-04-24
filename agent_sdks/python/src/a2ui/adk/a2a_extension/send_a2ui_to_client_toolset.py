@@ -88,9 +88,7 @@ Usage Examples:
 """
 
 import inspect
-import json
 import logging
-import re
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -101,7 +99,6 @@ from typing import (
     Union,
 )
 
-import jsonschema
 
 from a2a import types as a2a_types
 from a2ui.a2a import (

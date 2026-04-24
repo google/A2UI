@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
 from mcp.server import Server
-from mcp.types import Resource, TextContent
+from mcp.types import Resource
 
 app = Server("floor-plan-server")
 

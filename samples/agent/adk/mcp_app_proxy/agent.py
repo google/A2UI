@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
 from typing import Any, ClassVar, Optional, Dict
 
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2ui.a2a import get_a2ui_agent_extension
-from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import A2uiEnabledProvider, A2uiCatalogProvider, A2uiExamplesProvider, SendA2uiToClientToolset
 from a2ui.core.schema.manager import A2uiSchemaManager, VERSION_0_8, VERSION_0_9, CatalogConfig
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
@@ -27,7 +25,6 @@ from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
-from pydantic import PrivateAttr
 from tools import get_calculator_app, calculate_via_mcp, get_pong_app_a2ui_json, score_update
 from agent_executor import get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
 

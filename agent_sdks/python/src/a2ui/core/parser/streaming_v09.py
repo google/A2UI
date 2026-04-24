@@ -19,7 +19,7 @@ from typing import Any, List, Dict, Optional, Set
 from .streaming import A2uiStreamParser
 from .response_part import ResponsePart
 from .constants import *
-from ..schema.constants import VERSION_0_9, SURFACE_ID_KEY, CATALOG_COMPONENTS_KEY
+from ..schema.constants import SURFACE_ID_KEY, CATALOG_COMPONENTS_KEY
 
 
 class A2uiStreamParserV09(A2uiStreamParser):

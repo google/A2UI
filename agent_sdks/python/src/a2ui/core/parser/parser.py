@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import re
-from typing import List, Optional, Any
+from typing import List
 from .response_part import ResponsePart
 from ..schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from .payload_fixer import parse_and_fix

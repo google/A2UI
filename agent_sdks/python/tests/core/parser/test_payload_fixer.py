@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-import pytest
 from a2ui.core.parser.payload_fixer import (
     _remove_trailing_commas,
     _parse,

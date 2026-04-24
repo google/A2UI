@@ -16,11 +16,9 @@ import logging
 from typing import override
 
 from a2a.server.agent_execution import RequestContext
-from a2a.types import AgentCapabilities, AgentCard, AgentExtension, AgentSkill
 from a2ui.a2a import try_activate_a2ui_extension
 from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import A2uiEventConverter
 from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
-from a2ui.core.schema.manager import A2uiSchemaManager
 from google.adk.a2a.converters.request_converter import AgentRunRequest
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutorConfig

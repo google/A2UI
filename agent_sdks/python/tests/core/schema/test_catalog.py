@@ -12,10 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-import os
 import pytest
-from typing import Any, Dict, List
 from a2ui.core.schema.catalog import A2uiCatalog
 from a2ui.core.schema.constants import (
     A2UI_SCHEMA_BLOCK_START,

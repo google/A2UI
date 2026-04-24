@@ -37,7 +37,7 @@ from a2a.client.middleware import ClientCallContext, ClientCallInterceptor
 from a2a.client.client import ClientConfig as A2AClientConfig
 from a2a.client.client_factory import ClientFactory as A2AClientFactory
 from a2ui.a2a import *
-from a2a.types import AgentCapabilities, AgentCard, AgentExtension
+from a2a.types import AgentCapabilities, AgentCard
 from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
 
 logger = logging.getLogger(__name__)

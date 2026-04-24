@@ -21,7 +21,6 @@ from typing import Any, List, Dict, Optional, Set, TYPE_CHECKING
 from .constants import *
 from ..schema.constants import (
     VERSION_0_9,
-    VERSION_0_8,
     A2UI_OPEN_TAG,
     A2UI_CLOSE_TAG,
     SURFACE_ID_KEY,

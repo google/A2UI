@@ -27,10 +27,8 @@ if TYPE_CHECKING:
 from .constants import (
     BASE_SCHEMA_URL,
     CATALOG_COMPONENTS_KEY,
-    CATALOG_ID_KEY,
     CATALOG_STYLES_KEY,
     VERSION_0_8,
-    VERSION_0_9,
 )
 
 # RFC 6901 compliant regex for JSON Pointer

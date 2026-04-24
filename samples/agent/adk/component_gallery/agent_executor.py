@@ -15,11 +15,10 @@
 """Agent executor for Component Gallery."""
 
 import logging
-import json
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
-from a2a.types import (DataPart, Part, TaskState, TextPart, AgentCard)
+from a2a.types import (DataPart, TaskState, TextPart, AgentCard)
 from a2a.utils import new_agent_parts_message, new_task
 from agent import ComponentGalleryAgent
 from a2ui.a2a import try_activate_a2ui_extension
