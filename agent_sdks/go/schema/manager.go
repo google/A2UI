@@ -177,6 +177,16 @@ func (m *A2uiSchemaManager) selectCatalog(clientUICapabilities map[string]any) (
 					}
 				}
 			}
+			// Merge $defs from inline catalog so that local $ref references remain valid.
+			if inlineDefs, ok := inlineCatalogSchema["$defs"].(map[string]any); ok {
+				if mergedDefs, ok := mergedSchema["$defs"].(map[string]any); ok {
+					for k, v := range inlineDefs {
+						mergedDefs[k] = v
+					}
+				} else {
+					mergedSchema["$defs"] = deepCopyMap(inlineDefs)
+				}
+			}
 		}
 
 		return &A2uiCatalog{

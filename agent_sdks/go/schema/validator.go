@@ -455,6 +455,12 @@ func toAnySlice(v any) ([]any, bool) {
 	return nil, false
 }
 
+// toJSONSchemaValue re-parses a Go value through jsonschema.UnmarshalJSON so that
+// numbers are represented as json.Number (required by the schema validator library).
+// When called from the streaming parser (which already uses json.Decoder with
+// UseNumber), the re-serialization is largely a no-op for numeric types. This
+// conversion remains necessary for values originating from external callers that
+// use standard json.Unmarshal (which decodes numbers as float64).
 func toJSONSchemaValue(v any) any {
 	data, err := json.Marshal(v)
 	if err != nil {

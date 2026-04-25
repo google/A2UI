@@ -37,6 +37,11 @@ var CuttableKeys = map[string]struct{}{
 	"text":          {},
 }
 
+// maxJSONBufferSize is the maximum allowed size of the JSON buffer (10 MB).
+// If the buffer exceeds this limit without a closing </a2ui-json> tag,
+// the parser resets to prevent unbounded memory growth from malformed LLM output.
+const maxJSONBufferSize = 10 * 1024 * 1024
+
 // braceEntry tracks the type and position of an opening brace/bracket.
 type braceEntry struct {
 	bType    string // "{" or "["
@@ -427,6 +432,14 @@ func (p *A2uiStreamParser) fixJSON(fragment string) string {
 // processJSONChunk processes a chunk of JSON characters.
 func (p *A2uiStreamParser) processJSONChunk(chunk string, messages *[]ResponsePart) error {
 	for _, char := range chunk {
+		// Guard against unbounded buffer growth from malformed LLM output
+		// that never produces a closing </a2ui-json> tag.
+		if len(p.jsonBuffer) > maxJSONBufferSize {
+			logger.Printf("JSON buffer exceeded %d bytes, resetting parser state", maxJSONBufferSize)
+			p.resetJSONState()
+			return nil
+		}
+
 		charHandled := false
 		ch := string(char)
 
@@ -496,7 +509,9 @@ func (p *A2uiStreamParser) processJSONChunk(chunk string, messages *[]ResponsePa
 						objBuffer := p.jsonBuffer[startIdx:]
 						if strings.HasPrefix(objBuffer, "{") && strings.HasSuffix(objBuffer, "}") {
 							var obj map[string]any
-							if err := json.Unmarshal([]byte(objBuffer), &obj); err == nil {
+							dec := json.NewDecoder(strings.NewReader(objBuffer))
+							dec.UseNumber()
+							if err := dec.Decode(&obj); err == nil {
 								p.foundValidJSONBlock = true
 
 								isProtocol := p.inTopLevelList && p.impl.isProtocolMsg(obj)
@@ -522,13 +537,11 @@ func (p *A2uiStreamParser) processJSONChunk(chunk string, messages *[]ResponsePa
 								}
 
 								if p.braceCount == 0 || (p.inTopLevelList && len(p.braceStack) == 1) {
-									if len(p.braceStack) == 1 && p.braceStack[0].bType == "[" {
-										p.jsonBuffer = p.jsonBuffer[:startIdx] + p.jsonBuffer[startIdx+len(objBuffer):]
-									} else {
-										p.jsonBuffer = p.jsonBuffer[len(objBuffer):]
-										if len(p.braceStack) > 0 {
-											shift := len(objBuffer)
-											for i := range p.braceStack {
+									p.jsonBuffer = p.jsonBuffer[:startIdx] + p.jsonBuffer[startIdx+len(objBuffer):]
+									if len(p.braceStack) > 0 {
+										shift := len(objBuffer)
+										for i := range p.braceStack {
+											if p.braceStack[i].startIdx > startIdx {
 												p.braceStack[i].startIdx -= shift
 											}
 										}
@@ -679,7 +692,9 @@ func (p *A2uiStreamParser) sniffPartialComponent(messages *[]ResponsePart) {
 		}
 		fixedFragment := p.fixJSON(rawFragment)
 		var obj map[string]any
-		if err := json.Unmarshal([]byte(fixedFragment), &obj); err != nil {
+		dec := json.NewDecoder(strings.NewReader(fixedFragment))
+		dec.UseNumber()
+		if err := dec.Decode(&obj); err != nil {
 			continue
 		}
 		idVal, hasID := obj["id"]
@@ -904,6 +919,10 @@ func (p *A2uiStreamParser) processComponentTopology(comp map[string]any, extraCo
 						}
 					}
 					if len(validChildren) == 0 && (field == "children" || field == "explicitList") {
+						// Heuristic: check if the list field is still "open" (unclosed bracket)
+						// in the JSON buffer, indicating more children are expected from the stream.
+						// NOTE: this searches the full buffer, which in rare cases could match a
+						// same-named field from a different component. This matches the Python SDK behavior.
 						term := `"` + field + `"`
 						if strings.Contains(p.jsonBuffer, term) {
 							afterField := p.jsonBuffer[strings.LastIndex(p.jsonBuffer, term)+len(term):]
