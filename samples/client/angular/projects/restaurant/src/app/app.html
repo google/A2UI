@@ -29,7 +29,7 @@
 </form>
 } @else {
 <div class="surfaces">
-  @let surfaces = processor.getSurfaces();
+  @let surfaces = renderer.surfaceGroup.surfacesMap;
 
   @if (client.isLoading() && surfaces.size === 0) {
   <div class="pending">
@@ -45,7 +45,7 @@
   }
 
   @for (entry of surfaces; track entry[0]) {
-  <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]" />
+  <a2ui-v09-surface [surfaceId]="entry[0]" />
   }
   }
 </div>

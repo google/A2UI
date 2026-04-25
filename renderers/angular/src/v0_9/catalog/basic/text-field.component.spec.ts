@@ -17,24 +17,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextFieldComponent } from './text-field.component';
 import { signal } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '../../core/a2ui-renderer.service';
 import { By } from '@angular/platform-browser';
 
 describe('TextFieldComponent', () => {
   let component: TextFieldComponent;
   let fixture: ComponentFixture<TextFieldComponent>;
-  let mockRendererService: any;
 
   beforeEach(async () => {
-    mockRendererService = {};
-
     await TestBed.configureTestingModule({
       imports: [TextFieldComponent],
-      providers: [{ provide: A2uiRendererService, useValue: mockRendererService }],
+      providers: [
+        A2uiRendererService,
+        { provide: A2UI_RENDERER_CONFIG, useValue: { catalogs: [] } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextFieldComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
       label: { value: signal('Username'), raw: 'Username', onUpdate: () => {} },
       value: {
@@ -128,7 +129,11 @@ describe('TextFieldComponent', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
       isValid: { value: signal(false), raw: false, onUpdate: () => {} },
-      validationErrors: { value: signal(['Error 1', 'Error 2']), raw: ['Error 1', 'Error 2'], onUpdate: () => {} },
+      validationErrors: {
+        value: signal(['Error 1', 'Error 2']),
+        raw: ['Error 1', 'Error 2'],
+        onUpdate: () => {},
+      },
     });
 
     fixture.detectChanges();

@@ -16,18 +16,20 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
-  OnInit,
   Type,
   inject,
   input,
+  effect,
 } from '@angular/core';
-import { NgComponentOutlet } from '@angular/common';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from './a2ui-renderer.service';
-import { AngularCatalog } from '../catalog/types';
-import { ComponentBinder } from './component-binder.service';
+import {NgComponentOutlet} from '@angular/common';
+import {ComponentContext, ComponentModel, SurfaceModel, Subscription} from '@a2ui/web_core/v0_9';
+import {A2uiRendererService} from './a2ui-renderer.service';
+import {AngularCatalog} from '../catalog/types';
+import {ComponentBinder} from './component-binder.service';
+import {BoundProperty} from './types';
 
 /**
  * Dynamically renders an A2UI component as defined in the current surface model.
@@ -51,43 +53,62 @@ import { ComponentBinder } from './component-binder.service';
         *ngComponentOutlet="
           componentType;
           inputs: {
-          props: props,
-          surfaceId: surfaceId(),
-          componentId: resolvedComponentId,
-          dataContextPath: resolvedDataContextPath,
-        }
+            props: props,
+            surfaceId: surfaceId(),
+            componentId: resolvedComponentId,
+            dataContextPath: resolvedDataContextPath,
+          }
         "
       ></ng-container>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComponentHostComponent implements OnInit {
+export class ComponentHostComponent {
   /** The key of the component to render, either an ID string or an object with ID and basePath. Defaults to 'root'. */
-  componentKey = input<string | { id: string; basePath: string }>('root');
+  componentKey = input<string | {id: string; basePath: string}>('root');
 
   /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
 
-  private rendererService = inject(A2uiRendererService);
-  private binder = inject(ComponentBinder);
-  private destroyRef = inject(DestroyRef);
+  private readonly rendererService = inject(A2uiRendererService);
+  private readonly binder = inject(ComponentBinder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected componentType: Type<any> | null = null;
-  protected props: any = {};
+  protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
+
   protected resolvedComponentId: string = '';
   protected resolvedDataContextPath: string = '/';
 
-  ngOnInit(): void {
-    const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
+  private propsSub?: Subscription;
+  private createSub?: Subscription;
+
+  constructor() {
+    effect(() => {
+      const key = this.componentKey();
+      const surfaceId = this.surfaceId();
+      this.setupComponent(key, surfaceId);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.propsSub?.unsubscribe();
+      this.createSub?.unsubscribe();
+    });
+  }
+
+  private setupComponent(key: string | {id: string; basePath: string}, surfaceId: string) {
+    this.resetState();
+
+    const surface = this.rendererService.surfaceGroup?.getSurface(surfaceId);
 
     if (!surface) {
-      console.warn(`Surface ${this.surfaceId()} not found`);
+      console.warn(`Surface ${surfaceId} not found`);
       return;
     }
 
-    const key = this.componentKey();
     let id: string;
     let basePath: string;
 
@@ -104,10 +125,27 @@ export class ComponentHostComponent implements OnInit {
     const componentModel = surface.componentsModel.get(id);
 
     if (!componentModel) {
-      console.warn(`Component ${id} not found in surface ${this.surfaceId()}`);
+      console.warn(`Component ${id} not found in surface ${surfaceId}. Waiting for it...`);
+
+      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+        if (comp.id === id) {
+          this.initializeComponent(surface, comp, id, basePath);
+          sub.unsubscribe();
+        }
+      });
+      this.createSub = sub;
       return;
     }
 
+    this.initializeComponent(surface, componentModel, id, basePath);
+  }
+
+  private initializeComponent(
+    surface: SurfaceModel<any>,
+    componentModel: ComponentModel,
+    id: string,
+    basePath: string,
+  ): void {
     // Resolve component from the surface's catalog
     const catalog = surface.catalog as AngularCatalog;
     const api = catalog.components.get(componentModel.type);
@@ -127,6 +165,23 @@ export class ComponentHostComponent implements OnInit {
       updatedSubscription.unsubscribe();
       this.binder.disposeBoundProperties(this.props);
     });
+
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Resets the component host state, unsubscribing from active subscriptions
+   * and clearing component properties to avoid rendering stale data while
+   * a new component is being loaded.
+   */
+  private resetState(): void {
+    this.propsSub?.unsubscribe();
+    this.createSub?.unsubscribe();
+
+    this.componentType = null;
+    this.props = {};
+    this.resolvedDataContextPath = '/';
+    this.cdr.markForCheck();
   }
 
   private bindProps(): void {

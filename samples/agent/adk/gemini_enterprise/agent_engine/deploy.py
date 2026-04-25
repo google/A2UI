@@ -115,13 +115,14 @@ def main():
   app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
   api_endpoint = f"{location}-aiplatform.googleapis.com"
 
+  print("≈" * 120)
+
   vertexai.init(
       project=project_id,
       location=location,
       api_endpoint=api_endpoint,
       staging_bucket=storage,
   )
-  print("≈" * 120)
 
   print("✓ Vertex AI client initialized.")
 
@@ -149,21 +150,22 @@ def main():
       agent_name="Test Contact Card Agent",
       description="A helpful assistant agent that can find contact cards.",
       skills=[agent_skill],
-      streaming=True,
+      streaming=False,
+      default_input_modes=["text/plain"],
+      default_output_modes=["text/plain"],
   )
 
   base_url = "http://0.0.0.0:8080"
   contact_agent = ContactAgent(base_url=base_url)
-
-  # cc_agent_card = contact_agent.agent_card
 
   print(f"✓ Contact Card agent card created. {cc_agent_card}")
 
   a2ui_agent = A2aAgent(
       agent_card=cc_agent_card,
       agent_executor_builder=agent_executor.ContactAgentExecutor,
-      agent_executor_kwargs={"base_url": base_url},
   )
+  a2ui_agent.set_up()
+
   print("✓ Local Contact Card agent created.")
 
   config = {
@@ -173,28 +175,31 @@ def main():
       ),
       "agent_framework": "google-adk",
       "staging_bucket": storage,
+      # or "gcs_dir_name": str(uuid.uuid4()) to avoid collisions.
+      "gcs_dir_name": "dev",
       "requirements": [
           "google-cloud-aiplatform[agent_engines,adk]",
           "google-genai>=1.27.0",
           "python-dotenv>=1.1.0",
           "uvicorn",
-          "a2a-sdk>=0.3.4",
+          "a2a-sdk==0.3.25",
           "cloudpickle>=3.1.2",
           "pydantic",
           "jsonschema>=4.0.0",
-          "a2ui-agent-sdk>=0.1.1",
+          "a2ui-agent-sdk==0.1.2",
       ],
       "http_options": {
           "api_version": "v1beta1",
       },
       "max_instances": 1,
       "extra_packages": [
+          "__init__.py",
           "agent_executor.py",
-          "contact_data.json",
           "prompt_builder.py",
+          "contact_data.json",
           "agent.py",
           "tools.py",
-          "examples/0.8",
+          "examples",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
@@ -219,8 +224,11 @@ def main():
   response.raise_for_status()
   a2ui_agent_card_json = response.json()
   # Add A2UI capabilities to the agent card.
+  # Agent card for the agent deployed to Agent Engine does not support A2UI
+  # extension yet. We need to add A2UI extension to the Gemini Enterprise agent
+  # card.
   a2ui_agent_card_json["capabilities"] = {
-      "streaming": True,
+      "streaming": False,
       "extensions": [{
           "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
           "description": "Ability to render A2UI",

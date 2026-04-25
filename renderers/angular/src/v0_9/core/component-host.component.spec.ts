@@ -18,8 +18,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ComponentHostComponent } from './component-host.component';
 import { A2uiRendererService } from './a2ui-renderer.service';
-import { ComponentBinder } from './component-binder.service';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
+import { ComponentModel, SurfaceComponentsModel, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -38,8 +37,7 @@ describe('ComponentHostComponent', () => {
   let fixture: ComponentFixture<ComponentHostComponent>;
   let mockRendererService: any;
   let mockCatalog: any;
-  let mockBinder: jasmine.SpyObj<ComponentBinder>;
-  let mockSurface: any;
+  let mockSurface: SurfaceModel<any>;
   let mockSurfaceGroup: any;
   let onUpdatedHandler: (() => void) | undefined;
   let onUpdatedUnsubscribeSpy: jasmine.Spy;
@@ -71,7 +69,7 @@ describe('ComponentHostComponent', () => {
         ],
       ]),
       catalog: mockCatalog,
-    };
+    } as SurfaceModel<any>;
 
     mockSurfaceGroup = {
       getSurface: jasmine.createSpy('getSurface').and.returnValue(mockSurface),
@@ -90,7 +88,6 @@ describe('ComponentHostComponent', () => {
       imports: [ComponentHostComponent],
       providers: [
         { provide: A2uiRendererService, useValue: mockRendererService },
-        { provide: ComponentBinder, useValue: mockBinder },
       ],
     }).compileComponents();
 
@@ -104,16 +101,19 @@ describe('ComponentHostComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  describe('Component Initialization', () => {
     it('should resolve component type and bind props', () => {
-      fixture.detectChanges(); // Triggers ngOnInit
+      fixture.detectChanges(); // Triggers change detection
 
-      // @ts-ignore - Accessing protected property
-      expect(component.componentType).toBe(TestChildComponent);
-      // @ts-ignore - Accessing protected property
-      expect(component.props).toEqual({
-        text: jasmine.objectContaining({ value: jasmine.any(Function) }) as any,
-      });
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeTruthy();
+
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      expect(childInstance.props).toBeTruthy();
+      expect(childInstance.props.text.value()).toBe('Hello');
+      expect(childInstance.surfaceId).toBe('surf1');
+      expect(childInstance.componentId).toBe('comp1');
+      expect(childInstance.dataContextPath).toBe('/');
 
       expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
       expect(mockBinder.bind).toHaveBeenCalled();
@@ -130,8 +130,28 @@ describe('ComponentHostComponent', () => {
       fixture.componentRef.setInput('componentKey', { id: 'comp1', basePath: '/nested/path' });
       fixture.detectChanges();
 
-      const bindArg = mockBinder.bind.calls.mostRecent().args[0];
-      expect(bindArg.dataContext.path).toBe('/nested/path');
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeTruthy();
+
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      expect(childInstance.dataContextPath).toBe('/nested/path');
+    });
+
+    it('should update props when component model is updated', () => {
+      fixture.detectChanges(); // Trigger change detection
+      
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      const childInstance = childDebugElement.componentInstance as TestChildComponent;
+      
+      expect(childInstance.props.text.value()).toBe('Hello');
+
+      const compModel = mockSurface.componentsModel.get('comp1')!;
+      // This properties assignment triggers the update.
+      compModel.properties = { text: 'Hello', newProp: 'new value' };
+
+      fixture.detectChanges(); // Propagate changes
+
+      expect(childInstance.props.newProp.value()).toBe('new value');
     });
 
     it('should warn and return if surface not found', () => {
@@ -140,20 +160,20 @@ describe('ComponentHostComponent', () => {
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
       expect(consoleWarnSpy).toHaveBeenCalledWith('Surface surf1 not found');
     });
 
     it('should warn and return if component model not found', () => {
       const consoleWarnSpy = spyOn(console, 'warn');
-      mockSurface.componentsModel.clear();
+      mockSurface.componentsModel.dispose();
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1');
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Component comp1 not found in surface surf1. Waiting for it...');
     });
 
     it('should error and return if component type not in catalog', () => {
@@ -162,15 +182,15 @@ describe('ComponentHostComponent', () => {
 
       fixture.detectChanges();
 
-      // @ts-ignore
-      expect(component.componentType).toBeNull();
+      const childDebugElement = fixture.debugElement.query(By.directive(TestChildComponent));
+      expect(childDebugElement).toBeFalsy();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Component type "TestType" not found in catalog "test-catalog"',
       );
     });
 
     it('should trigger destroyRef on destroy', () => {
-      fixture.detectChanges(); // Trigger ngOnInit
+      fixture.detectChanges(); // Trigger change detection
 
       // Destroy fixture
       fixture.destroy();
@@ -195,7 +215,7 @@ describe('ComponentHostComponent', () => {
 
   describe('Template rendering', () => {
     it('should render the resolved component', () => {
-      fixture.detectChanges(); // Triggers ngOnInit and render
+      fixture.detectChanges(); // Triggers change detection and render
 
       const compiled = fixture.nativeElement;
       expect(compiled.innerHTML).toContain('Child Component');

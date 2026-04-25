@@ -29,46 +29,88 @@ import { A2uiSurface, basicCatalog } from '@a2ui/react/v0_9';
 
 ## Quick Start
 
-The React renderer works alongside the `MessageProcessor` from `@a2ui/web_core`.
+The React renderer works alongside the `MessageProcessor` from `@a2ui/web_core`. The processor interprets JSON messages from an AI agent and manages the resulting UI state. The core concepts are:
+
+- **Processor** — receives and interprets the agent's messages.
+- **Surface** — an independent rendering area, uniquely identified by a string ID, that the agent creates and populates with components.
+- **Catalog** — the set of components (e.g. `Text`, `Column`, `Button`) available for a surface to use.
+
+The example below creates a processor with the built-in `basicCatalog`, feeds it a sequence of hardcoded messages, and renders the resulting surface.
 
 ```tsx
 import { useState, useEffect } from 'react';
 import { MessageProcessor } from '@a2ui/web_core/v0_9';
 import { A2uiSurface, basicCatalog } from '@a2ui/react/v0_9';
 
-function App() {
-  // 1. Initialize the MessageProcessor with your catalogs
-  const [processor] = useState(() => new MessageProcessor([basicCatalog]));
-  const [surface, setSurface] = useState(null);
+export default function App() {
+  // 1. Create the processor and feed it messages.
+  const [processor] = useState(() => {
+    const p = new MessageProcessor([basicCatalog]);
+    p.processMessages(sampleAgentMessages);
+    return p;
+  });
 
+  // 2. Set up listeners to keep the UI up to date as messages arrive.
+  const [surfaces, setSurfaces] = useState(() =>
+    Array.from(processor.model.surfacesMap.values())
+  );
   useEffect(() => {
-    // 2. Listen for surface creation
-    const sub = processor.onSurfaceCreated(s => {
-      // You can filter by surfaceId or manage multiple surfaces
-      if (s.id === 'main-chat') setSurface(s);
-    });
+    const sync = () =>
+      setSurfaces(Array.from(processor.model.surfacesMap.values()));
 
-    // 3. Process messages from your agent (e.g., via WebSocket or SSE)
-    // For demo purposes, we manually process a creation message:
-    processor.processMessages([{
-      version: 'v0.9',
-      createSurface: { 
-        surfaceId: 'main-chat', 
-        catalogId: basicCatalog.id // 'https://a2ui.org/specification/v0_9/basic_catalog.json'
-      }
-    }]);
+    const createdSub = processor.onSurfaceCreated(sync);
+    const deletedSub = processor.onSurfaceDeleted(sync);
 
-    return () => sub.unsubscribe();
+    return () => {
+      createdSub.unsubscribe();
+      deletedSub.unsubscribe();
+    };
   }, [processor]);
 
-  // 4. Render the surface once it's available
+  // 3. Render every surface the agent has created.
   return (
     <div className="a2ui-container">
-      {surface ? <A2uiSurface surface={surface} /> : <div>Initializing Agent UI...</div>}
+      {surfaces.length === 0 && <div>Waiting for agent...</div>}
+      {surfaces.map(surface => (
+        <A2uiSurface key={surface.id} surface={surface} />
+      ))}
     </div>
   );
 }
+
+// In a real app, these messages would come from an agent via WebSocket, SSE, etc.
+// Here we hardcode them to show the message format.
+const sampleAgentMessages = [{
+  version: 'v0.9' as const,
+  createSurface: { surfaceId: 'main-chat', catalogId: basicCatalog.id }
+}, {
+  version: 'v0.9' as const,
+  updateComponents: {
+    surfaceId: 'main-chat',
+    components: [
+      { id: 'root', component: 'Column', children: ['greeting', 'description'] },
+      { id: 'greeting', component: 'Text', text: { path: '/title' } },
+      { id: 'description', component: 'Text', text: { path: '/body' } },
+    ],
+  }
+}, {
+  version: 'v0.9' as const,
+  updateDataModel: {
+    surfaceId: 'main-chat',
+    path: '/',
+    value: {
+      title: 'Hello from A2UI!',
+      body: 'Replace these messages with real agent responses to build interactive UIs.',
+    },
+  }
+}];
 ```
+
+Running this example should display "Hello from A2UI!". The example demonstrates three message types:
+
+- [`createSurface`](../../specification/v0_9/docs/a2ui_protocol.md#createsurface) initializes the rendering surface.
+- [`updateComponents`](../../specification/v0_9/docs/a2ui_protocol.md#updatecomponents) defines the UI tree. Here, a `Column` containing two `Text` components.
+- [`updateDataModel`](../../specification/v0_9/docs/a2ui_protocol.md#updatedatamodel) provides the data that the components reference via [`path` bindings](../../specification/v0_9/docs/a2ui_protocol.md#path-resolution--scope) (e.g. `{ path: '/title' }` resolves to the `title` field in the data model).
 
 ## Defining Custom Components
 
@@ -196,6 +238,40 @@ The `@a2ui/react/v0_9` package includes a `basicCatalog` with standard component
 - **Layout**: `Row`, `Column`, `List`, `Card`, `Tabs`, `Modal`, `Divider`
 - **Content**: `Text`, `Image`, `Icon`, `Video`, `AudioPlayer`
 - **Input**: `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider`, `DateTimeInput`
+
+## Styling and CSS Modules
+
+The basic catalog components are designed to be self-contained and styled using CSS variables exposed from `@a2ui/web_core`.
+
+Some components in this package (like `Text`) use **CSS Modules** for style encapsulation. Most modern React environments (like Vite, Next.js, and Create React App) support CSS Modules out of the box. If you are using a custom build setup, you must ensure it is configured to handle `.module.css` files (e.g., using `css-loader` with modules enabled in Webpack).
+
+You can also use CSS Modules for styling your custom components or extending the basic catalog:
+
+
+```css
+/* MyComponent.module.css */
+.myComponent {
+  display: flex;
+  gap: var(--a2ui-spacing-m, 8px);
+}
+
+/* Use :global to target nested elements (like those generated by Markdown) */
+.myComponent :global(p) {
+  color: var(--a2ui-color-on-background);
+}
+```
+
+```tsx
+import styles from './MyComponent.module.css';
+
+export const MyComponent = createComponentImplementation(MyComponentApi, ({ props }) => {
+  return (
+    <div className={styles.myComponent}>
+      {/* ... */}
+    </div>
+  );
+});
+```
 
 ---
 

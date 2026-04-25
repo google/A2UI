@@ -273,3 +273,36 @@ def test_streaming_msg_type_deduplication(mock_catalog):
 
   # After completion, msg_types is reset
   assert parser.msg_types == []
+
+
+def test_v08_path_heuristic_adds_slash(mock_catalog):
+  """Tests that v0.8 adds a leading slash to relative paths."""
+  parser = A2uiStreamParser(catalog=mock_catalog)
+  # Disable validation for simplicity
+  parser._validator = None
+
+  # 1. Send beginRendering first to avoid buffering
+  chunk_br = (
+      A2UI_OPEN_TAG
+      + '[{"beginRendering": {"surfaceId": "s1", "root": "root"}}]'
+      + A2UI_CLOSE_TAG
+  )
+  list(parser.process_chunk(chunk_br))
+
+  # 2. Send surfaceUpdate with a relative path
+  chunk_su = (
+      A2UI_OPEN_TAG
+      + '[{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root",'
+      ' "component": {"Text": {"text": {"path": "some/relative/path"}}}}]}}]'
+      + A2UI_CLOSE_TAG
+  )
+
+  messages = []
+  for part in parser.process_chunk(chunk_su):
+    if part.a2ui_json:
+      messages.extend(part.a2ui_json)
+
+  # The path should have been prefixed with a slash
+  assert len(messages) > 0
+  comp = messages[0][MSG_TYPE_SURFACE_UPDATE]["components"][0]
+  assert comp["component"]["Text"]["text"]["path"] == "/some/relative/path"

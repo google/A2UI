@@ -20,7 +20,7 @@
           "component": "Column",
           "children": [
             "title-heading",
-            "restaurant-row-1"
+            "restaurant-list"
           ]
         },
         {
@@ -32,184 +32,179 @@
           }
         },
         {
-          "id": "restaurant-row-1",
-          "component": "Row",
-          "children": [
-            "item-card-1",
-            "item-card-2"
-          ]
-        },
-        {
-          "id": "item-card-1",
-          "component": "Card",
-          "weight": 1,
-          "child": "card-layout-1"
-        },
-        {
-          "id": "card-layout-1",
-          "component": "Column",
-          "children": [
-            "template-image-1",
-            "card-details-1"
-          ]
-        },
-        {
-          "id": "template-image-1",
-          "component": "Image",
-          "url": {
-            "path": "/items/0/imageUrl"
+          "id": "restaurant-list",
+          "component": "List",
+          "direction": "vertical",
+          "children": {
+            "componentId": "row-template",
+            "path": "/items"
           }
         },
         {
-          "id": "card-details-1",
-          "component": "Column",
+          "id": "row-template",
+          "component": "Row",
           "children": [
-            "template-name-1",
-            "template-rating-1",
-            "template-detail-1",
-            "template-link-1",
-            "template-book-button-1"
+            "card-template-left",
+            "card-template-right"
           ]
         },
         {
-          "id": "template-name-1",
+          "id": "card-template-left",
+          "component": "Card",
+          "weight": 1,
+          "child": "card-layout-left"
+        },
+        {
+          "id": "card-layout-left",
+          "component": "Column",
+          "children": [
+            "template-image-left",
+            "card-details-left"
+          ]
+        },
+        {
+          "id": "template-image-left",
+          "component": "Image",
+          "variant": "mediumFeature",
+          "url": {
+            "path": "0/imageUrl"
+          }
+        },
+        {
+          "id": "card-details-left",
+          "component": "Column",
+          "children": [
+            "template-name-left",
+            "template-rating-left",
+            "template-detail-left",
+            "template-book-button-left"
+          ]
+        },
+        {
+          "id": "template-name-left",
           "component": "Text",
           "variant": "h3",
           "text": {
-            "path": "/items/0/name"
+            "path": "0/name"
           }
         },
         {
-          "id": "template-rating-1",
+          "id": "template-rating-left",
           "component": "Text",
           "text": {
-            "path": "/items/0/rating"
+            "path": "0/rating"
           }
         },
         {
-          "id": "template-detail-1",
+          "id": "template-detail-left",
           "component": "Text",
           "text": {
-            "path": "/items/0/detail"
+            "path": "0/detail"
           }
         },
         {
-          "id": "template-link-1",
-          "component": "Text",
-          "text": {
-            "path": "/items/0/infoLink"
-          }
-        },
-        {
-          "id": "template-book-button-1",
+          "id": "template-book-button-left",
           "component": "Button",
-          "child": "book-now-text-1",
+          "child": "book-now-text-left",
           "action": {
             "event": {
               "name": "book_restaurant",
               "context": {
                 "restaurantName": {
-                  "path": "/items/0/name"
+                  "path": "0/name"
                 },
                 "imageUrl": {
-                  "path": "/items/0/imageUrl"
+                  "path": "0/imageUrl"
                 },
                 "address": {
-                  "path": "/items/0/address"
+                  "path": "0/address"
                 }
               }
             }
           }
         },
         {
-          "id": "book-now-text-1",
+          "id": "book-now-text-left",
           "component": "Text",
           "text": "Book Now"
         },
         {
-          "id": "item-card-2",
+          "id": "card-template-right",
           "component": "Card",
           "weight": 1,
-          "child": "card-layout-2"
+          "child": "card-layout-right"
         },
         {
-          "id": "card-layout-2",
+          "id": "card-layout-right",
           "component": "Column",
           "children": [
-            "template-image-2",
-            "card-details-2"
+            "template-image-right",
+            "card-details-right"
           ]
         },
         {
-          "id": "template-image-2",
+          "id": "template-image-right",
           "component": "Image",
+          "variant": "mediumFeature",
           "url": {
-            "path": "/items/1/imageUrl"
+            "path": "1/imageUrl"
           }
         },
         {
-          "id": "card-details-2",
+          "id": "card-details-right",
           "component": "Column",
           "children": [
-            "template-name-2",
-            "template-rating-2",
-            "template-detail-2",
-            "template-link-2",
-            "template-book-button-2"
+            "template-name-right",
+            "template-rating-right",
+            "template-detail-right",
+            "template-book-button-right"
           ]
         },
         {
-          "id": "template-name-2",
+          "id": "template-name-right",
           "component": "Text",
           "variant": "h3",
           "text": {
-            "path": "/items/1/name"
+            "path": "1/name"
           }
         },
         {
-          "id": "template-rating-2",
+          "id": "template-rating-right",
           "component": "Text",
           "text": {
-            "path": "/items/1/rating"
+            "path": "1/rating"
           }
         },
         {
-          "id": "template-detail-2",
+          "id": "template-detail-right",
           "component": "Text",
           "text": {
-            "path": "/items/1/detail"
+            "path": "1/detail"
           }
         },
         {
-          "id": "template-link-2",
-          "component": "Text",
-          "text": {
-            "path": "/items/1/infoLink"
-          }
-        },
-        {
-          "id": "template-book-button-2",
+          "id": "template-book-button-right",
           "component": "Button",
-          "child": "book-now-text-2",
+          "child": "book-now-text-right",
           "action": {
             "event": {
               "name": "book_restaurant",
               "context": {
                 "restaurantName": {
-                  "path": "/items/1/name"
+                  "path": "1/name"
                 },
                 "imageUrl": {
-                  "path": "/items/1/imageUrl"
+                  "path": "1/imageUrl"
                 },
                 "address": {
-                  "path": "/items/1/address"
+                  "path": "1/address"
                 }
               }
             }
           }
         },
         {
-          "id": "book-now-text-2",
+          "id": "book-now-text-right",
           "component": "Text",
           "text": "Book Now"
         }
@@ -224,22 +219,22 @@
       "value": {
         "title": "Top Restaurants",
         "items": [
-          {
-            "name": "The Fancy Place",
-            "rating": 4.8,
-            "detail": "Fine dining experience",
-            "infoLink": "https://example.com/fancy",
-            "imageUrl": "https://example.com/fancy.jpg",
-            "address": "123 Main St"
-          },
-          {
-            "name": "Quick Bites",
-            "rating": 4.2,
-            "detail": "Casual and fast",
-            "infoLink": "https://example.com/quick",
-            "imageUrl": "https://example.com/quick.jpg",
-            "address": "456 Oak Ave"
-          }
+          [
+            {
+              "name": "The Fancy Place",
+              "rating": 4.8,
+              "detail": "Fine dining experience",
+              "imageUrl": "https://picsum.photos/200/300?random=1",
+              "address": "123 Luxury Ave, Food City"
+            },
+            {
+              "name": "Quick Bites",
+              "rating": 4.2,
+              "detail": "Casual and fast",
+              "imageUrl": "https://picsum.photos/200/300?random=2",
+              "address": "456 Fast Lane, Quick Town"
+            }
+          ]
         ]
       }
     }

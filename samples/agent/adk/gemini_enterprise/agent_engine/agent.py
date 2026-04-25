@@ -14,7 +14,6 @@
 
 from collections.abc import AsyncIterable
 import json
-import logging
 import os
 from typing import Any, Dict, Optional
 
@@ -25,14 +24,15 @@ from a2a.types import (
     Part,
     TextPart,
 )
+from a2ui.a2a import (
+    get_a2ui_agent_extension,
+    parse_response_to_parts,
+)
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a.extension import get_a2ui_agent_extension
-from a2ui.a2a.parts import parse_response_to_parts
-from a2ui.parser.parser import parse_response
-from a2ui.schema.common_modifiers import remove_strict_validation
-from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
-from a2ui.schema.manager import A2uiSchemaManager
-
+from a2ui.core.parser.parser import parse_response
+from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
 import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
@@ -44,8 +44,6 @@ from google.genai import types
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
 from tools import get_contact_info
-
-logger = logging.getLogger(__name__)
 
 SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
@@ -105,7 +103,8 @@ class ContactAgent:
         extensions.append(ext)
 
     capabilities = AgentCapabilities(
-        streaming=True,
+        # Agent Engine only supports non-streaming mode for now.
+        streaming=False,
         extensions=extensions,
     )
     skill = AgentSkill(
@@ -176,12 +175,13 @@ class ContactAgent:
 
   async def fetch_response(
       self, query, session_id, ui_version: Optional[str] = None
-  ) -> List[Part]:
+  ) -> list[Part]:
     """Fetches the response from the agent."""
 
     session_state = {"base_url": self.base_url}
 
-    # Determine which runner to use based on whether the a2ui extension is active.
+    # Determine which runner to use based on whether the a2ui extension is
+    # active.
     if ui_version:
       runner = self._ui_runners[ui_version]
       schema_manager = self._schema_managers[ui_version]
@@ -214,7 +214,7 @@ class ContactAgent:
 
     # Ensure catalog schema was loaded
     if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
-      logger.error(
+      print(
           "--- ContactAgent.fetch_response: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
       )
@@ -232,7 +232,7 @@ class ContactAgent:
 
     while attempt <= max_retries:
       attempt += 1
-      logger.info(
+      print(
           "--- ContactAgent.fetch_response: Attempt"
           f" {attempt}/{max_retries + 1} for session {session_id} ---"
       )
@@ -243,19 +243,35 @@ class ContactAgent:
 
       full_content_list = []
 
-      async for event in runner.run_async(
-          user_id=self._user_id,
-          session_id=session.id,
-          new_message=current_message,
-      ):
-        if event.is_final_response():
-          if event.content and event.content.parts and event.content.parts[0].text:
-            full_content_list.extend([p.text for p in event.content.parts if p.text])
+      print(
+          "--- ContactAgent.fetch_response: Starting runner.run_async with"
+          f" message: {current_message} ---"
+      )
+
+      try:
+        async for event in runner.run_async(
+            user_id=self._user_id,
+            session_id=session.id,
+            new_message=current_message,
+        ):
+          if event.is_final_response():
+            if event.content and event.content.parts and event.content.parts[0].text:
+              full_content_list.extend([p.text for p in event.content.parts if p.text])
+      except Exception as e:
+        print(
+            "--- ContactAgent.fetch_response: Exception caught while running"
+            f" runner: {e} ---"
+        )
+        raise e
 
       final_response_content = "".join(full_content_list)
+      print(
+          "--- ContactAgent.fetch_response: Final response content:"
+          f" {final_response_content[:500]}... ---"
+      )
 
       if final_response_content is None:
-        logger.warning(
+        print(
             "--- ContactAgent.fetch_response: Received no final response"
             f" content from runner (Attempt {attempt}). ---"
         )
@@ -264,10 +280,10 @@ class ContactAgent:
               "I received no response. Please try again."
               f"Please retry the original request: '{query}'"
           )
-          logger.info(f"Retrying with query: {current_query_text}")
+          print(f"Retrying with query: {current_query_text}")
           continue  # Go to next retry
         else:
-          logger.info("Retries exhausted on no-response")
+          print("Retries exhausted on no-response")
           # Retries exhausted on no-response
           final_response_content = (
               "I'm sorry, I encountered an error and couldn't process your request."
@@ -278,15 +294,11 @@ class ContactAgent:
       error_message = ""
 
       if ui_version:
-        logger.info(
+        print(
             "--- ContactAgent.fetch_response: Validating UI response (Attempt"
             f" {attempt})... ---"
         )
         try:
-          logger.info(
-              "--- ContactAgent.fetch_response: trying to parse response:"
-              f" {final_response_content})... ---"
-          )
           response_parts = parse_response(final_response_content)
 
           for part in response_parts:
@@ -297,7 +309,7 @@ class ContactAgent:
 
             # Handle the "no results found" or empty JSON case
             if parsed_json_data == []:
-              logger.info(
+              print(
                   "--- ContactAgent.fetch_response: Empty JSON list found. "
                   "Assuming valid (e.g., 'no results'). ---"
               )
@@ -305,15 +317,16 @@ class ContactAgent:
             else:
               # --- Validation Steps ---
               # Check if it validates against the A2UI_SCHEMA
-              # This will raise jsonschema.exceptions.ValidationError if it fails
-              logger.info(
+              # This will raise jsonschema.exceptions.ValidationError if it
+              # fails
+              print(
                   "--- ContactAgent.fetch_response: Validating against"
                   " A2UI_SCHEMA... ---"
               )
               selected_catalog.validator.validate(parsed_json_data)
               # --- End Validation Steps ---
 
-              logger.info(
+              print(
                   "--- ContactAgent.fetch_response: UI JSON successfully"
                   " parsed AND validated against schema. Validation OK"
                   f" (Attempt {attempt}). ---"
@@ -324,20 +337,18 @@ class ContactAgent:
             json.JSONDecodeError,
             jsonschema.exceptions.ValidationError,
         ) as e:
-          logger.warning(
+          print(
               f"--- ContactAgent.fetch_response: A2UI validation failed: {e}"
               f" (Attempt {attempt}) ---"
           )
-          logger.warning(
-              f"--- Failed response content: {final_response_content[:500]}... ---"
-          )
+          print(f"--- Failed response content: {final_response_content[:500]}... ---")
           error_message = f"Validation failed: {e}."
 
       else:  # Not using UI, so text is always "valid"
         is_valid = True
 
       if is_valid:
-        logger.info(
+        print(
             "--- ContactAgent.fetch_response: Response is valid. Task complete"
             f" (Attempt {attempt}). ---"
         )
@@ -347,7 +358,7 @@ class ContactAgent:
 
       # --- If we're here, it means validation failed ---
       if attempt <= max_retries:
-        logger.warning(
+        print(
             "--- ContactAgent.fetch_response: Retrying..."
             f" ({attempt}/{max_retries + 1}) ---"
         )
@@ -363,7 +374,7 @@ class ContactAgent:
         # Loop continues...
 
     # --- If we're here, it means we've exhausted retries ---
-    logger.error(
+    print(
         "--- ContactAgent.fetch_response: Max retries exhausted. Sending"
         " text-only error. ---"
     )
@@ -379,3 +390,7 @@ class ContactAgent:
         )
     ]
     # --- End: UI Validation and Retry Logic ---
+
+
+# ADK web looks for 'root_agent' in this file.
+root_agent = ContactAgent("http://0.0.0.0:8080")

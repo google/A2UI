@@ -18,9 +18,10 @@ import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
-import {mapAlign} from '../utils';
+import {mapAlign, useBasicCatalogStyles} from '../utils';
 
 export const List = createComponentImplementation(ListApi, ({props, buildChild, context}) => {
+  useBasicCatalogStyles();
   const isHorizontal = props.direction === 'horizontal';
   const style: React.CSSProperties = {
     display: 'flex',
@@ -28,9 +29,8 @@ export const List = createComponentImplementation(ListApi, ({props, buildChild, 
     alignItems: mapAlign(props.align),
     overflowX: isHorizontal ? 'auto' : 'hidden',
     overflowY: isHorizontal ? 'hidden' : 'auto',
-    width: '100%',
-    margin: 0,
-    padding: 0,
+    gap: 'var(--a2ui-list-gap, var(--a2ui-spacing-s))',
+    padding: 'var(--a2ui-list-padding, 0)',
   };
 
   return (

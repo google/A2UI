@@ -17,9 +17,10 @@
 import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {DateTimeInputApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
+import {useBasicCatalogStyles} from '../utils';
 
 export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({props}) => {
+  useBasicCatalogStyles();
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.setValue(e.target.value);
   };
@@ -32,10 +33,11 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
   if (!props.enableDate && props.enableTime) type = 'time';
 
   const style: React.CSSProperties = {
-    padding: '8px',
-    width: '100%',
-    border: STANDARD_BORDER,
-    borderRadius: STANDARD_RADIUS,
+    backgroundColor: 'var(--a2ui-datetimeinput-background, var(--a2ui-color-input, #fff))',
+    color: 'var(--a2ui-datetimeinput-color, var(--a2ui-color-on-input, #333))',
+    border: 'var(--a2ui-datetimeinput-border, var(--a2ui-border))',
+    borderRadius: 'var(--a2ui-datetimeinput-border-radius, var(--a2ui-border-radius))',
+    padding: 'var(--a2ui-datetimeinput-padding, var(--a2ui-spacing-s))',
     boxSizing: 'border-box',
   };
 
@@ -44,13 +46,19 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '4px',
-        width: '100%',
-        margin: LEAF_MARGIN,
+        gap: 'var(--a2ui-spacing-xs, 0.25rem)',
       }}
     >
       {props.label && (
-        <label htmlFor={uniqueId} style={{fontSize: '14px', fontWeight: 'bold'}}>
+        <label
+          htmlFor={uniqueId}
+          style={{
+            fontSize:
+              'var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)))',
+            fontWeight:
+              'var(--a2ui-datetimeinput-label-font-weight, var(--a2ui-label-font-weight, bold))',
+          }}
+        >
           {props.label}
         </label>
       )}

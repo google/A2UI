@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
 
 import { getNormalizedPath } from '../../core/utils';
 import { BasicCatalogComponent } from './basic-catalog-component';
@@ -41,70 +40,54 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
     '[style.width]': '"100%"',
     '[style.gap]': '"var(--a2ui-column-gap, var(--a2ui-spacing-m, 16px))"',
     '[style.justify-content]': 'justify()',
-    '[style.align-items]': 'align()'
+    '[style.align-items]': 'align()',
   },
   template: `
-      @if (!isRepeating()) {
-        @for (child of normalizedChildren(); track child.id) {
-          <a2ui-v09-component-host
-            [componentKey]="child"
-            [surfaceId]="surfaceId()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (!isRepeating()) {
+      @for (child of normalizedChildren(); track child.id) {
+        <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
+        </a2ui-v09-component-host>
       }
+    }
 
-      @if (isRepeating()) {
-        @for (item of children(); track item; let i = $index) {
-          <a2ui-v09-component-host
-            [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
-            [surfaceId]="surfaceId()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (isRepeating()) {
+      @for (item of children(); track item; let i = $index) {
+        <a2ui-v09-component-host
+          [componentKey]="{ id: templateId()!, basePath: getNormalizedPath(i) }"
+          [surfaceId]="surfaceId()"
+        >
+        </a2ui-v09-component-host>
       }
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColumnComponent extends BasicCatalogComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `children`: A list of component IDs OR a repeating collection definition.
-   * - `justify`: Flexbox justify-content value (e.g., 'flex-start', 'center').
-   * - `align`: Flexbox align-items value (e.g., 'flex-start', 'center').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  protected justify = computed(() => {
+  protected readonly justify = computed(() => {
     const val = this.props()['justify']?.value();
-    return val ? (JUSTIFY_MAP[val] || val) : undefined;
+    return val ? JUSTIFY_MAP[val] || val : undefined;
   });
-  protected align = computed(() => {
+  protected readonly align = computed(() => {
     const val = this.props()['align']?.value();
-    return val ? (ALIGN_MAP[val] || val) : undefined;
+    return val ? ALIGN_MAP[val] || val : undefined;
   });
 
-  protected children = computed(() => {
+  protected readonly children = computed(() => {
     const raw = this.props()['children']?.value() || [];
     return Array.isArray(raw) ? raw : [];
   });
 
-  protected isRepeating = computed(() => {
+  protected readonly isRepeating = computed(() => {
     return !!this.props()['children']?.raw?.componentId;
   });
 
-  protected templateId = computed(() => {
+  protected readonly templateId = computed(() => {
     return this.props()['children']?.raw?.componentId;
   });
 
-  protected normalizedChildren = computed(() => {
+  protected readonly normalizedChildren = computed(() => {
     if (this.isRepeating()) return [];
-    return this.children().map(child => {
+    return this.children().map((child) => {
       if (typeof child === 'object' && child !== null && 'id' in child) {
         return child as { id: string; basePath: string };
       }
