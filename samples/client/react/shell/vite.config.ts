@@ -16,9 +16,10 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { plugin as a2aPlugin } from './middleware/a2a';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), a2aPlugin()],
   server: {
     port: 5003,
     strictPort: true,

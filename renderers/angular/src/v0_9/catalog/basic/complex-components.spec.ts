@@ -131,6 +131,24 @@ describe('Complex Components', () => {
       input.click();
       expect(onUpdateSpy).toHaveBeenCalledWith(true);
     });
+
+    it('should apply primary color when checked', () => {
+      fixture.componentRef.setInput('props', {
+        label: createBoundProperty('Check me'),
+        value: createBoundProperty(true),
+      });
+      mockRendererService.surfaceGroup.getSurface.and.returnValue({
+        theme: { primaryColor: 'rgb(255, 0, 0)' },
+        componentsModel: new Map(),
+        catalog: { components: new Map() },
+      });
+      fixture.detectChanges();
+
+      const input = fixture.nativeElement.querySelector('input');
+      const styles = window.getComputedStyle(input);
+
+      expect(styles.accentColor).toBe('rgb(255, 0, 0)');
+    });
   });
 
   describe('ChoicePickerComponent', () => {

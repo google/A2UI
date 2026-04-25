@@ -19,6 +19,7 @@ import { TextComponent } from './text.component';
 import { By } from '@angular/platform-browser';
 import { signal } from '@angular/core';
 import { MarkdownRenderer } from '../../core/markdown';
+import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '../../core/a2ui-renderer.service';
 
 describe('TextComponent', () => {
   let component: TextComponent;
@@ -31,11 +32,16 @@ describe('TextComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TextComponent],
-      providers: [{ provide: MarkdownRenderer, useValue: mockMarkdownRenderer }],
+      providers: [
+        { provide: MarkdownRenderer, useValue: mockMarkdownRenderer },
+        A2uiRendererService,
+        { provide: A2UI_RENDERER_CONFIG, useValue: { catalogs: [] } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('surfaceId', 'surf1');
   });
 
   it('should create', () => {

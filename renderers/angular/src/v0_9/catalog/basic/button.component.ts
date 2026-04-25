@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { DataContext } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BasicCatalogComponent } from './basic-catalog-component';
 
 /**
@@ -74,7 +73,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         color: var(--_a2ui-text-color);
       }
       .a2ui-button.primary {
-        background-color: var(--a2ui-color-primary, #17e);
+        background: var(--a2ui-color-primary, #17e);
         --_a2ui-text-color: var(--a2ui-color-on-primary, #fff);
         color: var(--_a2ui-text-color);
         border: none;
@@ -96,7 +95,6 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent extends BasicCatalogComponent {
-  private rendererService = inject(A2uiRendererService);
 
   readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
   readonly child = computed(() => this.props()['child']?.value());
@@ -105,7 +103,7 @@ export class ButtonComponent extends BasicCatalogComponent {
   handleClick() {
     const action = this.action();
     if (action) {
-      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
+      const surface = this.surface();
       if (surface) {
         const dataContext = new DataContext(surface, this.dataContextPath());
         const resolvedAction = dataContext.resolveAction(action);

@@ -25,17 +25,5 @@ workspace:
   
 flutter:
   uses-material-design: true
-dependency_overrides:
-  a2ui_core:
-    path: /Users/polina/_/genui/packages/a2ui_core
-  genai_primitives:
-    path: /Users/polina/_/genui/packages/genai_primitives
-  genui:
-    path: /Users/polina/_/genui/packages/genui
-  genui_a2a:
-    path: /Users/polina/_/genui/packages/genui_a2a
-  json_schema_builder:
-    path: /Users/polina/_/genui/packages/json_schema_builder
-
 dev_dependencies:
   lints: ^6.1.0
