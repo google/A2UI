@@ -15,7 +15,7 @@
           "imageUrl": { "type": "string", "description": "Restaurant image URL." },
           "address": { "type": "string", "description": "Restaurant address." },
           "minDate": { "type": "string", "format": "date", "description": "Earliest available booking date (ISO 8601)." },
-          "defaultPartySize": { "type": "string", "description": "Suggested party size." }
+          "defaultPartySize": { "type": "number", "description": "Suggested party size." }
         }
       }
     }
@@ -98,12 +98,8 @@
     }
   ],
   "dataModel": {
-    "title": "Book a Table at {{booking.restaurantName}}",
-    "restaurantName": "{{booking.restaurantName}}",
-    "address": "{{booking.address}}",
     "partySize": "{{booking.defaultPartySize}}",
     "reservationTime": "",
-    "dietary": "",
-    "imageUrl": "{{booking.imageUrl}}"
+    "dietary": ""
   }
 }

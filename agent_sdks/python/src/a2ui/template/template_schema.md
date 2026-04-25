@@ -115,6 +115,8 @@ object.
 
 ### Path Resolution Rules
 
+Note: Keys containing literal dots are not supported in path expressions; dots are always treated as delimiters.
+
 | Rule | Placeholder | Data | Result |
 |------|-------------|------|--------|
 | Top-level key | `{{name}}` | `{"name": "Café Lux"}` | `"Café Lux"` |

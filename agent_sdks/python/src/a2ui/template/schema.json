@@ -25,12 +25,14 @@
     },
     "catalogId": {
       "type": "string",
+      "format": "uri",
       "description": "The A2UI catalog that this template's components belong to. Must match a valid catalog ID (e.g. the basic catalog URL). This value is used in the generated 'createSurface' message.",
       "examples": ["https://a2ui.org/specification/v0_9/basic_catalog.json"]
     },
     "surfaceId": {
       "type": "string",
       "description": "The surface ID to use when inflating this template into A2UI messages. If omitted, defaults to the template name.",
+      "pattern": "^([a-z][a-z0-9]*(-[a-z0-9]+)*)?$",
       "default": ""
     },
     "theme": {
@@ -47,6 +49,12 @@
       "type": "array",
       "description": "A flat, ordered list of A2UI component descriptors following the v0.9 catalog format. The first component with id 'root' serves as the component tree root. String-typed property values may contain {{placeholder}} expressions that reference fields from the LLM-provided data.",
       "minItems": 1,
+      "prefixItems": [
+        {
+          "properties": { "id": { "const": "root" } },
+          "required": ["id"]
+        }
+      ],
       "items": {
         "$ref": "#/$defs/TemplateComponent"
       }
