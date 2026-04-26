@@ -22,5 +22,12 @@
         "GEMINI_API_KEY": "${env:GEMINI_API_KEY}"
       }
     },
+    {
+      "name": "fix licenses",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "./scripts/fix_licenses.sh",
+      "cwd": "${workspaceFolder}"
+    },
   ]
 }

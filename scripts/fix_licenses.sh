@@ -44,4 +44,8 @@ addlicense \
   -ignore "**/pnpm-lock.yaml" \
   -ignore "**/package-lock.json" \
   -ignore "**/yarn.lock" \
+  -ignore "**/.venv/**" \
+  -ignore "**/node_modules/**" \
+  -ignore "**/build/**" \
+  -ignore "**/.dart_tool/**" \
   .
