@@ -80,17 +80,14 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   void _handleSubmitFromSurface(ChatMessage message) {
-    print('!!! Submit from surface: $message');
-    // _sendMessageToAgent(message);
+    _sendMessageToAgent(message);
   }
 
   void _handleUiFromAgent(A2uiMessage message) {
-    print('!!! UI from agent: $message');
     _surfaceController.handleMessage(message);
   }
 
   void _handleTextFromAgent(String text) {
-    print('!!! Text from agent: $text');
     _logger.info('Text from agent: $text');
   }
 
@@ -106,7 +103,6 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   void _startLoadingAnimation() {
-    print('!!! Starting loading animation');
     _loadingTextIndex = 0;
     _loadingTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       _loadingTextIndex = (_loadingTextIndex + 1) % _loadingTexts.length;
@@ -115,13 +111,11 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   void _stopLoadingAnimation() {
-    print('!!! Stopping loading animation');
     _loadingTimer?.cancel();
     _loadingTimer = null;
   }
 
   Future<void> sendMessage(String text) async {
-    print('!!! Sending message: $text');
     if (text.isEmpty) return;
     await _sendMessageToAgent(ChatMessage.user(text));
   }
