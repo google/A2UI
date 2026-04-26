@@ -66,13 +66,14 @@ class ErrorBanner extends StatelessWidget {
 }
 
 class LoadingTexts {
+  ///
   static const List<String> _texts = [
-    'Finding restaurants...',
-    'Checking reviews...',
-    'Comparing menus...',
-    'Scanning the neighborhood...',
-    'Picking the best spots...',
+    'Talking to your concierge...',
+    'Checking availability...',
+    'Looking up details...',
+    'Working on your request...',
     'Almost there...',
+    'Just a moment...',
   ];
 
   int _index = 0;
