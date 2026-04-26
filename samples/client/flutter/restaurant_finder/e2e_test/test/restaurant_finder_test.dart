@@ -47,6 +47,8 @@ class _Session extends ChangeNotifier {
     _connector = A2uiAgentConnector(url: Uri.parse(baseUrl));
     final List<Catalog> catalogs = [
       BasicCatalogItems.asCatalog().copyWith(
+        // Catalog id is already fixed in genui at main branch, so, as soon
+        // as this fix gets released, the override will no longer be needed.
         catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
       ),
     ];

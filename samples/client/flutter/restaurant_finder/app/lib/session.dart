@@ -41,6 +41,9 @@ class RestaurantSession extends ChangeNotifier {
   // The agent advertises its catalog under this id (see the Python
   // BasicCatalog provider). The Dart `BasicCatalogItems.asCatalog()` defaults
   // to `.../standard_catalog.json`, so we override the id to match.
+  //
+  // Catalog id is already fixed in genui at main branch, so, as soon
+  // as this fix gets released, the override will no longer be needed.
   static const String _agentCatalogId =
       'https://a2ui.org/specification/v0_9/basic_catalog.json';
 
