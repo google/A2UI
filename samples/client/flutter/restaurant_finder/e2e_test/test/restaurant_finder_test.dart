@@ -45,7 +45,11 @@ void main() {
 class _Session extends ChangeNotifier {
   _Session({required String baseUrl}) {
     _connector = A2uiAgentConnector(url: Uri.parse(baseUrl));
-    final List<Catalog> catalogs = [BasicCatalogItems.asCatalog()];
+    final List<Catalog> catalogs = [
+      BasicCatalogItems.asCatalog().copyWith(
+        catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
+      ),
+    ];
     _surfaceController = SurfaceController(catalogs: catalogs);
     _clientCapabilities = A2UiClientCapabilities.fromCatalogs(catalogs);
     _init();

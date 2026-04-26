@@ -29,11 +29,19 @@ const List<String> _loadingTexts = [
 
 class RestaurantSession extends ChangeNotifier {
   RestaurantSession({String serverUrl = defaultServerUrl}) {
-    final List<Catalog> catalogs = [BasicCatalogItems.asCatalog()];
+    final List<Catalog> catalogs = [
+      BasicCatalogItems.asCatalog().copyWith(catalogId: _agentCatalogId),
+    ];
     _connector = A2uiAgentConnector(url: Uri.parse(serverUrl));
     _surfaceController = SurfaceController(catalogs: catalogs);
     _init();
   }
+
+  // The agent advertises its catalog under this id (see the Python
+  // BasicCatalog provider). The Dart `BasicCatalogItems.asCatalog()` defaults
+  // to `.../standard_catalog.json`, so we override the id to match.
+  static const String _agentCatalogId =
+      'https://a2ui.org/specification/v0_9/basic_catalog.json';
 
   late final A2uiAgentConnector _connector;
   late final SurfaceController _surfaceController;
