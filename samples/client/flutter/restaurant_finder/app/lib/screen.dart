@@ -125,12 +125,14 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                       vertical: 16,
                     ),
                   ),
-                  onSubmitted: (_) => _sendMessage(),
+                  onSubmitted: _session.isRequesting
+                      ? null
+                      : (_) => _sendMessage(),
                 ),
               ),
               const SizedBox(width: 8),
               FilledButton(
-                onPressed: _sendMessage,
+                onPressed: _session.isRequesting ? null : _sendMessage,
                 style: FilledButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(16),

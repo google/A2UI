@@ -53,6 +53,8 @@ class RestaurantSession extends ChangeNotifier {
   bool _isRequesting = false;
   bool get isRequesting => _isRequesting;
 
+  bool _isDisposed = false;
+
   bool _hasSentMessage = false;
   bool get hasSentMessage => _hasSentMessage;
 
@@ -122,14 +124,17 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   Future<void> _sendMessageToAgent(ChatMessage message) async {
-    // Clear existing surfaces on each new request, like lit/shell does.
+    if (_isRequesting) return;
+    _isRequesting = true;
+    _hasSentMessage = true;
+    _error = null;
+    _startLoadingAnimation();
+
+    // Clear existing surfaces on each new request.
     for (final String id in [..._surfaceController.activeSurfaceIds]) {
       _surfaceController.handleMessage(DeleteSurface(surfaceId: id));
     }
-    _hasSentMessage = true;
-    _isRequesting = true;
-    _error = null;
-    _startLoadingAnimation();
+
     notifyListeners();
     try {
       await _connector.connectAndSend(
@@ -148,6 +153,7 @@ class RestaurantSession extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _a2uiSub.cancel();
     _textSub.cancel();
     _submitSub.cancel();
@@ -157,5 +163,11 @@ class RestaurantSession extends ChangeNotifier {
     _surfaceController.dispose();
     _connector.dispose();
     super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (_isDisposed) return;
+    super.notifyListeners();
   }
 }
