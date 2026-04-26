@@ -27,7 +27,7 @@ void main() {
   });
 
   test(
-    'RestaurantSession can talk to restaurant finder.',
+    'RestaurantSession can find restaurants and book a reservation.',
     () async {
       final session = RestaurantSession(
         serverUrl: TestRestaurantFinderClient().baseUrl,
@@ -38,14 +38,38 @@ void main() {
       expect(session.hasSentMessage, isFalse);
       expect(session.activeSurfaceIds, isEmpty);
 
-      await session.sendMessage('Find me 3 italian restaurants in New York.');
+      // 1. Ask the agent to find restaurants.
+      await session.sendMessage(
+        'Find me 3 italian restaurants in New York.',
+      );
 
       expect(session.hasSentMessage, isTrue);
       expect(session.isRequesting, isFalse);
       expect(session.error, isNull);
+      expect(
+        session.activeSurfaceIds,
+        isNotEmpty,
+        reason:
+            'Agent should respond with at least one surface listing the '
+            'restaurants.',
+      );
 
-      // TODO(polina-c): check the response of the service.
+      // 2. Ask the agent to book a table at one of them. This simulates the
+      // user tapping "Book Now" — both paths funnel into _sendMessageToAgent.
+      await session.sendMessage(
+        'Book a table at the first restaurant on Wednesday, April 29 2026 '
+        'at 7:47 PM, for 2 people, dietary requirement: vegan.',
+      );
+
+      expect(session.isRequesting, isFalse);
+      expect(session.error, isNull);
+      expect(
+        session.activeSurfaceIds,
+        isNotEmpty,
+        reason:
+            'Agent should respond with a booking confirmation surface.',
+      );
     },
-    timeout: const Timeout(Duration(minutes: 5)),
+    timeout: const Timeout(Duration(minutes: 10)),
   );
 }

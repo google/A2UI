@@ -34,7 +34,7 @@ class RestaurantScreen extends StatefulWidget {
 
 class _RestaurantScreenState extends State<RestaurantScreen> {
   final TextEditingController _textController = TextEditingController(
-    text: 'Find me 3 Italian restaurants in New York.',
+    text: 'Find me 3 Chinese restaurants in New York.',
   );
   final ScrollController _scrollController = ScrollController();
   late final RestaurantSession _session;
