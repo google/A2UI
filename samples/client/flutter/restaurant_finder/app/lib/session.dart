@@ -29,7 +29,7 @@ const List<String> _loadingTexts = [
 
 class RestaurantSession extends ChangeNotifier {
   RestaurantSession({String serverUrl = defaultServerUrl}) {
-    final catalogs = [BasicCatalogItems.asCatalog()];
+    final List<Catalog> catalogs = [BasicCatalogItems.asCatalog()];
     _connector = A2uiAgentConnector(url: Uri.parse(serverUrl));
     _surfaceController = SurfaceController(catalogs: catalogs);
     _init();
@@ -64,19 +64,31 @@ class RestaurantSession extends ChangeNotifier {
   late final StreamSubscription<SurfaceUpdate> _surfaceSub;
 
   void _init() {
-    _a2uiSub = _connector.stream.listen(_surfaceController.handleMessage);
-    _textSub = _connector.textStream.listen((text) {
-      _logger.info('Text from agent: $text');
-    });
+    _a2uiSub = _connector.stream.listen(_handleUiFromAgent);
+    _textSub = _connector.textStream.listen(_handleTextFromAgent);
     _submitSub = _surfaceController.onSubmit.listen(_sendMessageToAgent);
-    _errorSub = _connector.errorStream.listen((err) {
-      _error = err.toString();
-      _logger.severe('Error from agent: $err');
-      notifyListeners();
-    });
-    _surfaceSub = _surfaceController.surfaceUpdates.listen((_) {
-      notifyListeners();
-    });
+    _errorSub = _connector.errorStream.listen(_handleError);
+    _surfaceSub = _surfaceController.surfaceUpdates.listen(
+      _handleSurfaceUpdate,
+    );
+  }
+
+  void _handleUiFromAgent(A2uiMessage message) {
+    _surfaceController.handleMessage(message);
+  }
+
+  void _handleTextFromAgent(String text) {
+    _logger.info('Text from agent: $text');
+  }
+
+  void _handleError(Object err) {
+    _error = err.toString();
+    _logger.severe('Error from agent: $err');
+    notifyListeners();
+  }
+
+  void _handleSurfaceUpdate(SurfaceUpdate _) {
+    notifyListeners();
   }
 
   void _startLoadingAnimation() {
@@ -99,7 +111,7 @@ class RestaurantSession extends ChangeNotifier {
 
   Future<void> _sendMessageToAgent(ChatMessage message) async {
     // Clear existing surfaces on each new request, like lit/shell does.
-    for (final id in [..._surfaceController.activeSurfaceIds]) {
+    for (final String id in [..._surfaceController.activeSurfaceIds]) {
       _surfaceController.handleMessage(DeleteSurface(surfaceId: id));
     }
     _hasSentMessage = true;
