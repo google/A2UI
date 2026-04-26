@@ -68,9 +68,7 @@ class RestaurantSession extends ChangeNotifier {
     _textSub = _connector.textStream.listen(_handleTextFromAgent);
     _submitSub = _surfaceController.onSubmit.listen(_sendMessageToAgent);
     _errorSub = _connector.errorStream.listen(_handleError);
-    _surfaceSub = _surfaceController.surfaceUpdates.listen(
-      _handleSurfaceUpdate,
-    );
+    _surfaceSub = _surfaceController.surfaceUpdates.listen(_onSurfaceChanged);
   }
 
   void _handleUiFromAgent(A2uiMessage message) {
@@ -87,7 +85,7 @@ class RestaurantSession extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _handleSurfaceUpdate(SurfaceUpdate _) {
+  void _onSurfaceChanged(SurfaceUpdate _) {
     notifyListeners();
   }
 
