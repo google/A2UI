@@ -11,6 +11,6 @@ import 'package:restaurant_finder_client/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const RestaurantFinderApp());
   });
 }
