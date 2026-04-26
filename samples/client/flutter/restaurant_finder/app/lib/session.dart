@@ -66,9 +66,14 @@ class RestaurantSession extends ChangeNotifier {
   void _init() {
     _a2uiSub = _connector.stream.listen(_handleUiFromAgent);
     _textSub = _connector.textStream.listen(_handleTextFromAgent);
-    _submitSub = _surfaceController.onSubmit.listen(_sendMessageToAgent);
+    _submitSub = _surfaceController.onSubmit.listen(_handleSubmitFromSurface);
     _errorSub = _connector.errorStream.listen(_handleError);
     _surfaceSub = _surfaceController.surfaceUpdates.listen(_onSurfaceChanged);
+  }
+
+  void _handleSubmitFromSurface(ChatMessage message) {
+    print('!!! Submit from surface: $message');
+    // _sendMessageToAgent(message);
   }
 
   void _handleUiFromAgent(A2uiMessage message) {
