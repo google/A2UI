@@ -28,8 +28,6 @@ const String defaultServerUrl = 'http://localhost:10002';
 
 class RestaurantSession extends ChangeNotifier {
   RestaurantSession({String serverUrl = defaultServerUrl}) {
-    print('!!! new: $_agentCatalogId');
-    print('!!! original: ${BasicCatalogItems.asCatalog().catalogId}');
     final List<Catalog> catalogs = [
       BasicCatalogItems.asCatalog().copyWith(catalogId: _agentCatalogId),
     ];
@@ -96,7 +94,6 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   void _handleError(Object err) {
-    print('!!! Error from agent: $err');
     _error = err.toString();
     _logger.severe('Error from agent', err, StackTrace.current);
     notifyListeners();

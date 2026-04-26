@@ -26,10 +26,6 @@ void main() {
     await restaurantFinderClient.startAndVerify();
   });
 
-  tearDown(() {
-    print('Teared down the test.');
-  });
-
   test(
     'RestaurantSession can talk to restaurant finder.',
     () async {
