@@ -20,7 +20,7 @@ import 'session.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Logger.root.level = Level.ALL;
+  Logger.root.level = Level.WARNING;
   Logger.root.onRecord.listen((record) {
     debugPrint('${record.level.name}: ${record.time}: ${record.message}');
   });
@@ -92,7 +92,6 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   void initState() {
     super.initState();
     _session = RestaurantSession();
-    _session.addListener(_scrollToBottom);
   }
 
   @override
@@ -222,18 +221,6 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     final text = _textController.text.trim();
     if (text.isEmpty) return;
     await _session.sendMessage(text);
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
   }
 
   @override
