@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:logging/logging.dart';
 
+import 'primitives.dart';
 import 'session.dart';
 
 void main() async {
@@ -111,7 +112,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
               Positioned(
                 top: 8,
                 right: 16,
-                child: _ThemeToggleButton(
+                child: ThemeToggleButton(
                   themeMode: widget.themeMode,
                   onToggle: widget.onToggleTheme,
                 ),
@@ -187,7 +188,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
           ),
           if (_session.error != null) ...[
             const SizedBox(height: 16),
-            _ErrorBanner(message: _session.error!),
+            ErrorBanner(message: _session.error!),
           ],
         ],
       ),
@@ -195,10 +196,10 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   }
 
   Widget _buildSurfaces() {
-    final surfaceIds = _session.activeSurfaceIds.toList();
+    final List<String> surfaceIds = _session.activeSurfaceIds.toList();
     return Column(
       children: [
-        if (_session.error != null) _ErrorBanner(message: _session.error!),
+        if (_session.error != null) ErrorBanner(message: _session.error!),
         Expanded(
           child: surfaceIds.isEmpty
               ? const Center(child: CircularProgressIndicator())
@@ -218,7 +219,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   }
 
   Future<void> _sendMessage() async {
-    final text = _textController.text.trim();
+    final String text = _textController.text.trim();
     if (text.isEmpty) return;
     await _session.sendMessage(text);
   }
@@ -229,56 +230,5 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     _textController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-}
-
-class _ThemeToggleButton extends StatelessWidget {
-  const _ThemeToggleButton({required this.themeMode, required this.onToggle});
-
-  final ThemeMode themeMode;
-  final VoidCallback onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
-      ),
-      onPressed: onToggle,
-      style: IconButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        shape: const CircleBorder(),
-      ),
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  const _ErrorBanner({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.errorContainer,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          message,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onErrorContainer,
-          ),
-        ),
-      ),
-    );
   }
 }
