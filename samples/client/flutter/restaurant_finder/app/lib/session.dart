@@ -19,7 +19,7 @@ import 'package:genui/genui.dart';
 import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
-const String _serverUrl = 'http://localhost:10002';
+const String defaultServerUrl = 'http://localhost:10002';
 
 const List<String> _loadingTexts = [
   'Finding restaurants...',
@@ -28,9 +28,9 @@ const List<String> _loadingTexts = [
 ];
 
 class RestaurantSession extends ChangeNotifier {
-  RestaurantSession() {
+  RestaurantSession({String serverUrl = defaultServerUrl}) {
     final catalogs = [BasicCatalogItems.asCatalog()];
-    _connector = A2uiAgentConnector(url: Uri.parse(_serverUrl));
+    _connector = A2uiAgentConnector(url: Uri.parse(serverUrl));
     _surfaceController = SurfaceController(catalogs: catalogs);
     _init();
   }

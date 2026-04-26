@@ -39,8 +39,9 @@ class _RestaurantFinderAppState extends State<RestaurantFinderApp> {
 
   void _toggleTheme() {
     setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+      _themeMode = _themeMode == ThemeMode.dark
+          ? ThemeMode.light
+          : ThemeMode.dark;
     });
   }
 
@@ -98,29 +99,28 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: _session,
-      builder:
-          (context, _) => Scaffold(
-            body: SafeArea(
-              child: Stack(
-                children: [
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 640),
-                      child: _buildContent(),
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 16,
-                    child: _ThemeToggleButton(
-                      themeMode: widget.themeMode,
-                      onToggle: widget.onToggleTheme,
-                    ),
-                  ),
-                ],
+      builder: (context, _) => Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 640),
+                  child: _buildContent(),
+                ),
               ),
-            ),
+              Positioned(
+                top: 8,
+                right: 16,
+                child: _ThemeToggleButton(
+                  themeMode: widget.themeMode,
+                  onToggle: widget.onToggleTheme,
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 
@@ -131,10 +131,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
-          Text(
-            _session.loadingText,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          Text("loading", style: Theme.of(context).textTheme.bodyLarge),
         ],
       );
     }
@@ -202,23 +199,20 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     final surfaceIds = _session.activeSurfaceIds.toList();
     return Column(
       children: [
-        if (_session.error != null)
-          _ErrorBanner(message: _session.error!),
+        if (_session.error != null) _ErrorBanner(message: _session.error!),
         Expanded(
-          child:
-              surfaceIds.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(12),
-                    itemCount: surfaceIds.length,
-                    itemBuilder:
-                        (context, i) => Surface(
-                          surfaceContext: _session.surfaceHost.contextFor(
-                            surfaceIds[i],
-                          ),
-                        ),
+          child: surfaceIds.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(12),
+                  itemCount: surfaceIds.length,
+                  itemBuilder: (context, i) => Surface(
+                    surfaceContext: _session.surfaceHost.contextFor(
+                      surfaceIds[i],
+                    ),
                   ),
+                ),
         ),
       ],
     );
@@ -293,7 +287,9 @@ class _ErrorBanner extends StatelessWidget {
         ),
         child: Text(
           message,
-          style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onErrorContainer,
+          ),
         ),
       ),
     );
