@@ -81,7 +81,10 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
-          Text("loading", style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            _session.loadingText,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ],
       );
     }

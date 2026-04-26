@@ -21,11 +21,25 @@ import 'package:logging/logging.dart';
 
 const String defaultServerUrl = 'http://localhost:10002';
 
-const List<String> _loadingTexts = [
-  'Finding restaurants...',
-  'Checking reviews...',
-  'Almost there...',
-];
+class _LoadingTexts {
+  static const List<String> _texts = [
+    'Finding restaurants...',
+    'Checking reviews...',
+    'Almost there...',
+  ];
+
+  int _index = 0;
+
+  String get current => _texts[_index];
+
+  void advance() {
+    _index = (_index + 1) % _texts.length;
+  }
+
+  void reset() {
+    _index = 0;
+  }
+}
 
 class RestaurantSession extends ChangeNotifier {
   RestaurantSession({String serverUrl = defaultServerUrl}) {
@@ -54,8 +68,8 @@ class RestaurantSession extends ChangeNotifier {
   bool _hasSentMessage = false;
   bool get hasSentMessage => _hasSentMessage;
 
-  int _loadingTextIndex = 0;
-  String get loadingText => _loadingTexts[_loadingTextIndex];
+  final _LoadingTexts _loadingTexts = _LoadingTexts();
+  String get loadingText => _loadingTexts.current;
 
   String? _error;
   String? get error => _error;
@@ -103,9 +117,9 @@ class RestaurantSession extends ChangeNotifier {
   }
 
   void _startLoadingAnimation() {
-    _loadingTextIndex = 0;
+    _loadingTexts.reset();
     _loadingTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-      _loadingTextIndex = (_loadingTextIndex + 1) % _loadingTexts.length;
+      _loadingTexts.advance();
       notifyListeners();
     });
   }
