@@ -84,7 +84,7 @@ class RestaurantSession extends ChangeNotifier {
   void _handleError(Object err) {
     print('!!! Error from agent: $err');
     _error = err.toString();
-    _logger.severe('Error from agent: $err');
+    _logger.severe('Error from agent', err, StackTrace.current);
     notifyListeners();
   }
 
