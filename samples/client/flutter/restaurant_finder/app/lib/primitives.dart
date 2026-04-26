@@ -64,3 +64,26 @@ class ErrorBanner extends StatelessWidget {
     );
   }
 }
+
+class LoadingTexts {
+  static const List<String> _texts = [
+    'Finding restaurants...',
+    'Checking reviews...',
+    'Comparing menus...',
+    'Scanning the neighborhood...',
+    'Picking the best spots...',
+    'Almost there...',
+  ];
+
+  int _index = 0;
+
+  String get current => _texts[_index];
+
+  void advance() {
+    _index = (_index + 1) % _texts.length;
+  }
+
+  void reset() {
+    _index = 0;
+  }
+}

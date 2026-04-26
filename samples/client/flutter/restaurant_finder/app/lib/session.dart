@@ -19,30 +19,17 @@ import 'package:genui/genui.dart';
 import 'package:genui_a2a/genui_a2a.dart';
 import 'package:logging/logging.dart';
 
+import 'primitives.dart';
+
 const String defaultServerUrl = 'http://localhost:10002';
 
-class _LoadingTexts {
-  static const List<String> _texts = [
-    'Finding restaurants...',
-    'Checking reviews...',
-    'Almost there...',
-  ];
-
-  int _index = 0;
-
-  String get current => _texts[_index];
-
-  void advance() {
-    _index = (_index + 1) % _texts.length;
-  }
-
-  void reset() {
-    _index = 0;
-  }
-}
+// https://a2ui.org/specification/v0_9/basic_catalog.json
+// https://a2ui.org/specification/v0_9/standard_catalog.json
 
 class RestaurantSession extends ChangeNotifier {
   RestaurantSession({String serverUrl = defaultServerUrl}) {
+    print('!!! new: $_agentCatalogId');
+    print('!!! original: ${BasicCatalogItems.asCatalog().catalogId}');
     final List<Catalog> catalogs = [
       BasicCatalogItems.asCatalog().copyWith(catalogId: _agentCatalogId),
     ];
@@ -68,7 +55,7 @@ class RestaurantSession extends ChangeNotifier {
   bool _hasSentMessage = false;
   bool get hasSentMessage => _hasSentMessage;
 
-  final _LoadingTexts _loadingTexts = _LoadingTexts();
+  final LoadingTexts _loadingTexts = LoadingTexts();
   String get loadingText => _loadingTexts.current;
 
   String? _error;
