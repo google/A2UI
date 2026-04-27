@@ -48,7 +48,7 @@ from tools import get_contact_info
 
 logger = logging.getLogger(__name__)
 
-SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
+SUPPORTED_CONTENT_TYPES = ["text/plain"]
 
 dotenv.load_dotenv()
 
@@ -106,7 +106,7 @@ class ContactAgent:
         extensions.append(ext)
 
     capabilities = AgentCapabilities(
-        streaming=True,
+        streaming=False,
         extensions=extensions,
     )
     skill = AgentSkill(
@@ -133,7 +133,7 @@ class ContactAgent:
         default_input_modes=SUPPORTED_CONTENT_TYPES,
         default_output_modes=SUPPORTED_CONTENT_TYPES,
         capabilities=capabilities,
-        preferred_transport="HTTP+JSON",
+        preferred_transport="JSONRPC",
         skills=[skill],
     )
 
