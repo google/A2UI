@@ -7,12 +7,12 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="A2UI, a streaming protocol for Agent-Driven User Interfaces" name="description"/>
 <meta content="Google" name="author"/>
-<link href="https://a2ui.org/guides/theming/" rel="canonical"/>
-<link href="../authoring-components/" rel="prev"/>
-<link href="../a2ui_over_mcp/" rel="next"/>
+<link href="https://a2ui.org/guides/mcp-apps-in-a2ui/" rel="canonical"/>
+<link href="../a2ui_over_mcp/" rel="prev"/>
+<link href="../a2ui-in-mcp-apps/" rel="next"/>
 <link href="../../assets/A2UI_dark.svg" rel="icon"/>
 <meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
-<title>Theming &amp; Styling - A2UI</title>
+<title>MCP Apps in A2UI - A2UI</title>
 <link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
 <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M64%20480c-35.3%200-64-28.7-64-64V96c0-35.3%2028.7-64%2064-64h320c35.3%200%2064%2028.7%2064%2064v213.5c0%2017-6.7%2033.3-18.7%2045.3L322.7%20461.3c-12%2012-28.3%2018.7-45.3%2018.7zm325.5-176H296c-13.3%200-24%2010.7-24%2024v93.5z%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M384%20512H96c-53%200-96-43-96-96V96C0%2043%2043%200%2096%200h304c26.5%200%2048%2021.5%2048%2048v288c0%2020.9-13.4%2038.7-32%2045.3V448c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032zM96%20384c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032h256v-64zm32-232c0%2013.3%2010.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24H152c-13.3%200-24%2010.7-24%2024m24%2072c-13.3%200-24%2010.7-24%2024s10.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24z%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m-32-352a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200m-8%2064h48c13.3%200%2024%2010.7%2024%2024v88h8c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-80c-13.3%200-24-10.7-24-24s10.7-24%2024-24h24v-64h-24c-13.3%200-24-10.7-24-24s10.7-24%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M461.2%2018.9C472.7%2024%20480%2035.4%20480%2048v416c0%2012.6-7.3%2024-18.8%2029.1s-24.8%203.2-34.3-5.1l-46.6-40.7c-43.6-38.1-98.7-60.3-156.4-63V480c0%2017.7-14.3%2032-32%2032h-32c-17.7%200-32-14.3-32-32v-96C57.3%20384%200%20326.7%200%20256s57.3-128%20128-128h84.5c61.8-.2%20121.4-22.7%20167.9-63.3L427%2024c9.4-8.3%2022.9-10.2%2034.3-5.1zM224%20320v.2c70.3%202.7%20137.8%2028.5%20192%2073.4V118.3c-54.2%2044.9-121.7%2070.7-192%2073.4z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M434.8%2070.1c14.3%2010.4%2017.5%2030.4%207.1%2044.7l-256%20352c-5.5%207.6-14%2012.3-23.4%2013.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8%200-45.3s32.8-12.5%2045.3%200l101.5%20101.5%20234-321.7c10.4-14.3%2030.4-17.5%2044.7-7.1z%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m0-336c-17.7%200-32%2014.3-32%2032%200%2013.3-10.7%2024-24%2024s-24-10.7-24-24c0-44.2%2035.8-80%2080-80s80%2035.8%2080%2080c0%2047.2-36%2067.2-56%2074.5v3.8c0%2013.3-10.7%2024-24%2024s-24-10.7-24-24v-8.1c0-20.5%2014.8-35.2%2030.1-40.2%206.4-2.1%2013.2-5.5%2018.2-10.3%204.3-4.2%207.7-10%207.7-19.6%200-17.7-14.3-32-32-32zm-32%20192a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%200c14.7%200%2028.2%208.1%2035.2%2021l216%20400c6.7%2012.4%206.4%2027.4-.8%2039.5S486.1%20480%20472%20480H40c-14.1%200-27.2-7.4-34.4-19.5s-7.5-27.1-.8-39.5l216-400c7-12.9%2020.5-21%2035.2-21m0%20352a32%2032%200%201%200%200%2064%2032%2032%200%201%200%200-64m0-192c-18.2%200-32.7%2015.5-31.4%2033.7l7.4%20104c.9%2012.5%2011.4%2022.3%2023.9%2022.3%2012.6%200%2023-9.7%2023.9-22.3l7.4-104c1.3-18.2-13.1-33.7-31.4-33.7z%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20576%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M480-16c6.9%200%2013%204.4%2015.2%2010.9l13.5%2040.4%2040.4%2013.5C555.6%2051%20560%2057.1%20560%2064s-4.4%2013-10.9%2015.2l-40.4%2013.5-13.5%2040.4c-2.2%206.5-8.3%2010.9-15.2%2010.9s-13-4.4-15.2-10.9l-13.5-40.4-40.4-13.5C404.4%2077%20400%2070.9%20400%2064s4.4-13%2010.9-15.2l40.4-13.5%2013.5-40.4C467-11.6%20473.1-16%20480-16M321.4%2097.4c12.5-12.5%2032.8-12.5%2045.3%200l80%2080c12.5%2012.5%2012.5%2032.8%200%2045.3l-10.9%2010.9c7.9%2022%2012.2%2045.7%2012.2%2070.5%200%20114.9-93.1%20208-208%20208S32%20418.9%2032%20304%20125.1%2096%20240%2096c24.7%200%2048.5%204.3%2070.5%2012.3zM144%20304c0-53%2043-96%2096-96%2013.3%200%2024-10.7%2024-24s-10.7-24-24-24c-79.5%200-144%2064.5-144%20144%200%2013.3%2010.7%2024%2024%2024s24-10.7%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M416%20427.4c58.5-44%2096-111.6%2096-187.4C512%20107.5%20397.4%200%20256%200S0%20107.5%200%20240c0%2075.8%2037.5%20143.4%2096%20187.4V464c0%2026.5%2021.5%2048%2048%2048h32v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h64v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h32c26.5%200%2048-21.5%2048-48zM96%20256a64%2064%200%201%201%20128%200%2064%2064%200%201%201-128%200m256-64a64%2064%200%201%201%200%20128%2064%2064%200%201%201%200-128%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M352%200c0-17.7-14.3-32-32-32s-32%2014.3-32%2032v64h-96c-53%200-96%2043-96%2096v224c0%2053%2043%2096%2096%2096h256c53%200%2096-43%2096-96V160c0-53-43-96-96-96h-96zM160%20368c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24M224%20176a48%2048%200%201%201%200%2096%2048%2048%200%201%201%200-96m144%2048a48%2048%200%201%201%2096%200%2048%2048%200%201%201-96%200m-304%200c0-17.7-14.3-32-32-32S0%20206.3%200%20224v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32zm544-32c-17.7%200-32%2014.3-32%2032v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32v-96c0-17.7-14.3-32-32-32%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M288%200H128c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032v151.5L7.5%20426.3C2.6%20435%200%20444.7%200%20454.7%200%20486.4%2025.6%20512%2057.3%20512h333.4c31.6%200%2057.3-25.6%2057.3-57.3%200-10-2.6-19.8-7.5-28.4L320%20215.5V64c17.7%200%2032-14.3%2032-32S337.7%200%20320%200zm-96%20215.5V64h64v151.5c0%2011.1%202.9%2022.1%208.4%2031.8L306%20320H142l41.6-72.7c5.5-9.7%208.4-20.6%208.4-31.8%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M0%20216C0%20149.7%2053.7%2096%20120%2096h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064H64c-35.3%200-64-28.7-64-64zm256%200c0-66.3%2053.7-120%20120-120h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064h-64c-35.3%200-64-28.7-64-64z%22/%3E%3C/svg%3E');}</style>
@@ -29,7 +29,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#theming-styling">
+<a class="md-skip" href="#mcp-apps-integration-in-a2ui-surfaces">
           Skip to content
         </a>
 </div>
@@ -53,7 +53,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Theming &amp; Styling
+              MCP Apps in A2UI
             
           </span>
 </div>
@@ -451,20 +451,8 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    
-  
-    Theming &amp; Styling
-  
-
-    
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../theming/">
 <span class="md-ellipsis">
     
   
@@ -474,192 +462,6 @@
     
   </span>
 </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-a2ui-styling-philosophy">
-<span class="md-ellipsis">
-      
-        The A2UI Styling Philosophy
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#styling-layers">
-<span class="md-ellipsis">
-      
-        Styling Layers
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#agent-provided-styling-information">
-<span class="md-ellipsis">
-      
-        Agent-provided styling information
-      
-    </span>
-</a>
-<nav aria-label="Agent-provided styling information" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#semantic-hints">
-<span class="md-ellipsis">
-      
-        Semantic hints
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#theme-property">
-<span class="md-ellipsis">
-      
-        theme property
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#catalog-theming">
-<span class="md-ellipsis">
-      
-        Catalog theming
-      
-    </span>
-</a>
-<nav aria-label="Catalog theming" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-web-basic-catalog-theming">
-<span class="md-ellipsis">
-      
-        The Web Basic Catalog Theming
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#per-component-overrides">
-<span class="md-ellipsis">
-      
-        Per-component overrides
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#common-styling-features">
-<span class="md-ellipsis">
-      
-        Common Styling Features
-      
-    </span>
-</a>
-<nav aria-label="Common Styling Features" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#dark-mode">
-<span class="md-ellipsis">
-      
-        Dark Mode
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#custom-fonts">
-<span class="md-ellipsis">
-      
-        Custom Fonts
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#flutter">
-<span class="md-ellipsis">
-      
-        Flutter
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#best-practices">
-<span class="md-ellipsis">
-      
-        Best Practices
-      
-    </span>
-</a>
-<nav aria-label="Best Practices" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#1-use-semantic-hints-not-visual-properties">
-<span class="md-ellipsis">
-      
-        1. Use Semantic Hints, Not Visual Properties
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#2-maintain-accessibility">
-<span class="md-ellipsis">
-      
-        2. Maintain Accessibility
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#3-use-design-tokens">
-<span class="md-ellipsis">
-      
-        3. Use Design Tokens
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#4-test-across-platforms">
-<span class="md-ellipsis">
-      
-        4. Test Across Platforms
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#next-steps">
-<span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../a2ui_over_mcp/">
@@ -673,8 +475,20 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../mcp-apps-in-a2ui/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    MCP Apps in A2UI
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
     
   
@@ -684,6 +498,191 @@
     
   </span>
 </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#double-iframe-isolation-pattern">
+<span class="md-ellipsis">
+      
+        Double-Iframe Isolation Pattern
+      
+    </span>
+</a>
+<nav aria-label="Double-Iframe Isolation Pattern" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-rationale">
+<span class="md-ellipsis">
+      
+        Security Rationale
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-architecture">
+<span class="md-ellipsis">
+      
+        The Architecture
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture-diagram">
+<span class="md-ellipsis">
+      
+        Architecture Diagram
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#usage-code-example">
+<span class="md-ellipsis">
+      
+        Usage / Code Example
+      
+    </span>
+</a>
+<nav aria-label="Usage / Code Example" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-register-within-the-catalog">
+<span class="md-ellipsis">
+      
+        1. Register within the Catalog
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-usage-in-a2ui-message">
+<span class="md-ellipsis">
+      
+        2. Usage in A2UI Message
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#communication-protocol">
+<span class="md-ellipsis">
+      
+        Communication Protocol
+      
+    </span>
+</a>
+<nav aria-label="Communication Protocol" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#limitations">
+<span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#prerequisites">
+<span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#samples">
+<span class="md-ellipsis">
+      
+        Samples
+      
+    </span>
+</a>
+<nav aria-label="Samples" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#1-mcp-app-standalone-sample-lit-adk-agent">
+<span class="md-ellipsis">
+      
+        1. MCP App Standalone Sample (Lit &amp; ADK Agent)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2-mcp-apps-calculator-pong-angular">
+<span class="md-ellipsis">
+      
+        2. MCP Apps (Calculator + Pong) (Angular)
+      
+    </span>
+</a>
+<nav aria-label="2. MCP Apps (Calculator + Pong) (Angular)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-3-open-in-browser">
+<span class="md-ellipsis">
+      
+        Step 3: Open in Browser
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">
+<span class="md-ellipsis">
+      
+        Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
+      
+    </span>
+</a>
+<nav aria-label="Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-start-the-mcp-server-calculator">
+<span class="md-ellipsis">
+      
+        Step 1: Start the MCP Server (Calculator)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../a2ui-in-mcp-apps/">
@@ -989,47 +988,47 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#the-a2ui-styling-philosophy">
+<a class="md-nav__link" href="#overview">
 <span class="md-ellipsis">
       
-        The A2UI Styling Philosophy
+        Overview
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#styling-layers">
+<a class="md-nav__link" href="#double-iframe-isolation-pattern">
 <span class="md-ellipsis">
       
-        Styling Layers
+        Double-Iframe Isolation Pattern
       
     </span>
 </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#agent-provided-styling-information">
-<span class="md-ellipsis">
-      
-        Agent-provided styling information
-      
-    </span>
-</a>
-<nav aria-label="Agent-provided styling information" class="md-nav">
+<nav aria-label="Double-Iframe Isolation Pattern" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#semantic-hints">
+<a class="md-nav__link" href="#security-rationale">
 <span class="md-ellipsis">
       
-        Semantic hints
+        Security Rationale
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#theme-property">
+<a class="md-nav__link" href="#the-architecture">
 <span class="md-ellipsis">
       
-        theme property
+        The Architecture
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture-diagram">
+<span class="md-ellipsis">
+      
+        Architecture Diagram
       
     </span>
 </a>
@@ -1038,29 +1037,29 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#catalog-theming">
+<a class="md-nav__link" href="#usage-code-example">
 <span class="md-ellipsis">
       
-        Catalog theming
+        Usage / Code Example
       
     </span>
 </a>
-<nav aria-label="Catalog theming" class="md-nav">
+<nav aria-label="Usage / Code Example" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#the-web-basic-catalog-theming">
+<a class="md-nav__link" href="#1-register-within-the-catalog">
 <span class="md-ellipsis">
       
-        The Web Basic Catalog Theming
+        1. Register within the Catalog
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#per-component-overrides">
+<a class="md-nav__link" href="#2-usage-in-a2ui-message">
 <span class="md-ellipsis">
       
-        Per-component overrides
+        2. Usage in A2UI Message
       
     </span>
 </a>
@@ -1069,29 +1068,20 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#common-styling-features">
+<a class="md-nav__link" href="#communication-protocol">
 <span class="md-ellipsis">
       
-        Common Styling Features
+        Communication Protocol
       
     </span>
 </a>
-<nav aria-label="Common Styling Features" class="md-nav">
+<nav aria-label="Communication Protocol" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#dark-mode">
+<a class="md-nav__link" href="#limitations">
 <span class="md-ellipsis">
       
-        Dark Mode
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#custom-fonts">
-<span class="md-ellipsis">
-      
-        Custom Fonts
+        Limitations
       
     </span>
 </a>
@@ -1100,56 +1090,48 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#flutter">
+<a class="md-nav__link" href="#prerequisites">
 <span class="md-ellipsis">
       
-        Flutter
+        Prerequisites
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#best-practices">
+<a class="md-nav__link" href="#samples">
 <span class="md-ellipsis">
       
-        Best Practices
+        Samples
       
     </span>
 </a>
-<nav aria-label="Best Practices" class="md-nav">
+<nav aria-label="Samples" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#1-use-semantic-hints-not-visual-properties">
+<a class="md-nav__link" href="#1-mcp-app-standalone-sample-lit-adk-agent">
 <span class="md-ellipsis">
       
-        1. Use Semantic Hints, Not Visual Properties
+        1. MCP App Standalone Sample (Lit &amp; ADK Agent)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#2-maintain-accessibility">
+<a class="md-nav__link" href="#2-mcp-apps-calculator-pong-angular">
 <span class="md-ellipsis">
       
-        2. Maintain Accessibility
+        2. MCP Apps (Calculator + Pong) (Angular)
       
     </span>
 </a>
-</li>
+<nav aria-label="2. MCP Apps (Calculator + Pong) (Angular)" class="md-nav">
+<ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#3-use-design-tokens">
+<a class="md-nav__link" href="#step-3-open-in-browser">
 <span class="md-ellipsis">
       
-        3. Use Design Tokens
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#4-test-across-platforms">
-<span class="md-ellipsis">
-      
-        4. Test Across Platforms
+        Step 3: Open in Browser
       
     </span>
 </a>
@@ -1158,13 +1140,29 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#next-steps">
+<a class="md-nav__link" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">
 <span class="md-ellipsis">
       
-        Next Steps
+        Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
       
     </span>
 </a>
+<nav aria-label="Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#step-1-start-the-mcp-server-calculator">
+<span class="md-ellipsis">
+      
+        Step 1: Start the MCP Server (Calculator)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -1191,139 +1189,275 @@
 </ol>
 </nav>
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/guides/theming.md" title="View source of this page">
+<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/guides/mcp-apps-in-a2ui.md" title="View source of this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
 </a>
-<h1 id="theming-styling">Theming &amp; Styling<a class="headerlink" href="#theming-styling" title="Permanent link">¶</a></h1>
-<p>Customize the look and feel of A2UI components to match your brand.</p>
-<h2 id="the-a2ui-styling-philosophy">The A2UI Styling Philosophy<a class="headerlink" href="#the-a2ui-styling-philosophy" title="Permanent link">¶</a></h2>
-<p>A2UI follows a <strong>renderer-controlled styling</strong> approach by default, but allows for flexibility through catalogs:</p>
-<ul>
-<li><strong>Agents describe <em>what</em> to show</strong> (components and structure)</li>
-<li><strong>Renderers decide <em>how</em> it looks</strong> (colors, fonts, spacing)</li>
+<h1 id="mcp-apps-integration-in-a2ui-surfaces">MCP Apps Integration in A2UI Surfaces<a class="headerlink" href="#mcp-apps-integration-in-a2ui-surfaces" title="Permanent link">¶</a></h1>
+<p>This guide explains how <strong>Model Context Protocol (MCP) Applications</strong> are integrated and displayed within the <strong>A2UI</strong> surface, along with the security model and testing guidelines.</p>
+<blockquote>
+<p>NOTE: Looking for the core A2UI-over-MCP protocol? See <a href="../a2ui_over_mcp/">A2UI over MCP</a> for how to return A2UI JSON payloads from MCP tool calls.</p>
+</blockquote>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.</p>
+<p><img alt="MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent" src="../assets/mcp-apps-calculator-demo.gif" width="640"/></p>
+<h2 id="double-iframe-isolation-pattern">Double-Iframe Isolation Pattern<a class="headerlink" href="#double-iframe-isolation-pattern" title="Permanent link">¶</a></h2>
+<p>To run untrusted third-party code securely, A2UI utilizes a <strong>double-iframe</strong> isolation pattern. This approach isolates raw DOM injection from the main application while maintaining a structured JSON-RPC channel.</p>
+<h3 id="security-rationale">Security Rationale<a class="headerlink" href="#security-rationale" title="Permanent link">¶</a></h3>
+<p>Standard single-iframe sandboxing with <code>allow-scripts</code> is often bypassed if combined with <code>allow-same-origin</code>, which defeats the containerization. Any iframe with <code>allow-scripts</code> and <code>allow-same-origin</code> can escape its sandbox by programmatically interacting with its parent DOM or removing its own sandbox attribute.</p>
+<p>To prevent this, A2UI strictly excludes <code>allow-same-origin</code> for the inner iframe where the third-party application runs.</p>
+<h3 id="the-architecture">The Architecture<a class="headerlink" href="#the-architecture" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong><a href="https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html">Sandbox Proxy (<code>sandbox.html</code>)</a></strong>: An intermediate <code>iframe</code> served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.<ul>
+<li>Permissions: <strong>Do not sandbox</strong> in the host template (e.g., <a href="https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts"><code>mcp-app.ts</code></a> or <a href="https://github.com/google/A2UI/blob/main/samples/client/lit/custom-components-example/ui/custom-components/mcp-apps-component.ts"><code>mcp-apps-component.ts</code></a>).</li>
+<li>Host origin validation: Validates that messages come from the expected host origin.</li>
 </ul>
-<p>However, the protocol is flexible enough to allow agents to influence styling when needed.</p>
-<h2 id="styling-layers">Styling Layers<a class="headerlink" href="#styling-layers" title="Permanent link">¶</a></h2>
-<p>A2UI styling works in layers:</p>
+</li>
+<li><strong>Embedded App (Inner Iframe)</strong>: The innermost <code>iframe</code>. Injected dynamically via <code>srcdoc</code> with restricted permissions.<ul>
+<li>Permissions: <code>sandbox="allow-scripts allow-forms allow-popups allow-modals"</code> (<strong>MUST NOT</strong> include <code>allow-same-origin</code>).</li>
+<li>Isolation: Removes access to <code>localStorage</code>, <code>sessionStorage</code>, <code>IndexedDB</code>, and cookies due to unique origin.</li>
+</ul>
+</li>
+</ol>
+<h3 id="architecture-diagram">Architecture Diagram<a class="headerlink" href="#architecture-diagram" title="Permanent link">¶</a></h3>
 <pre class="mermaid"><code>flowchart TD
-    A["Agent-provided styling&lt;br/&gt;Semantic hints and theme data&lt;br/&gt;(e.g., usageHint: 'h1')"]
-    B["Catalog Theming&lt;br/&gt;Catalog interprets theme data&lt;br/&gt;or uses defaults"]
-    C["Platform theming&lt;br/&gt;Developer customizes&lt;br/&gt;(CSS variables, stylesheets...)"]
-    D["Rendered Output"]
-
-    A --&gt; B --&gt; C --&gt; D</code></pre>
-<h2 id="agent-provided-styling-information">Agent-provided styling information<a class="headerlink" href="#agent-provided-styling-information" title="Permanent link">¶</a></h2>
-<h3 id="semantic-hints">Semantic hints<a class="headerlink" href="#semantic-hints" title="Permanent link">¶</a></h3>
-<p>Agents provide semantic hints (not visual styles) to guide rendering. In the <em>basic catalog</em>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span>
-</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">      </span><span class="nt">"usageHint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"h1"</span>
-</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="p">}</span>
+    subgraph "Host Application"
+        A[A2UI Page] --&gt; B["Host Component e.g., McpApp"]
+    end
+    subgraph "Sandbox Proxy"
+        B --&gt;|Message Relay| C[iframe sandbox.html]
+    end
+    subgraph "Embedded App"
+        C --&gt;|Dynamic Injection| D[inner iframe untrusted content]
+    end</code></pre>
+<h2 id="usage-code-example">Usage / Code Example<a class="headerlink" href="#usage-code-example" title="Permanent link">¶</a></h2>
+<p>The MCP Apps component typically resolves to a <code>custom</code> node in the A2UI catalog. Here is how a developer might use it in their code.</p>
+<h3 id="1-register-within-the-catalog">1. Register within the Catalog<a class="headerlink" href="#1-register-within-the-catalog" title="Permanent link">¶</a></h3>
+<p>You must register the component in your catalog application. For example, in Angular:</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Catalog</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@a2ui/angular'</span><span class="p">;</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">inputBinding</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@angular/core'</span><span class="p">;</span>
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">DEMO_CATALOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">  </span><span class="nx">McpApp</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">import</span><span class="p">(</span><span class="s1">'./mcp-app'</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">McpApp</span><span class="p">),</span>
+</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="nx">bindings</span><span class="o">:</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">      </span><span class="nx">inputBinding</span><span class="p">(</span>
+</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">        </span><span class="s1">'content'</span><span class="p">,</span>
+</span><span id="__span-0-10"><a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s1">'content'</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">properties</span><span class="p">[</span><span class="s1">'content'</span><span class="p">])</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span>
+</span><span id="__span-0-11"><a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-0-12"><a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">      </span><span class="nx">inputBinding</span><span class="p">(</span><span class="s1">'title'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s1">'title'</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">properties</span><span class="p">[</span><span class="s1">'title'</span><span class="p">])</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="kc">undefined</span><span class="p">),</span>
+</span><span id="__span-0-13"><a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="p">],</span>
+</span><span id="__span-0-14"><a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-15"><a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="p">}</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Catalog</span><span class="p">;</span>
 </span></code></pre></div>
-<p><strong>Common <code>usageHint</code> values:</strong></p>
-<ul>
-<li>Text: <code>h1</code>, <code>h2</code>, <code>h3</code>, <code>h4</code>, <code>h5</code>, <code>body</code>, <code>caption</code></li>
-<li>Other components have their own hints (see <a href="../../reference/components/">Component Reference</a>)</li>
-</ul>
-<p>The catalog elements map these semantic hints to actual components on the target platform, and styles them.</p>
-<h3 id="theme-property"><code>theme</code> property<a class="headerlink" href="#theme-property" title="Permanent link">¶</a></h3>
-<p>The A2UI protocol allows for an arbitrary <code>theme</code> property in the <code>createSurface</code> message. For now, this property is
-defined as <code>z.any().optional()</code> in the Zod schema, meaning the agent can pass any JSON structure that the client
-renderer and catalog understand.</p>
-<ul>
-<li>See the schema definition in <a href="https://github.com/google/A2UI/blob/main/renderers/web_core/src/v0_9/schema/server-to-client.ts">server-to-client.ts</a>.</li>
-<li>See the <code>Catalog</code> class and <code>themeSchema</code> in <a href="https://github.com/google/A2UI/blob/main/renderers/web_core/src/v0_9/catalog/types.ts">catalog/types.ts</a>.</li>
-</ul>
-<p><strong>Note:</strong> The <em>basic catalog</em> components are not wired to use the <code>theme</code> coming from the agent.</p>
-<p><em>Want to influence this design? Chime in here: <a href="https://github.com/google/A2UI/issues/1118">#1118</a>.</em></p>
-<h2 id="catalog-theming">Catalog theming<a class="headerlink" href="#catalog-theming" title="Permanent link">¶</a></h2>
-<p>Theming is a responsibility of the catalog implementation. Each catalog can provide whatever theming solution it wants.
-As an example, this is how the default <em>basic catalog</em> does it:</p>
-<h3 id="the-web-basic-catalog-theming">The Web Basic Catalog Theming<a class="headerlink" href="#the-web-basic-catalog-theming" title="Permanent link">¶</a></h3>
-<p>On the web, the <em>basic catalog</em> provided by the default A2UI renderers is themed by overriding CSS variables.</p>
-<p>Basic catalog components inject a small stylesheet with default values for these variables. The stylesheet targets
-<code>:where(:root)</code> so their specificity is minimal, and the host app can override them easily.</p>
-<p>For example, to override the primary color, you can simply add this to your app's CSS:</p>
-<div class="language-css highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">:</span><span class="nd">root</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nv">--a2ui-color-primary</span><span class="p">:</span><span class="w"> </span><span class="mh">#ff5722</span><span class="p">;</span>
-</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="p">}</span>
+<h3 id="2-usage-in-a2ui-message">2. Usage in A2UI Message<a class="headerlink" href="#2-usage-in-a2ui-message" title="Permanent link">¶</a></h3>
+<p>In the Host or Agent context, send an A2UI message that translates to this custom node.</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span>
+</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"McpApp"</span><span class="p">,</span>
+</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;h1&gt;Hello, World!&lt;/h1&gt;"</span><span class="p">,</span>
+</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My MCP App"</span>
+</span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>See the default styles in <a href="https://github.com/google/A2UI/blob/main/renderers/web_core/src/v0_9/basic_catalog/styles/default.ts">default.ts</a>.</p>
-<p><strong>See some examples per-platform:</strong></p>
-<ul>
-<li><a href="https://github.com/google/A2UI/blob/main/samples/client/lit">Lit samples</a></li>
-<li><a href="https://github.com/google/A2UI/blob/main/samples/client/angular">Angular samples</a></li>
-<li><a href="https://github.com/google/A2UI/blob/main/samples/client/react">React samples</a></li>
-</ul>
-<h3 id="per-component-overrides">Per-component overrides<a class="headerlink" href="#per-component-overrides" title="Permanent link">¶</a></h3>
-<p>Beyond global theming, each component of the <em>basic catalog</em> exposes custom variables to further refine its appearance.
-For example, the <code>Card</code> component exposes a <code>--a2ui-card-background</code> variable.</p>
-<p>Check the documentation of each component to see what variables it exposes.</p>
-<h2 id="common-styling-features">Common Styling Features<a class="headerlink" href="#common-styling-features" title="Permanent link">¶</a></h2>
-<h3 id="dark-mode">Dark Mode<a class="headerlink" href="#dark-mode" title="Permanent link">¶</a></h3>
-<p>The default web renderers support automatic dark mode based on system preferences (<code>prefers-color-scheme</code>).</p>
-<p>To always force dark or light mode (or to programmatically control switching), use the classnames <code>a2ui-light</code> or
-<code>a2ui-dark</code> in an ancestor element of the generated code.</p>
-<h3 id="custom-fonts">Custom Fonts<a class="headerlink" href="#custom-fonts" title="Permanent link">¶</a></h3>
-<p>Fonts can be loaded as in any other web application. The <em>basic catalog</em> components attempt to inherit the font family
-of their container, but offer two overridable values: <code>--a2ui-font-family-title</code> and <code>--a2ui-font-family-monospace</code> to
-set a different font for headings and monospace text blocks.</p>
-<h2 id="flutter">Flutter<a class="headerlink" href="#flutter" title="Permanent link">¶</a></h2>
-<p>Flutter has built-in theming support. See:</p>
-<ul>
-<li><a href="https://docs.flutter.dev/cookbook/design/themes">Use themes to share colors and font styles</a> from the Flutter docs.</li>
-</ul>
-<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">¶</a></h2>
-<h3 id="1-use-semantic-hints-not-visual-properties">1. Use Semantic Hints, Not Visual Properties<a class="headerlink" href="#1-use-semantic-hints-not-visual-properties" title="Permanent link">¶</a></h3>
-<p>When defining your components, agents should provide semantic hints (<code>usageHint</code>), never visual styles:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1">// ✅ Good: Semantic hint</span>
-</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="p">{</span>
-</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">      </span><span class="nt">"usageHint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"h1"</span>
-</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-9"><a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="p">}</span>
-</span><span id="__span-2-10"><a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="c1">// ❌ Bad: Visual properties (not supported)</span>
-</span><span id="__span-2-12"><a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="p">{</span>
-</span><span id="__span-2-13"><a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">  </span><span class="nt">"component"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-14"><a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">    </span><span class="nt">"Text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-15"><a href="#__codelineno-2-15" id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">      </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"literalString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Welcome"</span><span class="p">},</span>
-</span><span id="__span-2-16"><a href="#__codelineno-2-16" id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">      </span><span class="nt">"fontSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span>
-</span><span id="__span-2-17"><a href="#__codelineno-2-17" id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">      </span><span class="nt">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#FF0000"</span>
-</span><span id="__span-2-18"><a href="#__codelineno-2-18" id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-19"><a href="#__codelineno-2-19" id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-20"><a href="#__codelineno-2-20" id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="p">}</span>
+<p>If the content is complex or requires encoding, you can pass a URL-encoded string:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span>
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"McpApp"</span><span class="p">,</span>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"url_encoded:%3Ch1%3EHello%2C%20World!%3C%2Fh1%3E"</span><span class="p">,</span>
+</span><span id="__span-2-6"><a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My MCP App"</span>
+</span><span id="__span-2-7"><a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-8"><a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="2-maintain-accessibility">2. Maintain Accessibility<a class="headerlink" href="#2-maintain-accessibility" title="Permanent link">¶</a></h3>
+<h2 id="communication-protocol">Communication Protocol<a class="headerlink" href="#communication-protocol" title="Permanent link">¶</a></h2>
+<p>Communication between the Host and the embedded inner iframe is facilitated via a structured JSON-RPC channel over <code>postMessage</code>.</p>
 <ul>
-<li>Ensure sufficient color contrast (WCAG AA: 4.5:1 for normal text, 3:1 for large text)</li>
-<li>Test with screen readers</li>
-<li>Support keyboard navigation</li>
-<li>Test in both light and dark modes</li>
+<li><strong>Events</strong>: The Host Component listens for a <code>SANDBOX_PROXY_READY_METHOD</code> message from the proxy.</li>
+<li><strong>Bridging</strong>: An <code>AppBridge</code> handles message relaying. Developers (specifically the MCP App Developer inside the untrusted iframe) can call tools on the MCP server using <code>bridge.callTool()</code>.</li>
+<li><strong>The Host</strong>: Resolves callbacks (e.g., specific resizing, Tool results).</li>
 </ul>
-<h3 id="3-use-design-tokens">3. Use Design Tokens<a class="headerlink" href="#3-use-design-tokens" title="Permanent link">¶</a></h3>
-<p>Define reusable design tokens (colors, spacing, etc.) and reference them throughout your styles for consistency.</p>
-<h3 id="4-test-across-platforms">4. Test Across Platforms<a class="headerlink" href="#4-test-across-platforms" title="Permanent link">¶</a></h3>
+<h3 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">¶</a></h3>
+<p>Because <code>allow-same-origin</code> is strictly omitted for the innermost iframe, the following conditions apply:
+-   The MCP app <strong>cannot</strong> use <code>localStorage</code>, <code>sessionStorage</code>, <code>IndexedDB</code>, or cookies. Each application runs with a unique origin.
+-   Direct DOM manipulation by the parent is blocked. All interactions must proceed via message passing.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
+<p>To run the samples, ensure you have the following installed:</p>
 <ul>
-<li>Test your theming on all target platforms (web, mobile, desktop)</li>
-<li>Verify both light and dark modes</li>
-<li>Check different screen sizes and orientations</li>
-<li>Ensure consistent brand experience across platforms</li>
+<li><strong>Python 3.10+</strong> — Required for the agent and MCP server backends</li>
+<li><strong><a href="https://docs.astral.sh/uv/">uv</a></strong> — Fast Python package manager (used to run all Python samples)</li>
+<li><strong>Node.js 18+</strong> and <strong>npm</strong> — Required for building and running the client apps</li>
+<li><strong>A <code>GEMINI_API_KEY</code></strong> — Required by all ADK-based agents. Get one from <a href="https://aistudio.google.com/apikey">Google AI Studio</a></li>
 </ul>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>⚠️ <strong>Environment variable setup</strong>: You can either export <code>GEMINI_API_KEY</code> in your shell or create a <code>.env</code> file in each agent directory. The agents use <code>dotenv</code> to load <code>.env</code> files automatically.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Option 1: Export in shell</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GEMINI_API_KEY</span><span class="o">=</span><span class="s2">"your-api-key-here"</span>
+</span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1"># Option 2: Create .env file in the agent directory</span>
+</span><span id="__span-3-5"><a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">'GEMINI_API_KEY=your-api-key-here'</span><span class="w"> </span>&gt;<span class="w"> </span>.env
+</span></code></pre></div>
+</blockquote>
+<h2 id="samples">Samples<a class="headerlink" href="#samples" title="Permanent link">¶</a></h2>
+<p>There are two primary samples demonstrating MCP Apps integration. Each sample requires running <strong>multiple terminals</strong> — one for each backend service and one for the client.</p>
+<hr/>
+<h3 id="1-mcp-app-standalone-sample-lit-adk-agent">1. MCP App Standalone Sample (Lit &amp; ADK Agent)<a class="headerlink" href="#1-mcp-app-standalone-sample-lit-adk-agent" title="Permanent link">¶</a></h3>
+<p>This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.</p>
 <ul>
-<li><strong><a href="../defining-your-own-catalog/">Defining Your Own Catalog</a></strong>: Build custom components with your styling</li>
-<li><strong><a href="../../reference/components/">Component Reference</a></strong>: See styling options for all components</li>
-<li><strong><a href="../client-setup/">Client Setup</a></strong>: Set up the renderer in your app</li>
+<li><strong>A2A Agent Server</strong>:<ul>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/"><code>samples/agent/adk/mcp-apps-in-a2ui-sample/</code></a></li>
+<li>Command: <code>uv run .</code> (requires <code>GEMINI_API_KEY</code> in <code>.env</code>)</li>
 </ul>
+</li>
+<li><strong>Lit Client App</strong>:<ul>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/"><code>samples/client/lit/mcp-apps-in-a2ui-sample/</code></a></li>
+<li>Command: <code>npm install &amp;&amp; npm run dev</code> (requires building the Lit renderer first)</li>
+<li>URL: <code>http://localhost:5173/</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>What to expect</strong>: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.</p>
+<h3 id="2-mcp-apps-calculator-pong-angular">2. MCP Apps (Calculator + Pong) (Angular)<a class="headerlink" href="#2-mcp-apps-calculator-pong-angular" title="Permanent link">¶</a></h3>
+<h4 id="step-3-open-in-browser">Step 3: Open in Browser<a class="headerlink" href="#step-3-open-in-browser" title="Permanent link">¶</a></h4>
+<p>Open your browser and navigate to <code>http://localhost:5173</code>. You should see the A2UI interface loading the MCP App.</p>
+<p><strong>What to expect</strong>: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.</p>
+<hr/>
+<h3 id="sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent">Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)<a class="headerlink" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent" title="Permanent link">¶</a></h3>
+<p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires <strong>three</strong> backend processes.</p>
+<h4 id="step-1-start-the-mcp-server-calculator">Step 1: Start the MCP Server (Calculator)<a class="headerlink" href="#step-1-start-the-mcp-server-calculator" title="Permanent link">¶</a></h4>
+<h1 id="cd-samplesagentmcpmcp-apps-calculator-uv-run"><div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/mcp/mcp-apps-calculator/
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div><a class="headerlink" href="#cd-samplesagentmcpmcp-apps-calculator-uv-run" title="Permanent link">¶</a></h1>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">cd</span><span class="w"> </span>samples/client/lit/mcp-apps-in-a2ui-sample
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>npm<span class="w"> </span>install
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+</span></code></pre></div>
+<p>The client starts at <code>http://localhost:5173/</code>.</p>
+<h4 id="step-2-start-the-agent">Step 2: Start the Agent<a class="headerlink" href="#step-2-start-the-agent" title="Permanent link">¶</a></h4>
+<p>In a separate terminal, navigate to the agent directory and start the agent:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/adk/mcp-apps-in-a2ui-sample
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>uv<span class="w"> </span>run<span class="w"> </span>agent.py
+</span></code></pre></div>
+<p>The agent will run on <code>http://localhost:8000</code>.</p>
+<h4 id="step-3-open-in-browser_1">Step 3: Open in Browser<a class="headerlink" href="#step-3-open-in-browser_1" title="Permanent link">¶</a></h4>
+<p>Open your browser and navigate to <code>http://localhost:5173</code>. You should see the A2UI interface loading the MCP App.</p>
+<p><strong>What to expect</strong>: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.</p>
+<hr/>
+<h3 id="sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent_1">Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)<a class="headerlink" href="#sample-2-mcp-apps-calculator-pong-angular-client-mcp-server-proxy-agent_1" title="Permanent link">¶</a></h3>
+<p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires <strong>three</strong> backend processes.</p>
+<h4 id="step-1-start-the-mcp-server-calculator_1">Step 1: Start the MCP Server (Calculator)<a class="headerlink" href="#step-1-start-the-mcp-server-calculator_1" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/mcp/mcp-apps-calculator/
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>e3c17f1f (docs: add npm install step to MCP guide)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>The MCP server starts on <code>http://localhost:8000</code> using SSE transport.</p>
+<h4 id="step-2-start-the-mcp-apps-proxy-agent">Step 2: Start the MCP Apps Proxy Agent<a class="headerlink" href="#step-2-start-the-mcp-apps-proxy-agent" title="Permanent link">¶</a></h4>
+<p>In a <strong>new terminal</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/adk/mcp_app_proxy/
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GEMINI_API_KEY</span><span class="o">=</span><span class="s2">"your-key"</span><span class="w">  </span><span class="c1"># or use a .env file</span>
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a>uv<span class="w"> </span>run<span class="w"> </span>.
+</span></code></pre></div>
+<p>The proxy agent starts on <code>http://localhost:10006</code> by default.</p>
+<h4 id="step-3-build-and-start-the-angular-client">Step 3: Build and Start the Angular Client<a class="headerlink" href="#step-3-build-and-start-the-angular-client" title="Permanent link">¶</a></h4>
+<p>In a <strong>new terminal</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>samples/client/angular/
+</span><span id="__span-9-2"><a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="c1"># Build the renderers (required — Angular depends on local renderer packages)</span>
+</span><span id="__span-9-4"><a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a>npm<span class="w"> </span>run<span class="w"> </span>build:renderer
+</span><span id="__span-9-5"><a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a>npm<span class="w"> </span>install<span class="w"> </span>--include<span class="o">=</span>dev
+</span><span id="__span-9-7"><a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a>npm<span class="w"> </span>run<span class="w"> </span>build:sandbox
+</span><span id="__span-9-8"><a href="#__codelineno-9-8" id="__codelineno-9-8" name="__codelineno-9-8"></a>npm<span class="w"> </span>start<span class="w"> </span>--<span class="w"> </span>mcp_calculator
+</span></code></pre></div>
+<blockquote>
+<p>⚠️ <strong><code>--include=dev</code> is required</strong>: The Angular CLI (<code>@angular/cli</code>) is a dev dependency. Without <code>--include=dev</code>, <code>ng serve</code> won't be available.</p>
+<p>⚠️ <strong><code>build:renderer</code> and <code>build:sandbox</code> are both required</strong>: <code>build:renderer</code> compiles the A2UI renderer packages that the Angular app depends on. <code>build:sandbox</code> bundles the sandbox proxy into the Angular project's public assets. Without either, the app won't work.</p>
+</blockquote>
+<p>The client starts at <code>http://localhost:4200/</code>.</p>
+<h4 id="step-4-open-in-browser">Step 4: Open in Browser<a class="headerlink" href="#step-4-open-in-browser" title="Permanent link">¶</a></h4>
+<p>Navigate to:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>http://localhost:4200/?disable_security_self_test=true
+</span></code></pre></div>
+<p><strong>What to expect</strong>: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Calculator App</th>
+<th style="text-align: center;">Pong App</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="An animated GIF of the calculator app being used to perform multiplications." src="../../assets/calculator_demo.gif"/></td>
+<td style="text-align: center;"><img alt="An animated GIF of the pong app being played." src="../../assets/pong_demo.gif"/></td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="url-options-for-testing">URL Options for Testing<a class="headerlink" href="#url-options-for-testing" title="Permanent link">¶</a></h2>
+<p>For testing purposes, you can opt-out of the security self-test by using specific URL query parameters.</p>
+<h3 id="disable_security_self_testtrue"><code>disable_security_self_test=true</code><a class="headerlink" href="#disable_security_self_testtrue" title="Permanent link">¶</a></h3>
+<p>This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments where the double-iframe setup may not pass strict origin checks (e.g., <code>localhost</code> development).</p>
+<p>Example usage:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a>http://localhost:4200/?disable_security_self_test=true
+</span></code></pre></div></p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GEMINI_API_KEY environment variable not set</code></td>
+<td>Export the key or add a <code>.env</code> file in the agent directory</td>
+</tr>
+<tr>
+<td>Python version error on <code>contact_lookup</code> agent</td>
+<td>Install Python 3.13+ (required by that sample's <code>pyproject.toml</code>)</td>
+</tr>
+<tr>
+<td><code>npm run build:renderer</code> fails</td>
+<td>Make sure you ran <code>npm install</code> first in <code>samples/client/lit/</code></td>
+</tr>
+<tr>
+<td>Angular client shows blank page</td>
+<td>Ensure you ran <code>npm run build:sandbox</code> before <code>npm start</code></td>
+</tr>
+<tr>
+<td>MCP app iframe doesn't load</td>
+<td>Check that both the MCP server (port 8000) and proxy agent (port 10006) are running</td>
+</tr>
+<tr>
+<td><code>ng serve</code> not found</td>
+<td>Run <code>npm install --include=dev</code> to install dev dependencies including <code>@angular/cli</code></td>
+</tr>
+<tr>
+<td>"URL with hostname not allowed"</td>
+<td>Angular 21 restricts allowed hosts. Use <code>localhost</code> (the default) — do not pass <code>--host 0.0.0.0</code></td>
+</tr>
+<tr>
+<td>Security self-test fails in dev</td>
+<td>Add <code>?disable_security_self_test=true</code> to the URL</td>
+</tr>
+</tbody>
+</table>
 </article>
 </div>
 <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
@@ -1336,7 +1470,7 @@ set a different font for headings and monospace text blocks.</p>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Authoring Custom Components" class="md-footer__link md-footer__link--prev" href="../authoring-components/">
+<a aria-label="Previous: A2UI over MCP" class="md-footer__link md-footer__link--prev" href="../a2ui_over_mcp/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </div>
@@ -1345,17 +1479,17 @@ set a different font for headings and monospace text blocks.</p>
                 Previous
               </span>
 <div class="md-ellipsis">
-                Authoring Custom Components
+                A2UI over MCP
               </div>
 </div>
 </a>
-<a aria-label="Next: A2UI over MCP" class="md-footer__link md-footer__link--next" href="../a2ui_over_mcp/">
+<a aria-label="Next: A2UI in MCP Apps" class="md-footer__link md-footer__link--next" href="../a2ui-in-mcp-apps/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                A2UI over MCP
+                A2UI in MCP Apps
               </div>
 </div>
 <div class="md-footer__button md-icon">
