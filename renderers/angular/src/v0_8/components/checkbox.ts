@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import type { BooleanValue, CheckboxNode, StringValue } from '../types';
 
 @Component({
   selector: 'a2ui-checkbox',
@@ -40,9 +40,9 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Checkbox extends DynamicComponent<Types.CheckboxNode> {
-  readonly label = input.required<Types.StringValue | null>();
-  readonly checked = input.required<Types.BooleanValue | null>();
+export class Checkbox extends DynamicComponent<CheckboxNode> {
+  readonly label = input.required<StringValue | null>();
+  readonly checked = input.required<BooleanValue | null>();
 
   protected inputChecked = computed(() => super.resolvePrimitive(this.checked()) ?? false);
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
@@ -51,15 +51,25 @@ export class Checkbox extends DynamicComponent<Types.CheckboxNode> {
   onToggle(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
     const checkedNode = this.checked();
-    if (checkedNode && typeof checkedNode === 'object' && 'path' in checkedNode && checkedNode.path) {
+    if (
+      checkedNode &&
+      typeof checkedNode === 'object' &&
+      'path' in checkedNode &&
+      checkedNode.path
+    ) {
       // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
-      this.processor.processMessages([{
-        dataModelUpdate: {
-          surfaceId: this.surfaceId()!,
-          path: this.processor.resolvePath(checkedNode.path as string, this.component().dataContextPath),
-          contents: [{ key: '.', valueBoolean: checked }],
+      this.processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: this.surfaceId()!,
+            path: this.processor.resolvePath(
+              checkedNode.path as string,
+              this.component().dataContextPath,
+            ),
+            contents: [{ key: '.', valueBoolean: checked }],
+          },
         },
-      }]);
+      ]);
     } else {
       this.sendAction({
         name: 'toggle',

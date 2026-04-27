@@ -19,7 +19,7 @@ import { Column } from './column';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
+import type { ColumnNode } from '../types';
 import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
@@ -41,7 +41,7 @@ describe('Column Component', () => {
   let fixture: ComponentFixture<Column>;
   let mockTheme: Theme;
 
-  const mockNode: Types.ColumnNode = {
+  const mockNode: ColumnNode = {
     id: 'col-1',
     type: 'Column',
     weight: 1,

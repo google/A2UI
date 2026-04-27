@@ -94,7 +94,12 @@ describe('v0.8 Angular Renderer Integration', () => {
   let processor: jasmine.SpyObj<MessageProcessor>;
 
   beforeEach(async () => {
-    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath', 'version']);
+    processor = jasmine.createSpyObj('MessageProcessor', [
+      'getData',
+      'dispatch',
+      'resolvePath',
+      'version',
+    ]);
     // Default mock behavior for getData
     processor.getData.and.callFake((node: any, path: string, surfaceId?: string) => {
       if (path === '/name') return 'The Italian Kitchen';

@@ -42,7 +42,12 @@ describe('Row Component Integration (Real Renderer)', () => {
   let processor: jasmine.SpyObj<MessageProcessor>;
 
   beforeEach(async () => {
-    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath', 'version']);
+    processor = jasmine.createSpyObj('MessageProcessor', [
+      'getData',
+      'dispatch',
+      'resolvePath',
+      'version',
+    ]);
 
     await TestBed.configureTestingModule({
       imports: [TestHost],

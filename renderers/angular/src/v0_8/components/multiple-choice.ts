@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import type { AnyComponentNode, MultipleChoiceNode, StringValue } from '../types';
 
 @Component({
   selector: 'a2ui-multiple-choice',
@@ -47,10 +47,10 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
-  readonly label = input<Types.StringValue | null>(null);
-  readonly options = input.required<{ label: Types.StringValue; value: string }[]>();
-  readonly selections = input.required<Types.AnyComponentNode | null>();
+export class MultipleChoice extends DynamicComponent<MultipleChoiceNode> {
+  readonly label = input<StringValue | null>(null);
+  readonly options = input.required<{ label: StringValue; value: string }[]>();
+  readonly selections = input.required<AnyComponentNode | null>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
 
@@ -74,15 +74,25 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
   onChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
     const selectionsNode = this.selections();
-    if (selectionsNode && typeof selectionsNode === 'object' && 'path' in selectionsNode && selectionsNode.path) {
+    if (
+      selectionsNode &&
+      typeof selectionsNode === 'object' &&
+      'path' in selectionsNode &&
+      selectionsNode.path
+    ) {
       // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
-      this.processor.processMessages([{
-        dataModelUpdate: {
-          surfaceId: this.surfaceId()!,
-          path: this.processor.resolvePath(selectionsNode.path as string, this.component().dataContextPath),
-          contents: [{ key: '.', valueString: JSON.stringify({ literalArray: [value] }) }],
+      this.processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: this.surfaceId()!,
+            path: this.processor.resolvePath(
+              selectionsNode.path as string,
+              this.component().dataContextPath,
+            ),
+            contents: [{ key: '.', valueString: JSON.stringify({ literalArray: [value] }) }],
+          },
         },
-      }]);
+      ]);
     } else {
       this.handleAction('change', { value });
     }
