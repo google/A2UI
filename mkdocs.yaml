@@ -201,6 +201,8 @@ plugins:
         'agents.md': 'reference/agents.md'
         'community.md': 'ecosystem/community.md'
         'introduction/where-is-it-used.md': 'ecosystem/a2ui-in-the-world.md'
+        'guides/guide_a2ui_dynamic_mcp.md': 'guides/a2ui-in-mcp-apps.md'
+        'guides/mcp-apps-in-a2ui-surface.md': 'guides/mcp-apps-in-a2ui.md'
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:
