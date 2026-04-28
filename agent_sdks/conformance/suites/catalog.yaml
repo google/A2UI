@@ -388,6 +388,13 @@
           type: array
           items: {type: object}
 
-
-
+- name: test_remove_strict_validation_keeps_true
+  description: Tests that remove_strict_validation keeps additionalProperties true.
+  catalog:
+    version: "0.8"
+  action: remove_strict_validation
+  args:
+    schema: {type: object, additionalProperties: true}
+  expect:
+    schema: {type: object, additionalProperties: true}
 

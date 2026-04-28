@@ -71,45 +71,4 @@ class CatalogTest {
     assertTrue(instructions.contains("### Catalog Schema:\n{"))
   }
 
-  @Test
-  fun allowlistProvided_prunesComponentsCorrectly() {
-    val catalog = createDummyCatalog()
-    val allowed = listOf("AllowedComp")
-
-    val prunedCatalog = catalog.withPrunedComponents(allowed)
-
-    val prunedComponents = prunedCatalog.catalogSchema["components"] as JsonObject
-    assertTrue("AllowedComp" in prunedComponents)
-    assertTrue("PrunedComp" !in prunedComponents)
-
-    // Verify oneOf filtering in anyComponent
-    val anyComponentStr = prunedCatalog.catalogSchema.toString()
-    assertTrue("#/components/AllowedComp" in anyComponentStr)
-    assertTrue("#/components/PrunedComp" !in anyComponentStr)
-  }
-
-  @Test
-  fun validExamplePath_loadsAndValidatesExamples() {
-    val dir =
-      File(System.getProperty("java.io.tmpdir"), "a2ui_examples_${System.currentTimeMillis()}")
-    dir.mkdirs()
-    try {
-      val ex1 = File(dir, "ex1.json").apply { writeText("""{"example": 1}""") }
-      val ex2 = File(dir, "ex2.txt").apply { writeText("ignore me") }
-      val ex3 = File(dir, "ex3.json").apply { writeText("invalid_json_here") }
-
-      val catalog = createDummyCatalog()
-      // We pass false to validate because our dummy validator will fail everything
-      val examplesContent = catalog.loadExamples(dir.absolutePath, validate = false)
-
-      assertTrue(examplesContent.contains("---BEGIN ex1---"))
-      assertTrue(examplesContent.contains("{\"example\": 1}"))
-      // invalid json loads anyway if validation is false
-      assertTrue(examplesContent.contains("---BEGIN ex3---"))
-      // txt file ignored
-      assertTrue(!examplesContent.contains("ignore me"))
-    } finally {
-      dir.deleteRecursively()
-    }
-  }
 }
