@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.org/agent_sdk/template/schema.json",
+  "title": "A2UI Template",
+  "description": "Defines a reusable A2UI UI template. Templates contain static component trees with {{placeholder}} expressions that are resolved at inflation time using data provided by an LLM. The inflated output is a standard sequence of v0.9 A2UI messages.",
+  "type": "object",
+  "required": ["name", "version", "catalogId", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "A unique, human-readable identifier for this template. Must be kebab-case. This is the value the LLM returns in its 'templateName' response field.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "examples": ["restaurant-card", "booking-form", "contact-card"]
+    },
+    "description": {
+      "type": "string",
+      "description": "A concise, human-readable summary of the UI this template renders. Included in LLM prompts to help the model choose the right template."
+    },
+    "version": {
+      "type": "string",
+      "description": "The semantic version of this template.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "catalogId": {
+      "type": "string",
+      "format": "uri",
+      "description": "The A2UI catalog that this template's components belong to. Must match a valid catalog ID (e.g. the basic catalog URL). This value is used in the generated 'createSurface' message.",
+      "examples": ["https://a2ui.org/specification/v0_9/basic_catalog.json"]
+    },
+    "surfaceId": {
+      "type": "string",
+      "description": "The surface ID to use when inflating this template into A2UI messages. If omitted, defaults to the template name.",
+      "pattern": "^([a-z][a-z0-9]*(-[a-z0-9]+)*)?$",
+      "default": ""
+    },
+    "theme": {
+      "type": "object",
+      "description": "Optional theme parameters for the generated surface. Passed through to the 'createSurface' message.",
+      "additionalProperties": true
+    },
+    "dataSchema": {
+      "type": "object",
+      "description": "A JSON Schema object describing the shape of the data the LLM must provide to inflate this template. Used by the SDK to (1) generate LLM prompt instructions and (2) validate the LLM response at runtime.",
+      "additionalProperties": true
+    },
+    "components": {
+      "type": "array",
+      "description": "A flat, ordered list of A2UI component descriptors following the v0.9 catalog format. The first component with id 'root' serves as the component tree root. String-typed property values may contain {{placeholder}} expressions that reference fields from the LLM-provided data.",
+      "minItems": 1,
+      "prefixItems": [
+        {
+          "properties": { "id": { "const": "root" } },
+          "required": ["id"]
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/TemplateComponent"
+      }
+    },
+    "dataModel": {
+      "type": "object",
+      "description": "An optional default data model object. Values may contain {{placeholder}} expressions. After inflation, this becomes the 'value' of an 'updateDataModel' message. Use this for initial field values, labels bound via {\"path\": \"...\"} in components, etc.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "TemplateComponent": {
+      "type": "object",
+      "description": "A single A2UI component descriptor. Follows the v0.9 catalog component format with the addition that any string value may contain {{placeholder}} expressions.",
+      "required": ["id", "component"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique component ID within this template."
+        },
+        "component": {
+          "type": "string",
+          "description": "The component type name matching a catalog entry (e.g. 'Text', 'Card', 'Button', 'Column')."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

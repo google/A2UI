@@ -1,0 +1,119 @@
+{
+  "name": "contact-card",
+  "description": "Displays a contact with name, email, phone number, and a button to send a message.",
+  "version": "1.0.0",
+  "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+  "dataSchema": {
+    "type": "object",
+    "required": ["contact"],
+    "properties": {
+      "contact": {
+        "type": "object",
+        "required": ["name", "email", "phone"],
+        "properties": {
+          "name": { "type": "string", "description": "Full name of the contact." },
+          "email": { "type": "string", "description": "Email address." },
+          "phone": { "type": "string", "description": "Phone number." },
+          "role": { "type": "string", "description": "Job title or role." }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "root",
+      "component": "Card",
+      "child": "card-layout"
+    },
+    {
+      "id": "card-layout",
+      "component": "Column",
+      "children": [
+        "contact-name",
+        "contact-role",
+        "divider-1",
+        "email-row",
+        "phone-row",
+        "divider-2",
+        "message-btn"
+      ]
+    },
+    {
+      "id": "contact-name",
+      "component": "Text",
+      "variant": "h2",
+      "text": "{{contact.name}}"
+    },
+    {
+      "id": "contact-role",
+      "component": "Text",
+      "variant": "caption",
+      "text": "{{contact.role}}"
+    },
+    {
+      "id": "divider-1",
+      "component": "Divider"
+    },
+    {
+      "id": "email-row",
+      "component": "Row",
+      "children": ["email-icon", "email-text"],
+      "align": "center"
+    },
+    {
+      "id": "email-icon",
+      "component": "Icon",
+      "name": "mail"
+    },
+    {
+      "id": "email-text",
+      "component": "Text",
+      "text": "{{contact.email}}"
+    },
+    {
+      "id": "phone-row",
+      "component": "Row",
+      "children": ["phone-icon", "phone-text"],
+      "align": "center"
+    },
+    {
+      "id": "phone-icon",
+      "component": "Icon",
+      "name": "phone"
+    },
+    {
+      "id": "phone-text",
+      "component": "Text",
+      "text": "{{contact.phone}}"
+    },
+    {
+      "id": "divider-2",
+      "component": "Divider"
+    },
+    {
+      "id": "message-btn-text",
+      "component": "Text",
+      "text": "Send Message"
+    },
+    {
+      "id": "message-btn",
+      "component": "Button",
+      "child": "message-btn-text",
+      "variant": "primary",
+      "action": {
+        "event": {
+          "name": "send_message",
+          "context": {
+            "contactName": "{{contact.name}}",
+            "contactEmail": "{{contact.email}}"
+          }
+        }
+      }
+    }
+  ],
+  "dataModel": {
+    "contactName": "{{contact.name}}",
+    "contactEmail": "{{contact.email}}",
+    "contactPhone": "{{contact.phone}}"
+  }
+}

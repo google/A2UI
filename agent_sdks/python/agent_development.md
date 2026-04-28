@@ -399,4 +399,74 @@ agent_card = AgentCard(
 ```
 
 
+### 5. Template-based Inference
 
+For agents that render a fixed set of known UI layouts, **template-based
+inference** offers a more efficient alternative to raw schema-based generation.
+Instead of the LLM generating full A2UI JSON payloads, it selects a pre-defined
+template and provides only the dynamic data.
+
+**Benefits:**
+- **Smaller LLM output** — the model returns a template name + data, not an
+  entire component tree.
+- **Guaranteed valid UI** — templates are pre-validated at design time.
+- **Visual authoring** — templates can be created in the A2UI Composer.
+
+#### How It Works
+
+1. The agent registers templates with the `A2uiTemplateManager`.
+2. The LLM receives a catalog of template names and their `dataSchema`.
+3. The LLM returns a compact response:
+   ```json
+   {
+     "templateName": "restaurant-card",
+     "data": {
+       "restaurant": {
+         "name": "The French Bistro",
+         "cuisine": "French",
+         "rating": 4.7
+       }
+     }
+   }
+   ```
+4. The SDK inflates `{{}}` placeholders and produces standard v0.9 A2UI messages.
+
+#### Template Format
+
+Templates are stored as JSON files in the `template/examples/` directory. Each
+template contains:
+
+- **`name`** — Unique kebab-case identifier (e.g. `restaurant-card`).
+- **`catalogId`** — The A2UI catalog the components belong to.
+- **`dataSchema`** — JSON Schema describing required LLM data.
+- **`components`** — Flat list of v0.9 components with `{{placeholder}}`
+  expressions.
+- **`dataModel`** (optional) — Default values for the data model.
+
+#### Placeholder Syntax
+
+String values may contain `{{path.to.field}}` expressions that resolve against
+the LLM-provided `data`:
+
+```json
+{"text": "{{restaurant.name}}"}          // Whole-string → preserves type
+{"text": "Rating: {{restaurant.rating}}"} // Inline → string interpolation
+```
+
+See [`template/template_schema.md`](src/a2ui/template/template_schema.md) for
+the full specification including resolution rules, error behavior, and the
+distinction between `{{}}` (server-side inflation) and `{"path": "..."}`
+(client-side data binding).
+
+#### Reference Templates
+
+The SDK includes 5 reference templates in
+[`template/examples/`](src/a2ui/template/examples/):
+
+| Template | Use Case |
+|----------|----------|
+| `restaurant-card` | Restaurant display with booking button |
+| `contact-card` | Contact info with message button |
+| `product-detail` | Product with add-to-cart button |
+| `weather-summary` | Weather conditions card |
+| `booking-form` | Interactive reservation form (demonstrates `{{}}` + data binding coexistence) |

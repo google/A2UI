@@ -1,0 +1,97 @@
+{
+  "name": "weather-summary",
+  "description": "Displays current weather conditions for a location including temperature, condition, and a brief forecast.",
+  "version": "1.0.0",
+  "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+  "dataSchema": {
+    "type": "object",
+    "required": ["weather"],
+    "properties": {
+      "weather": {
+        "type": "object",
+        "required": ["location", "temperature", "condition"],
+        "properties": {
+          "location": { "type": "string", "description": "City or location name." },
+          "temperature": { "type": "string", "description": "Current temperature with unit (e.g. '72°F')." },
+          "condition": { "type": "string", "description": "Weather condition (e.g. 'Sunny', 'Rainy')." },
+          "humidity": { "type": "string", "description": "Humidity percentage (e.g. '65%')." },
+          "forecast": { "type": "string", "description": "Brief forecast summary for the next period." }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "root",
+      "component": "Card",
+      "child": "weather-layout"
+    },
+    {
+      "id": "weather-layout",
+      "component": "Column",
+      "children": [
+        "location-heading",
+        "temp-condition-row",
+        "divider-1",
+        "details-row",
+        "divider-2",
+        "forecast-text"
+      ]
+    },
+    {
+      "id": "location-heading",
+      "component": "Text",
+      "variant": "h2",
+      "text": "{{weather.location}}"
+    },
+    {
+      "id": "temp-condition-row",
+      "component": "Row",
+      "children": ["temp-text", "condition-text"],
+      "justify": "spaceBetween",
+      "align": "center"
+    },
+    {
+      "id": "temp-text",
+      "component": "Text",
+      "variant": "h1",
+      "text": "{{weather.temperature}}"
+    },
+    {
+      "id": "condition-text",
+      "component": "Text",
+      "variant": "h3",
+      "text": "{{weather.condition}}"
+    },
+    {
+      "id": "divider-1",
+      "component": "Divider"
+    },
+    {
+      "id": "details-row",
+      "component": "Row",
+      "children": ["humidity-text"],
+      "justify": "start"
+    },
+    {
+      "id": "humidity-text",
+      "component": "Text",
+      "variant": "caption",
+      "text": "Humidity: {{weather.humidity}}"
+    },
+    {
+      "id": "divider-2",
+      "component": "Divider"
+    },
+    {
+      "id": "forecast-text",
+      "component": "Text",
+      "text": "{{weather.forecast}}"
+    }
+  ],
+  "dataModel": {
+    "location": "{{weather.location}}",
+    "temperature": "{{weather.temperature}}",
+    "condition": "{{weather.condition}}"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "name": "restaurant-card",
+  "description": "Displays a restaurant with its name, cuisine type, star rating, and a booking button.",
+  "version": "1.0.0",
+  "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+  "dataSchema": {
+    "type": "object",
+    "required": ["restaurant"],
+    "properties": {
+      "restaurant": {
+        "type": "object",
+        "required": ["name", "cuisine", "rating"],
+        "properties": {
+          "name": { "type": "string", "description": "The restaurant name." },
+          "cuisine": { "type": "string", "description": "The cuisine type (e.g. French, Italian)." },
+          "rating": { "type": "number", "description": "Star rating from 0 to 5." },
+          "imageUrl": { "type": "string", "description": "URL of the restaurant image." },
+          "address": { "type": "string", "description": "The restaurant street address." }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "root",
+      "component": "Card",
+      "child": "card-content"
+    },
+    {
+      "id": "card-content",
+      "component": "Column",
+      "children": [
+        "restaurant-image",
+        "restaurant-name",
+        "cuisine-text",
+        "rating-text",
+        "divider-1",
+        "address-text",
+        "book-btn"
+      ]
+    },
+    {
+      "id": "restaurant-image",
+      "component": "Image",
+      "url": "{{restaurant.imageUrl}}",
+      "description": "Photo of {{restaurant.name}}",
+      "variant": "header"
+    },
+    {
+      "id": "restaurant-name",
+      "component": "Text",
+      "variant": "h2",
+      "text": "{{restaurant.name}}"
+    },
+    {
+      "id": "cuisine-text",
+      "component": "Text",
+      "text": "Cuisine: {{restaurant.cuisine}}"
+    },
+    {
+      "id": "rating-text",
+      "component": "Text",
+      "text": "Rating: {{restaurant.rating}} / 5"
+    },
+    {
+      "id": "divider-1",
+      "component": "Divider"
+    },
+    {
+      "id": "address-text",
+      "component": "Text",
+      "variant": "caption",
+      "text": "{{restaurant.address}}"
+    },
+    {
+      "id": "book-btn-text",
+      "component": "Text",
+      "text": "Book a Table"
+    },
+    {
+      "id": "book-btn",
+      "component": "Button",
+      "child": "book-btn-text",
+      "variant": "primary",
+      "action": {
+        "event": {
+          "name": "book_restaurant",
+          "context": {
+            "restaurantName": "{{restaurant.name}}"
+          }
+        }
+      }
+    }
+  ],
+  "dataModel": {
+    "restaurantName": "{{restaurant.name}}",
+    "cuisine": "{{restaurant.cuisine}}",
+    "rating": "{{restaurant.rating}}"
+  }
+}
