@@ -20,12 +20,16 @@ import {NodeRenderer} from '../../../A2uiSurface';
 
 export const ChildList: React.FC<{
   childList: unknown;
-}> = ({childList}) => {
+  buildChild?: (nodeOrId: any) => React.ReactNode;
+}> = ({childList, buildChild}) => {
   if (Array.isArray(childList)) {
     return (
       <>
         {childList.map((item: unknown) => {
-          // In the Node Layer, ChildList properties resolve to actual Node instances
+          if (buildChild) {
+             return buildChild(item);
+          }
+          // Fallback if buildChild isn't provided for some reason
           if (item && typeof item === 'object' && 'instanceId' in item) {
             const node = item as A2uiNode;
             return <NodeRenderer key={node.instanceId} node={node} />;

@@ -20,7 +20,7 @@ import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseContainerStyle, getWeightStyle, useBasicCatalogStyles} from '../utils';
 import {NodeRenderer} from '../../../A2uiSurface';
 
-export const Card = createComponentImplementation(CardApi, ({props}) => {
+export const Card = createComponentImplementation(CardApi, ({props, buildChild}) => {
   useBasicCatalogStyles();
 
   const style: React.CSSProperties = {
@@ -36,5 +36,5 @@ export const Card = createComponentImplementation(CardApi, ({props}) => {
     margin: 'var(--a2ui-card-margin, var(--a2ui-spacing-m))',
   };
 
-  return <div style={style}>{props.child ? <NodeRenderer node={props.child as any} /> : null}</div>;
+  return <div style={style}>{props.child ? buildChild(props.child as any) : null}</div>;
 });

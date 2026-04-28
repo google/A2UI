@@ -20,7 +20,7 @@ import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 import {mapAlign, useBasicCatalogStyles} from '../utils';
 
-export const List = createComponentImplementation(ListApi, ({props}) => {
+export const List = createComponentImplementation(ListApi, ({props, buildChild}) => {
   useBasicCatalogStyles();
   const isHorizontal = (props.direction as any) === 'horizontal';
   const style: React.CSSProperties = {
@@ -35,7 +35,7 @@ export const List = createComponentImplementation(ListApi, ({props}) => {
 
   return (
     <div style={style}>
-      <ChildList childList={props.children} />
+      <ChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });

@@ -19,7 +19,7 @@ import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 import {mapJustify, mapAlign, getWeightStyle, useBasicCatalogStyles} from '../utils';
 
-export const Row = createComponentImplementation(RowApi, ({props}) => {
+export const Row = createComponentImplementation(RowApi, ({props, buildChild}) => {
   useBasicCatalogStyles();
   return (
     <div
@@ -32,7 +32,7 @@ export const Row = createComponentImplementation(RowApi, ({props}) => {
         gap: 'var(--a2ui-row-gap, var(--a2ui-spacing-m))',
       }}
     >
-      <ChildList childList={props.children} />
+      <ChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });

@@ -21,6 +21,7 @@ import type {
   ResolveA2uiProps,
   A2uiNode,
 } from '@a2ui/web_core/v0_9';
+import {NodeRenderer} from './A2uiSurface';
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
@@ -32,6 +33,7 @@ export interface ReactComponentImplementation extends ComponentApi {
 export type ReactA2uiComponentProps<T> = {
   props: T;
   node: A2uiNode;
+  buildChild: (nodeOrId: A2uiNode | string) => React.ReactNode;
 };
 
 /**
@@ -77,7 +79,17 @@ export function createComponentImplementation<Api extends ComponentApi>(
     node: A2uiNode;
   }> = ({node}) => {
     const props = useNodeProps(node as A2uiNode<Props>);
-    return <MemoizedRender props={props || ({} as Props)} node={node} />;
+    
+    // Trivial backward-compatible buildChild
+    const buildChild = useCallback((nodeOrId: A2uiNode | string) => {
+      if (typeof nodeOrId === 'object' && nodeOrId && 'instanceId' in nodeOrId) {
+        return <NodeRenderer key={nodeOrId.instanceId} node={nodeOrId as A2uiNode} />;
+      }
+      console.warn("buildChild expects an A2uiNode object, but received a string ID. The generic binder should resolve IDs into Node objects.");
+      return null;
+    }, []);
+
+    return <MemoizedRender props={props || ({} as Props)} node={node} buildChild={buildChild} />;
   };
 
   return {

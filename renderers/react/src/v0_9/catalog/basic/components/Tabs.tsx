@@ -25,7 +25,7 @@ import {NodeRenderer} from '../../../A2uiSurface';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type _Tab = any;
 
-export const Tabs = createComponentImplementation(TabsApi, ({props}) => {
+export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild}) => {
   useBasicCatalogStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -79,7 +79,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props}) => {
           </button>
         ))}
       </div>
-      <div style={content}>{activeTab ? <NodeRenderer node={activeTab.child as any} /> : null}</div>
+      <div style={content}>{activeTab ? buildChild(activeTab.child as any) : null}</div>
     </div>
   );
 });
