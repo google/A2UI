@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.a2a
+package com.google.a2ui.conformance
 
 // TODO: Migrate to extensions.yaml conformance tests when Kotlin SDK matches Python version's RequestContext and Card usage.
+
+import com.google.a2ui.a2a.A2uiA2a
+import com.google.a2ui.a2a.A2aHandler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
