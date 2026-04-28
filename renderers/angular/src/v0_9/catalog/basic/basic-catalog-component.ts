@@ -43,7 +43,7 @@ export abstract class BasicCatalogComponent<Api extends ComponentApi> extends Ba
   });
 
   /** Weight is applied as flex css property on the component host HTML element. */
-  protected readonly weight = computed(() => (this.props() as any)['weight']?.value() ?? null);
+  protected readonly weight = computed(() => this.props()['weight']?.value() ?? null);
 
   constructor() {
     super();

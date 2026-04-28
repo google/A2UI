@@ -164,7 +164,6 @@ export const IconApi = {
             .strict(),
         ])
         .describe('The name of the icon to display.'),
-      color: DynamicStringSchema.describe('The color of the icon.').optional(),
     })
     .strict(),
 } satisfies ComponentApi;
@@ -175,9 +174,6 @@ export const VideoApi = {
     .object({
       ...CommonProps,
       url: DynamicStringSchema.describe('The URL of the video to display.'),
-      posterUrl: DynamicStringSchema.describe(
-        'The URL of the poster image to display before the video plays.',
-      ).optional(),
     })
     .strict(),
 } satisfies ComponentApi;
@@ -403,9 +399,6 @@ export const TextFieldApi = {
           'A regular expression used for client-side validation of the input.',
         )
         .optional(),
-      placeholder: DynamicStringSchema.describe(
-        'The placeholder text for the input field.',
-      ).optional(),
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
