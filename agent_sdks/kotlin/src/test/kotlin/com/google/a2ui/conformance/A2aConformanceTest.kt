@@ -43,6 +43,10 @@ import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonElement
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 
@@ -55,6 +59,22 @@ class A2aConformanceTest {
     val userDir = System.getProperty("user.dir")
     return File(userDir, "../conformance/suites/$filename")
   }
+
+  private fun anyToJsonElement(any: Any?): JsonElement =
+    when (any) {
+      null -> JsonNull
+      is Map<*, *> -> {
+        val map: Map<String, JsonElement> = any.entries.associate { (key, value) ->
+          key.toString() to anyToJsonElement(value)
+        }
+        JsonObject(map)
+      }
+      is List<*> -> JsonArray(any.map { anyToJsonElement(it) })
+      is String -> JsonPrimitive(any)
+      is Number -> JsonPrimitive(any)
+      is Boolean -> JsonPrimitive(any)
+      else -> throw IllegalArgumentException("Unsupported type: ${any.javaClass.name}")
+    }
 
   @TestFactory
   fun testA2aIntegrationConformance(): List<DynamicTest> {
@@ -71,8 +91,7 @@ class A2aConformanceTest {
         when (action) {
           "create_a2ui_part" -> {
             val data = args["data"] as Map<*, *>
-            val jsonStr = jsonMapper.writeValueAsString(data)
-            val jsonElement = Json.parseToJsonElement(jsonStr) as JsonObject
+            val jsonElement = anyToJsonElement(data) as JsonObject
             
             val part = A2uiA2a.createA2uiPart(jsonElement)
             assertTrue(part is DataPart)
