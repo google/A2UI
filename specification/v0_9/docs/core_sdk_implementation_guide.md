@@ -325,14 +325,14 @@ Implement the `MessageProcessor` to act as the central controller.
 *   **Action**: Write unit tests passing a sequence of `createSurface`, `updateComponents`, and `updateDataModel` messages. Assert the final state of the models and verify `getClientDataModel()` correctly aggregates data for `sendDataModel: true`.
 
 ### Phase 8: Capabilities & Minimal Catalog Functions
-Target the `minimal_catalog.json` first.
+The Minimal Catalog (`@specification/v0_9/json/catalogs/minimal/minimal_catalog.json`) is designed for rapid bootstrapping and testing. Target it first.
 *   Implement the schema translation logic for `a2uiClientCapabilities` (stripping `REF:` tags and converting to `$ref`).
 *   Implement the pure API schemas for the minimal catalog components (`Text`, `Row`, `Column`, `Button`, `TextField`).
 *   Implement the `capitalize` function.
 *   **Action**: Write unit tests verifying that standard function execution and capability generation work correctly.
 
 ### Phase 9: Basic Catalog Support
-Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
+The Basic Catalog (`@specification/v0_9/json/basic_catalog.json`) is the ultimate standard that must be implemented for production renderers. Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
 *   Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
 *   Create definitions for the remaining Basic Catalog components.
 *   **Action**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit test cases for data coercion and function logic.

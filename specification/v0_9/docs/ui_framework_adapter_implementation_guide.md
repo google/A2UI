@@ -308,7 +308,7 @@ Implement the bridge between your models and the native UI.
 *   Establish lazy subscription mounting and disposal lifecycles to prevent memory leaks.
 
 ### Phase 4: Minimal Catalog Support
-Target the `minimal_catalog.json` first.
+The Minimal Catalog (`@specification/v0_9/json/catalogs/minimal/minimal_catalog.json`) is designed for rapid bootstrapping and testing. Target it first.
 *   Implement native UI support for a minimal set of components to verify the architecture: `Text`, `Row`, `Column`, `Button`, `TextField`.
 *   **Action**: Verify that native properties update reactively when the underlying Core SDK data changes.
 
@@ -319,7 +319,7 @@ Build the **Gallery App** as described in Section 9. This tool is essential for 
 *   **STOP HERE. Ask the user for approval of the architecture and gallery application before proceeding to Phase 6.**
 
 ### Phase 6: Basic Catalog Support
-Once the core architecture is stable, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) to:
+The Basic Catalog (`@specification/v0_9/json/basic_catalog.json`) is the ultimate standard that must be implemented for production renderers. Once the core architecture is stable, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) to:
 *   Implement the full suite of Basic Catalog widgets.
 *   Bind all standard functions (arithmetic, logical, formatting) to the native UI components.
 *   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
