@@ -18,6 +18,22 @@ Its primary responsibilities include:
 
 The architecture emphasizes a clean separation between construct (the model) and visualization (the renderer). This layer follows the exact same design in all programming languages and does not require design work when porting to a new ecosystem.
 
+### Implementation Topologies
+Because A2UI spans multiple languages and UI paradigms, the strictness and location of these architectural boundaries will vary depending on the target ecosystem.
+
+#### Dynamic Languages (e.g., TypeScript / JavaScript)
+In highly dynamic ecosystems like the web, the architecture is typically split across multiple packages to maximize code reuse across diverse UI frameworks (React, Angular, Vue, Lit).
+*   **Core Library (`web_core`)**: Implements the Core Data Layer, Component Schemas, and a Generic Binder Layer. Because TS/JS has powerful runtime reflection, the core library can provide a generic binder that automatically handles all data binding without framework-specific code. 
+*   **Framework Library (`react_renderer`, `angular_renderer`)**: Implements the Framework-Specific Adapters and the actual view implementations.
+
+#### Static Languages (e.g., Kotlin, Swift, Dart)
+In statically typed languages, runtime reflection is often limited or discouraged for performance reasons.
+*   **Core Library (e.g., `kotlin_core`)**: Implements the Core Data Layer and Component Schemas. The core library typically provides a manually implemented **Binder Layer** for the standard Basic Catalog components. This ensures that even in static environments, basic components have a standardized, framework-agnostic reactive state definition.
+*   **Framework Library (e.g., `compose_renderer`)**: Uses the predefined Binders to connect to native UI state and implements the actual visual components.
+
+#### Combined Core + Framework Libraries (e.g., Swift + SwiftUI)
+In ecosystems dominated by a single UI framework (like iOS with SwiftUI), developers often build a single, unified library rather than splitting Core and Framework into separate packages. The generic `ComponentContext` and the framework-specific adapter logic are often tightly integrated.
+
 ### Foundational Prerequisites
 
 The very first step in implementing a Core SDK is choosing two critical libraries that will dictate the ergonomics and performance of your implementation.
@@ -54,7 +70,13 @@ The State Layer maintains a long-lived, mutable state object designed for high-p
 
 ### Design Principles
 1.  **The "Add" Pattern**: Construction is separated from composition. Parent containers do not act as factories; they receive models to manage.
-2.  **Granular Reactivity**: Updates are isolated.
+2.  **Standard Observer Pattern**: Models must provide a mechanism for the rendering layer to observe changes. 
+    1.  **Low Dependency**: Prefer "lowest common denominator" mechanisms.
+    2.  **Multi-Cast**: Support multiple listeners registered simultaneously.
+    3.  **Unsubscribe Pattern**: There MUST be a clear way to stop listening.
+    4.  **Payload Support**: Communicate specific data updates and lifecycle events.
+    5.  **Consistency**: Used uniformly across `SurfaceGroupModel` (lifecycle), `SurfaceModel` (actions), `SurfaceComponentsModel` (lifecycle), `ComponentModel` (updates), and `DataModel` (data changes).
+3.  **Granular Reactivity**: Updates are isolated.
     *   **Structure Changes**: `SurfaceComponentsModel` notifies when items are added/removed.
     *   **Property Changes**: `ComponentModel` notifies when its specific configuration changes.
     *   **Data Changes**: `DataModel` notifies only subscribers to the specific path that changed.
@@ -65,6 +87,22 @@ The State Layer maintains a long-lived, mutable state object designed for high-p
 The root containers for active surfaces and their catalogs, data, and components.
 
 ```typescript
+interface SurfaceLifecycleListener<T extends ComponentApi> {
+  onSurfaceCreated?: (s: SurfaceModel<T>) => void;
+  onSurfaceDeleted?: (id: string) => void;
+}
+
+/** 
+ * Matches 'action' in specification/v0_9/json/client_to_server.json.
+ */
+interface A2uiClientAction {
+  name: string;
+  surfaceId: string;
+  sourceComponentId: string;
+  timestamp: string; // ISO 8601
+  context: Record<string, any>;
+}
+
 class SurfaceGroupModel<T extends ComponentApi> {
   addSurface(surface: SurfaceModel<T>): void;
   deleteSurface(id: string): void;
@@ -111,6 +149,20 @@ class ComponentModel {
 #### `DataModel`
 A dedicated store for application data supporting JSON Pointer ([RFC 6901]).
 
+```typescript
+interface Subscription<T> {
+  readonly value: T | undefined; // Latest evaluated value
+  unsubscribe(): void;
+}
+
+class DataModel {
+  get(path: string): any; // Resolve JSON Pointer to value
+  set(path: string, value: any): void; // Atomic update at path
+  subscribe<T>(path: string, onChange: (v: T | undefined) => void): Subscription<T>; // Reactive path monitoring
+  dispose(): void;
+}
+```
+
 **Implementation Rules**:
 1.  **Relative Paths**: A2UI extends JSON Pointer to support paths that do not start with `/` (e.g., `name`), resolving relative to the current scope.
 2.  **Auto-vivification**: When setting a path like `/a/b/0/c`, create intermediate segments. If a segment is numeric, initialize as an Array `[]`, otherwise an Object `{}`.
@@ -140,10 +192,12 @@ Pairs a component's specific configuration with its scoped `DataContext`.
 class ComponentContext<T extends ComponentApi> {
   readonly componentModel: ComponentModel;
   readonly dataContext: DataContext;
-  readonly surfaceComponents: SurfaceComponentsModel; // For cross-component inspection
+  readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
   dispatchAction(action: Record<string, any>): Promise<void>;
 }
 ```
+
+*Escape Hatch*: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface (e.g. a `Row` checking if children have a `weight` property). This is discouraged but necessary for some layout engines.
 
 ## 6. Message Processing (`MessageProcessor`)
 
@@ -160,7 +214,7 @@ To generate `a2uiClientCapabilities` (specifically `inlineCatalogs`):
 
 ## 7. The Catalog & Function API
 
-A catalog defines the set of available components and functions.
+A catalog groups component definitions and function definitions together, along with an optional theme schema.
 
 ### `ComponentApi`
 The framework-agnostic definition of a component.
@@ -172,10 +226,28 @@ interface ComponentApi {
 ```
 
 ### Functions
-Functions accept statically resolved values as input and can return a static value or a reactive stream (Signal).
-1.  **Pure Logic**: Synchronous (e.g., `add`).
-2.  **External State**: Reactive streams (e.g., `clock()`).
-3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`) triggered by actions.
+Functions accept statically resolved values as input arguments (not observable streams). However, they can return an observable stream (or Signal) to provide reactive updates to the UI, or they can simply return a static value synchronously.
+
+Functions generally fall into a few common patterns:
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. Their logic is immediate and depends only on their inputs. They typically return a static value.
+2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
+3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are triggered by user actions rather than interpolation.
+
+If a function returns a reactive stream, it MUST use an idiomatic listening mechanism that supports standard unsubscription. To properly support an AI agent, functions SHOULD include a schema to generate accurate client capabilities.
+
+### Composing Your Own Catalog
+You can define your own catalog by composing components and functions that reflect your design system. While you can build a catalog entirely from scratch, you can also import or combine definitions with the Basic Catalog to save time.
+
+*Example of composing a catalog:*
+```python
+# Pseudocode
+myCustomCatalog = Catalog(
+  id="https://mycompany.com/catalogs/custom_catalog.json",
+  functions=basicCatalog.functions,
+  components=basicCatalog.components + [MyCompanyLogoComponent()],
+  themeSchema=basicCatalog.themeSchema # Inherit theme schema
+)
+```
 
 ### Expression Resolution (`formatString`)
 Required logic for interpreting `${expression}` syntax.
