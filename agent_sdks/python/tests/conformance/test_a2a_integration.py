@@ -17,22 +17,27 @@ import re
 import yaml
 import pytest
 
+
 def _get_conformance_path(filename):
   return os.path.abspath(
       os.path.join(os.path.dirname(__file__), "../../../conformance", filename)
   )
+
 
 def load_tests(filename):
   path = _get_conformance_path(os.path.join("suites", filename))
   with open(path, "r", encoding="utf-8") as f:
     return yaml.safe_load(f)
 
+
 def get_conformance_cases(filename):
   cases = load_tests(filename)
   return [(case["name"], case) for case in cases]
 
+
 # --- A2A Integration Conformance ---
 cases_a2a_integration = get_conformance_cases("a2a_integration.yaml")
+
 
 @pytest.mark.parametrize(
     "name, test_case",
@@ -110,9 +115,7 @@ def test_a2a_integration_conformance(name, test_case):
       context.add_activated_extension.assert_not_called()
     else:
       assert result_version == expect["version"]
-      context.add_activated_extension.assert_called_once_with(
-          expect["activated"]
-      )
+      context.add_activated_extension.assert_called_once_with(expect["activated"])
 
   elif action == "select_newest":
     requested = args["requested"]

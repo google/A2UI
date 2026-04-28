@@ -357,9 +357,6 @@ def test_converter_class_convert_function_call_ignores():
   assert len(a2a_parts) == 0
 
 
-
-
-
 def test_converter_class_convert_other_part():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   converter = A2uiPartConverter(catalog_mock)
