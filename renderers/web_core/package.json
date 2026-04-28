@@ -70,6 +70,12 @@
     "fix": "gts fix"
   },
   "wireit": {
+    "test": {
+      "command": "find dist -name '*.test.js' | xargs node --test --enable-source-maps --test-reporter spec",
+      "dependencies": [
+        "build"
+      ]
+    },
     "copy-spec": {
       "command": "node scripts/copy-spec.js",
       "files": [
