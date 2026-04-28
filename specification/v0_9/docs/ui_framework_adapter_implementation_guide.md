@@ -182,9 +182,21 @@ Regardless of strategy, implementations MUST strictly manage subscriptions:
 
 ## 7. Advanced Framework Traits
 
+### Contract of Ownership
+A crucial part of A2UI's architecture is understanding who "owns" the data layers.
+*   **The Data Layer (Message Processor) owns the `ComponentModel`**. It creates, updates, and destroys the component's raw data state based on the incoming JSON stream.
+*   **The Framework Adapter owns the `ComponentContext` and `ComponentBinding`**. When the native framework decides to mount a component onto the screen (e.g., React runs `render`), the Framework Adapter creates the `ComponentContext` and passes it to the Binder. When the native framework unmounts the component, the Framework Adapter MUST call `binding.dispose()`.
+
 ### Data Props vs. Structural Props
-*   **Data Props (e.g., `label`)**: Handled by the Binder/Adapter. The view receives fully resolved values. Whenever data updates, the binder should emit a *new reference* (shallow copy) to trigger declarative re-renders.
-*   **Structural Props (e.g., `children`)**: The binder outputs metadata (`{ id, basePath }`). The adapter takes these and calls the framework-native `buildChild` method recursively.
+It's important to distinguish between Data Props (like `label` or `value`) and Structural Props (like `child` or `children`).
+*   **Data Props:** Handled entirely by the Binder. The adapter receives a stream of fully resolved values (e.g., `"Submit"` instead of a `DynamicString` path). Whenever a data value updates, the binder should emit a *new reference* (e.g. a shallow copy of the props object) to ensure declarative frameworks that rely on strict equality (like React) correctly detect the change and trigger a re-render.
+*   **Structural Props:** The Binder does not attempt to resolve component IDs into actual UI trees. Instead, it outputs metadata for the children that need to be rendered.
+    *   For a simple `ComponentId` (e.g., `Card.child`), it emits an object like `{ id: string, basePath: string }`.
+    *   For a `ChildList` (e.g., `Column.children`), it evaluates the array. If the array is driven by a dynamic template bound to the data model, the binder must iterate over the array, using `context.dataContext.nested()` to generate a specific context for each index, and output a list of `ChildNode` streams. 
+*   The framework adapter is then responsible for taking these node definitions and calling a framework-native `buildChild(id, basePath)` method recursively.
+
+> **Implementation Tip: Context Propagation**
+> When implementing the recursive `buildChild` helper, ensure that it correctly inherits the *current* component's data context path by default. If a nested component (like a Text field inside a List template) uses a relative path, it must resolve against the scoped path provided by its immediate structural parent (e.g., `/restaurants/0`), not the root path. Failing to propagate this context is a common cause of "empty" data in nested components.
 
 ### Reactive Validation (`Checkable`)
 Components supporting the `checks` property should implement the `Checkable` trait:
@@ -193,6 +205,17 @@ Components supporting the `checks` property should implement the `Checkable` tra
 
 ## 8. Strongly-Typed Catalogs
 
+The standard A2UI Basic Catalog specifies a set of core components (Button, Text, Row, Column) and functions.
+
+### Strict API / Implementation Separation
+When building libraries that provide the Basic Catalog, it is **crucial** to separate the pure API (the Schemas and `ComponentApi`/`FunctionApi` definitions) from the actual UI implementations.
+
+*   **Multi-Framework Code Reuse**: In ecosystems like the Web, this allows a shared `web_core` library to define the Basic Catalog API and Binders once, while separate packages (`react_renderer`, `angular_renderer`) provide the native view implementations.
+*   **Developer Overrides**: By exposing the standard API definitions, developers adopting A2UI can easily swap in custom UI implementations (e.g., replacing the default `Button` with their company's internal Design System `Button`) without having to rewrite the complex A2UI validation, data binding, and capability generation logic. 
+
+For a detailed walkthrough on how to visually and functionally implement each basic component and function, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md).
+
+### Strictly Matching APIs
 Platforms with strong type systems should utilize their features to ensure an adapter renderer strictly matches the official `ComponentApi` (name and schema). This catches spelling or schema mismatches at compile time.
 
 #### Statically Typed Languages (e.g. Kotlin/Swift)
@@ -247,9 +270,15 @@ const catalog = new Catalog("id", [
 The Gallery App is the reference environment for an A2UI renderer.
 
 ### UX Architecture
-*   **Left**: Sample Navigation.
-*   **Center**: Surface Preview, JSON Message Stream, and an "Advance" stepper for progressive rendering verification.
-*   **Right**: Live Data Model inspector and Action Logs.
+The Gallery App must implement a three-column layout:
+1.  **Left Column (Sample Navigation)**: A list of available A2UI samples.
+2.  **Center Column (Rendering & Messages)**:
+    *   **Surface Preview**: Renders the active A2UI `Surface`.
+    *   **JSON Message Stream**: Displays the list of A2UI JSON messages.
+    *   **Interactive Stepper**: An "Advance" button allows processing messages one by one to verify progressive rendering.
+3.  **Right Column (Live Inspection)**:
+    *   **Data Model Pane**: A live-updating view of the full Data Model.
+    *   **Action Logs Pane**: A log of triggered actions and their context.
 
 ### Integration Testing Requirements
 Every renderer must verify:

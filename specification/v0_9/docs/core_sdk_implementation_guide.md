@@ -2,7 +2,20 @@
 
 This document describes the architecture and implementation requirements for an A2UI Core SDK. The Core SDK is a framework-agnostic library responsible for state management, protocol parsing, and logic evaluation. It is designed to be implemented in any programming language (client or server) to provide a consistent foundation for A2UI-powered applications.
 
-## 1. Role of the Core SDK
+## 1. Unified Architecture Overview
+
+The A2UI client architecture has a well-defined data flow that bridges language-agnostic data structures with native UI frameworks.
+
+1. **A2UI Messages** arrive from the server (JSON).
+2. The **`MessageProcessor`** parses these and updates the **`SurfaceModel`** (Agnostic State).
+3. The **`Surface`** (Framework Entry View) listens to the `SurfaceModel` and begins rendering.
+4. The `Surface` instantiates and renders individual **`ComponentImplementation`** nodes to build the UI tree.
+
+This establishes a fundamental split:
+*   **The Framework-Agnostic Layer (Data Layer)**: Handles JSON parsing, state management, JSON pointers, and schemas. This logic is identical across all UI frameworks within a given language.
+*   **The Framework-Specific Layer (View Layer)**: Handles turning the structured state into actual pixels (React Nodes, Flutter Widgets, iOS Views).
+
+## 2. Role of the Core SDK
 
 The Core SDK handles the "brain" of the A2UI system. It manages language-agnostic data structures and bridges the raw JSON protocol with reactive state models.
 
@@ -186,6 +199,27 @@ class ComponentContext<T extends ComponentApi> {
 ## 6. Message Processing (`MessageProcessor`)
 
 The "Controller" that accepts the raw stream, parses messages, and mutates models.
+
+```typescript
+class MessageProcessor<T extends ComponentApi> {
+  readonly model: SurfaceGroupModel<T>;
+  
+  constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
+
+  // Accepts validated, strongly-typed message objects, not raw JSON
+  processMessages(messages: A2uiMessage[]): void;
+  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
+  
+  // Returns a strictly typed capabilities object ready for JSON serialization
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
+  
+  /**
+   * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
+   * This should be used by the transport layer to populate metadata (e.g., 'a2uiClientDataModel').
+   */
+  getClientDataModel(): A2uiClientDataModel | undefined;
+}
+```
 
 ### Client Data Model Synchronization
 When `sendDataModel: true`, the SDK aggregates the full state of enabled surfaces. The **Transport Layer** calls `getClientDataModel()` before sending any message to the server to populate metadata (e.g., `a2uiClientDataModel`).
