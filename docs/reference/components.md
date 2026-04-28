@@ -205,7 +205,7 @@ Display images from URLs.
 
 ### Icon
 
-Display icons from the standard set defined in the catalog.
+Display icons from the basic set defined in the catalog.
 
 === "v0.8"
 
