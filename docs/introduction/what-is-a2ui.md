@@ -106,7 +106,7 @@ A2UI: JSON messages describing UI that:
     }
     ```
 
-=== "v0.9 (Draft)"
+=== "v0.9 (Current)"
 
     ```jsonl
     {
