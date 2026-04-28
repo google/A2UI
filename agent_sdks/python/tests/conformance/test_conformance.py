@@ -356,3 +356,157 @@ def test_schema_manager_conformance(name, test_case):
       for expected in test_case["expect_contains"]:
         expected_normalized = re.sub(r"\s+", "", expected.strip())
         assert expected_normalized in output_normalized
+
+
+# --- A2A Integration Conformance ---
+cases_a2a_integration = get_conformance_cases("a2a_integration.yaml")
+
+
+@pytest.mark.parametrize(
+    "name, test_case",
+    cases_a2a_integration,
+    ids=[c[0] for c in cases_a2a_integration],
+)
+def test_a2a_integration_conformance(name, test_case):
+  from a2ui.a2a.parts import create_a2ui_part, is_a2ui_part, get_a2ui_datapart
+  from a2a.types import DataPart, Part
+  from a2ui.a2a.extension import (
+      get_a2ui_agent_extension,
+      try_activate_a2ui_extension,
+      _select_newest_a2ui_extension,
+  )
+  from unittest.mock import MagicMock
+  from a2a.server.agent_execution import RequestContext
+
+  action = test_case["action"]
+  args = test_case.get("args", {})
+
+  if action == "create_a2ui_part":
+    data = args["data"]
+    part = create_a2ui_part(data)
+    assert is_a2ui_part(part)
+    expect = test_case["expect"]
+    data_part = get_a2ui_datapart(part)
+    assert data_part.metadata.get("mimeType") == expect["mime_type"]
+
+  elif action == "is_a2ui_part":
+    mime_type = args["mime_type"]
+    part = Part(root=DataPart(data={}, metadata={"mimeType": mime_type}))
+    result = is_a2ui_part(part)
+    assert result == test_case["expect"]
+
+  elif action == "get_extension":
+    version = args["version"]
+    accepts_inline_catalogs = args.get("accepts_inline_catalogs")
+    supported_catalog_ids = args.get("supported_catalog_ids")
+
+    kwargs = {}
+    if accepts_inline_catalogs is not None:
+      kwargs["accepts_inline_catalogs"] = accepts_inline_catalogs
+    if supported_catalog_ids is not None:
+      kwargs["supported_catalog_ids"] = supported_catalog_ids
+
+    ext = get_a2ui_agent_extension(version, **kwargs)
+    expect = test_case["expect"]
+    assert ext.uri == expect["uri"]
+    if expect["params"] is None:
+      assert ext.params is None
+    else:
+      assert ext.params == expect["params"]
+
+  elif action == "try_activate":
+    requested = args["requested"]
+    advertised = args["advertised"]
+
+    context = MagicMock(spec=RequestContext)
+    context.requested_extensions = requested
+    context.add_activated_extension = MagicMock()
+
+    card = MagicMock()
+    extensions = []
+    for uri in advertised:
+      ext = MagicMock()
+      ext.uri = uri
+      extensions.append(ext)
+    card.capabilities.extensions = extensions
+
+    result_version = try_activate_a2ui_extension(context, card)
+    expect = test_case["expect"]
+
+    if expect["activated"] is None:
+      assert result_version is None
+      context.add_activated_extension.assert_not_called()
+    else:
+      assert result_version == expect["version"]
+      context.add_activated_extension.assert_called_once_with(
+          expect["activated"]
+      )
+
+  elif action == "select_newest":
+    requested = args["requested"]
+    advertised = args["advertised"]
+    result = _select_newest_a2ui_extension(requested, advertised)
+    expect = test_case["expect"]
+    assert result == expect["newest"]
+
+
+# --- ADK Extensions Conformance ---
+cases_adk_extensions = get_conformance_cases("adk_extensions.yaml")
+
+
+@pytest.mark.parametrize(
+    "name, test_case",
+    cases_adk_extensions,
+    ids=[c[0] for c in cases_adk_extensions],
+)
+def test_adk_extensions_conformance(name, test_case):
+  from a2ui.adk.send_a2ui_to_client_toolset import SendA2uiToClientToolset
+  from a2ui.schema.catalog import A2uiCatalog
+  from unittest.mock import MagicMock
+  import asyncio
+
+  action = test_case["action"]
+  args = test_case.get("args", {})
+
+  if action == "execute_tool":
+    a2ui_json_str = args.get("a2ui_json")
+    tool_args = {"a2ui_json": a2ui_json_str} if a2ui_json_str else args
+
+    catalog_mock = MagicMock(spec=A2uiCatalog)
+    catalog_mock.validator.validate.return_value = None
+
+    tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(
+        catalog_mock, "examples"
+    )
+
+    tool_context_mock = MagicMock()
+    tool_context_mock.state = {}
+    tool_context_mock.actions = MagicMock(skip_summarization=False)
+
+    # run_async is async in Python
+    result = asyncio.run(
+        tool.run_async(args=tool_args, tool_context=tool_context_mock)
+    )
+
+    expect = test_case["expect"]
+    expect_success = expect["success"]
+
+    if expect_success:
+      assert "error" not in result
+      assert (
+          SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY
+          in result
+      )
+      if expect.get("contains_validated_json"):
+        validated_payload = result[
+            SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY
+        ]
+        assert "beginRendering" in json.dumps(validated_payload)
+    else:
+      assert "error" in result
+      if expect.get("error_contains"):
+        assert expect["error_contains"] in result["error"]
+
+
+
+
