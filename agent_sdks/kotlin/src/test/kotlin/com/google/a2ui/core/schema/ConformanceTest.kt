@@ -22,6 +22,7 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlin.test.assertNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -32,6 +33,9 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import com.google.a2ui.core.parser.hasA2uiParts
+import com.google.a2ui.core.parser.parseResponseToParts
+import com.google.a2ui.core.parser.PayloadFixer
 
 class ConformanceTest {
 
@@ -403,6 +407,65 @@ class ConformanceTest {
                 )
               }
             }
+          }
+        }
+      }
+    }
+  }
+
+  @TestFactory
+  fun testParserConformance(): List<DynamicTest> {
+    val conformanceFile = getConformanceFile("suites/parser.yaml")
+    val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
+
+    return rawList.mapNotNull { caseObj ->
+      val case = caseObj as Map<*, *>
+      val name = case["name"] as String
+      val action = case["action"] as String
+      val input = case["input"] as String
+
+      DynamicTest.dynamicTest(name) {
+        when (action) {
+          "parse_full" -> {
+            if (case.containsKey("expect_error")) {
+              val expectError = case["expect_error"] as String
+              val exception = assertFailsWith<IllegalArgumentException> {
+                parseResponseToParts(input)
+              }
+              assertTrue(
+                exception.message!!.contains(expectError) || exception.message!!.contains("not found in response") || exception.message!!.contains("A2UI JSON part is empty") || exception.message!!.contains("Failed to parse"),
+                "Expected error containing '$expectError', but got: ${exception.message}"
+              )
+            } else {
+              val parts = parseResponseToParts(input)
+              val expect = case["expect"] as List<*>
+              assertEquals(expect.size, parts.size)
+              for (i in expect.indices) {
+                val exp = expect[i] as Map<*, *>
+                val part = parts[i]
+                assertEquals(exp["text"] as? String ?: "", part.text)
+                val expA2ui = exp["a2ui"]
+                if (expA2ui != null) {
+                  val expJsonStr = jsonMapper.writeValueAsString(expA2ui)
+                  val expJson = Json.parseToJsonElement(expJsonStr) as JsonArray
+                  assertEquals(expJson, part.a2uiJson)
+                } else {
+                  assertNull(part.a2uiJson)
+                }
+              }
+            }
+          }
+          "fix_payload" -> {
+             val result = PayloadFixer.parseAndFix(input)
+             val expect = case["expect"] as List<*>
+             val expectJsonStr = jsonMapper.writeValueAsString(expect)
+             val expectJson = Json.parseToJsonElement(expectJsonStr) as JsonArray
+             assertEquals(expectJson, result)
+          }
+          "has_parts" -> {
+             val result = hasA2uiParts(input)
+             val expect = case["expect"] as Boolean
+             assertEquals(expect, result)
           }
         }
       }
