@@ -27,7 +27,7 @@ export const ChildList: React.FC<{
       <>
         {childList.map((item: unknown) => {
           if (buildChild) {
-             return buildChild(item);
+            return buildChild(item);
           }
           // Fallback if buildChild isn't provided for some reason
           if (item && typeof item === 'object' && 'instanceId' in item) {

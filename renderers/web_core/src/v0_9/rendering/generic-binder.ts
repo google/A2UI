@@ -390,7 +390,10 @@ export class GenericBinder<T> {
           const initialChildren = currentArr.map((_, i) => {
             const childPath = listContext.nested(String(i)).path;
             if (this.nodeResolver) {
-              const node = this.nodeResolver.resolveNode(value.componentId, childPath);
+              const node = this.nodeResolver.resolveNode(
+                value.componentId,
+                childPath,
+              );
               this.resolvedNodes.add(node);
               return node;
             }
@@ -406,7 +409,10 @@ export class GenericBinder<T> {
           // Static ChildList
           return value.map(id => {
             if (this.nodeResolver) {
-              const node = this.nodeResolver.resolveNode(id, this.context.dataContext.path);
+              const node = this.nodeResolver.resolveNode(
+                id,
+                this.context.dataContext.path,
+              );
               this.resolvedNodes.add(node);
               return node;
             }
@@ -420,7 +426,10 @@ export class GenericBinder<T> {
         // Single ComponentId
         if (typeof value === 'string') {
           if (this.nodeResolver) {
-            const node = this.nodeResolver.resolveNode(value, this.context.dataContext.path);
+            const node = this.nodeResolver.resolveNode(
+              value,
+              this.context.dataContext.path,
+            );
             this.resolvedNodes.add(node);
             return node;
           }

@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { vi } from 'vitest';
-import { SurfaceModel, ComponentModel, Catalog, ComponentContext } from '@a2ui/web_core/v0_9';
+import { SurfaceModel, ComponentModel, Catalog, A2uiNode } from '@a2ui/web_core/v0_9';
 import { BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
 import type { ReactComponentImplementation } from '../src/v0_9/adapter';
+import { A2uiSurface, useSurface } from '../src/v0_9/A2uiSurface';
 
 export interface RenderA2uiOptions {
   initialData?: Record<string, any>;
@@ -65,33 +66,30 @@ export function renderA2uiComponent(
     surface.componentsModel.addComponent(childModel);
   }
 
-  const mainContext = new ComponentContext(surface, componentId, '/');
+  // Resolve the node for the component under test
+  let node: A2uiNode;
+  if (componentId === 'root') {
+     node = surface.rootNode.value!;
+  } else {
+     node = (surface as any)._nodeManager.resolveNode(componentId, '/');
+  }
 
-  // Smart buildChild mock:
-  // 1. If the component exists in the model and catalog, render it for real.
-  // 2. Otherwise, render a placeholder div that tests can query.
-  const buildChild = vi.fn((id: string, basePath?: string) => {
-    const compModel = surface.componentsModel.get(id);
+  const buildChild = vi.fn((nodeOrId: any) => {
+    if (!nodeOrId) return null;
     
-    if (!compModel) {
-      return <div key={`${id}-${basePath}`} data-testid={`child-${id}`} data-basepath={basePath} />;
+    if (typeof nodeOrId === 'object' && 'instanceId' in nodeOrId) {
+      return <NodeRenderer key={nodeOrId.instanceId} node={nodeOrId as A2uiNode} />;
     }
-
-    const compImpl = surface.catalog.components.get(compModel.type);
-    if (!compImpl) {
-       return <div key={`${id}-${basePath}`} data-testid={`error-unknown-type-${compModel.type}`} />;
-    }
-
-    const ctx = new ComponentContext(surface, id, basePath || '/');
-    const ChildComponent = (compImpl as ReactComponentImplementation).render;
-
-    return <ChildComponent key={`${id}-${basePath}`} context={ctx} buildChild={buildChild} />;
+    
+    return <div data-testid={`child-${typeof nodeOrId === 'string' ? nodeOrId : nodeOrId.componentId}`} />;
   });
 
   const ComponentToRender = impl.render;
 
   const view = render(
-    <ComponentToRender context={mainContext} buildChild={buildChild} />
+    <A2uiSurface surface={surface}>
+        {componentId !== 'root' ? <ComponentToRender node={node} buildChild={buildChild} /> : <NodeRenderer node={node} />}
+    </A2uiSurface>
   );
 
   return { 
@@ -99,12 +97,14 @@ export function renderA2uiComponent(
     surface, 
     buildChild, 
     mainModel,
-    context: mainContext,
+    node,
     // Helper to trigger data model updates and wait for re-render
     updateData: async (path: string, value: any) => {
-      surface.dataModel.set(path, value);
-      // Wait for React to process the useSyncExternalStore update
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await act(async () => {
+        surface.dataModel.set(path, value);
+        // Wait for React to process the useSyncExternalStore update
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
     }
   };
 }

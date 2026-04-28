@@ -59,7 +59,10 @@ export const Text = createComponentImplementation(TextApi, ({props}) => {
   };
 
   const isCaption = (props.variant as any) === 'caption';
-  const classes = [styles.a2uiText, isCaption ? styles.a2uiCaption : (props.variant as any) || 'body'];
+  const classes = [
+    styles.a2uiText,
+    isCaption ? styles.a2uiCaption : (props.variant as any) || 'body',
+  ];
   if (renderedHtml === null) {
     classes.push('no-markdown-renderer');
   }

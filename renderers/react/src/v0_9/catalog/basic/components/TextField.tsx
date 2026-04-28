@@ -28,7 +28,11 @@ export const TextField = createComponentImplementation(TextFieldApi, ({props}) =
 
   const isLong = (props.variant as any) === 'longText';
   const type =
-    (props.variant as any) === 'number' ? 'number' : (props.variant as any) === 'obscured' ? 'password' : 'text';
+    (props.variant as any) === 'number'
+      ? 'number'
+      : (props.variant as any) === 'obscured'
+        ? 'password'
+        : 'text';
 
   const uniqueId = React.useId();
   const hasError = props.validationErrors && props.validationErrors.length > 0;

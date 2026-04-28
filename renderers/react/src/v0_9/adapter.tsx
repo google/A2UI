@@ -27,13 +27,14 @@ export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
   render: React.FC<{
     node: A2uiNode;
+    buildChild?: (nodeOrId: A2uiNode | string) => React.ReactNode;
   }>;
 }
 
 export type ReactA2uiComponentProps<T> = {
   props: T;
   node: A2uiNode;
-  buildChild: (nodeOrId: A2uiNode | string) => React.ReactNode;
+  buildChild: (nodeOrId: any) => React.ReactNode;
 };
 
 /**
@@ -42,6 +43,7 @@ export type ReactA2uiComponentProps<T> = {
 export function useNodeProps<T>(node: A2uiNode<T>): T {
   const subscribe = useCallback(
     (callback: () => void) => {
+      if (!node) return () => {};
       // Create a reactive effect that re-runs the callback when props change
       const dispose = node.props.subscribe(() => {
         callback();
@@ -51,8 +53,8 @@ export function useNodeProps<T>(node: A2uiNode<T>): T {
     [node]
   );
 
-  const getSnapshot = useCallback(() => node.props.peek(), [node]);
-  
+  const getSnapshot = useCallback(() => node?.props.peek(), [node]);
+
   return useSyncExternalStore(subscribe, getSnapshot);
 }
 
@@ -77,17 +79,22 @@ export function createComponentImplementation<Api extends ComponentApi>(
 
   const ReactWrapper: React.FC<{
     node: A2uiNode;
-  }> = ({node}) => {
+    buildChild?: (nodeOrId: any) => React.ReactNode;
+  }> = ({node, buildChild: providedBuildChild}) => {
     const props = useNodeProps(node as A2uiNode<Props>);
-    
+
     // Trivial backward-compatible buildChild
-    const buildChild = useCallback((nodeOrId: A2uiNode | string) => {
+    const internalBuildChild = useCallback((nodeOrId: any) => {
       if (typeof nodeOrId === 'object' && nodeOrId && 'instanceId' in nodeOrId) {
         return <NodeRenderer key={nodeOrId.instanceId} node={nodeOrId as A2uiNode} />;
       }
-      console.warn("buildChild expects an A2uiNode object, but received a string ID. The generic binder should resolve IDs into Node objects.");
+      console.warn(
+        'buildChild expects an A2uiNode object, but received a string ID. The generic binder should resolve IDs into Node objects.'
+      );
       return null;
     }, []);
+
+    const buildChild = providedBuildChild || internalBuildChild;
 
     return <MemoizedRender props={props || ({} as Props)} node={node} buildChild={buildChild} />;
   };
@@ -106,6 +113,7 @@ export function createBinderlessComponentImplementation(
   api: ComponentApi,
   RenderComponent: React.FC<{
     node: A2uiNode;
+    buildChild?: (nodeOrId: any) => React.ReactNode;
   }>
 ): ReactComponentImplementation {
   return {

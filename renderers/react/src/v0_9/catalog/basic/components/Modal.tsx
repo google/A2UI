@@ -18,7 +18,6 @@ import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
-import {NodeRenderer} from '../../../A2uiSurface';
 
 export const Modal = createComponentImplementation(ModalApi, ({props, buildChild}) => {
   useBasicCatalogStyles();

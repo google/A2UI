@@ -42,7 +42,7 @@ describe('A2UI React Integration', () => {
     const surface = processor.model.getSurface('s1');
     expect(surface).toBeDefined();
     
-    const { rerender } = render(<A2uiSurface surface={surface as any} />);
+    render(<A2uiSurface surface={surface as any} />);
 
     // 2. Add components
     await act(async () => {

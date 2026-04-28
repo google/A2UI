@@ -18,7 +18,9 @@ import React, {useSyncExternalStore, memo, useCallback, createContext, useContex
 import {type SurfaceModel, type A2uiNode} from '@a2ui/web_core/v0_9';
 import type {ReactComponentImplementation} from './adapter';
 
-const SurfaceContext = createContext<SurfaceModel<ReactComponentImplementation> | undefined>(undefined);
+export const SurfaceContext = createContext<SurfaceModel<ReactComponentImplementation> | undefined>(
+  undefined
+);
 
 export const useSurface = () => {
   const surface = useContext(SurfaceContext);
@@ -28,7 +30,10 @@ export const useSurface = () => {
   return surface;
 };
 
-const useNodeStore = (signal?: {subscribe: (cb: (val: any) => void) => () => void, peek: () => any}) => {
+const useNodeStore = (signal?: {
+  subscribe: (cb: (val: unknown) => void) => () => void;
+  peek: () => any;
+}) => {
   const subscribe = useCallback(
     (callback: () => void) => {
       if (!signal) return () => {};
@@ -43,16 +48,12 @@ const useNodeStore = (signal?: {subscribe: (cb: (val: any) => void) => () => voi
   return useSyncExternalStore(subscribe, getSnapshot);
 };
 
-export const NodeRenderer = memo(
-  ({
-    node,
-  }: {
-    node: A2uiNode;
-  }) => {
-    const surface = useSurface();
-    // 1. Subscribe specifically to this node's destruction
-    const isDestroyed = useSyncExternalStore(
-      useCallback((cb: () => void) => {
+export const NodeRenderer = memo(({node}: {node: A2uiNode}) => {
+  const surface = useSurface();
+  // 1. Subscribe specifically to this node's destruction
+  const isDestroyed = useSyncExternalStore(
+    useCallback(
+      (cb: () => void) => {
         let active = true;
         const sub = node.onDestroyed.subscribe(() => {
           if (active) cb();
@@ -61,25 +62,26 @@ export const NodeRenderer = memo(
           active = false;
           sub.unsubscribe();
         };
-      }, [node]),
-      () => false // It's only true if the callback fires, causing unmount
-    );
+      },
+      [node]
+    ),
+    () => false // It's only true if the callback fires, causing unmount
+  );
 
-    if (isDestroyed) {
-      return null;
-    }
-
-    const compImpl = surface.catalog.components.get(node.type);
-
-    if (!compImpl) {
-      return <div style={{color: 'red'}}>Unknown component: {node.type}</div>;
-    }
-
-    const ComponentToRender = compImpl.render;
-
-    return <ComponentToRender node={node} />;
+  if (isDestroyed) {
+    return null;
   }
-);
+
+  const compImpl = surface.catalog.components.get(node.type);
+
+  if (!compImpl) {
+    return <div style={{color: 'red'}}>Unknown component: {node.type}</div>;
+  }
+
+  const ComponentToRender = compImpl.render;
+
+  return <ComponentToRender node={node} />;
+});
 NodeRenderer.displayName = 'NodeRenderer';
 
 export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({

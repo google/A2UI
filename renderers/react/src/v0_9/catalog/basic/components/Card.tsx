@@ -18,7 +18,6 @@ import React from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseContainerStyle, getWeightStyle, useBasicCatalogStyles} from '../utils';
-import {NodeRenderer} from '../../../A2uiSurface';
 
 export const Card = createComponentImplementation(CardApi, ({props, buildChild}) => {
   useBasicCatalogStyles();

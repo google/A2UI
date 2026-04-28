@@ -17,7 +17,6 @@
 import {createComponentImplementation} from '../../../adapter';
 import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
-import {NodeRenderer} from '../../../A2uiSurface';
 import styles from './Button.module.css';
 
 export const Button = createComponentImplementation(ButtonApi, ({props, buildChild}) => {

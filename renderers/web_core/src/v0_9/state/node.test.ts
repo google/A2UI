@@ -19,7 +19,6 @@ import {describe, it, beforeEach} from 'node:test';
 import {SurfaceModel} from './surface-model.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {ComponentModel} from './component-model.js';
-import {A2uiNode} from './node-types.js';
 import {z} from 'zod';
 import {CommonSchemas} from '../schema/common-types.js';
 
@@ -48,7 +47,7 @@ describe('Node Layer', () => {
     assert.strictEqual(surface.rootNode.value, undefined);
 
     surface.componentsModel.addComponent(
-      new ComponentModel('root', 'Text', {text: 'Hello'})
+      new ComponentModel('root', 'Text', {text: 'Hello'}),
     );
 
     const root = surface.rootNode.value as any;
@@ -71,7 +70,7 @@ describe('Node Layer', () => {
 
   it('destroys root node when "root" component is deleted', () => {
     surface.componentsModel.addComponent(
-      new ComponentModel('root', 'Text', {text: 'Hello'})
+      new ComponentModel('root', 'Text', {text: 'Hello'}),
     );
     assert.ok(surface.rootNode.value);
 
@@ -87,10 +86,10 @@ describe('Node Layer', () => {
 
   it('expands static child lists into child nodes', async () => {
     surface.componentsModel.addComponent(
-      new ComponentModel('root', 'Row', {children: ['child1']})
+      new ComponentModel('root', 'Row', {children: ['child1']}),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('child1', 'Text', {text: 'I am a child'})
+      new ComponentModel('child1', 'Text', {text: 'I am a child'}),
     );
 
     // Wait for async notifications to process
@@ -116,10 +115,10 @@ describe('Node Layer', () => {
           componentId: 'item-template',
           path: '/items',
         },
-      })
+      }),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('item-template', 'Text', {text: {path: '.'}})
+      new ComponentModel('item-template', 'Text', {text: {path: '.'}}),
     );
 
     // Wait for async notifications
@@ -146,10 +145,10 @@ describe('Node Layer', () => {
 
   it('recursively destroys child nodes when parent is destroyed', async () => {
     surface.componentsModel.addComponent(
-      new ComponentModel('root', 'Row', {children: ['child1']})
+      new ComponentModel('root', 'Row', {children: ['child1']}),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('child1', 'Text', {text: 'Child'})
+      new ComponentModel('child1', 'Text', {text: 'Child'}),
     );
 
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -168,10 +167,16 @@ describe('Node Layer', () => {
   });
 
   it('destroys child nodes when they are removed from the list', async () => {
-    const rootComp = new ComponentModel('root', 'Row', {children: ['c1', 'c2']});
+    const rootComp = new ComponentModel('root', 'Row', {
+      children: ['c1', 'c2'],
+    });
     surface.componentsModel.addComponent(rootComp);
-    surface.componentsModel.addComponent(new ComponentModel('c1', 'Text', {text: '1'}));
-    surface.componentsModel.addComponent(new ComponentModel('c2', 'Text', {text: '2'}));
+    surface.componentsModel.addComponent(
+      new ComponentModel('c1', 'Text', {text: '1'}),
+    );
+    surface.componentsModel.addComponent(
+      new ComponentModel('c2', 'Text', {text: '2'}),
+    );
 
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -194,18 +199,18 @@ describe('Node Layer', () => {
   it('supports shared nodes via reference counting', async () => {
     // A2UI adjacency list allows multiple parents to refer to the same ID.
     // In Node Layer, if they have the same dataPath, they share the Node instance.
-    
+
     surface.componentsModel.addComponent(
-      new ComponentModel('root', 'Row', {children: ['parent1', 'parent2']})
+      new ComponentModel('root', 'Row', {children: ['parent1', 'parent2']}),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('parent1', 'Row', {children: ['shared']})
+      new ComponentModel('parent1', 'Row', {children: ['shared']}),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('parent2', 'Row', {children: ['shared']})
+      new ComponentModel('parent2', 'Row', {children: ['shared']}),
     );
     surface.componentsModel.addComponent(
-      new ComponentModel('shared', 'Text', {text: 'Shared'})
+      new ComponentModel('shared', 'Text', {text: 'Shared'}),
     );
 
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -213,7 +218,7 @@ describe('Node Layer', () => {
     const root = surface.rootNode.value as any;
     const p1 = root.props.value.children[0];
     const p2 = root.props.value.children[1];
-    
+
     assert.ok(p1);
     assert.ok(p2);
 
@@ -222,7 +227,11 @@ describe('Node Layer', () => {
 
     assert.ok(shared1);
     assert.ok(shared2);
-    assert.strictEqual(shared1, shared2, 'Nodes with same instanceId should be shared');
+    assert.strictEqual(
+      shared1,
+      shared2,
+      'Nodes with same instanceId should be shared',
+    );
 
     let sharedDestroyed = false;
     shared1.onDestroyed.subscribe(() => {
@@ -231,10 +240,18 @@ describe('Node Layer', () => {
 
     // Remove shared from p1
     surface.componentsModel.get('parent1')!.properties = {children: []};
-    assert.strictEqual(sharedDestroyed, false, 'Shared node should not be destroyed if still used by p2');
+    assert.strictEqual(
+      sharedDestroyed,
+      false,
+      'Shared node should not be destroyed if still used by p2',
+    );
 
     // Remove parent2 from root
     surface.componentsModel.get('root')!.properties = {children: ['parent1']};
-    assert.strictEqual(sharedDestroyed, true, 'Shared node should be destroyed when no longer referenced');
+    assert.strictEqual(
+      sharedDestroyed,
+      true,
+      'Shared node should be destroyed when no longer referenced',
+    );
   });
 });

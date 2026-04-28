@@ -25,7 +25,9 @@ import {A2uiNode} from './node-types.js';
 /**
  * Internal implementation of the A2uiNode interface.
  */
-export class NodeImpl<TProps = Record<string, any>> implements A2uiNode<TProps> {
+export class NodeImpl<
+  TProps = Record<string, any>,
+> implements A2uiNode<TProps> {
   private readonly _onDestroyed = new EventEmitter<void>();
   private readonly _props = signal<TProps>({} as TProps);
   private binder: GenericBinder<TProps>;

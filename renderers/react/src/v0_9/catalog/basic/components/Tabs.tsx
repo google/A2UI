@@ -18,7 +18,6 @@ import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
-import {NodeRenderer} from '../../../A2uiSurface';
 
 // The type of a tab is deeply nested into the TabsApi schema, and
 // it seems z.infer is not inferring it correctly (?). We use `any` for now.
