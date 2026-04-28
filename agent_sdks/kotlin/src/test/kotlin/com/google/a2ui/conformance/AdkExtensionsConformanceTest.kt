@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.adk.a2a_extension
+package com.google.a2ui.conformance
+
+import com.google.a2ui.adk.a2a_extension.A2uiEventConverter
+import com.google.a2ui.adk.a2a_extension.SendA2uiToClientToolset
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory

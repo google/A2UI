@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.conformance
+
+import com.google.a2ui.core.schema.A2uiCatalog
+import com.google.a2ui.core.schema.A2uiVersion
+import com.google.a2ui.core.schema.A2uiValidator
+import com.google.a2ui.core.schema.A2uiCatalogProvider
+import com.google.a2ui.core.schema.CatalogConfig
+import com.google.a2ui.core.schema.SchemaModifiers
+import com.google.a2ui.core.schema.A2uiConstants
+import com.google.a2ui.core.schema.A2uiSchemaManager
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
