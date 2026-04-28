@@ -212,11 +212,6 @@ class ConformanceTest {
         // Kotlin loadExamples skips invalid files instead of throwing, so it's not conformant with error expectation
         return@mapNotNull null
       }
-      if (action == "render") {
-        // Render output formatting differs, skip for now to stick to current implementation
-        return@mapNotNull null
-      }
-
       DynamicTest.dynamicTest(name) {
         val catalog = (case["catalog"] as? Map<*, *>)?.let {
             val (cat, _) = buildCatalog(it, conformanceDir, emptyMap())

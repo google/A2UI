@@ -96,14 +96,14 @@ std::string A2uiCatalog::render_as_llm_instructions() const {
     ss << A2UI_SCHEMA_BLOCK_START << "\n";
 
     if (!s2c_schema_.empty()) {
-        ss << "### Server To Client Schema:\n" << s2c_schema_.dump(2) << "\n\n";
+        ss << "### Server To Client Schema:\n" << s2c_schema_.dump() << "\n\n";
     }
 
     if (common_types_schema_.contains("$defs") && !common_types_schema_["$defs"].empty()) {
-        ss << "### Common Types Schema:\n" << common_types_schema_.dump(2) << "\n\n";
+        ss << "### Common Types Schema:\n" << common_types_schema_.dump() << "\n\n";
     }
 
-    ss << "### Catalog Schema:\n" << catalog_schema_.dump(2) << "\n\n";
+    ss << "### Catalog Schema:\n" << catalog_schema_.dump() << "\n\n";
     ss << A2UI_SCHEMA_BLOCK_END;
 
     return ss.str();
