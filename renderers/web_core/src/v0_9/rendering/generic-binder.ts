@@ -22,6 +22,7 @@ import {
   DataBinding,
   FunctionCall,
 } from '../schema/common-types.js';
+import {A2uiNode} from '../state/node-types.js';
 
 // --- Schema Scraping ---
 
@@ -75,8 +76,22 @@ function getFieldBehavior(
     current = current._def.innerType;
   }
 
+  const description = current._def.description || '';
+
   if (propertyName === 'checks') {
     return {type: 'CHECKABLE'};
+  }
+
+  // Identify A2UI-specific structural types by tag in description or property name
+  if (
+    description.includes('A2UI_TYPE:ComponentId') ||
+    description.includes('A2UI_TYPE:ChildList') ||
+    propertyName === 'child' ||
+    propertyName === 'children' ||
+    propertyName === 'trigger' ||
+    propertyName === 'content'
+  ) {
+    return {type: 'STRUCTURAL'};
   }
 
   // Structural matching for A2UI primitives using typeName to avoid dual-module instanceof issues
@@ -101,9 +116,11 @@ function getFieldBehavior(
     // ChildList is a union containing an array and an object with { componentId, path }
     const isChildList = options.some(
       o =>
-        o._def.typeName === 'ZodObject' &&
-        o._def.shape().componentId &&
-        o._def.shape().path,
+        (o._def.typeName === 'ZodObject' &&
+          o._def.shape().componentId &&
+          o._def.shape().path) ||
+        (o._def.typeName === 'ZodArray' &&
+          o._def.type._def.description?.includes('A2UI_TYPE:ComponentId')),
     );
     if (isChildList) return {type: 'STRUCTURAL'};
   } else if (current._def.typeName === 'ZodString') {
@@ -144,10 +161,14 @@ type IsDynamic<T> = DataBinding extends NonNullable<T> ? true : false;
 export type ResolveA2uiProp<T> = [NonNullable<T>] extends [Action]
   ? (() => void) | Extract<T, undefined>
   : [NonNullable<T>] extends [ChildList]
-    ? any | Extract<T, undefined>
-    : Exclude<T, DynamicTypes> extends never
-      ? any
-      : Exclude<T, DynamicTypes>;
+    ? A2uiNode[] | Extract<T, undefined>
+    : [NonNullable<T>] extends [string]
+      ? T extends string
+        ? A2uiNode | string | Extract<T, undefined>
+        : A2uiNode | Extract<T, undefined>
+      : Exclude<T, DynamicTypes> extends never
+        ? any
+        : Exclude<T, DynamicTypes>;
 
 /**
  * Automatically generates two-way binding setters for dynamic properties.
@@ -174,6 +195,14 @@ export type ResolveA2uiProps<T> = (T extends object
   };
 
 /**
+ * A resolver that transforms component IDs and paths into living Node instances.
+ */
+export interface NodeResolver {
+  resolveNode(componentId: string, dataPath: string): any;
+  releaseNode(node: any): void;
+}
+
+/**
  * The Generic Binder is a framework-agnostic engine that transforms raw A2UI JSON payload
  * configurations into a single, cohesive reactive stream of strongly-typed `ResolvedProps`.
  *
@@ -196,16 +225,31 @@ export class GenericBinder<T> {
   private compUnsub?: () => void;
   private isConnected = false;
 
+  // Track nodes resolved by this binder to manage their lifecycle
+  private resolvedNodes: Set<any> = new Set();
+
   private context: ComponentContext;
   private behaviorTree: BehaviorNode;
+  private nodeResolver?: NodeResolver;
+  private componentsUnsub?: () => void;
 
-  constructor(context: ComponentContext, schema: z.ZodTypeAny) {
+  constructor(
+    context: ComponentContext,
+    schema: z.ZodTypeAny,
+    nodeResolver?: NodeResolver,
+  ) {
     this.context = context;
     this.behaviorTree = scrapeSchemaBehavior(schema);
+    this.nodeResolver = nodeResolver;
 
     if (this.behaviorTree.type !== 'OBJECT') {
       this.behaviorTree = {type: 'OBJECT', shape: {}};
     }
+
+    const sub = this.context.surfaceComponents.onCreated.subscribe(() => {
+      this.rebuildAllBindings();
+    });
+    this.componentsUnsub = () => sub.unsubscribe();
 
     this.resolveInitialProps();
   }
@@ -229,6 +273,14 @@ export class GenericBinder<T> {
   private rebuildAllBindings() {
     this.dataListeners.forEach(l => l());
     this.dataListeners = [];
+
+    // Release all nodes resolved in previous binding session
+    if (this.nodeResolver) {
+      for (const node of this.resolvedNodes) {
+        this.nodeResolver.releaseNode(node);
+      }
+    }
+    this.resolvedNodes.clear();
 
     const props = this.context.componentModel.properties;
 
@@ -287,15 +339,41 @@ export class GenericBinder<T> {
           value.path &&
           value.componentId
         ) {
+          // Template ChildList
           const bound = this.context.dataContext.subscribeDynamicValue(
             {path: value.path},
             newVal => {
+              const propName = path[path.length - 1];
+              const oldNodes = (this.currentProps as any)[propName] || [];
+
               const arr = Array.isArray(newVal) ? newVal : [];
               const listContext = this.context.dataContext.nested(value.path);
-              const resolvedChildren = arr.map((_, i) => ({
-                id: value.componentId,
-                basePath: listContext.nested(String(i)).path,
-              }));
+              const resolvedChildren = arr.map((_, i) => {
+                const childPath = listContext.nested(String(i)).path;
+                if (this.nodeResolver) {
+                  const node = this.nodeResolver.resolveNode(
+                    value.componentId,
+                    childPath,
+                  );
+                  this.resolvedNodes.add(node);
+                  return node;
+                }
+                return {
+                  id: value.componentId,
+                  basePath: childPath,
+                };
+              });
+
+              // Cleanup old nodes from this specific prop that are no longer present
+              if (this.nodeResolver && Array.isArray(oldNodes)) {
+                for (const oldNode of oldNodes) {
+                  if (!resolvedChildren.includes(oldNode)) {
+                    this.nodeResolver.releaseNode(oldNode);
+                    this.resolvedNodes.delete(oldNode);
+                  }
+                }
+              }
+
               this.updateDeepValue(path, resolvedChildren);
               this.notify();
             },
@@ -309,11 +387,49 @@ export class GenericBinder<T> {
 
           const currentArr = Array.isArray(bound.value) ? bound.value : [];
           const listContext = this.context.dataContext.nested(value.path);
-          return currentArr.map((_, i) => ({
-            id: value.componentId,
-            basePath: listContext.nested(String(i)).path,
-          }));
+          const initialChildren = currentArr.map((_, i) => {
+            const childPath = listContext.nested(String(i)).path;
+            if (this.nodeResolver) {
+              const node = this.nodeResolver.resolveNode(value.componentId, childPath);
+              this.resolvedNodes.add(node);
+              return node;
+            }
+            return {
+              id: value.componentId,
+              basePath: childPath,
+            };
+          });
+          return initialChildren;
         }
+
+        if (Array.isArray(value)) {
+          // Static ChildList
+          return value.map(id => {
+            if (this.nodeResolver) {
+              const node = this.nodeResolver.resolveNode(id, this.context.dataContext.path);
+              this.resolvedNodes.add(node);
+              return node;
+            }
+            return {
+              id,
+              basePath: this.context.dataContext.path,
+            };
+          });
+        }
+
+        // Single ComponentId
+        if (typeof value === 'string') {
+          if (this.nodeResolver) {
+            const node = this.nodeResolver.resolveNode(value, this.context.dataContext.path);
+            this.resolvedNodes.add(node);
+            return node;
+          }
+          return {
+            id: value,
+            basePath: this.context.dataContext.path,
+          };
+        }
+
         return value;
       }
 
@@ -454,10 +570,37 @@ export class GenericBinder<T> {
   }
 
   dispose() {
-    if (!this.isConnected) return;
+    if (!this.isConnected) {
+      // Still need to release nodes if we were never connected (e.g. only initial props)
+      if (this.nodeResolver) {
+        for (const node of this.resolvedNodes) {
+          this.nodeResolver.releaseNode(node);
+        }
+      }
+      this.resolvedNodes.clear();
+      if (this.componentsUnsub) {
+        this.componentsUnsub();
+        this.componentsUnsub = undefined;
+      }
+      return;
+    }
     this.isConnected = false;
     this.dataListeners.forEach(l => l());
     this.dataListeners = [];
+
+    // Release all nodes
+    if (this.nodeResolver) {
+      for (const node of this.resolvedNodes) {
+        this.nodeResolver.releaseNode(node);
+      }
+    }
+    this.resolvedNodes.clear();
+
+    if (this.componentsUnsub) {
+      this.componentsUnsub();
+      this.componentsUnsub = undefined;
+    }
+
     if (this.compUnsub) {
       this.compUnsub();
       this.compUnsub = undefined;
