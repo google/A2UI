@@ -51,7 +51,7 @@ def setup_catalog(catalog_config):
   if isinstance(catalog_schema, str):
     catalog_schema = load_json_file(catalog_schema)
   elif catalog_schema is None:
-    catalog_schema = {"catalogId": "test_catalog", "components": {}}
+    raise ValueError("catalog_schema is required in conformance test catalog config")
 
   common_types_schema = catalog_config.get("common_types_schema")
   if isinstance(common_types_schema, str):
