@@ -68,8 +68,8 @@ export const DateTimeInput = createComponentImplementation(DateTimeInputApi, ({p
         style={style}
         value={props.value || ''}
         onChange={onChange}
-        min={typeof props.min === 'string' ? props.min : undefined}
-        max={typeof props.max === 'string' ? props.max : undefined}
+        min={(props.min as any) || undefined}
+        max={(props.max as any) || undefined}
       />
     </div>
   );

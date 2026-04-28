@@ -18,15 +18,16 @@ import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
+import {NodeRenderer} from '../../../A2uiSurface';
 
-export const Modal = createComponentImplementation(ModalApi, ({props, buildChild}) => {
+export const Modal = createComponentImplementation(ModalApi, ({props}) => {
   useBasicCatalogStyles();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <div onClick={() => setIsOpen(true)} style={{display: 'inline-block'}}>
-        {props.trigger ? buildChild(props.trigger) : null}
+        {props.trigger ? <NodeRenderer node={props.trigger as any} /> : null}
       </div>
       {isOpen && (
         <div
@@ -73,7 +74,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
                 &times;
               </button>
             </div>
-            <div style={{flex: 1}}>{props.content ? buildChild(props.content) : null}</div>
+            <div style={{flex: 1}}>{props.content ? <NodeRenderer node={props.content as any} /> : null}</div>
           </div>
         </div>
       )}

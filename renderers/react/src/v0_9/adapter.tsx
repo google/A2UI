@@ -14,32 +14,50 @@
  * limitations under the License.
  */
 
-import React, {useRef, useSyncExternalStore, useCallback, memo, useEffect} from 'react';
-import {type ComponentContext, GenericBinder} from '@a2ui/web_core/v0_9';
+import React, {useSyncExternalStore, useCallback, memo} from 'react';
 import type {
   ComponentApi,
   InferredComponentApiSchemaType,
   ResolveA2uiProps,
+  A2uiNode,
 } from '@a2ui/web_core/v0_9';
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
   render: React.FC<{
-    context: ComponentContext;
-    buildChild: (id: string, basePath?: string) => React.ReactNode;
+    node: A2uiNode;
   }>;
 }
 
 export type ReactA2uiComponentProps<T> = {
   props: T;
-  buildChild: (id: string, basePath?: string) => React.ReactNode;
-  context: ComponentContext;
+  node: A2uiNode;
 };
+
+/**
+ * Hook to subscribe to an A2uiNode's properties.
+ */
+export function useNodeProps<T>(node: A2uiNode<T>): T {
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      // Create a reactive effect that re-runs the callback when props change
+      const dispose = node.props.subscribe(() => {
+        callback();
+      });
+      return () => dispose();
+    },
+    [node]
+  );
+
+  const getSnapshot = useCallback(() => node.props.peek(), [node]);
+  
+  return useSyncExternalStore(subscribe, getSnapshot);
+}
 
 // --- Component Factories ---
 
 /**
- * Creates a React component implementation using the deep generic binder.
+ * Creates a React component implementation using the Node Layer.
  */
 export function createComponentImplementation<Api extends ComponentApi>(
   api: Api,
@@ -51,47 +69,15 @@ export function createComponentImplementation<Api extends ComponentApi>(
 
   const MemoizedRender = memo(RenderComponent, (prev, next) => {
     if (prev.props !== next.props) return false;
-    if (prev.context.componentModel.id !== next.context.componentModel.id) return false;
-    if (prev.context.dataContext.path !== next.context.dataContext.path) return false;
+    if (prev.node.instanceId !== next.node.instanceId) return false;
     return true;
   });
 
   const ReactWrapper: React.FC<{
-    context: ComponentContext;
-    buildChild: (id: string, basePath?: string) => React.ReactNode;
-  }> = ({context, buildChild}) => {
-    const bindingRef = useRef<GenericBinder<Props> | null>(null);
-
-    // Create or recreate the binder if the context object changes.
-    // DeferredChild memoizes `context`, so reference changes strictly correspond
-    // to ComponentModel updates (like type changes) or Base Path adjustments.
-    if (!bindingRef.current) {
-      bindingRef.current = new GenericBinder<Props>(context, api.schema);
-    } else if ((bindingRef.current as unknown as {context: ComponentContext}).context !== context) {
-      bindingRef.current.dispose();
-      bindingRef.current = new GenericBinder<Props>(context, api.schema);
-    }
-    const binding = bindingRef.current;
-
-    const subscribe = useCallback(
-      (callback: () => void) => {
-        const sub = binding.subscribe(callback);
-        return () => sub.unsubscribe();
-      },
-      [binding]
-    );
-
-    const getSnapshot = useCallback(() => binding.snapshot, [binding]);
-    const props = useSyncExternalStore(subscribe, getSnapshot);
-
-    // Prevent DataModel subscription leaks on unmount
-    useEffect(() => {
-      return () => binding.dispose();
-    }, [binding]);
-
-    return (
-      <MemoizedRender props={props || ({} as Props)} buildChild={buildChild} context={context} />
-    );
+    node: A2uiNode;
+  }> = ({node}) => {
+    const props = useNodeProps(node as A2uiNode<Props>);
+    return <MemoizedRender props={props || ({} as Props)} node={node} />;
   };
 
   return {
@@ -102,13 +88,12 @@ export function createComponentImplementation<Api extends ComponentApi>(
 }
 
 /**
- * Creates a React component implementation that manages its own context bindings (no generic binder).
+ * Creates a React component implementation that manages its own bindings.
  */
 export function createBinderlessComponentImplementation(
   api: ComponentApi,
   RenderComponent: React.FC<{
-    context: ComponentContext;
-    buildChild: (id: string, basePath?: string) => React.ReactNode;
+    node: A2uiNode;
   }>
 ): ReactComponentImplementation {
   return {

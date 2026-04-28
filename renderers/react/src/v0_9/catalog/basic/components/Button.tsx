@@ -17,9 +17,10 @@
 import {createComponentImplementation} from '../../../adapter';
 import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
+import {NodeRenderer} from '../../../A2uiSurface';
 import styles from './Button.module.css';
 
-export const Button = createComponentImplementation(ButtonApi, ({props, buildChild}) => {
+export const Button = createComponentImplementation(ButtonApi, ({props}) => {
   useBasicCatalogStyles();
 
   const classes = [styles.button];
@@ -31,7 +32,7 @@ export const Button = createComponentImplementation(ButtonApi, ({props, buildChi
 
   return (
     <button className={classes.join(' ')} onClick={props.action} disabled={props.isValid === false}>
-      {props.child ? buildChild(props.child) : null}
+      {props.child ? <NodeRenderer node={props.child as any} /> : null}
     </button>
   );
 });

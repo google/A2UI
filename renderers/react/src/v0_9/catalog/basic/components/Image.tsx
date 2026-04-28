@@ -29,23 +29,23 @@ export const Image = createComponentImplementation(ImageApi, ({props}) => {
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     ...getWeightStyle(props.weight),
-    objectFit: mapFit(props.fit),
+    objectFit: mapFit(props.fit as any),
     display: 'block',
     borderRadius: 'var(--a2ui-image-border-radius, 0)',
   };
 
-  if (props.variant === 'icon') {
+  if ((props.variant as any) === 'icon') {
     style.width = 'var(--a2ui-image-icon-size, 24px)';
     style.height = 'var(--a2ui-image-icon-size, 24px)';
-  } else if (props.variant === 'avatar') {
+  } else if ((props.variant as any) === 'avatar') {
     style.width = 'var(--a2ui-image-avatar-size, 40px)';
     style.height = 'var(--a2ui-image-avatar-size, 40px)';
     style.borderRadius = '50%';
-  } else if (props.variant === 'smallFeature') {
+  } else if ((props.variant as any) === 'smallFeature') {
     style.maxWidth = 'var(--a2ui-image-small-feature-size, 100px)';
-  } else if (props.variant === 'largeFeature') {
+  } else if ((props.variant as any) === 'largeFeature') {
     style.maxHeight = 'var(--a2ui-image-large-feature-size, 400px)';
-  } else if (props.variant === 'header') {
+  } else if ((props.variant as any) === 'header') {
     style.height = 'var(--a2ui-image-header-size, 200px)';
     style.objectFit = 'cover';
   }

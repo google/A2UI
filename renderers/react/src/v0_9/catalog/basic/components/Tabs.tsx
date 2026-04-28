@@ -18,13 +18,14 @@ import {useState} from 'react';
 import {createComponentImplementation} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {useBasicCatalogStyles} from '../utils';
+import {NodeRenderer} from '../../../A2uiSurface';
 
 // The type of a tab is deeply nested into the TabsApi schema, and
 // it seems z.infer is not inferring it correctly (?). We use `any` for now.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type _Tab = any;
 
-export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild}) => {
+export const Tabs = createComponentImplementation(TabsApi, ({props}) => {
   useBasicCatalogStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -78,7 +79,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
           </button>
         ))}
       </div>
-      <div style={content}>{activeTab ? buildChild(activeTab.child) : null}</div>
+      <div style={content}>{activeTab ? <NodeRenderer node={activeTab.child as any} /> : null}</div>
     </div>
   );
 });

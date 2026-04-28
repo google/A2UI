@@ -14,119 +14,88 @@
  * limitations under the License.
  */
 
-import React, {useSyncExternalStore, memo, useMemo, useCallback} from 'react';
-import {type SurfaceModel, ComponentContext, type ComponentModel} from '@a2ui/web_core/v0_9';
+import React, {useSyncExternalStore, memo, useCallback, createContext, useContext} from 'react';
+import {type SurfaceModel, type A2uiNode} from '@a2ui/web_core/v0_9';
 import type {ReactComponentImplementation} from './adapter';
 
-const ResolvedChild = memo(
-  ({
-    surface,
-    id,
-    basePath,
-    compImpl,
-    componentModel,
-  }: {
-    surface: SurfaceModel<ReactComponentImplementation>;
-    id: string;
-    basePath: string;
-    componentModel: ComponentModel;
-    compImpl: ReactComponentImplementation;
-  }) => {
-    const ComponentToRender = compImpl.render;
+const SurfaceContext = createContext<SurfaceModel<ReactComponentImplementation> | undefined>(undefined);
 
-    // Create context. Recreate if the componentModel instance changes (e.g. type change recreation).
-    const context = useMemo(
-      () => new ComponentContext(surface, id, basePath),
-      // componentModel is used as a trigger for recreation even if not in the body
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [surface, id, basePath, componentModel]
-    );
-
-    const buildChild = useCallback(
-      (childId: string, specificPath?: string) => {
-        const path = specificPath || context.dataContext.path;
-        return (
-          <DeferredChild
-            key={`${childId}-${path}`}
-            surface={surface}
-            id={childId}
-            basePath={path}
-          />
-        );
-      },
-      [surface, context.dataContext.path]
-    );
-
-    return <ComponentToRender context={context} buildChild={buildChild} />;
+export const useSurface = () => {
+  const surface = useContext(SurfaceContext);
+  if (!surface) {
+    throw new Error('useSurface must be used within an A2uiSurface');
   }
-);
-ResolvedChild.displayName = 'ResolvedChild';
+  return surface;
+};
 
-export const DeferredChild: React.FC<{
-  surface: SurfaceModel<ReactComponentImplementation>;
-  id: string;
-  basePath: string;
-}> = memo(({surface, id, basePath}) => {
-  // 1. Subscribe specifically to this component's existence
-  const store = useMemo(() => {
-    let version = 0;
-    return {
-      subscribe: (cb: () => void) => {
-        const unsub1 = surface.componentsModel.onCreated.subscribe((comp) => {
-          if (comp.id === id) {
-            version++;
-            cb();
-          }
-        });
-        const unsub2 = surface.componentsModel.onDeleted.subscribe((delId) => {
-          if (delId === id) {
-            version++;
-            cb();
-          }
+const useNodeStore = (signal?: {subscribe: (cb: (val: any) => void) => () => void, peek: () => any}) => {
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      if (!signal) return () => {};
+      const dispose = signal.subscribe(() => {
+        callback();
+      });
+      return () => dispose();
+    },
+    [signal]
+  );
+  const getSnapshot = useCallback(() => signal?.peek(), [signal]);
+  return useSyncExternalStore(subscribe, getSnapshot);
+};
+
+export const NodeRenderer = memo(
+  ({
+    node,
+  }: {
+    node: A2uiNode;
+  }) => {
+    const surface = useSurface();
+    // 1. Subscribe specifically to this node's destruction
+    const isDestroyed = useSyncExternalStore(
+      useCallback((cb: () => void) => {
+        let active = true;
+        const sub = node.onDestroyed.subscribe(() => {
+          if (active) cb();
         });
         return () => {
-          unsub1.unsubscribe();
-          unsub2.unsubscribe();
+          active = false;
+          sub.unsubscribe();
         };
-      },
-      getSnapshot: () => {
-        const comp = surface.componentsModel.get(id);
-        // We use instance identity + version as the snapshot to ensure
-        // type replacements (e.g. Button -> Text) trigger a re-render.
-        return comp ? `${comp.type}-${version}` : `missing-${version}`;
-      },
-    };
-  }, [surface, id]);
+      }, [node]),
+      () => false // It's only true if the callback fires, causing unmount
+    );
 
-  useSyncExternalStore(store.subscribe, store.getSnapshot);
+    if (isDestroyed) {
+      return null;
+    }
 
-  const componentModel = surface.componentsModel.get(id);
+    const compImpl = surface.catalog.components.get(node.type);
 
-  if (!componentModel) {
-    return <div style={{color: 'gray', padding: '4px'}}>[Loading {id}...]</div>;
+    if (!compImpl) {
+      return <div style={{color: 'red'}}>Unknown component: {node.type}</div>;
+    }
+
+    const ComponentToRender = compImpl.render;
+
+    return <ComponentToRender node={node} />;
   }
-
-  const compImpl = surface.catalog.components.get(componentModel.type);
-
-  if (!compImpl) {
-    return <div style={{color: 'red'}}>Unknown component: {componentModel.type}</div>;
-  }
-
-  return (
-    <ResolvedChild
-      surface={surface}
-      id={id}
-      basePath={basePath}
-      componentModel={componentModel}
-      compImpl={compImpl}
-    />
-  );
-});
-DeferredChild.displayName = 'DeferredChild';
+);
+NodeRenderer.displayName = 'NodeRenderer';
 
 export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({
   surface,
 }) => {
-  // The root component always has ID 'root' and base path '/'
-  return <DeferredChild surface={surface} id="root" basePath="/" />;
+  const rootNode = useNodeStore(surface?.rootNode);
+
+  if (!surface) return null;
+
+  return (
+    <SurfaceContext.Provider value={surface}>
+      {!rootNode ? (
+        <div style={{color: 'gray', padding: '4px'}}>[Loading root...]</div>
+      ) : (
+        <NodeRenderer node={rootNode} />
+      )}
+    </SurfaceContext.Provider>
+  );
 };
