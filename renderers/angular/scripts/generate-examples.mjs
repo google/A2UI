@@ -40,7 +40,7 @@ const options = {
   help: { type: 'boolean', short: 'h' },
   outFile: { type: 'string', short: 'o', default: DEFAULT_OUT_FILE },
   specPath: { type: 'string', short: 's', default: DEFAULT_SPEC_PATH },
-  catalog: { type: 'string', short: 'c', multiple: true },
+  catalog: { type: 'string', short: 'c', multiple: true, default: DEFAULT_CATALOGS },
 };
 
 /**
@@ -75,7 +75,7 @@ async function main() {
     fs.mkdirSync(outDir, { recursive: true });
   }
 
-  const catalogs = values.catalog && values.catalog.length > 0 ? values.catalog : DEFAULT_CATALOGS;
+  const catalogs = values.catalog;
   const examples = [];
 
   for (const catalog of catalogs) {
