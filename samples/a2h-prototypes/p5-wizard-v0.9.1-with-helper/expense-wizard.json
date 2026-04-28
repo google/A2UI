@@ -1,0 +1,610 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "a2h-expense-wizard-001",
+      "catalogId": "https://a2ui.org/specification/v0_9_1/basic_catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "a2h-expense-wizard-001",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "main-col"
+        },
+        {
+          "id": "main-col",
+          "component": "Column",
+          "children": [
+            "step-indicator",
+            "divider-top",
+            "step1-container",
+            "step2-container",
+            "step3-container",
+            "step4-container"
+          ]
+        },
+        {
+          "id": "step-indicator",
+          "component": "Text",
+          "text": {
+            "path": "/wizard/stepLabel"
+          },
+          "variant": "caption"
+        },
+        {
+          "id": "divider-top",
+          "component": "Divider"
+        },
+        {
+          "id": "step1-container",
+          "component": "Column",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/wizard/currentStep"
+              },
+              1
+            ]
+          },
+          "children": [
+            "s1-title",
+            "s1-desc",
+            "s1-date",
+            "s1-category",
+            "s1-amount",
+            "s1-description",
+            "s1-divider",
+            "s1-actions"
+          ]
+        },
+        {
+          "id": "s1-title",
+          "component": "Text",
+          "text": "Expense Basics",
+          "variant": "h3"
+        },
+        {
+          "id": "s1-desc",
+          "component": "Text",
+          "text": "Enter the basic details for your expense report.",
+          "variant": "body"
+        },
+        {
+          "id": "s1-date",
+          "component": "TextField",
+          "label": "Date (YYYY-MM-DD)",
+          "value": {
+            "path": "/expense/date"
+          }
+        },
+        {
+          "id": "s1-category",
+          "component": "ChoicePicker",
+          "label": "Category",
+          "value": {
+            "path": "/expense/category"
+          },
+          "variant": "mutuallyExclusive",
+          "options": [
+            {
+              "label": "Travel",
+              "value": "Travel"
+            },
+            {
+              "label": "Meals",
+              "value": "Meals"
+            },
+            {
+              "label": "Equipment",
+              "value": "Equipment"
+            },
+            {
+              "label": "Software",
+              "value": "Software"
+            },
+            {
+              "label": "Office Supplies",
+              "value": "Office Supplies"
+            },
+            {
+              "label": "Other",
+              "value": "Other"
+            }
+          ]
+        },
+        {
+          "id": "s1-amount",
+          "component": "TextField",
+          "label": "Amount ($)",
+          "value": {
+            "path": "/expense/amount"
+          }
+        },
+        {
+          "id": "s1-description",
+          "component": "TextField",
+          "label": "Description",
+          "value": {
+            "path": "/expense/description"
+          }
+        },
+        {
+          "id": "s1-divider",
+          "component": "Divider"
+        },
+        {
+          "id": "s1-actions",
+          "component": "Row",
+          "justify": "end",
+          "children": [
+            "btn-s1-next"
+          ]
+        },
+        {
+          "id": "btn-s1-next",
+          "component": "Button",
+          "label": "Next \u2192",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.wizard.next",
+              "context": {
+                "step": 1,
+                "intent": "COLLECT"
+              }
+            }
+          }
+        },
+        {
+          "id": "step2-container",
+          "component": "Column",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/wizard/currentStep"
+              },
+              2
+            ]
+          },
+          "children": [
+            "s2-title",
+            "s2-desc",
+            "s2-receipt",
+            "s2-vendor",
+            "s2-notes",
+            "s2-divider",
+            "s2-actions"
+          ]
+        },
+        {
+          "id": "s2-title",
+          "component": "Text",
+          "text": "Receipt Details",
+          "variant": "h3"
+        },
+        {
+          "id": "s2-desc",
+          "component": "Text",
+          "text": "Provide receipt information for your expense.",
+          "variant": "body"
+        },
+        {
+          "id": "s2-receipt",
+          "component": "TextField",
+          "label": "Receipt Number",
+          "value": {
+            "path": "/expense/receiptNumber"
+          }
+        },
+        {
+          "id": "s2-vendor",
+          "component": "TextField",
+          "label": "Vendor",
+          "value": {
+            "path": "/expense/vendor"
+          }
+        },
+        {
+          "id": "s2-notes",
+          "component": "TextField",
+          "label": "Notes",
+          "value": {
+            "path": "/expense/notes"
+          }
+        },
+        {
+          "id": "s2-divider",
+          "component": "Divider"
+        },
+        {
+          "id": "s2-actions",
+          "component": "Row",
+          "justify": "end",
+          "children": [
+            "btn-s2-back",
+            "btn-s2-next"
+          ]
+        },
+        {
+          "id": "btn-s2-back",
+          "component": "Button",
+          "label": "\u2190 Back",
+          "action": {
+            "event": {
+              "name": "a2h.wizard.back",
+              "context": {
+                "step": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-s2-next",
+          "component": "Button",
+          "label": "Next \u2192",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.wizard.next",
+              "context": {
+                "step": 2,
+                "intent": "COLLECT"
+              }
+            }
+          }
+        },
+        {
+          "id": "step3-container",
+          "component": "Column",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/wizard/currentStep"
+              },
+              3
+            ]
+          },
+          "children": [
+            "s3-title",
+            "s3-desc",
+            "s3-review-card",
+            "s3-divider",
+            "s3-actions"
+          ]
+        },
+        {
+          "id": "s3-title",
+          "component": "Text",
+          "text": "Review Your Expense",
+          "variant": "h3"
+        },
+        {
+          "id": "s3-desc",
+          "component": "Text",
+          "text": "Please review the details below before submitting.",
+          "variant": "body"
+        },
+        {
+          "id": "s3-review-card",
+          "component": "Card",
+          "child": "s3-review-col"
+        },
+        {
+          "id": "s3-review-col",
+          "component": "Column",
+          "children": [
+            "rev-date",
+            "rev-category",
+            "rev-amount",
+            "rev-description",
+            "rev-divider",
+            "rev-receipt",
+            "rev-vendor",
+            "rev-notes"
+          ]
+        },
+        {
+          "id": "rev-date",
+          "component": "KeyValue",
+          "label": "Date",
+          "value": {
+            "path": "/expense/date"
+          }
+        },
+        {
+          "id": "rev-category",
+          "component": "KeyValue",
+          "label": "Category",
+          "value": {
+            "path": "/expense/category"
+          }
+        },
+        {
+          "id": "rev-amount",
+          "component": "KeyValue",
+          "label": "Amount",
+          "value": {
+            "path": "/expense/amount"
+          }
+        },
+        {
+          "id": "rev-description",
+          "component": "KeyValue",
+          "label": "Description",
+          "value": {
+            "path": "/expense/description"
+          }
+        },
+        {
+          "id": "rev-divider",
+          "component": "Divider"
+        },
+        {
+          "id": "rev-receipt",
+          "component": "KeyValue",
+          "label": "Receipt #",
+          "value": {
+            "path": "/expense/receiptNumber"
+          }
+        },
+        {
+          "id": "rev-vendor",
+          "component": "KeyValue",
+          "label": "Vendor",
+          "value": {
+            "path": "/expense/vendor"
+          }
+        },
+        {
+          "id": "rev-notes",
+          "component": "KeyValue",
+          "label": "Notes",
+          "value": {
+            "path": "/expense/notes"
+          }
+        },
+        {
+          "id": "s3-divider",
+          "component": "Divider"
+        },
+        {
+          "id": "s3-actions",
+          "component": "Row",
+          "justify": "end",
+          "children": [
+            "btn-s3-back",
+            "btn-s3-next"
+          ]
+        },
+        {
+          "id": "btn-s3-back",
+          "component": "Button",
+          "label": "\u2190 Back",
+          "action": {
+            "event": {
+              "name": "a2h.wizard.back",
+              "context": {
+                "step": 3
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-s3-next",
+          "component": "Button",
+          "label": "Proceed to Submit \u2192",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.wizard.next",
+              "context": {
+                "step": 3,
+                "intent": "INFORM"
+              }
+            }
+          }
+        },
+        {
+          "id": "step4-container",
+          "component": "Column",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/wizard/currentStep"
+              },
+              4
+            ]
+          },
+          "children": [
+            "s4-header-row",
+            "s4-desc",
+            "s4-summary-card",
+            "s4-policy",
+            "s4-divider",
+            "s4-actions"
+          ]
+        },
+        {
+          "id": "s4-header-row",
+          "component": "Row",
+          "children": [
+            "s4-icon",
+            "s4-title"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "s4-icon",
+          "component": "Icon",
+          "name": "lock"
+        },
+        {
+          "id": "s4-title",
+          "component": "Text",
+          "text": "Submit Expense Report",
+          "variant": "h3"
+        },
+        {
+          "id": "s4-desc",
+          "component": "Text",
+          "text": "By submitting, you confirm this expense complies with company policy.",
+          "variant": "body"
+        },
+        {
+          "id": "s4-summary-card",
+          "component": "Card",
+          "child": "s4-summary-col"
+        },
+        {
+          "id": "s4-summary-col",
+          "component": "Column",
+          "children": [
+            "auth-amount",
+            "auth-category",
+            "auth-vendor"
+          ]
+        },
+        {
+          "id": "auth-amount",
+          "component": "KeyValue",
+          "label": "Amount",
+          "value": {
+            "path": "/expense/amount"
+          }
+        },
+        {
+          "id": "auth-category",
+          "component": "KeyValue",
+          "label": "Category",
+          "value": {
+            "path": "/expense/category"
+          }
+        },
+        {
+          "id": "auth-vendor",
+          "component": "KeyValue",
+          "label": "Vendor",
+          "value": {
+            "path": "/expense/vendor"
+          }
+        },
+        {
+          "id": "s4-policy",
+          "component": "Text",
+          "text": "\u26a0\ufe0f Expenses over $500 require manager co-approval.",
+          "variant": "caption"
+        },
+        {
+          "id": "s4-divider",
+          "component": "Divider"
+        },
+        {
+          "id": "s4-actions",
+          "component": "Row",
+          "justify": "end",
+          "children": [
+            "btn-cancel",
+            "btn-submit"
+          ]
+        },
+        {
+          "id": "btn-cancel",
+          "component": "Button",
+          "label": "Cancel",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.reject",
+              "context": {
+                "interactionId": {
+                  "path": "/wizard/interactionId"
+                },
+                "intent": "AUTHORIZE"
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-submit",
+          "component": "Button",
+          "label": "Submit Expense",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.approve",
+              "context": {
+                "interactionId": {
+                  "path": "/wizard/interactionId"
+                },
+                "intent": "AUTHORIZE"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-processing",
+          "component": "Row",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/wizard/currentStep"
+              },
+              5
+            ]
+          },
+          "children": [
+            "submit-spinner",
+            "submit-label"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "submit-spinner",
+          "component": "ProgressIndicator",
+          "mode": "indeterminate"
+        },
+        {
+          "id": "submit-label",
+          "component": "Text",
+          "text": {
+            "path": "/wizard/processingLabel"
+          },
+          "variant": "body"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-expense-wizard-001",
+      "value": {
+        "wizard": {
+          "currentStep": 1,
+          "stepLabel": "Step 1 of 4 \u2014 Expense Details",
+          "interactionId": "exp-2026-0304-001",
+          "processingLabel": "Submitting expense report\u2026"
+        },
+        "expense": {
+          "date": "",
+          "category": [],
+          "amount": "",
+          "description": "",
+          "receiptNumber": "",
+          "vendor": "",
+          "notes": ""
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,465 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "catalogId": "https://a2ui.org/specification/v0_9_1/basic_catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "main-col"
+        },
+        {
+          "id": "main-col",
+          "component": "Column",
+          "children": [
+            "header-row",
+            "divider-1",
+            "meta-card",
+            "divider-2",
+            "step-build",
+            "step-test",
+            "step-stage",
+            "step-deploy",
+            "divider-3",
+            "approve-card"
+          ]
+        },
+        {
+          "id": "header-row",
+          "component": "Row",
+          "children": [
+            "header-icon",
+            "header-text"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "header-icon",
+          "component": "Icon",
+          "name": "rocket_launch"
+        },
+        {
+          "id": "header-text",
+          "component": "Text",
+          "text": "Deployment Pipeline",
+          "variant": "h3"
+        },
+        {
+          "id": "divider-1",
+          "component": "Divider"
+        },
+        {
+          "id": "meta-card",
+          "component": "Card",
+          "child": "meta-col"
+        },
+        {
+          "id": "meta-col",
+          "component": "Column",
+          "children": [
+            "meta-app",
+            "meta-commit",
+            "meta-env"
+          ]
+        },
+        {
+          "id": "meta-app",
+          "component": "KeyValue",
+          "label": "Application",
+          "value": {
+            "path": "/pipeline/app"
+          }
+        },
+        {
+          "id": "meta-commit",
+          "component": "KeyValue",
+          "label": "Commit",
+          "value": {
+            "path": "/pipeline/commit"
+          }
+        },
+        {
+          "id": "meta-env",
+          "component": "KeyValue",
+          "label": "Environment",
+          "value": {
+            "path": "/pipeline/environment"
+          }
+        },
+        {
+          "id": "divider-2",
+          "component": "Divider"
+        },
+        {
+          "id": "step-build",
+          "component": "Row",
+          "children": [
+            "build-progress",
+            "build-label"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "build-progress",
+          "component": "ProgressIndicator",
+          "mode": {
+            "path": "/steps/build/mode"
+          },
+          "value": {
+            "path": "/steps/build/value"
+          }
+        },
+        {
+          "id": "build-label",
+          "component": "Text",
+          "text": {
+            "path": "/steps/build/label"
+          },
+          "variant": "body"
+        },
+        {
+          "id": "step-test",
+          "component": "Row",
+          "children": [
+            "test-progress",
+            "test-label"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "test-progress",
+          "component": "ProgressIndicator",
+          "mode": {
+            "path": "/steps/test/mode"
+          },
+          "value": {
+            "path": "/steps/test/value"
+          }
+        },
+        {
+          "id": "test-label",
+          "component": "Text",
+          "text": {
+            "path": "/steps/test/label"
+          },
+          "variant": "body"
+        },
+        {
+          "id": "step-stage",
+          "component": "Row",
+          "children": [
+            "stage-progress",
+            "stage-label"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "stage-progress",
+          "component": "ProgressIndicator",
+          "mode": {
+            "path": "/steps/stage/mode"
+          },
+          "value": {
+            "path": "/steps/stage/value"
+          }
+        },
+        {
+          "id": "stage-label",
+          "component": "Text",
+          "text": {
+            "path": "/steps/stage/label"
+          },
+          "variant": "body"
+        },
+        {
+          "id": "step-deploy",
+          "component": "Row",
+          "children": [
+            "deploy-progress",
+            "deploy-label"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "deploy-progress",
+          "component": "ProgressIndicator",
+          "mode": {
+            "path": "/steps/deploy/mode"
+          },
+          "value": {
+            "path": "/steps/deploy/value"
+          }
+        },
+        {
+          "id": "deploy-label",
+          "component": "Text",
+          "text": {
+            "path": "/steps/deploy/label"
+          },
+          "variant": "body"
+        },
+        {
+          "id": "divider-3",
+          "component": "Divider",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/approvalVisible"
+              },
+              true
+            ]
+          }
+        },
+        {
+          "id": "approve-card",
+          "component": "Card",
+          "child": "approve-col",
+          "visible": {
+            "fn": "equals",
+            "args": [
+              {
+                "path": "/approvalVisible"
+              },
+              true
+            ]
+          }
+        },
+        {
+          "id": "approve-col",
+          "component": "Column",
+          "children": [
+            "approve-title",
+            "approve-desc",
+            "approve-actions"
+          ]
+        },
+        {
+          "id": "approve-title",
+          "component": "Text",
+          "text": "\u26a0\ufe0f Deploy to production?",
+          "variant": "h3"
+        },
+        {
+          "id": "approve-desc",
+          "component": "Text",
+          "text": {
+            "path": "/approvalSummary"
+          },
+          "variant": "body"
+        },
+        {
+          "id": "approve-actions",
+          "component": "Row",
+          "children": [
+            "btn-rollback",
+            "btn-approve"
+          ],
+          "justify": "end"
+        },
+        {
+          "id": "btn-rollback",
+          "component": "Button",
+          "label": "Rollback",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.rollback",
+              "context": {
+                "app": {
+                  "path": "/pipeline/app"
+                },
+                "commit": {
+                  "path": "/pipeline/commit"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "btn-approve",
+          "component": "Button",
+          "label": "Approve",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.approve",
+              "context": {
+                "app": {
+                  "path": "/pipeline/app"
+                },
+                "commit": {
+                  "path": "/pipeline/commit"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "environment": "production",
+          "startedAt": "2026-03-04T07:30:00Z"
+        },
+        "approvalVisible": false,
+        "approvalSummary": "",
+        "steps": {
+          "build": {
+            "mode": "indeterminate",
+            "value": 0,
+            "label": "Build \u2014 running\u2026"
+          },
+          "test": {
+            "mode": "none",
+            "value": 0,
+            "label": "Test"
+          },
+          "stage": {
+            "mode": "none",
+            "value": 0,
+            "label": "Stage"
+          },
+          "deploy": {
+            "mode": "none",
+            "value": 0,
+            "label": "Deploy"
+          }
+        }
+      }
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "environment": "production",
+          "startedAt": "2026-03-04T07:30:00Z"
+        },
+        "approvalVisible": false,
+        "approvalSummary": "",
+        "steps": {
+          "build": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Build \u2014 1m 12s"
+          },
+          "test": {
+            "mode": "indeterminate",
+            "value": 0,
+            "label": "Test \u2014 running\u2026"
+          },
+          "stage": {
+            "mode": "none",
+            "value": 0,
+            "label": "Stage"
+          },
+          "deploy": {
+            "mode": "none",
+            "value": 0,
+            "label": "Deploy"
+          }
+        }
+      }
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "environment": "production",
+          "startedAt": "2026-03-04T07:30:00Z"
+        },
+        "approvalVisible": false,
+        "approvalSummary": "",
+        "steps": {
+          "build": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Build \u2014 1m 12s"
+          },
+          "test": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Test \u2014 48/48 passed"
+          },
+          "stage": {
+            "mode": "indeterminate",
+            "value": 0,
+            "label": "Stage \u2014 running\u2026"
+          },
+          "deploy": {
+            "mode": "none",
+            "value": 0,
+            "label": "Deploy"
+          }
+        }
+      }
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-inform-deploy-pipeline-001",
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "environment": "production",
+          "startedAt": "2026-03-04T07:30:00Z"
+        },
+        "approvalVisible": true,
+        "approvalSummary": "acme-web-v2.4.1 (a3f9c21) \u2022 48/48 tests passed \u2022 Staged OK at stage.acme.dev",
+        "steps": {
+          "build": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Build \u2014 1m 12s"
+          },
+          "test": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Test \u2014 48/48 passed"
+          },
+          "stage": {
+            "mode": "complete",
+            "value": 1,
+            "label": "Stage \u2014 live at stage.acme.dev"
+          },
+          "deploy": {
+            "mode": "paused",
+            "value": 0,
+            "label": "Deploy \u2014 awaiting approval"
+          }
+        }
+      }
+    }
+  }
+]

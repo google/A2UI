@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 5 — Expense Wizard v0.9.1 (with Helper)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem; gap: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; }
+
+    .stats {
+      text-align: center; font-size: 0.85rem; color: #5f6368; max-width: 600px;
+    }
+    .stats strong { color: #1a73e8; }
+    .stats .highlight { color: #0d652d; font-weight: 500; }
+
+    .layout { display: flex; gap: 1.5rem; width: 100%; max-width: 900px; align-items: flex-start; }
+    .surface { max-width: 440px; width: 100%; flex-shrink: 0; }
+    .side-panels { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1rem; }
+
+    /* Components */
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card { background: #f8f9fa; box-shadow: none; border: 1px solid #e0e0e0; }
+    .c-Column { display: flex; flex-direction: column; gap: 0.6rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.15rem 0; }
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #5f6368; }
+
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #1a73e8; font-weight: 500; }
+
+    .c-KeyValue { display: flex; flex-direction: row; gap: 0.75rem; align-items: baseline; }
+    .c-KeyValue-label { font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 90px; }
+    .c-KeyValue-value { font-size: 0.9rem; color: #202124; font-family: 'Roboto Mono', monospace; }
+
+    .c-ProgressIndicator {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; flex-shrink: 0;
+    }
+    .c-ProgressIndicator[data-mode="indeterminate"]::after {
+      content: ''; display: block; width: 20px; height: 20px;
+      border: 2.5px solid #dadce0; border-top-color: #1a73e8;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px; padding: 0.5rem 1.25rem;
+      font-family: inherit; font-size: 0.875rem; font-weight: 500;
+      cursor: pointer; background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    .c-TextField { display: flex; flex-direction: column; gap: 4px; }
+    .c-TextField label { font-size: 0.8rem; font-weight: 500; color: #5f6368; }
+    .c-TextField input {
+      border: 1px solid #dadce0; border-radius: 8px; padding: 0.5rem 0.75rem;
+      font-family: inherit; font-size: 0.9rem; outline: none;
+    }
+    .c-TextField input:focus { border-color: #1a73e8; }
+
+    .c-ChoicePicker { display: flex; flex-direction: column; gap: 4px; }
+    .c-ChoicePicker label { font-size: 0.8rem; font-weight: 500; color: #5f6368; }
+    .c-ChoicePicker select {
+      border: 1px solid #dadce0; border-radius: 8px; padding: 0.5rem;
+      font-family: inherit; font-size: 0.9rem; background: #fff;
+    }
+
+    .panel-title { font-size: 0.85rem; font-weight: 500; color: #666; margin-bottom: 0.25rem; }
+    #data-model-panel {
+      background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 1rem;
+      font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 350px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #msg-log {
+      background: #263238; color: #80cbc4; border-radius: 8px; padding: 1rem;
+      font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 150px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log {
+      background: #263238; color: #aed581; border-radius: 8px; padding: 1rem;
+      font-family: 'Roboto Mono', monospace; font-size: 0.8rem;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before { content: '// Events appear here…'; color: #607d8b; }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — P5: Expense Wizard v0.9.1</h1>
+
+  <div class="stats">
+    v0.9.0: <strong>6 messages</strong> (4× updateComponents, ~100 components) &nbsp;|&nbsp;
+    v0.9.1: <strong>3 messages</strong> (1× updateComponents, ~70 components)<br>
+    <span class="highlight">Step transitions are pure data model updates — zero tree rebuilds!</span>
+  </div>
+
+  <div class="layout">
+    <div class="surface" id="surface"></div>
+    <div class="side-panels">
+      <div>
+        <div class="panel-title">📨 Messages Received</div>
+        <div id="msg-log"></div>
+      </div>
+      <div>
+        <div class="panel-title">📊 Data Model</div>
+        <div id="data-model-panel"></div>
+      </div>
+      <div>
+        <div class="panel-title">📋 Event Log</div>
+        <div id="event-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const response = await fetch('./expense-wizard.json');
+    const messages = await response.json();
+
+    let surfaceConfig = null;
+    let components = {};
+    let dataModel = {};
+
+    const stepLabels = {
+      1: 'Step 1 of 4 — Expense Details',
+      2: 'Step 2 of 4 — Receipt Info',
+      3: 'Step 3 of 4 — Review',
+      4: 'Step 4 of 4 — Authorization',
+      5: 'Submitting…',
+    };
+
+    function deepGet(obj, path) {
+      const parts = path.split('/').filter(Boolean);
+      let cur = obj;
+      for (const p of parts) cur = cur?.[p];
+      return cur;
+    }
+
+    function deepSet(obj, path, val) {
+      const parts = path.split('/').filter(Boolean);
+      let cur = obj;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!(parts[i] in cur)) cur[parts[i]] = {};
+        cur = cur[parts[i]];
+      }
+      cur[parts[parts.length - 1]] = val;
+    }
+
+    function resolve(val) {
+      if (val && typeof val === 'object' && val.path) {
+        const result = deepGet(dataModel, val.path) ?? '';
+        return Array.isArray(result) ? result.join(', ') : result;
+      }
+      return val;
+    }
+
+    function isVisible(comp) {
+      if (!comp.visible) return true;
+      const vis = comp.visible;
+      if (vis.fn === 'equals' && Array.isArray(vis.args)) {
+        return resolve(vis.args[0]) === vis.args[1];
+      }
+      return true;
+    }
+
+    function render(id) {
+      const comp = components[id];
+      if (!comp) return document.createTextNode('');
+      if (!isVisible(comp)) {
+        const el = document.createElement('span');
+        el.style.display = 'none';
+        return el;
+      }
+
+      switch (comp.component) {
+        case 'Card': {
+          const el = document.createElement('div');
+          el.className = 'c-Card';
+          if (comp.child) el.appendChild(render(comp.child));
+          return el;
+        }
+        case 'Column': {
+          const el = document.createElement('div');
+          el.className = 'c-Column';
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Row': {
+          const el = document.createElement('div');
+          el.className = 'c-Row';
+          if (comp.justify) el.dataset.justify = comp.justify;
+          if (comp.align) el.style.alignItems = comp.align;
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Divider': { const el = document.createElement('hr'); el.className = 'c-Divider'; return el; }
+        case 'Icon': {
+          const el = document.createElement('span');
+          el.className = 'c-Icon';
+          el.textContent = resolve(comp.name);
+          return el;
+        }
+        case 'Text': {
+          const el = document.createElement('span');
+          el.className = 'c-Text';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          el.textContent = resolve(comp.text);
+          return el;
+        }
+        case 'KeyValue': {
+          const el = document.createElement('div');
+          el.className = 'c-KeyValue';
+          const label = document.createElement('span');
+          label.className = 'c-KeyValue-label';
+          label.textContent = resolve(comp.label) + ':';
+          const value = document.createElement('span');
+          value.className = 'c-KeyValue-value';
+          value.textContent = resolve(comp.value) || '—';
+          el.append(label, value);
+          return el;
+        }
+        case 'ProgressIndicator': {
+          const el = document.createElement('div');
+          el.className = 'c-ProgressIndicator';
+          el.dataset.mode = resolve(comp.mode) || 'indeterminate';
+          return el;
+        }
+        case 'TextField': {
+          const el = document.createElement('div');
+          el.className = 'c-TextField';
+          const lbl = document.createElement('label');
+          lbl.textContent = comp.label || '';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = resolve(comp.value) || '';
+          if (comp.value?.path) {
+            inp.addEventListener('input', (e) => {
+              deepSet(dataModel, comp.value.path, e.target.value);
+              updateDataPanel();
+            });
+          }
+          el.append(lbl, inp);
+          return el;
+        }
+        case 'ChoicePicker': {
+          const el = document.createElement('div');
+          el.className = 'c-ChoicePicker';
+          const lbl = document.createElement('label');
+          lbl.textContent = comp.label || '';
+          const sel = document.createElement('select');
+          const empty = document.createElement('option');
+          empty.value = ''; empty.textContent = '— Select —';
+          sel.appendChild(empty);
+          const currentVal = resolve(comp.value);
+          const selected = Array.isArray(currentVal) ? currentVal : (currentVal ? [currentVal] : []);
+          for (const opt of (comp.options || [])) {
+            const o = document.createElement('option');
+            o.value = opt.value; o.textContent = opt.label;
+            if (selected.includes(opt.value)) o.selected = true;
+            sel.appendChild(o);
+          }
+          if (comp.value?.path) {
+            sel.addEventListener('change', (e) => {
+              deepSet(dataModel, comp.value.path, e.target.value ? [e.target.value] : []);
+              updateDataPanel();
+            });
+          }
+          el.append(lbl, sel);
+          return el;
+        }
+        case 'Button': {
+          const el = document.createElement('button');
+          el.className = 'c-Button';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          // v0.9.1: label prop — no child Text needed
+          if (comp.label) {
+            el.textContent = resolve(comp.label);
+          } else if (comp.child) {
+            const ch = components[comp.child];
+            el.textContent = ch ? resolve(ch.text) : comp.child;
+          }
+          if (comp.action?.event) {
+            el.addEventListener('click', () => handleEvent(comp.action.event));
+          }
+          return el;
+        }
+        default: return document.createTextNode(`[unknown: ${comp.component}]`);
+      }
+    }
+
+    function handleEvent(eventInfo) {
+      const ctx = {};
+      for (const [k, v] of Object.entries(eventInfo.context || {})) ctx[k] = resolve(v);
+      const payload = {
+        eventName: eventInfo.name, context: ctx,
+        ...(surfaceConfig?.sendDataModel ? { dataModel } : {}),
+        timestamp: new Date().toISOString()
+      };
+      logEvent(payload);
+
+      if (eventInfo.name === 'a2h.wizard.next') {
+        const nextStep = (ctx.step || 1) + 1;
+        goToStep(nextStep);
+      } else if (eventInfo.name === 'a2h.wizard.back') {
+        const prevStep = (ctx.step || 2) - 1;
+        goToStep(prevStep);
+      } else if (eventInfo.name === 'a2h.authorize.approve') {
+        // Show processing spinner (step 5), then success
+        goToStep(5);
+        setTimeout(() => alert('✅ Expense report submitted!'), 1500);
+      } else if (eventInfo.name === 'a2h.authorize.reject') {
+        alert('❌ Expense report cancelled.');
+      }
+    }
+
+    function goToStep(step) {
+      // THIS IS THE v0.9.1 MAGIC: step transition = pure data model update
+      dataModel.wizard.currentStep = step;
+      dataModel.wizard.stepLabel = stepLabels[step] || '';
+      logDataModelUpdate(step);
+      rerender();
+      updateDataPanel();
+    }
+
+    function logDataModelUpdate(step) {
+      const log = document.getElementById('msg-log');
+      log.textContent += `→ updateDataModel: currentStep=${step}\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function logEvent(payload) {
+      const log = document.getElementById('event-log');
+      log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function updateDataPanel() {
+      document.getElementById('data-model-panel').textContent = JSON.stringify(dataModel, null, 2);
+    }
+
+    function rerender() {
+      const el = document.getElementById('surface');
+      el.innerHTML = '';
+      el.appendChild(render('root'));
+    }
+
+    // Apply all initial messages
+    const msgLog = document.getElementById('msg-log');
+    for (const m of messages) {
+      const type = m.createSurface ? 'createSurface' : m.updateComponents ? 'updateComponents' : 'updateDataModel';
+      msgLog.textContent += `← ${type}${m._comment ? ' // ' + m._comment : ''}\n`;
+      if (m.createSurface) surfaceConfig = m.createSurface;
+      if (m.updateComponents) {
+        for (const c of m.updateComponents.components) components[c.id] = c;
+      }
+      if (m.updateDataModel) dataModel = m.updateDataModel.value;
+    }
+
+    rerender();
+    updateDataPanel();
+  </script>
+</body>
+</html>

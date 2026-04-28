@@ -1,0 +1,192 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "a2h-authorize-transfer-001",
+      "catalogId": "https://a2ui.org/specification/v0_9_1/basic_catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "a2h-authorize-transfer-001",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "main-column"
+        },
+        {
+          "id": "main-column",
+          "component": "Column",
+          "children": [
+            "header-row",
+            "divider-1",
+            "description",
+            "details-card",
+            "ttl-text",
+            "divider-2",
+            "actions",
+            "processing"
+          ]
+        },
+        {
+          "id": "header-row",
+          "component": "Row",
+          "children": ["header-icon", "header-text"],
+          "align": "center"
+        },
+        {
+          "id": "header-icon",
+          "component": "Icon",
+          "name": "lock"
+        },
+        {
+          "id": "header-text",
+          "component": "Text",
+          "text": "Authorization Required",
+          "variant": "h3"
+        },
+        {
+          "id": "divider-1",
+          "component": "Divider"
+        },
+        {
+          "id": "description",
+          "component": "Text",
+          "text": { "path": "/transfer/description" },
+          "variant": "body"
+        },
+        {
+          "id": "details-card",
+          "component": "Card",
+          "child": "details-column"
+        },
+        {
+          "id": "details-column",
+          "component": "Column",
+          "children": [
+            "detail-action",
+            "detail-from",
+            "detail-to",
+            "detail-amount"
+          ]
+        },
+        {
+          "id": "detail-action",
+          "component": "KeyValue",
+          "label": "Action",
+          "value": { "path": "/transfer/action" }
+        },
+        {
+          "id": "detail-from",
+          "component": "KeyValue",
+          "label": "From",
+          "value": { "path": "/transfer/fromAccount" }
+        },
+        {
+          "id": "detail-to",
+          "component": "KeyValue",
+          "label": "To",
+          "value": { "path": "/transfer/toAccount" }
+        },
+        {
+          "id": "detail-amount",
+          "component": "KeyValue",
+          "label": "Amount",
+          "value": { "path": "/transfer/amount" }
+        },
+        {
+          "id": "ttl-text",
+          "component": "Text",
+          "text": "⏱ Expires in 5 minutes",
+          "variant": "caption",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "pending"] }
+        },
+        {
+          "id": "divider-2",
+          "component": "Divider",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "pending"] }
+        },
+        {
+          "id": "actions",
+          "component": "Row",
+          "children": ["reject-btn", "approve-btn"],
+          "justify": "end",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "pending"] }
+        },
+        {
+          "id": "reject-btn",
+          "component": "Button",
+          "label": "Reject",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.reject",
+              "context": {
+                "interactionId": { "path": "/meta/interactionId" },
+                "intent": "AUTHORIZE"
+              }
+            }
+          }
+        },
+        {
+          "id": "approve-btn",
+          "component": "Button",
+          "label": "Approve",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.authorize.approve",
+              "context": {
+                "interactionId": { "path": "/meta/interactionId" },
+                "intent": "AUTHORIZE"
+              }
+            }
+          }
+        },
+        {
+          "id": "processing",
+          "component": "Row",
+          "children": ["processing-indicator", "processing-text"],
+          "align": "center",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "processing"] }
+        },
+        {
+          "id": "processing-indicator",
+          "component": "ProgressIndicator",
+          "mode": "indeterminate"
+        },
+        {
+          "id": "processing-text",
+          "component": "Text",
+          "text": "Processing your authorization...",
+          "variant": "body"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-authorize-transfer-001",
+      "value": {
+        "state": "pending",
+        "transfer": {
+          "description": "Your financial agent wants to transfer funds between your accounts.",
+          "action": "Transfer Funds",
+          "fromAccount": "Checking (****4521)",
+          "toAccount": "Savings (****7890)",
+          "amount": "$500.00"
+        },
+        "meta": {
+          "interactionId": "txn-2026-0304-001",
+          "agentId": "financial-assistant-v2",
+          "intent": "AUTHORIZE",
+          "timestamp": "2026-03-04T06:45:00Z",
+          "ttlSeconds": 300
+        }
+      }
+    }
+  }
+]
