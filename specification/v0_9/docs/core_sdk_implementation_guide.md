@@ -18,22 +18,6 @@ Its primary responsibilities include:
 
 The architecture emphasizes a clean separation between construct (the model) and visualization (the renderer). This layer follows the exact same design in all programming languages and does not require design work when porting to a new ecosystem.
 
-### Implementation Topologies
-Because A2UI spans multiple languages and UI paradigms, the strictness and location of these architectural boundaries will vary depending on the target ecosystem.
-
-#### Dynamic Languages (e.g., TypeScript / JavaScript)
-In highly dynamic ecosystems like the web, the architecture is typically split across multiple packages to maximize code reuse across diverse UI frameworks (React, Angular, Vue, Lit).
-*   **Core Library (`web_core`)**: Implements the Core Data Layer, Component Schemas, and a Generic Binder Layer. Because TS/JS has powerful runtime reflection, the core library can provide a generic binder that automatically handles all data binding without framework-specific code. 
-*   **Framework Library (`react_renderer`, `angular_renderer`)**: Implements the Framework-Specific Adapters and the actual view implementations.
-
-#### Static Languages (e.g., Kotlin, Swift, Dart)
-In statically typed languages, runtime reflection is often limited or discouraged for performance reasons.
-*   **Core Library (e.g., `kotlin_core`)**: Implements the Core Data Layer and Component Schemas. The core library typically provides a manually implemented **Binder Layer** for the standard Basic Catalog components. This ensures that even in static environments, basic components have a standardized, framework-agnostic reactive state definition.
-*   **Framework Library (e.g., `compose_renderer`)**: Uses the predefined Binders to connect to native UI state and implements the actual visual components.
-
-#### Combined Core + Framework Libraries (e.g., Swift + SwiftUI)
-In ecosystems dominated by a single UI framework (like iOS with SwiftUI), developers often build a single, unified library rather than splitting Core and Framework into separate packages. The generic `ComponentContext` and the framework-specific adapter logic are often tightly integrated.
-
 ### Foundational Prerequisites
 
 The very first step in implementing a Core SDK is choosing two critical libraries that will dictate the ergonomics and performance of your implementation.

@@ -12,7 +12,24 @@ Its primary responsibilities include:
 *   **Action Handling**: Connecting native UI events (clicks, input) to A2UI actions.
 *   **Component Mapping**: Dispatching component types to their native implementations.
 
-## 2. The Rendering Architecture
+## 2. Implementation Topologies
+
+Because A2UI spans multiple languages and UI paradigms, the strictness and location of the architectural boundaries between the Core SDK and the Framework Adapter will vary depending on the target ecosystem.
+
+#### Dynamic Languages (e.g., TypeScript / JavaScript)
+In highly dynamic ecosystems like the web, the architecture is typically split across multiple packages to maximize code reuse across diverse UI frameworks (React, Angular, Vue, Lit).
+*   **Core Library (e.g., `web_core`)**: Implements the Core Data Layer, Component Schemas, and a Generic Binder Layer. Because TS/JS has powerful runtime reflection, the core library can provide a generic binder that automatically handles all data binding without framework-specific code. 
+*   **Framework Adapter (e.g., `react_renderer`, `angular_renderer`)**: Implements the Framework-Specific Adapters and the actual view implementations.
+
+#### Static Languages (e.g., Kotlin, Swift, Dart)
+In statically typed languages, runtime reflection is often limited or discouraged for performance reasons.
+*   **Core Library (e.g., `kotlin_core`)**: Implements the Core Data Layer and Component Schemas. The core library typically provides a manually implemented **Binder Layer** for the standard Basic Catalog components. This ensures that even in static environments, basic components have a standardized, framework-agnostic reactive state definition.
+*   **Framework Adapter (e.g., `compose_renderer`)**: Uses the predefined Binders from the Core SDK to connect to native UI state and implements the actual visual components.
+
+#### Combined Core + Framework Libraries (e.g., Swift + SwiftUI)
+In ecosystems dominated by a single UI framework (like iOS with SwiftUI), developers often build a single, unified library rather than splitting the Core SDK and Framework Adapter into separate packages. In these cases, the generic `ComponentContext` and the framework-specific adapter logic are often tightly integrated.
+
+## 3. The Rendering Architecture
 
 The rendering flow follows a well-defined path:
 1.  **The `Surface` Entry Point**: A native widget/view is instantiated with a `SurfaceModel`.
@@ -23,7 +40,7 @@ The rendering flow follows a well-defined path:
 ### The recursive `buildChild` helper
 When implementing the recursive renderer, ensure it correctly propagates the data context path. If a nested component (like a Text field inside a List template) uses a relative path, it must resolve against the scoped path provided by its immediate parent (e.g., `/restaurants/0`), not the root path.
 
-## 3. Component Implementation
+## 4. Component Implementation
 
 Each A2UI component is defined by its implementation interface.
 
@@ -52,7 +69,7 @@ interface ComponentImplementation extends ComponentApi {
 }
 ```
 
-## 4. Implementation Strategies
+## 5. Implementation Strategies
 
 ### Strategy 1: Direct / Binderless Implementation
 The developer manually manages A2UI reactivity within the `build` method using native reactive tools (e.g., `useEffect` in React or `StreamBuilder` in Flutter).
@@ -153,7 +170,7 @@ export class AngularWrapper {
 }
 ```
 
-## 5. Reactivity & Lifecycle Rules
+## 6. Reactivity & Lifecycle Rules
 
 Regardless of strategy, implementations MUST strictly manage subscriptions:
 1.  **Lazy Subscription**: Only bind and subscribe to data when the component is actually mounted/attached to the UI.
@@ -163,7 +180,7 @@ Regardless of strategy, implementations MUST strictly manage subscriptions:
 3.  **Path Stability**: If a property changes via an `updateComponents` message, you MUST unsubscribe from the old path before subscribing to the new one.
 4.  **Destruction**: When a component or surface is removed, the adapter MUST dispose of all data model subscriptions to prevent memory leaks.
 
-## 6. Advanced Framework Traits
+## 7. Advanced Framework Traits
 
 ### Data Props vs. Structural Props
 *   **Data Props (e.g., `label`)**: Handled by the Binder/Adapter. The view receives fully resolved values. Whenever data updates, the binder should emit a *new reference* (shallow copy) to trigger declarative re-renders.
@@ -174,7 +191,7 @@ Components supporting the `checks` property should implement the `Checkable` tra
 *   **UI Feedback**: Reactively display the `message` of the first failing check.
 *   **Action Blocking**: Actions (like Button clicks) should be disabled if validation fails.
 
-## 7. Strongly-Typed Catalogs
+## 8. Strongly-Typed Catalogs
 
 Platforms with strong type systems should utilize their features to ensure an adapter renderer strictly matches the official `ComponentApi` (name and schema). This catches spelling or schema mismatches at compile time.
 
@@ -225,7 +242,7 @@ const catalog = new Catalog("id", [
 ]);
 ```
 
-## 8. Development Tools: The Gallery App
+## 9. Development Tools: The Gallery App
 
 The Gallery App is the reference environment for an A2UI renderer.
 
@@ -240,7 +257,7 @@ Every renderer must verify:
 *   **Two-Way Binding**: TextField updates reflected in the Data Model viewer.
 *   **Context Scoping**: Correct data resolution in nested templates (like Lists).
 
-## 9. Phased Implementation Workflow
+## 10. Phased Implementation Workflow
 
 If you are building a new A2UI renderer, follow this strict, phased sequence of operations.
 
