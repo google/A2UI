@@ -257,20 +257,21 @@ Every renderer must verify:
 *   **Two-Way Binding**: TextField updates reflected in the Data Model viewer.
 *   **Context Scoping**: Correct data resolution in nested templates (like Lists).
 
-## 10. Phased Implementation Workflow
+## 10. Agent Implementation Guide
 
-If you are building a new A2UI renderer, follow this strict, phased sequence of operations.
+If you are an AI Agent tasked with building a new A2UI renderer, you MUST follow this strict, phased sequence of operations. 
 
 ### Phase 1: Implement or Adopt a Core SDK
 The framework adapter relies entirely on a stable, framework-agnostic data layer.
 *   If a Core SDK already exists for your language (e.g., `@a2ui/web_core` for JS/TS), add it as a dependency.
 *   If one does not exist, you **must** build it first. Follow the strict, test-driven phases outlined in the [Core SDK Implementation Guide](core_sdk_implementation_guide.md) before writing any UI code.
 
-### Phase 2: Key Architecture Decisions
-Before writing UI code, create a design document detailing:
-*   **Component Architecture**: Define the `ComponentImplementation` API for your specific framework.
-*   **Surface Architecture**: Design how the `Surface` entry point will recursively build children and propagate context.
-*   **Binding Strategy**: Decide between a Generic Binder Layer (recommended for dynamic languages) or a Direct/Binderless implementation.
+### Phase 2: Key Architecture Decisions (Write a Plan Document)
+Before writing UI code, create a comprehensive design document detailing:
+*   **Component Architecture**: How will you define the `ComponentImplementation` API for this language and framework?
+*   **Surface Architecture**: How will the `Surface` framework entry point function to recursively build children?
+*   **Binding Strategy**: Will you use an intermediate Generic Binder Layer (recommended for dynamic languages) or a Direct/Binderless implementation?
+*   **STOP HERE. Ask the user for approval on this design document before proceeding.**
 
 ### Phase 3: Framework-Specific Layer
 Implement the bridge between your models and the native UI.
@@ -278,15 +279,19 @@ Implement the bridge between your models and the native UI.
 *   Establish lazy subscription mounting and disposal lifecycles to prevent memory leaks.
 
 ### Phase 4: Minimal Catalog Support
-Implement native UI support for a minimal set of components to verify the architecture:
-*   **Components**: `Text`, `Row`, `Column`, `Button`, `TextField`.
-*   **Validation**: Verify that native properties update reactively when the underlying Core SDK data changes.
+Target the `minimal_catalog.json` first.
+*   Implement native UI support for a minimal set of components to verify the architecture: `Text`, `Row`, `Column`, `Button`, `TextField`.
+*   **Action**: Verify that native properties update reactively when the underlying Core SDK data changes.
 
-### Phase 5: Development Tools (Gallery App)
-Build the **Gallery App** as described in Section 8. This tool is essential for debugging progressive rendering and two-way interaction logic before adding more complex components.
+### Phase 5: Gallery Application (Milestone)
+Build the **Gallery App** as described in Section 9. This tool is essential for debugging progressive rendering and two-way interaction logic before adding more complex components.
+*   Load JSON samples from `specification/v0_9/json/catalogs/minimal/examples/`.
+*   Verify progressive rendering and reactivity.
+*   **STOP HERE. Ask the user for approval of the architecture and gallery application before proceeding to Phase 6.**
 
 ### Phase 6: Basic Catalog Support
 Once the core architecture is stable, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) to:
 *   Implement the full suite of Basic Catalog widgets.
 *   Bind all standard functions (arithmetic, logical, formatting) to the native UI components.
+*   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
 

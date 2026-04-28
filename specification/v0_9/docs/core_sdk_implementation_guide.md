@@ -254,53 +254,53 @@ It is **crucial** to separate the pure API (the Schemas and `ComponentApi`) from
 | `null` / `undefined`       | `Number`    | `0`                                                                     |
 | `String` (numeric)         | `Number`    | Parsed numeric value or `0`                                             |
 
-## 9. Phased Implementation Workflow
+## 9. Agent Implementation Guide
 
-Building a Core SDK requires a rigorous, test-driven approach. Since the SDK is framework-agnostic, you can build and test it entirely in isolation before touching any UI code.
+If you are an AI Agent tasked with building a new Core SDK for A2UI, you MUST follow this strict, phased sequence of operations. Building a Core SDK requires a rigorous, test-driven approach. You can build and test it entirely in isolation before touching any UI code.
 
-### Phase 1: Context Ingestion & Architecture
-Review the protocol specifications (`a2ui_protocol.md`, `common_types.json`, `server_to_client.json`). Decide on your Schema Library and Observable/Reactive Library. Set up your unit testing framework.
+### Phase 1: Context to Ingest
+Thoroughly review:
+*   `specification/v0_9/docs/a2ui_protocol.md` (protocol rules)
+*   `specification/v0_9/json/common_types.json` (dynamic binding types)
+*   `specification/v0_9/json/server_to_client.json` (message envelopes)
+*   `specification/v0_9/json/catalogs/minimal/minimal_catalog.json` (your initial target)
 
-### Phase 2: Protocol Models & Serialization
+### Phase 2: Key Architecture Decisions (Write a Plan Document)
+Create a comprehensive design document detailing:
+*   **Dependencies**: Which Schema Library and Observable/Reactive Library will you use? *Note: Ensure your reactive library supports both discrete event subscription (EventEmitter style) and stateful, signal-like data streams (BehaviorSubject/Signal style).*
+*   **STOP HERE. Ask the user for approval on this design document before proceeding.**
+
+### Phase 3: Protocol Models & Serialization
 Implement strict native types for all A2UI messages and metadata. Write the deserialization and validation logic.
-*   **Unit Tests (Exhaustive)**:
-    *   Provide valid JSON strings for all message types and assert correct object instantiation.
-    *   Provide invalid JSON (missing required fields, wrong types) and assert `A2uiValidationError` is thrown.
-    *   Test client-to-server serialization (e.g., ensuring `A2uiClientAction` formats timestamps correctly).
+*   **Action**: Write unit tests for JSON validation. Provide valid JSON strings and assert correct instantiation. Provide invalid JSON and assert `A2uiValidationError` is thrown.
 
-### Phase 3: The Data Model
+### Phase 4: The Data Model
 Implement the `DataModel` class. This is the most algorithmically complex layer.
-*   **Unit Tests (Exhaustive)**:
-    *   **Path Resolution**: Test setting/getting absolute paths (`/user/name`).
-    *   **Auto-vivification**: Test setting deep paths (`/a/b/0/c`). Assert that `0` becomes an array and `b` becomes an object.
-    *   **Deletion**: Test setting a path to `undefined`/`null`. Assert keys are removed from objects and indices are emptied in arrays.
-    *   **Subscriptions**: Test that updating `/user/name` triggers subscribers for `/user/name` (exact), `/user` (bubble), and `/` (bubble), but not `/user/age` (sibling).
+*   **Action**: Write exhaustive unit tests for `DataModel`, especially JSON pointer resolution, auto-vivification (e.g. `/a/b/0/c`), and the cascade/bubble notification strategy. Ensure they pass before continuing.
 
-### Phase 4: Component & Surface State Models
+### Phase 5: Component & Surface State Models
 Implement `ComponentModel`, `SurfaceComponentsModel`, `SurfaceModel`, and `SurfaceGroupModel`.
-*   **Unit Tests (Exhaustive)**:
-    *   Assert `SurfaceComponentsModel` properly adds, updates, and deletes components, emitting events for each.
-    *   Test that replacing a component with a different `type` but the same `id` disposes the old model and creates a new one.
-    *   Test `SurfaceGroupModel` lifecycle (adding/deleting surfaces and cascading disposal).
+*   **Action**: Write unit tests verifying that `SurfaceComponentsModel` properly adds, updates, and deletes components, emitting events for each. Test `SurfaceGroupModel` lifecycle management.
 
-### Phase 5: The Context & Evaluation Layer
+### Phase 6: The Context & Evaluation Layer
 Implement `DataContext` and `ComponentContext` to handle path scoping and dynamic value resolution.
-*   **Unit Tests (Exhaustive)**:
-    *   **Scoping**: Test that `nested("child").path` resolves correctly against parent paths (handling trailing slashes).
-    *   **Dynamic Resolution**: Test `resolveDynamicValue` with literals, DataBindings (`path`), and FunctionCalls (`call`).
-    *   **Reactivity**: Test `subscribeDynamicValue` returning a stateful stream that updates when the underlying `DataModel` path is mutated.
+*   **Action**: Write unit tests for scoping (e.g. `nested("child").path`) and dynamic resolution with literals, DataBindings (`path`), and FunctionCalls (`call`).
 
-### Phase 6: Message Processing
+### Phase 7: Message Processing
 Implement the `MessageProcessor` to act as the central controller.
-*   **Unit Tests (Exhaustive)**:
-    *   Pass a sequence of `createSurface`, `updateComponents`, and `updateDataModel` messages. Assert the final state of the `SurfaceGroupModel`.
-    *   Test that invalid message sequences (e.g., updating a surface before creating it) throw `A2uiStateError`.
-    *   Test `getClientDataModel()` correctly aggregates data only for surfaces with `sendDataModel: true`.
+*   **Action**: Write unit tests passing a sequence of `createSurface`, `updateComponents`, and `updateDataModel` messages. Assert the final state of the models and verify `getClientDataModel()` correctly aggregates data for `sendDataModel: true`.
 
-### Phase 7: Capabilities & Catalog Functions
-Implement the schema translation logic for `a2uiClientCapabilities` and standard function execution (e.g., `formatString`).
-*   **Unit Tests (Exhaustive)**:
-    *   **Capabilities**: Define a mock ComponentApi, generate capabilities, and assert the resulting JSON Schema is valid and that `REF:` tags are properly stripped and converted to `$ref` objects.
-    *   **Functions**: Test `formatString` with mixed static text, absolute paths, relative paths, and nested function calls. Ensure missing values fail gracefully or coerce to empty strings.
+### Phase 8: Capabilities & Minimal Catalog Functions
+Target the `minimal_catalog.json` first.
+*   Implement the schema translation logic for `a2uiClientCapabilities` (stripping `REF:` tags and converting to `$ref`).
+*   Implement the pure API schemas for the minimal catalog components (`Text`, `Row`, `Column`, `Button`, `TextField`).
+*   Implement the `capitalize` function.
+*   **Action**: Write unit tests verifying that standard function execution and capability generation work correctly.
+
+### Phase 9: Basic Catalog Support
+Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
+*   Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
+*   Create definitions for the remaining Basic Catalog components.
+*   **Action**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit test cases for data coercion and function logic.
 
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
