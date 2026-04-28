@@ -49,7 +49,7 @@ Signals the client to initialize and render a surface.
     | ----------- | ------ | -------- | --------------------------------------------------------------------------------------- |
     | `surfaceId` | string | ✅        | Unique identifier for this surface.                                                     |
     | `root`      | string | ✅        | The `id` of the component that should be the root of the UI tree for this surface.      |
-    | `catalogId` | string | ❌        | Identifier for the component catalog. Defaults to the v0.8 standard catalog if omitted. |
+    | `catalogId` | string | ❌        | Identifier for the component catalog. Defaults to the v0.8 basic catalog if omitted. |
     | `styles`    | object | ❌        | Styling information for the UI, as defined by the catalog.                              |
 
     ### Example

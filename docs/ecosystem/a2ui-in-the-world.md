@@ -76,7 +76,7 @@ The [Agent Development Kit](https://google.github.io/adk-docs/) (ADK) is Google'
 
 **How ADK uses A2UI:**
 
-ADK integrated the A2UI v0.8 standard catalog to automatically render spec-compliant agent parts as native UI components directly in the chat. ADK also handles A2UI↔A2A message conversion, so agents built with ADK can send rich UI to any A2UI-capable client.
+ADK integrated the A2UI v0.8 basic catalog to automatically render spec-compliant agent parts as native UI components directly in the chat. ADK also handles A2UI↔A2A message conversion, so agents built with ADK can send rich UI to any A2UI-capable client.
 
 - **Built-in rendering**: ADK Web renders A2UI components natively in the dev UI.
 - **A2A integration**: A2UI messages are converted between A2A DataPart metadata and ADK events.
