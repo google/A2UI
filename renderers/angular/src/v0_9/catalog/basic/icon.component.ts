@@ -84,7 +84,7 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
-  readonly color = computed(() => this.props().color?.value());
+  readonly color = computed(() => this.props()['color']?.value());
   readonly iconNameRaw = computed(() => this.props()['name']?.value());
 
   readonly isPath = computed(() => {
