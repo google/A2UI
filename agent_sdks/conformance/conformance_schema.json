@@ -83,7 +83,16 @@
           "has_parts",
           "select_catalog",
           "generate_prompt",
-          "load_catalog"
+          "load_catalog",
+          "convert_event",
+          "create_a2ui_part",
+          "is_a2ui_part",
+          "try_activate_extension",
+          "handle_rpc",
+          "execute_tool",
+          "get_extension",
+          "try_activate",
+          "select_newest"
         ]
       }
     },
@@ -102,7 +111,16 @@
           { "$ref": "#/$defs/HasPartsTest" },
           { "$ref": "#/$defs/SelectCatalogTest" },
           { "$ref": "#/$defs/GeneratePromptTest" },
-          { "$ref": "#/$defs/LoadCatalogTest" }
+          { "$ref": "#/$defs/LoadCatalogTest" },
+          { "$ref": "#/$defs/ConvertEventTest" },
+          { "$ref": "#/$defs/CreateA2uiPartTest" },
+          { "$ref": "#/$defs/IsA2uiPartTest" },
+          { "$ref": "#/$defs/TryActivateExtensionTest" },
+          { "$ref": "#/$defs/HandleRpcTest" },
+          { "$ref": "#/$defs/ExecuteToolTest" },
+          { "$ref": "#/$defs/GetExtensionTest" },
+          { "$ref": "#/$defs/TryActivateTest" },
+          { "$ref": "#/$defs/SelectNewestTest" }
         ]
       }
     ]
@@ -359,6 +377,88 @@
         }
       },
       "required": [ "action", "catalog_configs" ]
+    },
+    "ConvertEventTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "convert_event" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" },
+        "expect_empty": { "type": "boolean" }
+      },
+      "required": [ "action", "args" ]
+    },
+    "CreateA2uiPartTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "create_a2ui_part" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "IsA2uiPartTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "is_a2ui_part" },
+        "args": { "type": "object" },
+        "expect": { "type": "boolean" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "TryActivateExtensionTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "try_activate_extension" },
+        "args": { "type": "object" },
+        "expect": { "type": "boolean" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "HandleRpcTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "handle_rpc" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "ExecuteToolTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "execute_tool" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "GetExtensionTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "get_extension" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "TryActivateTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "try_activate" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
+    },
+    "SelectNewestTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "select_newest" },
+        "args": { "type": "object" },
+        "expect": { "type": "object" }
+      },
+      "required": [ "action", "args", "expect" ]
     }
   }
 }
