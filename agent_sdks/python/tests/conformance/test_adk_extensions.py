@@ -18,22 +18,27 @@ import json
 import asyncio
 import pytest
 
+
 def _get_conformance_path(filename):
   return os.path.abspath(
       os.path.join(os.path.dirname(__file__), "../../../conformance", filename)
   )
+
 
 def load_tests(filename):
   path = _get_conformance_path(os.path.join("suites", filename))
   with open(path, "r", encoding="utf-8") as f:
     return yaml.safe_load(f)
 
+
 def get_conformance_cases(filename):
   cases = load_tests(filename)
   return [(case["name"], case) for case in cases]
 
+
 # --- ADK Extensions Conformance ---
 cases_adk_extensions = get_conformance_cases("adk_extensions.yaml")
+
 
 @pytest.mark.parametrize(
     "name, test_case",
@@ -55,18 +60,14 @@ def test_adk_extensions_conformance(name, test_case):
     catalog_mock = MagicMock(spec=A2uiCatalog)
     catalog_mock.validator.validate.return_value = None
 
-    tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(
-        catalog_mock, "examples"
-    )
+    tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
 
     tool_context_mock = MagicMock()
     tool_context_mock.state = {}
     tool_context_mock.actions = MagicMock(skip_summarization=False)
 
     # run_async is async in Python
-    result = asyncio.run(
-        tool.run_async(args=tool_args, tool_context=tool_context_mock)
-    )
+    result = asyncio.run(tool.run_async(args=tool_args, tool_context=tool_context_mock))
 
     expect = test_case["expect"]
     expect_success = expect["success"]
