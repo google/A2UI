@@ -8,14 +8,16 @@ The following scripts in `renderers/scripts/` automate the versioning, building,
 
 ### Pre-requirement: Artifact registry configuration
 
-_(Note: Only Googlers will be able to do this)_
+_(Note: Only Googlers will be able to do this. This is a one-time setup.)_
 
-Ensure your `~/.npmrc` file contains the following line, so the release script
-can authenticate with the artifact registry:
+Add the following line to your `~/.npmrc` file:
 
 ```
 //us-npm.pkg.dev/oss-exit-gate-prod/a2ui--npm/:_authToken=<auth_token>
 ```
+
+The `<auth_token>` field gets populated by the `google-artifactregistry-auth`
+command on "Step 2" later.
 
 ### 1. Increment Versions (Local)
 
