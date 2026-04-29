@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
@@ -21,11 +20,10 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:restaurant_finder_client/main.dart';
+import 'package:restaurant_finder_client/restaurant_finder_client.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Restaurant finder  smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const RestaurantFinderApp());
   });
 }

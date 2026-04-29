@@ -1,0 +1,173 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Flutter CI, except 'e2e_test'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main    
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Tests may fail due to new dependency releases.
+    # Regular execution provides early detection of such regressions.
+    - cron: '0 * * * *' # hourly
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.generate_matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          # Fetch the full history to be able to diff against the base branch
+          fetch-depth: 0
+
+      - name: Generate testing matrix
+        id: generate_matrix
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Find all directories containing pubspec.yaml in packages, tools, and examples.
+          ALL_DIRS=$(find packages examples tool -name pubspec.yaml -not -path "*/.dart_tool/*" -not -path "examples/eval/*" -exec dirname {} \;)
+
+          # Get the list of changed files. The method depends on the event type.
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Try using gh pr diff first to get the precise list of changed files.
+            # This avoids false positives if main has moved forward.
+            # We wrap it in an if statement to catch failures (e.g. diff too large).
+            if ! CHANGED_FILES=$(gh pr diff --name-only ${{ github.event.pull_request.number }}); then
+              echo "Warning: 'gh pr diff' failed. This usually happens when the PR is very large."
+              echo "Falling back to 'git diff' against origin/${{ github.base_ref }}."
+              CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+            fi
+          else
+            # For pushes, diff between the two SHAs of the push.
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+          fi
+
+          # Build a regex to match any of the package directories or the workflow file.
+          REGEX="^\.github/workflows/flutter_packages.yaml$"
+          for dir in $ALL_DIRS; do
+            REGEX="$REGEX|^$dir/"
+          done
+
+          if echo "$CHANGED_FILES" | grep -q -E "$REGEX"; then
+            echo "Changes detected in package directories or workflow file. Testing all packages."
+            DIRS_TO_TEST=$ALL_DIRS
+          else
+            DIRS_TO_TEST=""
+          fi
+
+          # Build a JSON array of package objects for the matrix.
+          JSON_MATRIX="["
+          FIRST=true
+          for dir in $DIRS_TO_TEST; do
+            if [ "$FIRST" = false ]; then
+              JSON_MATRIX="$JSON_MATRIX,"
+            fi
+            FIRST=false
+            # The name for the job (path with '/' -> '_')
+            package_name=$(echo "$dir" | tr '/' '_')
+            # The actual path to the package
+            package_path="$dir"
+            JSON_MATRIX="$JSON_MATRIX{\"name\":\"$package_name\",\"path\":\"$package_path\"}"
+          done
+          JSON_MATRIX="$JSON_MATRIX]"
+
+          echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
+
+  copyright:
+    runs-on: ubuntu-latest
+    if: github.repository == 'flutter/genui'
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      # Before bumping, verify the new version is on the flutter org's
+      # enterprise actions allowlist, or CI will fail with startup_failure.
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e
+        with:
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get > /dev/null
+      - name: Check copyrights
+        run: dart tool/fix_copyright/bin/fix_copyright.dart --year 2025
+
+  analyze_and_test:
+    needs: matrix
+    # Only run if the matrix job has produced a non-empty matrix.
+    if: github.repository == 'flutter/genui' && needs.matrix.outputs.matrix != '[]'
+    name: ${{ matrix.package.name }} (${{ matrix.flutter_version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.matrix.outputs.matrix) }}
+        flutter_version: [beta, stable]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+      # Before bumping, verify the new version is on the flutter org's
+      # enterprise actions allowlist, or CI will fail with startup_failure.
+      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e
+        with:
+          channel: ${{ matrix.flutter_version }}
+          cache: true
+      - name: Print Flutter version
+        run: flutter --version
+      - name: Cache Pub dependencies
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+      - name: Update submodules
+        working-directory: ${{ matrix.package.path }}
+        run: git submodule update --init --recursive
+      - name: Install dependencies
+        working-directory: ${{ matrix.package.path }}
+        run: dart pub get
+      - name: Check formatting
+        working-directory: ${{ matrix.package.path }}
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze code
+        working-directory: ${{ matrix.package.path }}
+        run: flutter analyze --fatal-infos
+      - name: Run tests
+        working-directory: ${{ matrix.package.path }}
+        run: |
+          if [ -d "test" ]; then
+            flutter test --test-randomize-ordering-seed=random
+          else
+            echo "No 'test' directory found in ${{ matrix.package.path }}, skipping tests."
+          fi
+
+      - name: Check for cycles
+        working-directory: ${{ matrix.package.path }}
+        run: |
+          dart pub global activate layerlens
+          layerlens --fail-on-cycles  --except "lib/src/schema" --except "lib/src/core"

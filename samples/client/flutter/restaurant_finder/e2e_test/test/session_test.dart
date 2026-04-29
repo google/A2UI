@@ -15,7 +15,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:restaurant_finder_client/session.dart';
+import 'package:restaurant_finder_client/restaurant_finder_client.dart';
 
 import 'test_infra/restaurant_finder.dart';
 
@@ -39,9 +39,7 @@ void main() {
       expect(session.activeSurfaceIds, isEmpty);
 
       // 1. Ask the agent to find restaurants.
-      await session.sendMessage(
-        'Find me 3 italian restaurants in New York.',
-      );
+      await session.sendMessage('Find me 3 italian restaurants in New York.');
 
       expect(session.hasSentMessage, isTrue);
       expect(session.isRequesting, isFalse);
@@ -66,8 +64,7 @@ void main() {
       expect(
         session.activeSurfaceIds,
         isNotEmpty,
-        reason:
-            'Agent should respond with a booking confirmation surface.',
+        reason: 'Agent should respond with a booking confirmation surface.',
       );
     },
     timeout: const Timeout(Duration(minutes: 10)),
