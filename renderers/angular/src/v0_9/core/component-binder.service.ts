@@ -48,7 +48,7 @@ export class ComponentBinder {
    */
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
-    const bound: Record<string, any> = {};
+    const bound: Record<string, BoundProperty<any>> = {};
 
     for (const key of Object.keys(props)) {
       const value = props[key];

@@ -20,6 +20,7 @@ import { ComponentHostComponent } from '../../core/component-host.component';
 import { getNormalizedPath } from '../../core/utils';
 import { BasicCatalogComponent } from './basic-catalog-component';
 import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
+import { ColumnApi } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Column component (v0.9).
@@ -62,7 +63,7 @@ import { JUSTIFY_MAP, ALIGN_MAP } from './utils';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColumnComponent extends BasicCatalogComponent {
+export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   protected readonly justify = computed(() => {
     const val = this.props()['justify']?.value();
     return val ? JUSTIFY_MAP[val] || val : undefined;
