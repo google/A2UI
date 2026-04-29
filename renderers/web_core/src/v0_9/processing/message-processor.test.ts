@@ -548,6 +548,15 @@ describe('MessageProcessor', () => {
     let comp = surface?.componentsModel.get('comp1');
     assert.strictEqual(comp?.type, 'Button');
 
+    let disposeCalled = false;
+    const originalDispose = comp?.dispose.bind(comp);
+    if (comp && originalDispose) {
+      comp.dispose = () => {
+        disposeCalled = true;
+        originalDispose();
+      };
+    }
+
     // Change type to Label
     processor.processMessages([
       {
@@ -564,6 +573,7 @@ describe('MessageProcessor', () => {
     assert.strictEqual(comp?.type, 'Label');
     assert.strictEqual(comp?.properties.text, 'Lbl');
     assert.strictEqual(comp?.properties.label, undefined);
+    assert.strictEqual(disposeCalled, true);
   });
 
   it('throws when catalog not found', () => {

@@ -191,4 +191,41 @@ describe('GenericBinder Checkable Trait', () => {
     assert.strictEqual(binder.snapshot.isValid, true);
     assert.deepStrictEqual(binder.snapshot.validationErrors, []);
   });
+
+  it('resolves initial dynamic props synchronously without leaking data signals', () => {
+    const surface = new SurfaceModel('s2', mockCatalog);
+    surface.dataModel.set('/greeting', 'hello');
+
+    const compModel = new ComponentModel('c5', 'Test', {
+      text: {path: '/greeting'},
+    });
+    surface.componentsModel.addComponent(compModel);
+
+    const schema = z.object({
+      text: CommonSchemas.DynamicString,
+    });
+
+    const context = new ComponentContext(surface, 'c5');
+    const initialSignalCount = (surface.dataModel as any).signals.size;
+
+    const binder = new GenericBinder<any>(context, schema);
+
+    assert.strictEqual(binder.snapshot.text, 'hello');
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount,
+    );
+
+    const sub = binder.subscribe(() => {});
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount + 1,
+    );
+
+    sub.unsubscribe();
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount,
+    );
+  });
 });

@@ -161,11 +161,9 @@ export class ComponentHostComponent {
     this.props = this.binder.bind(this.context);
     this.resolvedDataContextPath = this.context.dataContext.path;
 
-    // Subscribes to updates to the component model properties, to get the
-    // component to react when a new prop is added after creation.
-    this.propsSub = componentModel.onUpdated.subscribe(() => {
-      this.props = this.binder.bind(this.context!);
-      this.cdr.markForCheck();
+    this.destroyRef.onDestroy(() => {
+      updatedSubscription.unsubscribe();
+      this.binder.disposeBoundProperties(this.props);
     });
 
     this.cdr.markForCheck();
@@ -184,5 +182,14 @@ export class ComponentHostComponent {
     this.props = {};
     this.resolvedDataContextPath = '/';
     this.cdr.markForCheck();
+  }
+
+  private bindProps(): void {
+    if (!this.context) {
+      return;
+    }
+
+    this.binder.disposeBoundProperties(this.props);
+    this.props = this.binder.bind(this.context, this.destroyRef);
   }
 }

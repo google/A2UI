@@ -37,7 +37,6 @@ export interface Child {
   providedIn: 'root',
 })
 export class ComponentBinder {
-  private destroyRef = inject(DestroyRef);
   private ngZone = inject(NgZone);
 
   /**
@@ -46,7 +45,7 @@ export class ComponentBinder {
    * @param context The ComponentContext containing the model and data context.
    * @returns An object where each key corresponds to a component prop and its value is an Angular Signal.
    */
-  bind(context: ComponentContext): Record<string, BoundProperty> {
+  bind(context: ComponentContext, destroyRef: DestroyRef): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, any> = {};
 
@@ -141,5 +140,18 @@ export class ComponentBinder {
     }
 
     return bound;
+  }
+
+  disposeBoundProperties(bound: Record<string, BoundProperty> | undefined): void {
+    if (!bound) {
+      return;
+    }
+
+    for (const prop of Object.values(bound)) {
+      const dispose = (prop.value as any)?.dispose;
+      if (typeof dispose === 'function') {
+        dispose();
+      }
+    }
   }
 }

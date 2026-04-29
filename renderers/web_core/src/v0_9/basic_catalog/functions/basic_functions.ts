@@ -290,7 +290,7 @@ export const FormatStringImplementation = createFunctionImplementation(
       return context.resolveSignal(part);
     });
 
-    return computed(() => {
+    const formatted = computed(() => {
       return dynamicParts
         .map(p => {
           if (isSignal(p)) {
@@ -300,6 +300,20 @@ export const FormatStringImplementation = createFunctionImplementation(
         })
         .join('');
     });
+
+    (formatted as any).unsubscribe = () => {
+      for (const part of dynamicParts) {
+        if (
+          part &&
+          typeof part === 'object' &&
+          typeof (part as any).unsubscribe === 'function'
+        ) {
+          (part as any).unsubscribe();
+        }
+      }
+    };
+
+    return formatted;
   },
 );
 /**
