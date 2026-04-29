@@ -38,45 +38,12 @@ jobs:
       matrix: ${{ steps.generate_matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          # Fetch the full history to be able to diff against the base branch
-          fetch-depth: 0
 
       - name: Generate testing matrix
         id: generate_matrix
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          # Find all directories containing pubspec.yaml in packages, tools, and examples.
-          ALL_DIRS=$(find samples -name pubspec.yaml -not -path "*/.dart_tool/*" -not -path "*/e2e_test/*" -exec dirname {} \;)
-
-          # Get the list of changed files. The method depends on the event type.
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            # Try using gh pr diff first to get the precise list of changed files.
-            # This avoids false positives if main has moved forward.
-            # We wrap it in an if statement to catch failures (e.g. diff too large).
-            if ! CHANGED_FILES=$(gh pr diff --name-only ${{ github.event.pull_request.number }}); then
-              echo "Warning: 'gh pr diff' failed. This usually happens when the PR is very large."
-              echo "Falling back to 'git diff' against origin/${{ github.base_ref }}."
-              CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
-            fi
-          else
-            # For pushes, diff between the two SHAs of the push.
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-          fi
-
-          # Build a regex to match any of the package directories or the workflow file.
-          REGEX="^\.github/workflows/flutter_packages.yaml$"
-          for dir in $ALL_DIRS; do
-            REGEX="$REGEX|^$dir/"
-          done
-
-          if echo "$CHANGED_FILES" | grep -q -E "$REGEX"; then
-            echo "Changes detected in package directories or workflow file. Testing all packages."
-            DIRS_TO_TEST=$ALL_DIRS
-          else
-            DIRS_TO_TEST=""
-          fi
+          # Test all packages with a pubspec.yaml, except those named 'e2e_test'.
+          DIRS_TO_TEST=$(find samples -name pubspec.yaml -not -path "*/.dart_tool/*" -not -path "*/e2e_test/*" -exec dirname {} \;)
 
           # Build a JSON array of package objects for the matrix.
           JSON_MATRIX="["
