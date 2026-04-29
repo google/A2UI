@@ -119,7 +119,7 @@ NOTE: if you already have an agent that is deployed to Agent Engine, skip to
 
 ## Running the Script
 
-The `main.py` script performs the following actions:
+The `deploy.py` script performs the following actions:
 
 1.  Initializes the Vertex AI client.
 2.  Defines a sample "Contact Card Agent" skill and creates an agent card.
