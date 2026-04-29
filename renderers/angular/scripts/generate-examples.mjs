@@ -38,9 +38,10 @@ const DEFAULT_CATALOGS = ['minimal', 'basic'];
  */
 const options = {
   help: { type: 'boolean', short: 'h' },
-  outFile: { type: 'string', short: 'o', default: DEFAULT_OUT_FILE },
-  specPath: { type: 'string', short: 's', default: DEFAULT_SPEC_PATH },
+  'out-file': { type: 'string', short: 'o', default: DEFAULT_OUT_FILE },
+  'spec-path': { type: 'string', short: 's', default: DEFAULT_SPEC_PATH },
   catalog: { type: 'string', short: 'c', multiple: true, default: DEFAULT_CATALOGS },
+  'override-minimal-catalog-id': { type: 'boolean', default: true },
 };
 
 /**
@@ -49,27 +50,50 @@ const options = {
 const HELP_MESSAGE = `Usage: node generate-examples.mjs [options]
 
 Options:
-  -o, --outFile <path>   Output file path (default: ${DEFAULT_OUT_FILE})
-  -s, --specPath <path>   Specification path (default: ${DEFAULT_SPEC_PATH})
+  -o, --out-file <path>   Output file path (default: ${DEFAULT_OUT_FILE})
+  -s, --spec-path <path>   Specification path (default: ${DEFAULT_SPEC_PATH})
   -c, --catalog <name>   Catalog names to include (can be specified multiple times) (default: ${DEFAULT_CATALOGS.join(', ')})
+  --no-override-minimal-catalog-id  Do not override catalog ID for minimal catalog
   -h, --help             Show this help message
 `;
+
+/**
+ * Overrides the catalog ID for minimal catalog to use basic catalog instead,
+ * preserving the version in the path.
+ */
+function overrideMessagesCatalogId(messages) {
+  const overrideCatalogId = (catalogId) => {
+    return catalogId.replace('catalogs/minimal/minimal_catalog.json', 'basic_catalog.json');
+  };
+  for (const msg of messages) {
+    // For v0.9 (and up?)
+    if (msg.createSurface && msg.createSurface.catalogId) {
+      msg.createSurface.catalogId = overrideCatalogId(msg.createSurface.catalogId);
+    }
+    // The minimal catalog examples in 0.8 contain a catalogId (but not the basic
+    // catalog ones). That's probably copy-pasta from when catalogIds were
+    // introduced later, as the v0.8 renderers didn't use catalogIds. We don't
+    // need to handle the overrides of the catalogId for the beginRendering
+    // messages from the v0.8 spec.
+  }
+}
 
 /**
  * Main execution function for the script.
  * Parses arguments, reads catalog examples, and generates the TypeScript bundle.
  */
 async function main() {
-  const { values } = parseArgs({ options });
+  const { values } = parseArgs({ options, allowNegative: true });
 
   if (values.help) {
     console.log(HELP_MESSAGE);
     return;
   }
 
-  const outPath = values.outFile;
-  const specPath = values.specPath;
+  const outPath = values['out-file'];
+  const specPath = values['spec-path'];
   const outDir = path.dirname(outPath);
+  const overrideCatalogId = values['override-minimal-catalog-id'];
 
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, { recursive: true });
@@ -113,27 +137,26 @@ async function main() {
             };
           }
 
-          // In the Angular Demo we only load the basic catalog (which implements minimal components as well).
+          // In the Angular Demo we only load the basic catalog (a superset of the minimal one).
           // Rewrite the catalogId for minimal examples to use basic_catalog.json
-          if (catalog === 'minimal') {
-            for (const msg of example.messages) {
-              if (msg.createSurface && msg.createSurface.catalogId) {
-                msg.createSurface.catalogId =
-                  'https://a2ui.org/specification/v0_9/basic_catalog.json';
-              }
-            }
+          if (catalog === 'minimal' && overrideCatalogId) {
+            overrideMessagesCatalogId(example.messages);
           }
 
           examples.push(example);
         } catch (e) {
-          console.error(`Error parsing ${filePath}:`, e);
+          throw new Error(`Error parsing ${filePath}:`, e);
         }
       }
     } else {
-      console.error(`Examples directory for catalog '${catalog}' does not exist: ${examplesDir}`);
+      throw new Error(`Examples directory for catalog '${catalog}' does not exist: ${examplesDir}`);
     }
   }
+  if (examples.length === 0) {
+    throw new Error(`No examples found for catalogs: ${catalogs.join(', ')}`);
+  }
 
+  // Generate the file now!
   const tsContent = `/**
  * Generated file. Do not edit directly.
  */
