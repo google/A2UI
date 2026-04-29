@@ -112,7 +112,7 @@ Many research projects across multiple Google teams, including integration into 
 
 ## Long-Term Vision
 
-**Full App UIs**
+### Full App UIs
 
 Configurable, Customizable UIs - facilitated by A2UI (agent optional)
 
@@ -120,7 +120,7 @@ Configurable, Customizable UIs - facilitated by A2UI (agent optional)
 - Patterns for A2UI caching, as config layer for static UI
 - Designs and samples for full app composition
 
-**Multi-Agent Coordination**
+### Multi-Agent Coordination
 
 Enhanced support for multiple agents contributing to the same UI:
 
@@ -128,7 +128,7 @@ Enhanced support for multiple agents contributing to the same UI:
 - Conflict resolution strategies
 - Shared surface management
 
-**Accessibility Features**
+### Accessibility Features
 
 First-class accessibility support:
 
@@ -137,7 +137,7 @@ First-class accessibility support:
 - Keyboard navigation standards
 - Contrast and color guidance
 
-**Advanced UI Patterns**
+### Advanced UI Patterns
 
 Support for more complex UI interactions:
 
@@ -146,7 +146,7 @@ Support for more complex UI interactions:
 - 3D rendering
 - AR/VR interfaces (exploratory)
 
-**Ecosystem Growth**
+### Ecosystem Growth
 
 - More framework integrations
 - Third-party component libraries
