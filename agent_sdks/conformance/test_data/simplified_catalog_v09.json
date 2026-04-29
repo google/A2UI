@@ -1,10 +1,11 @@
 {
+  "$id": "https://a2ui.org/specification/v0_9/catalog.json",
   "catalogId": "test_catalog",
   "components": {
     "Container": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" }
       ],
       "properties": {
@@ -19,50 +20,50 @@
     "Card": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" }
       ],
       "properties": {
         "component": { "const": "Card" },
-        "child": { "$ref": "simplified_common_types_v09.json#/$defs/ComponentId" }
+        "child": { "$ref": "common_types.json#/$defs/ComponentId" }
       },
       "required": [ "component", "child" ]
     },
     "Text": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" }
       ],
       "properties": {
         "component": { "const": "Text" },
-        "text": { "$ref": "simplified_common_types_v09.json#/$defs/DynamicString" }
+        "text": { "$ref": "common_types.json#/$defs/DynamicString" }
       },
       "required": [ "component", "text" ]
     },
     "Column": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" }
       ],
       "properties": {
         "component": { "const": "Column" },
-        "children": { "$ref": "simplified_common_types_v09.json#/$defs/ChildList" }
+        "children": { "$ref": "common_types.json#/$defs/ChildList" }
       },
       "required": [ "component", "children" ]
     },
     "AudioPlayer": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "AudioPlayer" },
-            "url": { "$ref": "simplified_common_types_v09.json#/$defs/DynamicString" },
-            "description": { "$ref": "simplified_common_types_v09.json#/$defs/DynamicString" }
+            "url": { "$ref": "common_types.json#/$defs/DynamicString" },
+            "description": { "$ref": "common_types.json#/$defs/DynamicString" }
           },
           "required": [ "component", "url" ]
         }
@@ -71,13 +72,13 @@
     "List": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "List" },
-            "children": { "$ref": "simplified_common_types_v09.json#/$defs/ChildList" },
+            "children": { "$ref": "common_types.json#/$defs/ChildList" },
             "direction": {
               "type": "string",
               "enum": [ "vertical", "horizontal" ]
@@ -90,13 +91,13 @@
     "Row": {
       "type": "object",
       "allOf": [
-        { "$ref": "simplified_common_types_v09.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/ComponentCommon" },
         { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Row" },
-            "children": { "$ref": "simplified_common_types_v09.json#/$defs/ChildList" }
+            "children": { "$ref": "common_types.json#/$defs/ChildList" }
           },
           "required": [ "component", "children" ]
         }

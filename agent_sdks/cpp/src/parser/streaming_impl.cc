@@ -45,6 +45,7 @@ A2uiStreamParserImpl::A2uiStreamParserImpl(A2uiCatalog catalog)
             }
         }
     }
+    discover_reference_fields();
 }
 
 std::vector<ResponsePart> A2uiStreamParserImpl::process_chunk(const std::string& chunk) {
@@ -749,6 +750,210 @@ void A2uiStreamParserImpl::yield_messages(const std::vector<nlohmann::json>& mes
              messages.push_back({"", nlohmann::json::array({m})});
         }
     }
+}
+
+std::set<std::string> A2uiStreamParserImpl::get_reachable_components(
+    const std::string& root_id,
+    const std::map<std::string, nlohmann::json>& seen_components
+) {
+    std::map<std::string, std::vector<std::string>> adj_list;
+    for (const auto& pair : seen_components) {
+        const auto& id = pair.first;
+        const auto& comp = pair.second;
+        adj_list[id] = {};
+        
+        // Extract refs using schema analysis
+        std::string comp_type;
+        if (version_ == VERSION_0_9) {
+            comp_type = comp.value("component", "");
+        } else {
+            if (comp.contains("component") && comp["component"].is_object() && !comp["component"].empty()) {
+                comp_type = comp["component"].begin().key();
+            }
+        }
+
+        if (comp_type.empty()) {
+             throw std::runtime_error("Failed to determine component type during streaming");
+        }
+
+        auto it = component_ref_fields_.find(comp_type);
+        if (it == component_ref_fields_.end()) {
+             throw std::runtime_error("Schema analysis failed or component type unknown: " + comp_type);
+        }
+
+        for (const auto& field_name : it->second) {
+            nlohmann::json props;
+            if (version_ == VERSION_0_9) {
+                props = comp;
+            } else {
+                if (comp.contains("component") && comp["component"].is_object()) {
+                    props = comp["component"].begin().value();
+                }
+            }
+            
+            if (props.contains(field_name)) {
+                const auto& val = props[field_name];
+                if (val.is_string()) {
+                    adj_list[id].push_back(val.get<std::string>());
+                } else if (val.is_array()) {
+                    for (const auto& item : val) {
+                        if (item.is_string()) adj_list[id].push_back(item.get<std::string>());
+                    }
+                } else if (val.is_object()) {
+                    if (val.contains("componentId") && val["componentId"].is_string()) {
+                        adj_list[id].push_back(val["componentId"].get<std::string>());
+                    }
+                    if (val.contains("explicitList") && val["explicitList"].is_array()) {
+                        for (const auto& item : val["explicitList"]) {
+                            if (item.is_string()) adj_list[id].push_back(item.get<std::string>());
+                        }
+                    }
+                    if (val.contains("template") && val["template"].is_object()) {
+                        const auto& temp = val["template"];
+                        if (temp.contains("componentId") && temp["componentId"].is_string()) {
+                            adj_list[id].push_back(temp["componentId"].get<std::string>());
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+    }
+
+    std::set<std::string> visited;
+    std::set<std::string> recursion_stack;
+
+    std::function<void(const std::string&)> dfs = [&](const std::string& node_id) {
+        visited.insert(node_id);
+        recursion_stack.insert(node_id);
+
+        auto it = adj_list.find(node_id);
+        if (it != adj_list.end()) {
+            for (const auto& neighbor : it->second) {
+                if (neighbor == node_id) {
+                     throw std::runtime_error("Self-reference detected");
+                }
+                if (visited.find(neighbor) == visited.end()) {
+                    dfs(neighbor);
+                } else if (recursion_stack.find(neighbor) != recursion_stack.end()) {
+                     throw std::runtime_error("Circular reference detected");
+                }
+            }
+        }
+
+        recursion_stack.erase(node_id);
+    };
+
+    if (seen_components.find(root_id) != seen_components.end()) {
+        dfs(root_id);
+    }
+    return visited;
+}
+
+void A2uiStreamParserImpl::extract_properties(const nlohmann::json& schema, std::vector<std::string>& ref_fields) const {
+    if (!schema.is_object()) return;
+
+    if (schema.contains("properties") && schema["properties"].is_object()) {
+        auto props = schema["properties"];
+        for (auto it = props.begin(); it != props.end(); ++it) {
+            std::string prop_name = it.key();
+            if (is_component_id_ref(it.value()) || is_child_list_ref(it.value()) ||
+                prop_name == "child" || prop_name == "contentChild" || prop_name == "entryPointChild" || prop_name == "children") {
+                ref_fields.push_back(prop_name);
+            }
+        }
+    }
+
+    for (const auto& key : {"allOf", "oneOf", "anyOf"}) {
+        if (schema.contains(key) && schema[key].is_array()) {
+            for (const auto& sub : schema[key]) {
+                extract_properties(sub, ref_fields);
+            }
+        }
+    }
+}
+
+
+void A2uiStreamParserImpl::discover_reference_fields() {
+    auto catalog_schema = catalog_.catalog_schema();
+    if (!catalog_schema.contains("components")) return;
+
+    auto comps = catalog_schema["components"];
+    for (auto it = comps.begin(); it != comps.end(); ++it) {
+        std::string comp_name = it.key();
+        auto comp_def = it.value();
+
+        // Initialize with empty vector so we know it's a valid component type
+        component_ref_fields_[comp_name] = {};
+        
+        extract_properties(comp_def, component_ref_fields_[comp_name]);
+    }
+}
+
+
+bool A2uiStreamParserImpl::is_component_id_ref(const nlohmann::json& schema) const {
+    if (!schema.is_object()) return false;
+
+    if (schema.contains("$ref")) {
+        std::string ref = schema["$ref"].get<std::string>();
+        if (ref.rfind("ComponentId") != std::string::npos ||
+            ref.rfind("child") != std::string::npos ||
+            ref.find("/child") != std::string::npos) {
+            return true;
+        }
+    }
+
+    if (schema.value("type", "") == "string" && schema.value("title", "") == "ComponentId") {
+        return true;
+    }
+
+    for (const auto& key : {"oneOf", "anyOf", "allOf"}) {
+        if (schema.contains(key) && schema[key].is_array()) {
+            for (const auto& item : schema[key]) {
+                if (is_component_id_ref(item)) return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool A2uiStreamParserImpl::is_child_list_ref(const nlohmann::json& schema) const {
+    if (!schema.is_object()) return false;
+
+    if (schema.contains("$ref")) {
+        std::string ref = schema["$ref"].get<std::string>();
+        if (ref.rfind("ChildList") != std::string::npos ||
+            ref.rfind("children") != std::string::npos ||
+            ref.find("/children") != std::string::npos) {
+            return true;
+        }
+    }
+
+    if (schema.value("type", "") == "object") {
+        if (schema.contains("properties") && schema["properties"].is_object()) {
+            auto props = schema["properties"];
+            if (props.contains("explicitList") || props.contains("template") || props.contains("componentId")) {
+                return true;
+            }
+        }
+    }
+
+    if (schema.value("type", "") == "array") {
+        if (schema.contains("items")) {
+            return is_component_id_ref(schema["items"]);
+        }
+    }
+
+    for (const auto& key : {"oneOf", "anyOf", "allOf"}) {
+        if (schema.contains(key) && schema[key].is_array()) {
+            for (const auto& item : schema[key]) {
+                if (is_child_list_ref(item)) return true;
+            }
+        }
+    }
+    return false;
 }
 
 } // namespace a2ui
