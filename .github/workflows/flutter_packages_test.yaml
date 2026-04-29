@@ -63,19 +63,6 @@ jobs:
 
           echo "matrix=$JSON_MATRIX" >> $GITHUB_OUTPUT
 
-  copyright:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      # Before bumping, verify the new version is on the flutter org's
-      # enterprise actions allowlist, or CI will fail with startup_failure.
-      - uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e
-        with:
-          channel: stable
-          cache: true
-      - name: Install dependencies
-        run: flutter pub get > /dev/null
-
   analyze_and_test:
     needs: matrix
     name: ${{ matrix.package.name }} (${{ matrix.flutter_version }})
