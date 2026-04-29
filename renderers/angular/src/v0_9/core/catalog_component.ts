@@ -26,7 +26,7 @@ import { ComponentApiToProps } from './types';
  * fields.
  */
 @Directive()
-export abstract class BaseCatalogComponent<Api extends ComponentApi> {
+export abstract class CatalogComponent<Api extends ComponentApi> {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
