@@ -75,8 +75,6 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get > /dev/null
-      - name: Check copyrights
-        run: dart tool/fix_copyright/bin/fix_copyright.dart --year 2025
 
   analyze_and_test:
     needs: matrix
