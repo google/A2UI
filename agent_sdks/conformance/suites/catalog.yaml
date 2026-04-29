@@ -197,23 +197,13 @@
     ---BEGIN A2UI JSON SCHEMA---
 
     ### Server To Client Schema:
-    {
-      "s2c": "schema"
-    }
+    {"s2c":"schema"}
 
     ### Common Types Schema:
-    {
-      "$defs": {
-        "common": "types"
-      }
-    }
+    {"$defs":{"common":"types"}}
 
     ### Catalog Schema:
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "catalog": "schema",
-      "catalogId": "id_basic"
-    }
+    {"$schema":"https://json-schema.org/draft/2020-12/schema","catalog":"schema","catalogId":"id_basic"}
 
     ---END A2UI JSON SCHEMA---
 
@@ -232,16 +222,10 @@
     ---BEGIN A2UI JSON SCHEMA---
 
     ### Server To Client Schema:
-    {
-      "s2c": "schema"
-    }
+    {"s2c":"schema"}
 
     ### Catalog Schema:
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "catalog": "schema",
-      "catalogId": "id_basic"
-    }
+    {"$schema":"https://json-schema.org/draft/2020-12/schema","catalog":"schema","catalogId":"id_basic"}
 
     ---END A2UI JSON SCHEMA---
 
@@ -388,6 +372,13 @@
           type: array
           items: {type: object}
 
-
-
+- name: test_remove_strict_validation_keeps_true
+  description: Tests that remove_strict_validation keeps additionalProperties true.
+  catalog:
+    version: "0.8"
+  action: remove_strict_validation
+  args:
+    schema: {type: object, additionalProperties: true}
+  expect:
+    schema: {type: object, additionalProperties: true}
 
