@@ -36,6 +36,10 @@ These projects are not directly A2UI renderers but are closely related and do su
 |---------|----------|-------------|-------|
 | **vercel-labs/json-render** (`@json-render/*`) | React, Vue, Svelte, Solid, React Native | Generative UI framework by Vercel — uses its own JSON schema (not A2UI protocol) with Zod-based component catalogs. Supports streaming, 36 pre-built shadcn/ui components, and cross-platform rendering. | [GitHub](https://github.com/vercel-labs/json-render) · [npm](https://www.npmjs.com/package/@json-render/core) · [Docs](https://json-render.dev/) |
 
+### Ecosystem Utilities
+
+- **[@a2ui/markdown-it](https://www.npmjs.com/package/@a2ui/markdown-it)** — Enables markdown rendering in the Text widgets of all renderers.
+
 ### Highlights
 
 **easyops-cn/a2ui-sdk** (`@a2ui-sdk/react`) is the most fully-featured community React renderer, with 11 published versions, Radix UI primitives, Tailwind CSS styling, and a dedicated docs site. It was [announced on the A2UI discussions](https://github.com/google/A2UI/discussions/489). For the official A2UI React renderer, see [`@a2ui/react`](https://www.npmjs.com/package/@a2ui/react).
@@ -44,7 +48,7 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 **sivamrudram-eng/a2ui-react-native** is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.
 
-**BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui**) is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
+**BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui**) is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 basic A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
 
 ## Submitting a Renderer
 
