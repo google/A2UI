@@ -145,7 +145,7 @@ async function main() {
 
           examples.push(example);
         } catch (e) {
-          throw new Error(`Error parsing ${filePath}:`, e);
+          throw new Error(`Error parsing ${filePath}`, { cause: e });
         }
       }
     } else {
