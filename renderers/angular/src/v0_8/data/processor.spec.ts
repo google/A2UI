@@ -17,7 +17,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MessageProcessor, A2UIClientEvent } from './processor';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
+import type { A2UIClientEventMessage, AnyComponentNode, ServerToClientMessage } from '../types';
 import * as WebCore from '@a2ui/web_core/v0_8';
 
 describe('MessageProcessor', () => {
@@ -41,14 +41,14 @@ describe('MessageProcessor', () => {
     const baseProcessor = (service as any).baseProcessor;
     spyOn(baseProcessor, 'processMessages');
 
-    const messages: Types.ServerToClientMessage[] = [];
+    const messages: ServerToClientMessage[] = [];
     service.processMessages(messages);
 
     expect(baseProcessor.processMessages).toHaveBeenCalledWith(messages);
   });
 
   it('should dispatch events and emit to observable', (done) => {
-    const mockMessage: Types.A2UIClientEventMessage = {
+    const mockMessage: A2UIClientEventMessage = {
       userAction: {
         name: 'click',
         sourceComponentId: 'btn-1',
@@ -67,11 +67,11 @@ describe('MessageProcessor', () => {
   });
 
   it('should resolve dispatch promise when completion is triggered', async () => {
-    const mockMessage: Types.A2UIClientEventMessage = {
+    const mockMessage: A2UIClientEventMessage = {
       userAction: { name: 'click', sourceComponentId: '1', surfaceId: '1', timestamp: '' },
     };
 
-    const replyMessages: Types.ServerToClientMessage[] = [{ type: 'UpdateSurface' } as any];
+    const replyMessages: ServerToClientMessage[] = [{ type: 'UpdateSurface' } as any];
 
     // Setup subscription to trigger completion
     service.events.subscribe((event: A2UIClientEvent) => {
@@ -86,7 +86,7 @@ describe('MessageProcessor', () => {
     const baseProcessor = (service as any).baseProcessor;
     spyOn(baseProcessor, 'getData').and.returnValue('mock-value');
 
-    const node = { id: '1', type: 'Text' } as any as Types.AnyComponentNode;
+    const node = { id: '1', type: 'Text' } as any as AnyComponentNode;
     const result = service.getData(node, 'path/to/data', 'surf-1');
 
     expect(baseProcessor.getData).toHaveBeenCalledWith(node, 'path/to/data', 'surf-1');
@@ -97,7 +97,7 @@ describe('MessageProcessor', () => {
     const baseProcessor = (service as any).baseProcessor;
     spyOn(baseProcessor, 'setData');
 
-    const node = { id: '1', type: 'Text' } as any as Types.AnyComponentNode;
+    const node = { id: '1', type: 'Text' } as any as AnyComponentNode;
     service.setData(node, 'path/to/data', 'new-value', 'surf-1');
 
     expect(baseProcessor.setData).toHaveBeenCalledWith(node, 'path/to/data', 'new-value', 'surf-1');
@@ -135,7 +135,7 @@ describe('MessageProcessor', () => {
         type: 'Text',
         properties: {
           text: { literalString: 'Ready to render' },
-        }
+        },
       },
       dataModel: new Map(),
       components: new Map(),

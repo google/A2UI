@@ -20,68 +20,185 @@
         "properties": {
           "version": {
             "type": "string",
-            "enum": ["0.8", "0.9"],
+            "enum": [
+              "0.8",
+              "0.9"
+            ],
             "description": "Protocol version."
           },
           "s2c_schema": {
+            "description": "Path to simplified schema file or inlined schema object. Defaults to null if not passed.",
             "oneOf": [
-              { "type": "string", "description": "Path to simplified schema file." },
-              { "type": "object", "description": "Inlined schema object." }
+              {
+                "type": "string",
+                "description": "Path to simplified schema file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined schema object."
+              }
             ]
           },
           "catalog_schema": {
+            "description": "Path to catalog file or inlined catalog object. Defaults to an empty object if not passed.",
             "oneOf": [
-              { "type": "string", "description": "Path to catalog file." },
-              { "type": "object", "description": "Inlined catalog object." }
+              {
+                "type": "string",
+                "description": "Path to catalog file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined catalog object."
+              }
             ]
           },
           "common_types_schema": {
+            "description": "Path to common types schema file or inlined common types schema object. Defaults to an empty object if not passed.",
             "oneOf": [
-              { "type": "string", "description": "Path to common types schema file." },
-              { "type": "object", "description": "Inlined common types schema object." }
+              {
+                "type": "string",
+                "description": "Path to common types schema file."
+              },
+              {
+                "type": "object",
+                "description": "Inlined common types schema object."
+              }
             ]
           }
         },
-        "required": ["version", "s2c_schema", "catalog_schema"]
+        "required": [ "version" ]
       },
-      "process_chunk": {
-        "type": "array",
-        "description": "Steps for parser tests.",
-        "items": {
-          "type": "object",
-          "properties": {
-            "input": {
-              "type": "string",
-              "description": "Chunk of data to feed to process_chunk."
+      "action": {
+        "type": "string",
+        "description": "The action to perform.",
+        "enum": [
+          "process_chunk",
+          "validate",
+          "prune",
+          "render",
+          "load",
+          "remove_strict_validation",
+          "parse_full",
+          "fix_payload",
+          "has_parts",
+          "select_catalog",
+          "generate_prompt",
+          "load_catalog"
+        ]
+      }
+    },
+    "required": [ "name", "action" ],
+    "allOf": [
+      {
+        "oneOf": [
+          { "$ref": "#/$defs/ProcessChunkTest" },
+          { "$ref": "#/$defs/ValidateTest" },
+          { "$ref": "#/$defs/PruneTest" },
+          { "$ref": "#/$defs/RenderTest" },
+          { "$ref": "#/$defs/LoadTest" },
+          { "$ref": "#/$defs/RemoveStrictValidationTest" },
+          { "$ref": "#/$defs/ParseFullTest" },
+          { "$ref": "#/$defs/FixPayloadTest" },
+          { "$ref": "#/$defs/HasPartsTest" },
+          { "$ref": "#/$defs/SelectCatalogTest" },
+          { "$ref": "#/$defs/GeneratePromptTest" },
+          { "$ref": "#/$defs/LoadCatalogTest" }
+        ]
+      }
+    ]
+  },
+  "$defs": {
+    "ProcessChunkTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "process_chunk" },
+        "steps": {
+          "type": "array",
+          "description": "Steps for parser tests.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "input": {
+                "type": "string",
+                "description": "Chunk of data to feed to process_chunk."
+              },
+              "expect": {
+                "type": "array",
+                "description": "Expected output parts.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "a2ui": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              },
+              "expect_error": {
+                "type": "string",
+                "description": "Expected error message (regex) if this step should fail."
+              }
             },
-            "expect": {
+            "required": [
+              "input"
+            ],
+            "oneOf": [
+              {
+                "required": [
+                  "expect"
+                ]
+              },
+              {
+                "required": [
+                  "expect_error"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [ "steps" ]
+    },
+    "ValidateTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "validate" }
+      },
+      "required": [ "action" ],
+      "oneOf": [
+        {
+          "properties": {
+            "steps": {
               "type": "array",
-              "description": "Expected output parts.",
+              "description": "Steps for validator tests.",
               "items": {
                 "type": "object",
                 "properties": {
-                  "text": { "type": "string" },
-                  "a2ui": { "type": "array", "items": { "type": "object" } }
-                }
+                  "payload": {
+                    "oneOf": [
+                      { "type": "object" },
+                      { "type": "array", "items": { "type": "object" } }
+                    ],
+                    "description": "Payload to validate (single message or list of messages)."
+                  },
+                  "expect_error": {
+                    "type": "string",
+                    "description": "Expected error message (regex) if validation should fail."
+                  }
+                },
+                "required": [ "payload" ]
               }
-            },
-            "expect_error": {
-              "type": "string",
-              "description": "Expected error message (regex) if this step should fail."
             }
           },
-          "required": ["input"],
-          "oneOf": [
-            { "required": ["expect"] },
-            { "required": ["expect_error"] }
-          ]
-        }
-      },
-      "validate": {
-        "type": "array",
-        "description": "Steps for validator tests.",
-        "items": {
-          "type": "object",
+          "required": [ "steps" ]
+        },
+        {
           "properties": {
             "payload": {
               "oneOf": [
@@ -95,14 +212,153 @@
               "description": "Expected error message (regex) if validation should fail."
             }
           },
-          "required": ["payload"]
+          "required": [ "payload" ]
         }
-      }
+      ]
     },
-    "required": ["name", "catalog"],
-    "oneOf": [
-      { "required": ["process_chunk"] },
-      { "required": ["validate"] }
-    ]
+    "PruneTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "prune" },
+        "args": {
+          "type": "object",
+          "properties": {
+            "allowed_components": { "type": "array", "items": { "type": "string" } },
+            "allowed_messages": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "expect": { "type": "object" }
+      },
+      "required": [ "args", "expect" ]
+    },
+    "RenderTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "render" },
+        "expect_output": { "type": "string" }
+      },
+      "required": [ "expect_output" ]
+    },
+    "LoadTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "load" },
+        "args": {
+          "type": "object",
+          "properties": {
+            "path": { "type": ["string", "null"] },
+            "validate": { "type": "boolean" }
+          },
+          "required": [ "path" ]
+        },
+        "expect_output": { "type": "string" },
+        "expect_error": { "type": "string" }
+      },
+      "required": [ "args" ]
+    },
+    "RemoveStrictValidationTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "remove_strict_validation" },
+        "args": {
+          "type": "object",
+          "properties": {
+            "schema": { "type": "object" }
+          },
+          "required": [ "schema" ]
+        },
+        "expect": {
+          "type": "object",
+          "properties": {
+            "schema": { "type": "object" }
+          },
+          "required": [ "schema" ]
+        }
+      },
+      "required": [ "args", "expect" ]
+    },
+    "ParseFullTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "parse_full" },
+        "input": { "type": "string" },
+        "expect": { "type": "array" },
+        "expect_error": { "type": "string" }
+      },
+      "required": [ "input" ]
+    },
+    "FixPayloadTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "fix_payload" },
+        "input": { "type": "string" },
+        "expect": {}
+      },
+      "required": [ "input", "expect" ]
+    },
+    "HasPartsTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "has_parts" },
+        "input": { "type": "string" },
+        "expect": { "type": "boolean" }
+      },
+      "required": [ "input", "expect" ]
+    },
+    "SelectCatalogTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "select_catalog" },
+        "args": { "type": "object" },
+        "expect_selected": { "type": "string" },
+        "expect_catalog_schema": { "type": "object" },
+        "expect_error": { "type": "string" }
+      },
+      "required": [ "args" ]
+    },
+    "GeneratePromptTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "generate_prompt" },
+        "args": { "type": "object" },
+        "expect_contains": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": [ "args", "expect_contains" ]
+    },
+    "LoadCatalogTest": {
+      "type": "object",
+      "properties": {
+        "action": { "const": "load_catalog" },
+        "catalog_configs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" }
+            },
+            "required": [ "name", "path" ]
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "expect": {
+          "type": "object",
+          "properties": {
+            "catalog_schema": { "type": "object" },
+            "supported_catalog_ids": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": [ "action", "catalog_configs" ]
+    }
   }
 }

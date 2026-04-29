@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import type { IconNode, StringValue } from '../types';
 
 @Component({
   selector: 'a2ui-icon',
@@ -43,7 +43,7 @@ import { Types } from '../types';
     }
   `,
 })
-export class Icon extends DynamicComponent<Types.IconNode> {
-  readonly name = input<Types.StringValue | null>(null);
+export class Icon extends DynamicComponent<IconNode> {
+  readonly name = input<StringValue | null>(null);
   protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
 }

@@ -19,7 +19,7 @@ import { Row } from './row';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
+import type { RowNode } from '../types';
 import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
@@ -41,7 +41,7 @@ describe('Row Component', () => {
   let fixture: ComponentFixture<Row>;
   let mockTheme: Theme;
 
-  const mockNode: Types.RowNode = {
+  const mockNode: RowNode = {
     id: 'row-1',
     type: 'Row',
     weight: 1,

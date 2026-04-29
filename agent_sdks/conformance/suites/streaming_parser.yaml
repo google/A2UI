@@ -16,7 +16,7 @@
   description: Tests that partial chunks are buffered and yielded correctly.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -24,7 +24,8 @@
           type: object
           properties:
             text: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Here is your"
       expect: [{text: "Here is your"}]
     - input: " response.<a2ui-json>["
@@ -36,7 +37,7 @@
   description: Tests that components are not yielded until reachable from root.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -51,7 +52,8 @@
               type: array
               items: {type: string, title: "ComponentId"}
           additionalProperties: true
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "c1", "component": {"Text": {"text": {"literalString": "hello"}}}}'
@@ -76,14 +78,15 @@
   description: Tests that orphan components (not reachable from root) are ignored.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
         Text:
           type: object
           additionalProperties: true
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Text": {"text": "root"}}}, {"id": "orphan", "component": {"Text": {"text": "orphan"}}}]}}] </a2ui-json>'
@@ -101,7 +104,7 @@
   description: Tests that circular references are detected during streaming.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -109,7 +112,8 @@
           type: object
           properties:
             child: {type: string, title: "ComponentId"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "c1", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "c1", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "c1", "component": {"Card": {"child": "c2"}}}]}},{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "c2", "component": {"Card": {"child": "c1"}}}]}}]}} </a2ui-json>'
@@ -119,7 +123,7 @@
   description: Tests that self-references are detected during streaming.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -127,7 +131,8 @@
           type: object
           properties:
             child: {type: string, title: "ComponentId"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "c1", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "c1", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "c1", "component": {"Card": {"child": "c1"}}}]}}]}} </a2ui-json>'
@@ -137,9 +142,10 @@
   description: Tests that conversational text and A2UI content are interleaved correctly.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Hello! "
       expect: [{text: "Hello! "}]
     - input: "Here is your UI: <a2ui-json>"
@@ -153,9 +159,10 @@
   description: Tests that the parser handles the opening tag split across chunks correctly.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Talking <a2u"
       expect: [{text: "Talking "}]
     - input: "i-json>"
@@ -169,11 +176,12 @@
   description: Tests that beginRendering is yielded only when complete.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>"
       expect: []
     - input: "["
@@ -191,15 +199,16 @@
   description: Tests that multiple A2UI blocks are handled correctly with interleaved text.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
-      catalogId: "test_catalog"
+      catalogId: test_catalog
       components:
         Text:
           type: object
           properties:
             text: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: 'Some text here <a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}}] </a2ui-json> mid text'
       expect:
         - text: "Some text here "
@@ -222,7 +231,7 @@
   description: Tests that partial JSON chunks are fixed and yielded incrementally.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -230,7 +239,8 @@
           type: object
           properties:
             text: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Text": {"text": "hello'
@@ -248,7 +258,7 @@
   description: Tests that placeholders are yielded for missing children and resolved when they arrive.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -267,7 +277,8 @@
               type: object
               properties:
                 explicitList: {type: array}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Card": {"child": "c1"}}}, '
@@ -303,7 +314,7 @@
   description: Tests that placeholders are yielded for missing template components and resolved when they arrive.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -328,7 +339,8 @@
               type: object
               properties:
                 explicitList: {type: array}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"List": {"children": {"template": {"componentId": "c1"}}}}}, '
@@ -364,7 +376,7 @@
   description: Tests that placeholders are yielded for all missing children in a list and resolved individually.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -385,7 +397,8 @@
               type: object
               properties:
                 explicitList: {type: array}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Container": {"children": ["c1", "c2", "c3"]}}}, '
@@ -437,7 +450,7 @@
   description: Tests that data model updates can be processed before components.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -448,7 +461,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"dataModelUpdate": {"surfaceId": "s1", "contents": [{"key": "name", "valueString": "Alice"}]}, '
@@ -474,7 +488,7 @@
   description: Tests that components can be processed before data model updates.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -485,7 +499,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -511,7 +526,7 @@
   description: Tests that partial paths are buffered and not yielded until complete.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -522,7 +537,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -546,7 +562,7 @@
   description: "Verifies that properties hinting at being images or links get specialized placeholders (Note: Python test actually expects full resolution as all components are provided in the chunk)."
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -567,7 +583,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -597,7 +614,7 @@
   description: Tests that atomic keys are buffered and not yielded until complete.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -609,7 +626,8 @@
           type: object
           properties:
             child: {type: string, title: "ComponentId"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "contact'
@@ -634,7 +652,7 @@
   description: Tests that cuttable text is yielded eagerly even if cut.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -645,7 +663,8 @@
               type: object
               properties:
                 literalString: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -675,7 +694,7 @@
   description: Tests that surfaceUpdate is buffered until beginRendering arrives.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -683,7 +702,8 @@
           type: object
           properties:
             text: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Text": {"text": "hi"}}}]}}, '
@@ -700,9 +720,10 @@
   description: Tests that deleteSurface before beginRendering is ignored.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"deleteSurface": {"surfaceId": "s1"}}, '
@@ -714,7 +735,7 @@
   description: Tests that non-cuttable keys like path are not yielded until complete.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -725,7 +746,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -743,9 +765,10 @@
   description: Tests that invalid messages fail validation.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"unknownMessage": "invalid"}]'
@@ -755,7 +778,7 @@
   description: Tests that invalid components fail validation.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -764,7 +787,8 @@
           required: ["text"]
           properties:
             text: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"surfaceId": "s1", "root": "root"}}, '
       expect: [{a2ui: [{beginRendering: {surfaceId: "s1", root: "root"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Text": {}}}]}}]'
@@ -774,7 +798,7 @@
   description: Verifies that the parser correctly assembles components from small deltas.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -785,7 +809,8 @@
               type: object
               properties:
                 literalString: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>"
       expect: []
     - input: "["
@@ -819,7 +844,7 @@
   description: Tests multiple re-yielding scenarios with data model updates.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -836,7 +861,8 @@
             children:
               type: array
               items: {type: string, title: "ComponentId"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "root", "surfaceId": "s1"}}, '
@@ -870,7 +896,7 @@
   description: Verifies that the parser yields surface updates as items arrive in a dataModelUpdate stream.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -892,7 +918,8 @@
               type: object
               properties:
                 path: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"root": "item-list", "surfaceId": "default"}}, '
@@ -937,9 +964,10 @@
   description: Verifies that sniffing a partial DM update that would fail validation doesn't crash.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "name", "valueString": "John"}, {"valueString": "incomplete"'
       expect:
         - a2ui:
@@ -953,9 +981,10 @@
   description: "Verifies that an unclosed string like {\"key or {\"key\": \"val still yields previous valid entries."
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "infoLink", "valueString": "[More Info](x)"}, {"key'
       expect:
         - a2ui:
@@ -999,9 +1028,10 @@
   description: Verifies that unchanged keys are retained in partial dataModelUpdates.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"}, {"key": "items", "valueMap": ['
       expect:
         - a2ui:
@@ -1029,9 +1059,10 @@
   description: Verifies that entries with only a key and no value are pruned from partial dataModelUpdates.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"},{"key": "items", "valueMap": [{"key": "item1", "valueMap": [{"key": "name", "valueString": "Food"}, {"key": "detail", "valueString": "Spicy"}, {}, {"key": "imageUrl'
       expect:
         - a2ui:
@@ -1053,9 +1084,10 @@
   description: Verifies that an incomplete trailing empty dictionary '{}' is dropped.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"dataModelUpdate": {"surfaceId": "default", "contents": [{"key": "title", "valueString": "Top Restaurants"},{"key": "items", "valueMap": [{"key": "item2", "valueMap": [{"key": "name", "valueString": "Han Dynasty"}, {"key": "imageUrl", "valueString": "http://localhost:10002/static/mapotofu.jpeg"}, {}]}]} ]}] </a2ui-json>'
       expect:
         - a2ui:
@@ -1077,7 +1109,7 @@
   description: Verifies that an incomplete component with an empty children dictionary is discarded until populated.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1102,7 +1134,8 @@
                 explicitList:
                   type: array
                   items: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"beginRendering": {"surfaceId": "default", "root": "root-column"}},'
       expect: [{a2ui: [{beginRendering: {surfaceId: "default", root: "root-column"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "default", "components": [{"id": "root-column", "component": {"Column": {"children": {"explicitList": ["item-list"]}}}},{"id": "item-list", "component": {"List": {"direction": "vertical", "children": {'
@@ -1124,14 +1157,15 @@
   description: Tests that a component with an empty dictionary in a required field is discarded until populated.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
         Card:
           type: object
           additionalProperties: true
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "root", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Card": {"action": {"context": [{"key": "address", "value": {'
@@ -1152,7 +1186,7 @@
   description: Tests that components missing required fields are not yielded during sniffing.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1161,7 +1195,8 @@
           properties:
             url: {type: object}
           required: ["url"]
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"beginRendering": {"root": "c1", "surfaceId": "s1"}},'
       expect: [{a2ui: [{beginRendering: {root: "c1", surfaceId: "s1"}}]}]
     - input: '{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "c1", "component": {"AudioPlayer": {"description": "almost ready"'
@@ -1182,7 +1217,7 @@
   description: Verifies that the parser can handle multiple surfaces simultaneously.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1202,7 +1237,8 @@
                 explicitList:
                   type: array
                   items: {type: string}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>["
       expect: []
     - input: '{"beginRendering": {"surfaceId": "surface1", "root": "root1"}},'
@@ -1246,8 +1282,8 @@
   description: Tests that partial chunks are buffered and yielded correctly for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1276,7 +1312,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Row"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Here is your"
       expect: [{text: "Here is your"}]
     - input: " response.<a2ui-json>["
@@ -1370,8 +1407,8 @@
   description: Tests that components are not yielded until reachable from root for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1393,7 +1430,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "c1", "component": "Text", "text": "hello"}'
@@ -1416,8 +1454,8 @@
   description: Tests that orphan components (not reachable from root) are ignored for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1430,7 +1468,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "root"}, {"id": "orphan", "component": "Text", "text": "orphan"}]}}]</a2ui-json>'
@@ -1448,8 +1487,8 @@
   description: Tests that circular references are detected during streaming for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1462,7 +1501,8 @@
           oneOf:
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "child"}]}},{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "child", "component": "Card", "child": "root"}]}}'
@@ -1472,8 +1512,8 @@
   description: Tests that self-references are detected during streaming for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1486,7 +1526,8 @@
           oneOf:
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "root"}]}}'
@@ -1496,8 +1537,8 @@
   description: Tests that conversational text and A2UI content are interleaved correctly for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1507,7 +1548,8 @@
           oneOf:
             - {$ref: "#/components/Dummy"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Hello! "
       expect: [{text: "Hello! "}]
     - input: "Here is your UI: <a2ui-json>"
@@ -1521,8 +1563,8 @@
   description: Tests that the parser handles the opening tag split across chunks correctly for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1532,7 +1574,8 @@
           oneOf:
             - {$ref: "#/components/Dummy"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "Talking <a2u"
       expect: [{text: "Talking "}]
     - input: "i-json>"
@@ -1546,12 +1589,13 @@
   description: Verifies that v0.9 createSurface fails when catalogId is missing.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>"
       expect: []
     - input: '[{"version": "v0.9", "createSurface": {"surfaceId": "s1"}}]'
@@ -1561,12 +1605,13 @@
   description: Tests that createSurface is yielded only when complete for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>"
       expect: []
     - input: "["
@@ -1584,8 +1629,8 @@
   description: Tests that multiple A2UI blocks are handled correctly with interleaved text for v0.9.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1598,7 +1643,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: 'Some text here <a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}] </a2ui-json> mid text'
       expect:
         - text: "Some text here "
@@ -1621,8 +1667,8 @@
   description: Tests that partial JSON yields incremental updates.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1637,7 +1683,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -1660,8 +1707,8 @@
   description: Tests that partial single child string yields placeholder.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1683,7 +1730,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -1711,8 +1759,8 @@
   description: Tests that partial template componentId yields placeholder after path is seen.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1739,7 +1787,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/List"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -1769,8 +1818,8 @@
   description: Tests that partial children lists yield placeholders.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1792,7 +1841,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Container"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -1809,8 +1859,8 @@
   description: Tests that data model before components works.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1831,7 +1881,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "updateDataModel": {"surfaceId": "s1", "value": {"name": "Alice"}}}, '
@@ -1863,8 +1914,8 @@
   description: Tests that data model after components works.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1885,7 +1936,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -1917,8 +1969,8 @@
   description: Tests that partial paths are buffered.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1937,7 +1989,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -1964,8 +2017,8 @@
   description: Tests that atomic IDs are buffered when cut.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -1987,7 +2040,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
@@ -2019,8 +2073,8 @@
   description: Tests that cuttable text is yielded incrementally.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2035,7 +2089,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2070,8 +2125,8 @@
   description: Tests that updateComponents is buffered until createSurface arrives.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2086,7 +2141,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
@@ -2111,8 +2167,8 @@
   description: Tests that data model after components works.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2132,7 +2188,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2164,8 +2221,8 @@
   description: Tests that partial paths are handled correctly.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2185,7 +2242,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2212,8 +2270,8 @@
   description: Tests that cutting atomic ID buffers the component.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2235,7 +2293,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Card"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
@@ -2267,8 +2326,8 @@
   description: Tests that cutting cuttable text yields partial text.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2283,7 +2342,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2318,8 +2378,8 @@
   description: Tests that updateComponents before createSurface is buffered.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2334,7 +2394,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
@@ -2358,12 +2419,13 @@
   description: Tests that deleteSurface before createSurface is ignored.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "deleteSurface": {"surfaceId": "s1"}}, '
@@ -2380,8 +2442,8 @@
   description: Tests that cutting non-cuttable path buffers the component.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2401,7 +2463,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2428,12 +2491,13 @@
   description: Tests that invalid message fails validation.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"unknownMessage": "invalid"}]'
@@ -2443,8 +2507,8 @@
   description: Tests that missing required fields fail validation.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2459,7 +2523,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2476,8 +2541,8 @@
   description: Tests that the parser correctly assembles components from small deltas.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2492,7 +2557,8 @@
           oneOf:
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>'
       expect: []
     - input: '['
@@ -2533,8 +2599,8 @@
   description: Tests that updateDataModel yields expected updates.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2561,7 +2627,8 @@
             - {$ref: "#/components/Container"}
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
@@ -2606,8 +2673,8 @@
   description: Tests that the parser yields surface updates as items arrive in a updateDataModel stream.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2638,7 +2705,8 @@
             - {$ref: "#/components/List"}
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "default"}}, '
@@ -2691,12 +2759,13 @@
   description: Tests that sniffing a partial DM update that would fail validation doesn't crash.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"name": "John", "incomplete": '
       expect:
         - a2ui:
@@ -2711,12 +2780,13 @@
   description: Tests that an unclosed string yields previous valid entries.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"infoLink": "[More Info](x)", "rat'
       expect:
         - a2ui:
@@ -2746,12 +2816,13 @@
   description: Tests that unchanged keys are retained in partial updateDataModels.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"title": "Top Restaurants", "items": {'
@@ -2776,12 +2847,13 @@
   description: Tests that entries with only a key and no value are pruned.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"title": "Top Restaurants","items": {"item1": {"name": "Food", "detail": "Spicy", "imageUrl":'
       expect:
         - a2ui:
@@ -2799,12 +2871,13 @@
   description: Tests that an incomplete trailing empty dictionary is dropped.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components: {}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[ {"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"title": "Top Restaurants","items": {"item2": {"name": "Han Dynasty", "imageUrl": "http://localhost:10002/static/mapotofu.jpeg", "broken":'
       expect:
         - a2ui:
@@ -2822,8 +2895,8 @@
   description: Tests that an incomplete component with an empty children dictionary is discarded.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2857,7 +2930,8 @@
             - {$ref: "#/components/List"}
             - {$ref: "#/components/Row"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "default"}},{"version": "v0.9", "updateComponents": {"surfaceId": "default", "components": [{"id": "root", "component": "Column", "children": ["item-list"]},{"id": "item-list", "component": "List", "direction": "vertical", "children": {'
       expect:
         - a2ui:
@@ -2880,8 +2954,8 @@
   description: Tests that partial empty dict is discarded until populated.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2907,7 +2981,8 @@
             - {$ref: "#/components/Column"}
             - {$ref: "#/components/Text"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -2935,8 +3010,8 @@
   description: Tests that partial component is discarded if it lacks required fields.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -2952,7 +3027,8 @@
           oneOf:
             - {$ref: "#/components/AudioPlayer"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
       expect:
         - a2ui:
@@ -2978,8 +3054,8 @@
   description: Tests that the parser can handle multiple surfaces simultaneously.
   catalog:
     version: "0.9"
-    common_types_schema: "simplified_common_types_v09.json"
-    s2c_schema: "simplified_s2c_v09.json"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
     catalog_schema:
       catalogId: "test_catalog"
       components:
@@ -3008,7 +3084,8 @@
             - {$ref: "#/components/Text"}
             - {$ref: "#/components/Row"}
           discriminator: {propertyName: "component"}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: '<a2ui-json>['
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"surfaceId": "surface1", "catalogId": "test_catalog"}},'
@@ -3069,9 +3146,71 @@
   description: Tests that completely invalid JSON inside A2UI tags raises an error.
   catalog:
     version: "0.8"
-    s2c_schema: "simplified_s2c_v08.json"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
     catalog_schema: {catalogId: "test_catalog", components: {}}
-  process_chunk:
+  action: process_chunk
+  steps:
     - input: "<a2ui-json>invalid json</a2ui-json>"
       expect_error: "Failed to parse JSON"
+
+- name: test_v08_path_heuristic_adds_slash
+  description: Tests that the parser automatically adds a leading slash to paths in v0.8 if missing.
+  catalog:
+    version: "0.8"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: "test_catalog"
+      components:
+        Text:
+          type: object
+          properties:
+            text:
+              type: object
+              properties:
+                path: {type: string}
+  action: process_chunk
+  steps:
+    - input: '<a2ui-json>[{"beginRendering": {"surfaceId": "s1", "root": "root"}}]</a2ui-json>'
+      expect: [{a2ui: [{beginRendering: {surfaceId: "s1", root: "root"}}]}]
+    - input: '<a2ui-json>[{"surfaceUpdate": {"surfaceId": "s1", "components": [{"id": "root", "component": {"Text": {"text": {"path": "some/relative/path"}}}}]}}]</a2ui-json>'
+      expect:
+        - a2ui:
+            - surfaceUpdate:
+                surfaceId: "s1"
+                components:
+                  - id: "root"
+                    component:
+                      Text:
+                        text: {path: "/some/relative/path"}
+
+- name: test_v09_path_heuristic_relative_path
+  description: Tests that the parser does NOT add a leading slash to paths in v0.9.
+  catalog:
+    version: "0.9"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: "test_catalog"
+      components:
+        Text:
+          type: object
+          properties:
+            text:
+              type: object
+              properties:
+                path: {type: string}
+  action: process_chunk
+  steps:
+    - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"surfaceId": "s1", "catalogId": "test_catalog"}}]</a2ui-json>'
+      expect: [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
+    - input: '<a2ui-json>[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "some/relative/path"}}]}}]</a2ui-json>'
+      expect:
+        - a2ui:
+            - version: "v0.9"
+              updateComponents:
+                surfaceId: "s1"
+                components:
+                  - id: "root"
+                    component: "Text"
+                    text: {path: "some/relative/path"}
+
 

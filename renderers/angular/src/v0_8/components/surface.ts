@@ -17,7 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MessageProcessor } from '../data';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
+import type { Surface as SurfaceType, SurfaceID } from '../types';
 
 @Component({
   selector: 'a2ui-surface',
@@ -38,8 +38,8 @@ import { Types } from '../types';
 })
 export class Surface {
   private readonly processor = inject(MessageProcessor);
-  readonly surfaceId = input.required<Types.SurfaceID>();
-  readonly surfaceInput = input<Types.Surface | null>(null, { alias: 'surface' });
+  readonly surfaceId = input.required<SurfaceID>();
+  readonly surfaceInput = input<SurfaceType | null>(null, { alias: 'surface' });
 
   protected readonly surface = computed(() => {
     this.processor.version(); // Track dependency on in-place mutations

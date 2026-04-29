@@ -19,7 +19,7 @@ import { Modal } from './modal';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
+import type { AnyComponentNode } from '../types';
 import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
@@ -42,12 +42,12 @@ describe('Modal Component', () => {
   let fixture: ComponentFixture<Modal>;
   let mockTheme: Theme;
 
-  const mockEntryPoint: Types.AnyComponentNode = {
+  const mockEntryPoint: AnyComponentNode = {
     id: 'btn-1',
     type: 'Button',
     properties: { text: 'Open' },
   };
-  const mockContent: Types.AnyComponentNode = {
+  const mockContent: AnyComponentNode = {
     id: 'text-1',
     type: 'Text',
     properties: { text: 'Hello' },
