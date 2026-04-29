@@ -65,7 +65,6 @@ jobs:
 
   copyright:
     runs-on: ubuntu-latest
-    if: github.repository == 'flutter/genui'
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       # Before bumping, verify the new version is on the flutter org's
@@ -81,8 +80,6 @@ jobs:
 
   analyze_and_test:
     needs: matrix
-    # Only run if the matrix job has produced a non-empty matrix.
-    if: github.repository == 'flutter/genui' && needs.matrix.outputs.matrix != '[]'
     name: ${{ matrix.package.name }} (${{ matrix.flutter_version }})
     runs-on: ${{ matrix.os }}
     strategy:
