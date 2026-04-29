@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Video } from './video';
-import { Types } from '../types';
+import type { VideoNode } from '../types';
 import { Theme } from '../rendering/theming';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { MessageProcessor } from '../data/processor';
@@ -28,7 +28,7 @@ describe('Video Component', () => {
   let mockTheme: Theme;
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
 
-  const mockVideoNode: Types.VideoNode = {
+  const mockVideoNode: VideoNode = {
     id: 'video-1',
     type: 'Video',
     weight: 1,

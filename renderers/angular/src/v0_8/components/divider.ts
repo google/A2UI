@@ -15,7 +15,7 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Types } from '../types';
+import type { DividerNode } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -36,4 +36,4 @@ import { DynamicComponent } from '../rendering/dynamic-component';
     }
   `,
 })
-export class Divider extends DynamicComponent<Types.DividerNode> {}
+export class Divider extends DynamicComponent<DividerNode> {}

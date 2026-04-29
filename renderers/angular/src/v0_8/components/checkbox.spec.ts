@@ -18,14 +18,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Checkbox } from './checkbox';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
-import { Types } from '../types';
+import type { A2UIClientEventMessage, CheckboxNode } from '../types';
 
 describe('Checkbox Component', () => {
   let component: Checkbox;
   let fixture: ComponentFixture<Checkbox>;
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
 
-  const mockNode: Types.CheckboxNode = {
+  const mockNode: CheckboxNode = {
     id: 'chk-1',
     type: 'CheckBox',
     weight: 1,
@@ -87,8 +87,7 @@ describe('Checkbox Component', () => {
     inputEl.dispatchEvent(new Event('change'));
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent()
-      .args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('toggle');
     expect(message.userAction!.context!['checked']).toBeTrue();
   });

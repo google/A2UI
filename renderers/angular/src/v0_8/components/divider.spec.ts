@@ -18,14 +18,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Divider } from './divider';
 import { Theme } from '../rendering/theming';
 import { MessageProcessor } from '../data/processor';
-import { Types } from '../types';
+import type { DividerNode } from '../types';
 
 describe('Divider Component', () => {
   let component: Divider;
   let fixture: ComponentFixture<Divider>;
   let mockTheme: Theme;
 
-  const mockNode: Types.DividerNode = {
+  const mockNode: DividerNode = {
     id: 'div-1',
     type: 'Divider',
     weight: 1,

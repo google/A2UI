@@ -16,13 +16,13 @@
 
 import { Binding, InjectionToken, Type } from '@angular/core';
 import { DynamicComponent } from './dynamic-component';
-import { Types } from '../types';
+import type { AnyComponentNode } from '../types';
 
 export type CatalogLoader = () =>
   | Promise<Type<DynamicComponent<any>>>
   | Type<DynamicComponent<any>>;
 
-export type CatalogEntry<T extends Types.AnyComponentNode> =
+export type CatalogEntry<T extends AnyComponentNode> =
   | CatalogLoader
   | {
       type: CatalogLoader;
@@ -30,7 +30,7 @@ export type CatalogEntry<T extends Types.AnyComponentNode> =
     };
 
 export interface Catalog {
-  [key: string]: CatalogEntry<Types.AnyComponentNode>;
+  [key: string]: CatalogEntry<AnyComponentNode>;
 }
 
 export const Catalog = new InjectionToken<Catalog>('Catalog');

@@ -19,6 +19,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <regex>
 #include <queue>
 #include <set>
 
@@ -103,18 +104,83 @@ std::string A2uiCatalog::render_as_llm_instructions() const {
     return ss.str();
 }
 
+static std::string glob_to_regex(const std::string& glob) {
+    std::string regex = "^";
+    for (size_t i = 0; i < glob.length(); ++i) {
+        char c = glob[i];
+        if (c == '*') {
+            if (i + 1 < glob.length() && glob[i+1] == '*') {
+                regex += ".*";
+                i++; // skip next *
+                if (i + 1 < glob.length() && glob[i+1] == '/') {
+                    i++; // skip next /
+                }
+            } else {
+                regex += "[^/]*";
+            }
+        } else if (c == '?') {
+            regex += "[^/]";
+        } else if (c == '.') {
+            regex += "\\.";
+        } else if (c == '[') {
+            regex += c;
+            if (i + 1 < glob.length() && glob[i+1] == '!') {
+                regex += "^";
+                i++; // skip !
+            }
+        } else if (c == ']') {
+            regex += c;
+
+        } else {
+            if (std::string("\\^$+|(){}").find(c) != std::string::npos) {
+                regex += '\\';
+            }
+            regex += c;
+        }
+    }
+    regex += "$";
+    return regex;
+}
+
 std::string A2uiCatalog::load_examples(const std::string& path, bool validate) const {
     if (path.empty()) return "";
 
     std::vector<std::string> matched_files;
-    if (fs::is_directory(path)) {
-        for (const auto& entry : fs::directory_iterator(path)) {
-            if (entry.is_regular_file() && entry.path().extension() == ".json") {
-                matched_files.push_back(entry.path().string());
+
+    size_t first_wildcard = path.find_first_of("*?[");
+    if (first_wildcard != std::string::npos) {
+        size_t last_slash = path.rfind('/', first_wildcard);
+        std::string base_dir = (last_slash == std::string::npos) ? "." : (last_slash == 0 ? "/" : path.substr(0, last_slash));
+        std::string pattern = (last_slash == std::string::npos) ? path : path.substr(last_slash + 1);
+        
+        std::string regex_str = glob_to_regex(pattern);
+        std::regex pattern_regex;
+        try {
+            pattern_regex = std::regex(regex_str);
+        } catch (const std::regex_error& e) {
+            throw std::runtime_error("Failed to parse glob pattern '" + pattern + "' to regex: " + e.what());
+        }
+        
+        if (fs::exists(base_dir) && fs::is_directory(base_dir)) {
+            for (const auto& entry : fs::recursive_directory_iterator(base_dir, fs::directory_options::skip_permission_denied)) {
+                if (entry.is_regular_file()) {
+                    std::string rel_path = fs::relative(entry.path(), base_dir).string();
+                    if (std::regex_match(rel_path, pattern_regex) && entry.path().extension() == ".json") {
+                        matched_files.push_back(entry.path().string());
+                    }
+                }
             }
         }
-    } else if (fs::is_regular_file(path)) {
-        matched_files.push_back(path);
+    } else {
+        if (fs::is_directory(path)) {
+            for (const auto& entry : fs::directory_iterator(path, fs::directory_options::skip_permission_denied)) {
+                if (entry.is_regular_file() && entry.path().extension() == ".json") {
+                    matched_files.push_back(entry.path().string());
+                }
+            }
+        } else if (fs::is_regular_file(path)) {
+            matched_files.push_back(path);
+        }
     }
 
     if (matched_files.empty()) return "";
@@ -146,7 +212,8 @@ std::string A2uiCatalog::load_examples(const std::string& path, bool validate) c
 
 void A2uiCatalog::validate_example(const std::string& full_path, const std::string& content) const {
     try {
-        nlohmann::json::parse(content);
+        auto parsed = nlohmann::json::parse(content);
+        (void)parsed;
     } catch (const std::exception& e) {
         throw std::runtime_error("Failed to parse example " + full_path + ": " + e.what());
     }
