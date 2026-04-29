@@ -6,6 +6,17 @@ This guide is for project maintainers. It details the publishing process to the 
 
 The following scripts in `renderers/scripts/` automate the versioning, building, testing, and publishing of packages. These should generally be run from the `main` branch after a PR has been merged.
 
+### Pre-requirement: Artifact registry configuration
+
+_(Note: Only Googlers will be able to do this)_
+
+Ensure your `~/.npmrc` file contains the following line, so the release script
+can authenticate with the artifact registry:
+
+```
+//us-npm.pkg.dev/oss-exit-gate-prod/a2ui--npm/:_authToken=<auth_token>
+```
+
 ### 1. Increment Versions (Local)
 
 To increment a package version and automatically sync all internal dependents (updating their `package-lock.json` files). This should be done in a PR:
