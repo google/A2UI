@@ -51,15 +51,18 @@ const handleVariant = (text: string, variant?: string): string => {
 export const Text = createComponentImplementation(TextApi, ({props}) => {
   useBasicCatalogStyles();
   const text = typeof props.text === 'string' ? props.text : String(props.text ?? '');
-  const markdownText = handleVariant(text, props.variant);
+  const markdownText = handleVariant(text, props.variant as any);
   const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     ...getWeightStyle(props.weight),
   };
 
-  const isCaption = props.variant === 'caption';
-  const classes = [styles.a2uiText, isCaption ? styles.a2uiCaption : props.variant || 'body'];
+  const isCaption = (props.variant as any) === 'caption';
+  const classes = [
+    styles.a2uiText,
+    isCaption ? styles.a2uiCaption : (props.variant as any) || 'body',
+  ];
   if (renderedHtml === null) {
     classes.push('no-markdown-renderer');
   }

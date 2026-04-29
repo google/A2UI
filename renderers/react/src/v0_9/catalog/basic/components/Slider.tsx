@@ -71,8 +71,8 @@ export const Slider = createComponentImplementation(SliderApi, ({props}) => {
       <input
         id={uniqueId}
         type="range"
-        min={props.min ?? 0}
-        max={props.max}
+        min={(props.min as any) ?? 0}
+        max={props.max as any}
         value={props.value ?? 0}
         onChange={onChange}
         style={inputStyle}

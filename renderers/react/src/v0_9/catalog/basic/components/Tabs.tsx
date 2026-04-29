@@ -78,7 +78,7 @@ export const Tabs = createComponentImplementation(TabsApi, ({props, buildChild})
           </button>
         ))}
       </div>
-      <div style={content}>{activeTab ? buildChild(activeTab.child) : null}</div>
+      <div style={content}>{activeTab ? buildChild(activeTab.child as any) : null}</div>
     </div>
   );
 });
