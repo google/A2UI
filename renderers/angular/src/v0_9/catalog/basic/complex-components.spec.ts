@@ -435,7 +435,6 @@ describe('Complex Components', () => {
     });
 
     it('should handle missing children property', () => {
-      fixture.componentRef.setInput('props', {});
       fixture.detectChanges();
       expect(component.children()).toEqual([]);
     });
@@ -497,7 +496,6 @@ describe('Complex Components', () => {
     });
 
     it('should handle missing tabs property', () => {
-      fixture.componentRef.setInput('props', {});
       fixture.detectChanges();
       expect(component.tabs()).toEqual([]);
       expect(fixture.nativeElement.querySelectorAll('.a2ui-tab-button').length).toBe(0);
@@ -600,7 +598,6 @@ describe('Complex Components', () => {
     });
 
     it('should handle missing trigger or content', () => {
-      fixture.componentRef.setInput('props', {});
       fixture.detectChanges();
       expect(component.trigger()).toBeUndefined();
       expect(component.content()).toBeUndefined();
