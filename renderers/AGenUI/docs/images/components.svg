@@ -1,0 +1,116 @@
+<svg width="760" height="456" viewBox="0 0 760 456" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .chip-label { font-family: system-ui,-apple-system,sans-serif; font-size: 11px; }
+      .cat-label  { font-family: system-ui,-apple-system,sans-serif; font-size: 11px; font-weight: 600; }
+      .section-title { font-family: system-ui,-apple-system,sans-serif; font-size: 13px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- ── Section 1: A2UI Protocol Components ── -->
+  <rect x="20" y="14" width="720" height="248" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="36" y="36" class="section-title" fill="#1E293B">A2UI Protocol Components</text>
+  <text x="236" y="36" class="section-title" fill="#94A3B8">(18)</text>
+
+  <!-- Layout row -->
+  <text x="36" y="68" class="cat-label" fill="#3B82F6">Layout</text>
+  <!-- Row -->
+  <rect x="110" y="53" width="46" height="24" rx="5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+  <text x="133" y="69" text-anchor="middle" class="chip-label" fill="#1D4ED8">Row</text>
+  <!-- Column -->
+  <rect x="162" y="53" width="60" height="24" rx="5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+  <text x="192" y="69" text-anchor="middle" class="chip-label" fill="#1D4ED8">Column</text>
+  <!-- Card -->
+  <rect x="228" y="53" width="46" height="24" rx="5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+  <text x="251" y="69" text-anchor="middle" class="chip-label" fill="#1D4ED8">Card</text>
+  <!-- List -->
+  <rect x="280" y="53" width="42" height="24" rx="5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+  <text x="301" y="69" text-anchor="middle" class="chip-label" fill="#1D4ED8">List</text>
+  <!-- Tabs -->
+  <rect x="328" y="53" width="44" height="24" rx="5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+  <text x="350" y="69" text-anchor="middle" class="chip-label" fill="#1D4ED8">Tabs</text>
+
+  <!-- Display row -->
+  <text x="36" y="110" class="cat-label" fill="#16A34A">Display</text>
+  <!-- Text -->
+  <rect x="110" y="95" width="44" height="24" rx="5" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1"/>
+  <text x="132" y="111" text-anchor="middle" class="chip-label" fill="#15803D">Text</text>
+  <!-- Image -->
+  <rect x="160" y="95" width="52" height="24" rx="5" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1"/>
+  <text x="186" y="111" text-anchor="middle" class="chip-label" fill="#15803D">Image</text>
+  <!-- Icon -->
+  <rect x="218" y="95" width="44" height="24" rx="5" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1"/>
+  <text x="240" y="111" text-anchor="middle" class="chip-label" fill="#15803D">Icon</text>
+  <!-- Divider -->
+  <rect x="268" y="95" width="58" height="24" rx="5" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1"/>
+  <text x="297" y="111" text-anchor="middle" class="chip-label" fill="#15803D">Divider</text>
+
+  <!-- Media row -->
+  <text x="36" y="152" class="cat-label" fill="#EA580C">Media</text>
+  <!-- Video -->
+  <rect x="110" y="137" width="50" height="24" rx="5" fill="#FED7AA" stroke="#FDBA74" stroke-width="1"/>
+  <text x="135" y="153" text-anchor="middle" class="chip-label" fill="#C2410C">Video</text>
+  <!-- AudioPlayer -->
+  <rect x="166" y="137" width="88" height="24" rx="5" fill="#FED7AA" stroke="#FDBA74" stroke-width="1"/>
+  <text x="210" y="153" text-anchor="middle" class="chip-label" fill="#C2410C">AudioPlayer</text>
+
+  <!-- Input row 1 -->
+  <text x="36" y="194" class="cat-label" fill="#7C3AED">Input</text>
+  <!-- Button -->
+  <rect x="110" y="179" width="58" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="139" y="195" text-anchor="middle" class="chip-label" fill="#6D28D9">Button</text>
+  <!-- TextField -->
+  <rect x="174" y="179" width="74" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="211" y="195" text-anchor="middle" class="chip-label" fill="#6D28D9">TextField</text>
+  <!-- CheckBox -->
+  <rect x="254" y="179" width="74" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="291" y="195" text-anchor="middle" class="chip-label" fill="#6D28D9">CheckBox</text>
+  <!-- Slider -->
+  <rect x="334" y="179" width="52" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="360" y="195" text-anchor="middle" class="chip-label" fill="#6D28D9">Slider</text>
+  <!-- Modal -->
+  <rect x="392" y="179" width="52" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="418" y="195" text-anchor="middle" class="chip-label" fill="#6D28D9">Modal</text>
+
+  <!-- Input row 2 -->
+  <!-- ChoicePicker -->
+  <rect x="110" y="220" width="96" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="158" y="236" text-anchor="middle" class="chip-label" fill="#6D28D9">ChoicePicker</text>
+  <!-- DateTimeInput -->
+  <rect x="212" y="220" width="106" height="24" rx="5" fill="#EDE9FE" stroke="#C4B5FD" stroke-width="1"/>
+  <text x="265" y="236" text-anchor="middle" class="chip-label" fill="#6D28D9">DateTimeInput</text>
+
+  <!-- ── Section 2: SDK Extensions ── -->
+  <rect x="20" y="278" width="720" height="76" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="36" y="300" class="section-title" fill="#1E293B">SDK Built-in Extensions</text>
+  <text x="222" y="300" class="section-title" fill="#94A3B8">(4)</text>
+
+  <!-- Table -->
+  <rect x="110" y="311" width="50" height="24" rx="5" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="135" y="327" text-anchor="middle" class="chip-label" fill="#334155">Table</text>
+  <!-- Carousel -->
+  <rect x="166" y="311" width="70" height="24" rx="5" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="201" y="327" text-anchor="middle" class="chip-label" fill="#334155">Carousel</text>
+  <!-- Web -->
+  <rect x="242" y="311" width="40" height="24" rx="5" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="262" y="327" text-anchor="middle" class="chip-label" fill="#334155">Web</text>
+  <!-- RichText -->
+  <rect x="288" y="311" width="70" height="24" rx="5" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="323" y="327" text-anchor="middle" class="chip-label" fill="#334155">RichText</text>
+
+  <!-- ── Section 3: Playground Examples ── -->
+  <rect x="20" y="364" width="720" height="76" rx="8" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="36" y="386" class="section-title" fill="#92400E">Playground Examples</text>
+  <text x="202" y="386" class="section-title" fill="#D97706">(3)</text>
+  <text x="232" y="386" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#A16207">— not included in SDK, demonstrates custom component API</text>
+
+  <!-- Chart -->
+  <rect x="110" y="397" width="50" height="24" rx="5" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="135" y="413" text-anchor="middle" class="chip-label" fill="#92400E">Chart</text>
+  <!-- Markdown -->
+  <rect x="166" y="397" width="76" height="24" rx="5" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="204" y="413" text-anchor="middle" class="chip-label" fill="#92400E">Markdown</text>
+  <!-- Lottie -->
+  <rect x="248" y="397" width="54" height="24" rx="5" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="275" y="413" text-anchor="middle" class="chip-label" fill="#92400E">Lottie</text>
+</svg>

@@ -1,0 +1,15 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "lottie_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Lottie",
+        "url": "https://assets4.lottiefiles.com/packages/lf20_jbrw3hcz.json",
+        "autoPlay": true,
+        "loop": true
+      }
+    ]
+  }
+}

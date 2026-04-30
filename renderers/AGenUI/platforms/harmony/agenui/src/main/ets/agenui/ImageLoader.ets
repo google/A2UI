@@ -1,0 +1,197 @@
+/**
+ * Public image loader API for the A2UI SDK
+ *
+ * Usage:
+ *   1. Implement IImageLoader.
+ *   2. Inject it with ImageLoaderConfiguration.shared().setLoader(loader).
+ *   3. Register the loader during app initialization.
+ */
+
+import image from '@ohos.multimedia.image';
+
+// ============================================================
+// Pixel transfer model (Uint8Array-based)
+// ============================================================
+
+/**
+ * PixelMap payload wrapper
+ * Uses a Uint8Array snapshot to move pixel data across layers and avoid native buffer lifetime issues.
+ */
+export interface PixelData {
+  /** Raw pixel bytes; actual format is indicated by the pixelFormat field (e.g. BGRA_8888 = 4) */
+  bytes: Uint8Array;
+  /** Image width in px */
+  width: number;
+  /** Image height in px */
+  height: number;
+  /** Pixel format of the bytes buffer (e.g. PIXEL_FORMAT_BGRA_8888 = 4); passed directly to the native layer as srcFmt */
+  pixelFormat: image.PixelMapFormat;
+  /** Alpha type */
+  alphaType: image.AlphaType;
+}
+
+// ============================================================
+// Data structures
+// ============================================================
+
+/**
+ * Image load options
+ */
+export type ImageLoadOptions = Record<string, Object>;
+
+/**
+ * Image load option keys
+ */
+export class ImageLoadOptionsKey {
+  /** Target width in px. Loaders may downsample against this value. */
+  public static readonly width: string = 'width';
+  /** Target height in px. Loaders may downsample against this value. */
+  public static readonly height: string = 'height';
+  /** Component ID that issued the request. Useful for logging or app-specific behavior. */
+  public static readonly componentId: string = 'componentId';
+  /** Surface ID that issued the request. Useful for logging or app-specific behavior. */
+  public static readonly surfaceId: string = 'surfaceId';
+}
+
+/**
+ * Image format
+ */
+export enum ImageFormat {
+  UNKNOWN = 'unknown',
+  JPEG    = 'jpeg',
+  PNG     = 'png',
+  WEBP    = 'webp',
+  GIF     = 'gif',
+}
+
+/**
+ * Successful image load result
+ */
+export interface ImageLoadResult {
+  /** Decoded image pixels */
+  image: PixelData;
+  /** Whether the result came from cache */
+  isFromCache: boolean;
+  /** Image format */
+  format: ImageFormat;
+}
+
+export class ImageLoadResultImpl implements ImageLoadResult {
+  image: PixelData;
+  isFromCache: boolean;
+  format: ImageFormat;
+  constructor(img: PixelData, isFromCache: boolean, fmt: ImageFormat) {
+    this.image = img;
+    this.isFromCache = isFromCache;
+    this.format = fmt;
+  }
+}
+
+/**
+ * Image loader error type
+ */
+export enum ImageLoaderErrorType {
+  INVALID_URL        = 'invalidURL',
+  NETWORK_ERROR      = 'networkError',
+  INVALID_DATA       = 'invalidData',
+  DECOMPRESSION_FAILED = 'decompressionFailed',
+  CANCELLED          = 'cancelled',
+}
+
+/**
+ * Image loader error
+ */
+export interface ImageLoaderError {
+  type: ImageLoaderErrorType;
+  /** Optional detail message */
+  message?: string;
+  /** True when the request was cancelled. Components should handle this silently. */
+  isCancelled: boolean;
+}
+
+export class ImageLoaderErrorImpl implements ImageLoaderError {
+  type: ImageLoaderErrorType;
+  message?: string;
+  isCancelled: boolean;
+  constructor(type: ImageLoaderErrorType, isCancelled: boolean, message?: string) {
+    this.type = type;
+    this.isCancelled = isCancelled;
+    this.message = message;
+  }
+}
+
+/**
+ * Image loader configuration singleton
+ *
+ * Stores the injected IImageLoader instance.
+ * Use ImageLoaderConfiguration.shared() to access the singleton and setLoader() to inject the loader.
+ */
+export class ImageLoaderConfiguration {
+  private static _instance: ImageLoaderConfiguration | null = null;
+
+  /** Injected image loader instance */
+  loader: IImageLoader | null = null;
+
+  private constructor() {}
+
+  /** Returns the singleton */
+  public static shared(): ImageLoaderConfiguration {
+    if (ImageLoaderConfiguration._instance === null) {
+      ImageLoaderConfiguration._instance = new ImageLoaderConfiguration();
+    }
+    return ImageLoaderConfiguration._instance;
+  }
+
+  /** Injects the loader */
+  public setLoader(loader: IImageLoader): void {
+    this.loader = loader;
+  }
+
+  /** Whether a loader has been injected */
+  public hasLoader(): boolean {
+    return this.loader !== null;
+  }
+}
+
+// ============================================================
+// Core interface
+// ============================================================
+
+/**
+ * Image loader contract
+ *
+ * The host app implements this interface and injects it through ImageLoaderConfiguration.shared().setLoader().
+ * The SDK uses this interface first for ImageComponent and background images.
+ * If no loader is provided, the SDK falls back to native ArkUI image handling.
+ *
+ * Notes:
+ *   - loadImage must return a globally unique requestId generated by the loader.
+ *   - The loader must always invoke onComplete, including cancellation and failure cases, so the SDK can clean up state.
+ */
+export interface IImageLoader {
+  /**
+   * Loads an image
+   *
+   * @param url        Image URL
+   * @param options    Load options, or null. See ImageLoadOptionsKey for built-in keys.
+   * @param onComplete Completion callback. Exactly one of result or error must be non-null;
+   *                   result and error must not both be null at the same time.
+   * @returns          Unique requestId for this request, generated by the loader and used for cancellation.
+   */
+  loadImage(
+    url: string,
+    options: ImageLoadOptions | null,
+    onComplete: (requestId: string, result: ImageLoadResult | null, error: ImageLoaderError | null) => void
+  ): string;
+
+  /**
+   * Cancels a request
+   * @param requestId Request ID to cancel
+   */
+  cancel(requestId: string): void;
+
+  /**
+   * Clears memory and disk caches. This method may be a no-op.
+   */
+  clearCache(): void;
+}

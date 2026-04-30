@@ -1,0 +1,103 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "datetime_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "des1",
+          "date_only",
+          "des2",
+          "time_only",
+          "des3",
+          "data_and_time",
+          "des4",
+          "default"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "des1",
+        "component": "Text",
+        "text": "Date Only",
+        "variant": "h2",
+        "styles": {
+          "margin": "20px 0 0 0"
+        }
+      },
+      {
+        "id": "date_only",
+        "component": "DateTimeInput",
+        "label": "Date",
+        "value": "2026-02-08",
+        "enableDate": true,
+        "enableTime": false,
+        "styles": {
+          "margin": "10px 0 0 0"
+        }
+      },
+      {
+        "id": "des2",
+        "component": "Text",
+        "text": "Time Only",
+        "variant": "h2",
+        "styles": {
+          "margin": "20px 0 0 0"
+        }
+      },
+      {
+        "id": "time_only",
+        "component": "DateTimeInput",
+        "label": "Date",
+        "value": "16:59",
+        "enableDate": false,
+        "enableTime": true,
+        "styles": {
+          "margin": "10px 0 0 0"
+        }
+      },
+      {
+        "id": "des3",
+        "component": "Text",
+        "text": "Date and Time",
+        "variant": "h2",
+        "styles": {
+          "margin": "20px 0 0 0"
+        }
+      },
+      {
+        "id": "data_and_time",
+        "component": "DateTimeInput",
+        "label": "Date",
+        "value": "2026-02-08 15:33",
+        "enableDate": true,
+        "enableTime": true,
+        "styles": {
+          "margin": "10px 0 0 0"
+        }
+      },
+      {
+        "id": "des4",
+        "component": "Text",
+        "text": "Default State",
+        "variant": "h2",
+        "styles": {
+          "margin": "20px 0 0 0"
+        }
+      },
+      {
+        "id": "default",
+        "component": "DateTimeInput",
+        "label": "Date",
+        "enableDate": true,
+        "enableTime": false,
+        "styles": {
+          "margin": "10px 0 30px 0"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "modal_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Row",
+        "children": [
+          "modal"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "modal",
+        "component": "Modal",
+        "trigger": "modal-title",
+        "content": "modal-content",
+        "visible": true
+      },
+      {
+        "id": "modal-title",
+        "component": "Text",
+        "text": "Click Modal",
+        "variant": "body"
+      },
+      {
+        "id": "modal-content",
+        "component": "Text",
+        "text": "This is Modal Content",
+        "variant": "body"
+      }
+    ]
+  }
+}

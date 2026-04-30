@@ -1,0 +1,104 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "carousel_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Card",
+        "child": "main-col",
+        "styles": {
+          "width": "100%"
+        }
+      },
+      {
+        "id": "main-col",
+        "component": "Column",
+        "children": [
+          "title",
+          "carousel1",
+          "label1",
+          "carousel2",
+          "label2",
+          "carousel3",
+          "label3"
+        ],
+        "align": "stretch"
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "Carousel Component",
+        "variant": "h2"
+      },
+      {
+        "id": "carousel1",
+        "component": "Carousel",
+        "autoplay": false,
+        "draggable": true,
+        "content": [
+          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&h=200&fit=crop"
+        ],
+        "styles": {
+          "width": "100%",
+          "height": "200px"
+        }
+      },
+      {
+        "id": "label1",
+        "component": "Text",
+        "text": "Manual drag switching (draggable: true)",
+        "variant": "caption"
+      },
+      {
+        "id": "carousel2",
+        "component": "Carousel",
+        "autoplay": true,
+        "autoplaySpeed": 3000,
+        "draggable": true,
+        "content": [
+          "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=400&h=200&fit=crop"
+        ],
+        "styles": {
+          "width": "100%",
+          "height": "200px",
+          "margin": "100px 0px 0px 0px"
+        }
+      },
+      {
+        "id": "label2",
+        "component": "Text",
+        "text": "Auto play (autoplay: true, autoplaySpeed: 3000)",
+        "variant": "caption"
+      },
+      {
+        "id": "carousel3",
+        "component": "Carousel",
+        "autoplay": true,
+        "autoplaySpeed": 2000,
+        "draggable": true,
+        "content": [
+          "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=200&fit=crop"
+        ],
+        "styles": {
+          "width": "100%",
+          "height": "200px",
+          "margin": "100px 0px 0px 0px"
+        }
+      },
+      {
+        "id": "label3",
+        "component": "Text",
+        "text": "Quick switching (autoplaySpeed: 2000, 4 images)",
+        "variant": "caption"
+      }
+    ]
+  }
+}

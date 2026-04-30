@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">AGenUIPlayground</string>
+    
+    <!-- Playground -->
+    <string name="playground_title">A2UI Playground</string>
+    <string name="components_label">Components</string>
+    <string name="data_model_label">DataModel</string>
+    <string name="logs_label">Logs</string>
+    <string name="edit_button">Edit</string>
+    
+    <!-- Toolbar actions -->
+    <string name="action_scan">Scan QR</string>
+    <string name="action_toggle_theme">Toggle Theme</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_edit_json">Edit JSON</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_more">More</string>
+    <string name="action_performance">Performance Monitor</string>
+    
+    <!-- Drawer -->
+    <string name="drawer_title_json_editor">JSON Editor</string>
+    <string name="drawer_title_components">Edit Components</string>
+    <string name="drawer_title_data_model">Edit DataModel</string>
+    <string name="drawer_close">Close</string>
+    <string name="drawer_format">Format</string>
+    <string name="drawer_validate">Validate</string>
+    <string name="drawer_cancel">Cancel</string>
+    <string name="drawer_save">Save &amp; Preview</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="drawer_nav_title">Feature Menu</string>
+    <string name="menu_custom_component">Custom Component</string>
+    <string name="menu_custom_component_desc">Create component by entering JSON manually</string>
+    <string name="menu_a2ui_show_all">A2UI Show - Load All</string>
+    <string name="menu_a2ui_show_all_desc">Load and render all A2UI Show components</string>
+    <string name="menu_gallery_load_all">Gallery - Load All</string>
+    <string name="menu_gallery_load_all_desc">Load and render all Gallery components</string>
+    
+    <!-- Tabs -->
+    <string name="tab_components">Components</string>
+    <string name="tab_data_model">DataModel</string>
+    
+    <!-- Hints -->
+    <string name="hint_json_editor">Enter JSON here…</string>
+    <string name="hint_no_logs">No logs yet</string>
+    <string name="hint_empty_json">{}</string>
+</resources>

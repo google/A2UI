@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/performanceOverlay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top|end"
+    android:layout_marginTop="56dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_performance_overlay"
+    android:padding="8dp"
+    android:visibility="gone">
+
+    <!-- FPS -->
+    <TextView
+        android:id="@+id/tvFps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FPS: 60"
+        android:textColor="#00FF00"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:fontFamily="monospace" />
+
+    <!-- Memory -->
+    <TextView
+        android:id="@+id/tvMemory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="MEM: 100.0 MB"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:fontFamily="monospace" />
+
+    <!-- Average FPS -->
+    <TextView
+        android:id="@+id/tvAvgFps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="AVG: 60"
+        android:textColor="#FFA500"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:fontFamily="monospace" />
+
+</LinearLayout>

@@ -1,0 +1,13 @@
+platform :ios, '13.0'
+
+target 'Playground' do
+
+  pod 'AGenUI', :path => '../../../platforms/iOS/AGenUI_ForSDK.podspec'
+#  pod 'AGenUI', :path => '../../../platforms/iOS/AGenUI.podspec'
+
+  pod 'FlexLayout'
+  pod 'MarkdownKit'
+  pod 'DGCharts'
+  pod 'lottie-ios'
+
+end

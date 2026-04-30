@@ -1,0 +1,14 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@agenui/agenui": "file:../../../platforms/harmony/agenui",
+    "@ohos/lottie-turbo": "1.0.10",
+    "@luvi/lv-markdown-in": "3.2.9",
+    "@ohos/mpchart": "3.0.26"
+  }
+}

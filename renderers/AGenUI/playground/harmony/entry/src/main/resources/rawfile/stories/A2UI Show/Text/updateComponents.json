@@ -1,0 +1,86 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "text_variants_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "h1-text",
+          "h2-text",
+          "h3-text",
+          "h4-text",
+          "h5-text",
+          "h6-text",
+          "h7-text"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "h1-text",
+        "component": "Text",
+        "text": "h1 text",
+        "variant": "h1",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h2-text",
+        "component": "Text",
+        "text": "h2 text",
+        "variant": "h2",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h3-text",
+        "component": "Text",
+        "text": "h3 text",
+        "variant": "h3",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h4-text",
+        "component": "Text",
+        "text": "h4 text",
+        "variant": "h4",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h5-text",
+        "component": "Text",
+        "text": "h5 text",
+        "variant": "h5",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h6-text",
+        "component": "Text",
+        "text": "h6 body",
+        "variant": "body",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "h7-text",
+        "component": "Text",
+        "text": "h7 caption",
+        "variant": "caption",
+        "styles": {
+          "text-align": "center"
+        }
+      }
+    ]
+  }
+}

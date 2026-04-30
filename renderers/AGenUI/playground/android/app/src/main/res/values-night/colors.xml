@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design colors (keep same for consistency) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Night mode specific colors -->
+    <color name="render_background">#121212</color>
+    <color name="component_row_background">#1E1E1E</color>
+    <color name="divider">#2C2C2C</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#E0E0E0</color>
+    <color name="text_hint">#B0B0B0</color>
+    <color name="logs_background">#1E1E1E</color>
+    <color name="drawer_background">#1E1E1E</color>
+    
+    <!-- Additional night mode colors -->
+    <color name="surface_background">#1E1E1E</color>
+    <color name="card_background">#2C2C2C</color>
+    <color name="editor_background">#1E1E1E</color>
+    <color name="editor_text">#E0E0E0</color>
+</resources>

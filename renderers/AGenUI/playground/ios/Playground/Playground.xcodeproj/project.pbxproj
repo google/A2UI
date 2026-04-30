@@ -1,0 +1,571 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		28DD879C2F9618FB0080C60B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD87982F9618FB0080C60B /* SceneDelegate.swift */; };
+		28DD8A942F96476B0080C60B /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A922F96476B0080C60B /* ThemeManager.swift */; };
+		28DD8A952F96476B0080C60B /* PerformanceDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A902F96476B0080C60B /* PerformanceDisplayView.swift */; };
+		28DD8A962F96476B0080C60B /* PerformanceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A912F96476B0080C60B /* PerformanceMonitor.swift */; };
+		28DD8A9C2F9648850080C60B /* A2UIPlaygroundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A992F9648850080C60B /* A2UIPlaygroundViewController.swift */; };
+		28DD8A9D2F9648850080C60B /* A2UIPlaygroundMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A982F9648850080C60B /* A2UIPlaygroundMenuViewController.swift */; };
+		28DD8A9E2F9648850080C60B /* A2UIPlaygroundEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD8A972F9648850080C60B /* A2UIPlaygroundEditViewController.swift */; };
+		5AACF8702FA1A4CB0078DE87 /* MarkdownComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF86D2FA1A4CB0078DE87 /* MarkdownComponent.swift */; };
+		5AACF8712FA1A4CB0078DE87 /* ChartComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF86A2FA1A4CB0078DE87 /* ChartComponent.swift */; };
+		5AACF8722FA1A4CB0078DE87 /* GradientBarChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF86B2FA1A4CB0078DE87 /* GradientBarChartRenderer.swift */; };
+		5AACF8732FA1A4CB0078DE87 /* LottieComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF86C2FA1A4CB0078DE87 /* LottieComponent.swift */; };
+		5AACF8742FA1A4CB0078DE87 /* RoundedBarChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF86E2FA1A4CB0078DE87 /* RoundedBarChartRenderer.swift */; };
+		5AACF8812FA1B0000078DE87 /* ToastFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AACF8802FA1B0000078DE87 /* ToastFunction.swift */; };
+		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
+		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
+		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
+		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		CB1E111FDBE09EE86B12D9AE /* libPods-Playground.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E69591F731E9F979B85FAB8 /* libPods-Playground.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		03B5361F2B04F9CF4166538D /* Pods-Playground.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Playground.debug.xcconfig"; path = "Target Support Files/Pods-Playground/Pods-Playground.debug.xcconfig"; sourceTree = "<group>"; };
+		2509242AFD2BFF15C44B4A01 /* Pods-AGenUI_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AGenUI_Tests.release.xcconfig"; path = "Target Support Files/Pods-AGenUI_Tests/Pods-AGenUI_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		2861DC502FA0F04D005F0D12 /* build-agenui-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-agenui-framework.sh"; sourceTree = "<group>"; };
+		2861DC512FA0F07C005F0D12 /* AGenUI.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = AGenUI.podspec; path = /Users/yinglong.zyl/Desktop/work/earth/18748/ios/DevPods/AGenUI/platforms/ios/AGenUI.podspec; sourceTree = "<absolute>"; };
+		2861DC522FA0F07C005F0D12 /* AGenUI_ForSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = AGenUI_ForSDK.podspec; path = /Users/yinglong.zyl/Desktop/work/earth/18748/ios/DevPods/AGenUI/platforms/ios/AGenUI_ForSDK.podspec; sourceTree = "<absolute>"; };
+		28DD87982F9618FB0080C60B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		28DD8A902F96476B0080C60B /* PerformanceDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDisplayView.swift; sourceTree = "<group>"; };
+		28DD8A912F96476B0080C60B /* PerformanceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceMonitor.swift; sourceTree = "<group>"; };
+		28DD8A922F96476B0080C60B /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		28DD8A972F9648850080C60B /* A2UIPlaygroundEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2UIPlaygroundEditViewController.swift; sourceTree = "<group>"; };
+		28DD8A982F9648850080C60B /* A2UIPlaygroundMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2UIPlaygroundMenuViewController.swift; sourceTree = "<group>"; };
+		28DD8A992F9648850080C60B /* A2UIPlaygroundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2UIPlaygroundViewController.swift; sourceTree = "<group>"; };
+		28DD935F2F977D390080C60B /* build-agenui-xcframework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-agenui-xcframework.sh"; sourceTree = "<group>"; };
+		28DDB5792F98C4560080C60B /* Playground-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Playground-Bridging-Header.h"; sourceTree = "<group>"; };
+		4D508AB94145974711D18579 /* Pods-AGenUI_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AGenUI_Example.debug.xcconfig"; path = "Target Support Files/Pods-AGenUI_Example/Pods-AGenUI_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		5AACF86A2FA1A4CB0078DE87 /* ChartComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartComponent.swift; sourceTree = "<group>"; };
+		5AACF86B2FA1A4CB0078DE87 /* GradientBarChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBarChartRenderer.swift; sourceTree = "<group>"; };
+		5AACF86C2FA1A4CB0078DE87 /* LottieComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieComponent.swift; sourceTree = "<group>"; };
+		5AACF86D2FA1A4CB0078DE87 /* MarkdownComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownComponent.swift; sourceTree = "<group>"; };
+		5AACF86E2FA1A4CB0078DE87 /* RoundedBarChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBarChartRenderer.swift; sourceTree = "<group>"; };
+		5AACF8802FA1B0000078DE87 /* ToastFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastFunction.swift; sourceTree = "<group>"; };
+		5FED8F7ADD57772EE2F13823 /* Pods-AGenUI_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AGenUI_Example.release.xcconfig"; path = "Target Support Files/Pods-AGenUI_Example/Pods-AGenUI_Example.release.xcconfig"; sourceTree = "<group>"; };
+		607FACD01AFB9204008FA782 /* Playground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Playground.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		9E69591F731E9F979B85FAB8 /* libPods-Playground.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Playground.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B14E01D6F0F4F3D67372E0 /* Pods-Playground.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Playground.release.xcconfig"; path = "Target Support Files/Pods-Playground/Pods-Playground.release.xcconfig"; sourceTree = "<group>"; };
+		BBBBCEBF607A4180B2AC96B7 /* Pods-AGenUI_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AGenUI_Tests.debug.xcconfig"; path = "Target Support Files/Pods-AGenUI_Tests/Pods-AGenUI_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		BE5A54B9E0AA77EA64CA841B /* Pods_AGenUI_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AGenUI_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		607FACCD1AFB9204008FA782 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB1E111FDBE09EE86B12D9AE /* libPods-Playground.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		11AE020050100DF12854E7A3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BE5A54B9E0AA77EA64CA841B /* Pods_AGenUI_Tests.framework */,
+				9E69591F731E9F979B85FAB8 /* libPods-Playground.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		28DD8A932F96476B0080C60B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				28DD8A902F96476B0080C60B /* PerformanceDisplayView.swift */,
+				28DD8A912F96476B0080C60B /* PerformanceMonitor.swift */,
+				28DD8A922F96476B0080C60B /* ThemeManager.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		28DD8A9B2F9648850080C60B /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				28DD8A972F9648850080C60B /* A2UIPlaygroundEditViewController.swift */,
+				28DD8A982F9648850080C60B /* A2UIPlaygroundMenuViewController.swift */,
+				28DD8A992F9648850080C60B /* A2UIPlaygroundViewController.swift */,
+				28DDB5792F98C4560080C60B /* Playground-Bridging-Header.h */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		28DD93602F977D390080C60B /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				2861DC502FA0F04D005F0D12 /* build-agenui-framework.sh */,
+				28DD935F2F977D390080C60B /* build-agenui-xcframework.sh */,
+			);
+			name = Scripts;
+			path = ../Scripts;
+			sourceTree = SOURCE_ROOT;
+		};
+		4D17724EA977747076A98DB9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4D508AB94145974711D18579 /* Pods-AGenUI_Example.debug.xcconfig */,
+				5FED8F7ADD57772EE2F13823 /* Pods-AGenUI_Example.release.xcconfig */,
+				BBBBCEBF607A4180B2AC96B7 /* Pods-AGenUI_Tests.debug.xcconfig */,
+				2509242AFD2BFF15C44B4A01 /* Pods-AGenUI_Tests.release.xcconfig */,
+				03B5361F2B04F9CF4166538D /* Pods-Playground.debug.xcconfig */,
+				A1B14E01D6F0F4F3D67372E0 /* Pods-Playground.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		5AACF86F2FA1A4CB0078DE87 /* CustomComponent */ = {
+			isa = PBXGroup;
+			children = (
+				5AACF86A2FA1A4CB0078DE87 /* ChartComponent.swift */,
+				5AACF86B2FA1A4CB0078DE87 /* GradientBarChartRenderer.swift */,
+				5AACF86C2FA1A4CB0078DE87 /* LottieComponent.swift */,
+				5AACF86D2FA1A4CB0078DE87 /* MarkdownComponent.swift */,
+				5AACF86E2FA1A4CB0078DE87 /* RoundedBarChartRenderer.swift */,
+			);
+			path = CustomComponent;
+			sourceTree = "<group>";
+		};
+		5AACF8822FA1B0000078DE87 /* Function */ = {
+			isa = PBXGroup;
+			children = (
+				5AACF8802FA1B0000078DE87 /* ToastFunction.swift */,
+			);
+			path = Function;
+			sourceTree = "<group>";
+		};
+		607FACC71AFB9204008FA782 = {
+			isa = PBXGroup;
+			children = (
+				28DD93602F977D390080C60B /* Scripts */,
+				607FACF51AFB993E008FA782 /* Podspec Metadata */,
+				607FACD21AFB9204008FA782 /* Playground for AGenUI */,
+				607FACD11AFB9204008FA782 /* Products */,
+				4D17724EA977747076A98DB9 /* Pods */,
+				11AE020050100DF12854E7A3 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		607FACD11AFB9204008FA782 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				607FACD01AFB9204008FA782 /* Playground.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		607FACD21AFB9204008FA782 /* Playground for AGenUI */ = {
+			isa = PBXGroup;
+			children = (
+				5AACF8822FA1B0000078DE87 /* Function */,
+				5AACF86F2FA1A4CB0078DE87 /* CustomComponent */,
+				28DD8A9B2F9648850080C60B /* ViewController */,
+				28DD8A932F96476B0080C60B /* Utils */,
+				28DD87982F9618FB0080C60B /* SceneDelegate.swift */,
+				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
+				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				607FACDC1AFB9204008FA782 /* Images.xcassets */,
+				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
+				607FACD31AFB9204008FA782 /* Supporting Files */,
+			);
+			path = "Playground for AGenUI";
+			sourceTree = "<group>";
+		};
+		607FACD31AFB9204008FA782 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				607FACD41AFB9204008FA782 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				2861DC512FA0F07C005F0D12 /* AGenUI.podspec */,
+				2861DC522FA0F07C005F0D12 /* AGenUI_ForSDK.podspec */,
+			);
+			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		607FACCF1AFB9204008FA782 /* Playground */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Playground" */;
+			buildPhases = (
+				C9E89B61B68B670DA9A85A03 /* [CP] Check Pods Manifest.lock */,
+				607FACCC1AFB9204008FA782 /* Sources */,
+				607FACCD1AFB9204008FA782 /* Frameworks */,
+				28DD8B012FA100000080C60B /* ShellScript */,
+				607FACCE1AFB9204008FA782 /* Resources */,
+				D8674B588DD9A61005124F62 /* [CP] Copy Pods Resources */,
+				2861DC532FA0F4C5005F0D12 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Playground;
+			productName = AGenUI;
+			productReference = 607FACD01AFB9204008FA782 /* Playground.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		607FACC81AFB9204008FA782 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = CocoaPods;
+				TargetAttributes = {
+					607FACCF1AFB9204008FA782 = {
+						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = 2RNFV2RN9A;
+						LastSwiftMigration = 2640;
+					};
+				};
+			};
+			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Playground" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+				Base,
+			);
+			mainGroup = 607FACC71AFB9204008FA782;
+			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				607FACCF1AFB9204008FA782 /* Playground */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		607FACCE1AFB9204008FA782 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
+				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2861DC532FA0F4C5005F0D12 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "
+";
+		};
+		28DD8B012FA100000080C60B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Sync templates folder from resource/stories to project AND bundle\nSRC_DIR=\"${SRCROOT}/../../resource/stories\"\nPROJECT_TEMPLATES_DIR=\"${SRCROOT}/Playground for AGenUI/Templates\"\n\n# 1. Sync to project directory (for Xcode reference)\nif [ -d \"$PROJECT_TEMPLATES_DIR\" ]; then\n    rm -rf \"$PROJECT_TEMPLATES_DIR\"\n    echo \"🗑️  Removed old project Templates folder\"\nfi\n\nmkdir -p \"$PROJECT_TEMPLATES_DIR\"\n\nif [ -d \"$SRC_DIR/A2UI Show\" ]; then\n    cp -R \"$SRC_DIR/A2UI Show\" \"$PROJECT_TEMPLATES_DIR/A2UI Show\"\n    echo \"✅ A2UI Show synced to project: $PROJECT_TEMPLATES_DIR\"\nelse\n    echo \"❌ Source folder not found: $SRC_DIR/A2UI Show\"\n    exit 1\nfi\n\n# 2. Also copy directly to Build Bundle (ensure it's packaged)\nBUNDLE_TEMPLATES_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Templates\"\nif [ -d \"$BUNDLE_TEMPLATES_DIR\" ]; then\n    rm -rf \"$BUNDLE_TEMPLATES_DIR\"\nfi\n\nif [ -d \"$SRC_DIR/A2UI Show\" ]; then\n    mkdir -p \"$BUNDLE_TEMPLATES_DIR\"\n    cp -R \"$SRC_DIR/A2UI Show\" \"$BUNDLE_TEMPLATES_DIR/A2UI Show\"\n    echo \"✅ A2UI Show copied to Bundle: $BUNDLE_TEMPLATES_DIR\"\n    \n    # Show stats\n    FILE_COUNT=$(find \"$BUNDLE_TEMPLATES_DIR/A2UI Show\" -type f | wc -l | tr -d ' ')\n    DIR_COUNT=$(find \"$BUNDLE_TEMPLATES_DIR/A2UI Show\" -type d | wc -l | tr -d ' ')\n    echo \"📊 Synced $FILE_COUNT files in $DIR_COUNT directories\"\nfi\n";
+		};
+		C9E89B61B68B670DA9A85A03 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Playground-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D8674B588DD9A61005124F62 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Playground/Pods-Playground-resources.sh",
+				"${PODS_ROOT}/../../../../platforms/iOS/AGenUI/Assets/AGenUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/DGCharts/DGCharts.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AGenUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DGCharts.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LottiePrivacyInfo.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Playground/Pods-Playground-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		607FACCC1AFB9204008FA782 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AACF8812FA1B0000078DE87 /* ToastFunction.swift in Sources */,
+				5AACF8702FA1A4CB0078DE87 /* MarkdownComponent.swift in Sources */,
+				5AACF8712FA1A4CB0078DE87 /* ChartComponent.swift in Sources */,
+				5AACF8722FA1A4CB0078DE87 /* GradientBarChartRenderer.swift in Sources */,
+				5AACF8732FA1A4CB0078DE87 /* LottieComponent.swift in Sources */,
+				5AACF8742FA1A4CB0078DE87 /* RoundedBarChartRenderer.swift in Sources */,
+				28DD8A942F96476B0080C60B /* ThemeManager.swift in Sources */,
+				28DD8A9C2F9648850080C60B /* A2UIPlaygroundViewController.swift in Sources */,
+				28DD8A9D2F9648850080C60B /* A2UIPlaygroundMenuViewController.swift in Sources */,
+				28DD8A9E2F9648850080C60B /* A2UIPlaygroundEditViewController.swift in Sources */,
+				28DD8A952F96476B0080C60B /* PerformanceDisplayView.swift in Sources */,
+				28DD8A962F96476B0080C60B /* PerformanceMonitor.swift in Sources */,
+				28DD879C2F9618FB0080C60B /* SceneDelegate.swift in Sources */,
+				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				607FACDA1AFB9204008FA782 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				607FACDF1AFB9204008FA782 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		607FACED1AFB9204008FA782 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		607FACEE1AFB9204008FA782 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = z;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LLVM_LTO = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = all;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		607FACF01AFB9204008FA782 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 03B5361F2B04F9CF4166538D /* Pods-Playground.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 2RNFV2RN9A;
+				INFOPLIST_FILE = "Playground for AGenUI/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.cocoapods.demo.Playground1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Playground for AGenUI/ViewController/Playground-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		607FACF11AFB9204008FA782 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1B14E01D6F0F4F3D67372E0 /* Pods-Playground.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 2RNFV2RN9A;
+				INFOPLIST_FILE = "Playground for AGenUI/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.cocoapods.demo.Playground1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Playground for AGenUI/ViewController/Playground-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Playground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				607FACED1AFB9204008FA782 /* Debug */,
+				607FACEE1AFB9204008FA782 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Playground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				607FACF01AFB9204008FA782 /* Debug */,
+				607FACF11AFB9204008FA782 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 607FACC81AFB9204008FA782 /* Project object */;
+}

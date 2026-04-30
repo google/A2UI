@@ -1,0 +1,15 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "textfield_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "TextField",
+        "label": "Username",
+        "placeholder": "Please enter username",
+        "value": ""
+      }
+    ]
+  }
+}

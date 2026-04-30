@@ -1,0 +1,34 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        // Local Maven repository (~/.m2/repository): agenui sdk dependency - commented out, using AAR from libs/ instead
+        mavenLocal()
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "AGenUIPlayground"
+
+// ===== AGenUI SDK Dependency Mode Configuration =====
+def agenuiSdkSource = providers.gradleProperty('agenui.sdk.source').getOrElse('false').toBoolean()
+if (agenuiSdkSource) {
+    include ':agenui-sdk'
+    project(':agenui-sdk').projectDir = file('../../platforms/android')
+}
+
+include ':app'

@@ -1,0 +1,57 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "tabs_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Tabs",
+        "tabs": [
+          {
+            "title": "Tab 1",
+            "child": "tab1"
+          },
+          {
+            "title": "Tab 2",
+            "child": "tab2"
+          },
+          {
+            "title": "Tab 3",
+            "child": "tab3"
+          }
+        ],
+        "selectedIndex": 0
+      },
+      {
+        "id": "tab1",
+        "component": "Text",
+        "text": "Tab 1 Content",
+        "variant": "body",
+        "styles": {
+          "width": "100%",
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "tab2",
+        "component": "Text",
+        "text": "Tab 2 Content",
+        "variant": "body",
+        "styles": {
+          "width": "100%",
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "tab3",
+        "component": "Text",
+        "text": "Tab 3 Content",
+        "variant": "body",
+        "styles": {
+          "width": "100%",
+          "text-align": "center"
+        }
+      }
+    ]
+  }
+}

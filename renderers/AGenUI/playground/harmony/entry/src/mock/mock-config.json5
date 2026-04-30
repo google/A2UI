@@ -1,0 +1,5 @@
+{
+  "liba2ui-capi.so": {
+    "source": "src/mock/Libentry.mock.ets"
+  }
+}

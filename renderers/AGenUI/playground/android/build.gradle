@@ -1,0 +1,24 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+}
+
+def agenuiSdkSource = providers.gradleProperty('agenui.sdk.source').getOrElse('false').toBoolean()
+
+if (!agenuiSdkSource) {
+    // AAR mode: build the SDK in platforms/android first, then copy the artifact to app/libs/
+    tasks.register('buildSdkAar', GradleBuild) {
+        dir = file('../../platforms/android')
+        tasks = ['assembleRelease']
+    }
+
+    tasks.register('copySdkAar', Copy) {
+        dependsOn 'buildSdkAar'
+        from fileTree('../../platforms/android/build/outputs/aar') {
+            include '*-release.aar'
+        }
+        into file('app/libs')
+        rename { 'AGenUI-Client-Android-release.aar' }
+    }
+}

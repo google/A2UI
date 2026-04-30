@@ -1,0 +1,17 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "icon_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Icon",
+        "name": "favorite",
+        "styles":{
+          "width": "48px", 
+          "height": "48px"
+        }
+      }
+    ]
+  }
+}

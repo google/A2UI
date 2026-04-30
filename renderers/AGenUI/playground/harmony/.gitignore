@@ -1,0 +1,29 @@
+# Build outputs
+build/
+**/build/
+output/
+*.hap
+*.har
+*.tgz
+
+# Auto-generated build profile (hvigor 每次构建自动覆盖)
+**/BuildProfile.ets
+
+# Dependencies
+oh_modules/
+node_modules/
+
+# IDE & tooling
+.idea/
+.preview/
+.cxx/
+.hvigor/
+
+# OS
+.DS_Store
+
+# Lock files
+oh-package-lock.json5
+
+# Local config
+local.properties

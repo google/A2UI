@@ -1,0 +1,13 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "web_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Web",
+        "source": "https://a2ui.org/"
+      }
+    ]
+  }
+}

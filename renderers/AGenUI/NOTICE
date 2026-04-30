@@ -1,0 +1,141 @@
+================================================================================
+AGenUI Third-Party Notices
+================================================================================
+
+This project uses third-party open-source software. Below is a list of all
+dependencies and their respective licenses.
+
+Unless otherwise stated, all AGenUI source code files (excluding third-party
+dependencies) are licensed under the MIT License. See the LICENSE file at the
+root of this repository for details.
+
+--------------------------------------------------------------------------------
+GNU Lesser General Public License (LGPL) v2.1 Dependencies
+--------------------------------------------------------------------------------
+
+The following components are governed by the GNU Lesser General Public
+License, Version 2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).
+Their source files are included in this repository and retain the original
+LGPL v2.1 license. The full license text is provided in the COPYING.txt file
+located in each component's directory.
+
+The AGenUI engine's own source code (outside of these LGPL components) is
+licensed under the MIT License and is NOT a derivative work of these libraries.
+
+  - iksemel
+    Copyright (c) 2000-2007 Gurer Ozen <madcat@e-kolay.net>
+    License: LGPL v2.1
+    License text: engine/src/third_party/ik/COPYING.txt
+    Upstream source: https://github.com/meduketto/iksemel (commit 03c0e84)
+    Location: engine/src/third_party/ik/
+    Integration: The complete iksemel source code is vendored in this repository
+    under engine/src/third_party/ik/{include,src}/ for build reproducibility.
+    On the HarmonyOS platform, it is compiled as a shared library
+    (libiksemel.so) via dynamic linking, satisfying LGPL's requirement that
+    users retain the ability to relink with a modified version of the library.
+    A minimal config.h (engine/src/third_party/ik/config.h) is provided to
+    replace the autotools-generated one. Developers may supply their own
+    iksemel installation via the AGENUI_USE_SYSTEM_IKSEMEL CMake option.
+    On Android and iOS, iksemel is not used.
+
+  - sax (derived from iksemel)
+    Copyright (c) 2000-2007 Gurer Ozen <madcat@e-kolay.net>
+    Modifications Copyright (c) AGenUI Contributors
+    License: LGPL v2.1
+    Location: engine/src/third_party/sax/
+    Integration: This is a derivative work of the iksemel SAX parser, modified
+    to support more relaxed XML parsing (single/double quote variants, bare
+    ampersands, unquoted attribute values). The complete modified source code
+    (sax.c, sax.h) is included in this repository under LGPL v2.1, satisfying
+    LGPL Section 2's requirement to distribute modified source. On HarmonyOS,
+    sax.c is compiled directly into the a2ui-capi shared library. Since the
+    full modified source is openly available in this repository, recipients
+    can modify and recompile the component. On Android and iOS, this component
+    is not used.
+    Modifications documented in: engine/src/third_party/sax/sax.h and sax.c
+
+--------------------------------------------------------------------------------
+MIT License Dependencies
+--------------------------------------------------------------------------------
+
+The following libraries are included under the MIT License
+(https://opensource.org/licenses/MIT):
+
+  - yoga (facebook/yoga)
+    Copyright (c) Meta Platforms, Inc. and affiliates.
+    License: MIT
+    Upstream source: https://github.com/facebook/yoga (tag v2.0.0)
+    Integration: On the HarmonyOS platform, yoga v2.0.0 source code is fetched
+    at build time via CMake FetchContent and compiled as a separate shared
+    library (libyoga.so) via dynamic linking. Developers may supply their own
+    yoga installation via the AGENUI_USE_SYSTEM_YOGA CMake option or point to
+    a local source tree via AGENUI_YOGA_SOURCE_DIR. On Android and iOS, the
+    platform's native flexbox implementation is used instead.
+
+  - nlohmann/json
+    Copyright (c) 2013-2022 Niels Lohmann
+
+  - jschema_validator
+    Copyright (c) Patrick Boettcher
+
+  - FlexLayout
+    Copyright (c) 2017 Lucas Ortis
+
+  - MarkdownKit
+    Copyright (c) 2016 Ivan Bruel
+
+  - @luvi/lv-markdown-in
+
+  - @cangjie-tpc/formula_hybrid
+
+--------------------------------------------------------------------------------
+Apache License 2.0 Dependencies
+--------------------------------------------------------------------------------
+
+The following libraries are included under the Apache License, Version 2.0
+(http://www.apache.org/licenses/LICENSE-2.0):
+
+  - Lottie-iOS
+    Copyright (c) Airbnb, Inc.
+
+  - DGCharts
+    Copyright (c) 2016 Daniel Cohen Gindi & Philipp Jahoda
+
+  - @ohos/mpchart
+    Copyright (c) 2021 ohos
+    License: Apache 2.0 / MIT dual-licensed
+
+  - MPAndroidChart
+    Copyright (c) 2014-2024 Philipp Jahoda
+
+  - Gson (com.google.code.gson:gson)
+    Copyright (c) Google LLC
+
+  - AndroidX AppCompat (androidx.appcompat:appcompat)
+    Copyright (c) The Android Open Source Project
+
+  - Material Components for Android (com.google.android.material:material)
+    Copyright (c) Google LLC
+
+  - FlexboxLayout (com.google.android.flexbox:flexbox)
+    Copyright (c) Google LLC
+
+  - Picasso (com.squareup.picasso:picasso)
+    Copyright (c) Square, Inc.
+
+  - Lottie (com.airbnb.android:lottie)
+    Copyright (c) Airbnb, Inc.
+
+  - Markwon (io.noties.markwon)
+    Copyright (c) 2017-2019 Dimitry Ivanov (noties)
+
+--------------------------------------------------------------------------------
+Disclaimer
+--------------------------------------------------------------------------------
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. THE COPYRIGHT HOLDERS OF THIRD-PARTY LIBRARIES ARE NOT AFFILIATED WITH
+THIS PROJECT AND ARE SOLELY RESPONSIBLE FOR THEIR RESPECTIVE WORKS.
+
+For the full text of each license, please refer to the license files included
+with the respective libraries or visit the license URLs listed above.

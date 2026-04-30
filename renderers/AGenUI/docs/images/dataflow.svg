@@ -1,0 +1,46 @@
+<svg width="560" height="410" viewBox="0 0 560 410" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- 1: LLM -->
+  <rect x="80" y="20" width="400" height="56" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+  <text x="280" y="46" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#1D4ED8">LLM / AI Model</text>
+  <text x="280" y="64" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#6B7280">generates A2UI JSON tokens (SSE stream)</text>
+
+  <!-- Arrow 1 + label -->
+  <line x1="280" y1="76" x2="280" y2="112" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="292" y="98" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#9CA3AF">receiveTextChunk(chunk)</text>
+
+  <!-- 2: SurfaceManager -->
+  <rect x="80" y="114" width="400" height="62" rx="8" fill="#F8FAFC" stroke="#475569" stroke-width="1.5"/>
+  <text x="280" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#1E293B">SurfaceManager  (platform layer)</text>
+  <text x="280" y="158" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748B">beginTextStream() · receiveTextChunk() · endTextStream()</text>
+
+  <!-- Arrow 2 + label -->
+  <line x1="280" y1="176" x2="280" y2="212" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="292" y="198" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#9CA3AF">JNI / ObjC++ / NAPI</text>
+
+  <!-- 3: C++ Engine -->
+  <rect x="80" y="214" width="400" height="98" rx="8" fill="#FEFCE8" stroke="#EAB308" stroke-width="2"/>
+  <text x="280" y="238" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700" fill="#854D0E">C++ Engine  (engine/)</text>
+  <text x="100" y="258" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#92400E">stream/</text>
+  <text x="152" y="258" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#78716C">chunk reassembly &amp; buffering</text>
+  <text x="100" y="274" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#92400E">surface/</text>
+  <text x="152" y="274" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#78716C">virtual DOM · data binding · Yoga layout</text>
+  <text x="100" y="290" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#92400E">function_call/</text>
+  <text x="175" y="290" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#78716C">platform function dispatch</text>
+  <text x="100" y="306" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#92400E">engine/include/</text>
+  <text x="192" y="306" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#78716C">public C API for platform bridges</text>
+
+  <!-- Arrow 3 + label -->
+  <line x1="280" y1="312" x2="280" y2="348" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="292" y="334" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#9CA3AF">callbacks on sub-thread</text>
+
+  <!-- 4: Native UI -->
+  <rect x="80" y="350" width="400" height="46" rx="8" fill="#F0FDF4" stroke="#22C55E" stroke-width="2"/>
+  <text x="280" y="371" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700" fill="#15803D">Native UI Components</text>
+  <text x="280" y="387" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#6B7280">UIKit (iOS)  ·  ViewGroup (Android)  ·  ArkUI (HarmonyOS)</text>
+</svg>

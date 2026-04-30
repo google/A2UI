@@ -1,0 +1,43 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "choicepicker_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Row",
+        "children": [
+          "choicepicker"
+        ],
+        "justify": "center",
+        "align": "center"
+      },
+      {
+        "id": "choicepicker",
+        "component": "ChoicePicker",
+        "label": "Single Selection - Vertical",
+        "variant": "mutuallyExclusive",
+        "options": [
+          {
+            "label": "Option A",
+            "value": "a"
+          },
+          {
+            "label": "Option B",
+            "value": "b"
+          },
+          {
+            "label": "Option C",
+            "value": "c"
+          }
+        ],
+        "value": [
+          "a"
+        ],
+        "styles": {
+          "orientation": "vertical"
+        }
+      }
+    ]
+  }
+}

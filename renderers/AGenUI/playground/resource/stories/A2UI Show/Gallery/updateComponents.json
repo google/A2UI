@@ -1,0 +1,1661 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "gallery_all_components",
+    "components": [
+      {
+        "id": "root",
+        "component": "List",
+        "children": [
+          "section-basic",
+          "section-text-header",
+          "gallery-text",
+          "section-image-header",
+          "gallery-image",
+          "gallery-icon",
+          "gallery-lottie",
+          "section-layout-header",
+          "gallery-column",
+          "gallery-row",
+          "gallery-divider",
+          "gallery-card",
+          "section-input-header",
+          "gallery-button",
+          "gallery-textfield",
+          "gallery-checkbox",
+          "gallery-slider",
+          "gallery-choicepicker",
+          "gallery-datetimeinput",
+          "section-navigation-header",
+          "gallery-tabs",
+          "gallery-list",
+          "gallery-carousel",
+          "gallery-modal",
+          "section-data-header",
+          "gallery-table",
+          "gallery-chart",
+          "section-rich-header",
+          "gallery-markdown",
+          "gallery-richtext",
+          "section-media-header",
+          "gallery-audio",
+          "gallery-video",
+          "gallery-web"
+        ],
+        "styles": {
+          "width": "100%",
+          "padding": "0px 24px 40px 24px",
+          "gap": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L1"}}
+        }
+      },
+
+      {
+        "id": "section-basic",
+        "component": "Text",
+        "text": "Basic Display",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "section-text-header",
+        "component": "Text",
+        "text": "Text",
+        "variant": "h3",
+        "styles": {
+          "margin": "8px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L2"}}
+        }
+      },
+      {
+        "id": "gallery-text",
+        "component": "Card",
+        "child": "text-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "text-card-content",
+        "component": "Column",
+        "children": [
+          "text-h1", "text-h2", "text-h3", "text-h4", "text-h5", "text-body", "text-caption"
+        ],
+        "align": "stretch",
+        "styles": { "gap": "8px" }
+      },
+      {
+        "id": "text-h1",
+        "component": "Text",
+        "text": "H1 Heading",
+        "variant": "h1"
+      },
+      {
+        "id": "text-h2",
+        "component": "Text",
+        "text": "H2 Heading",
+        "variant": "h2"
+      },
+      {
+        "id": "text-h3",
+        "component": "Text",
+        "text": "H3 Heading",
+        "variant": "h3"
+      },
+      {
+        "id": "text-h4",
+        "component": "Text",
+        "text": "H4 Heading",
+        "variant": "h4"
+      },
+      {
+        "id": "text-h5",
+        "component": "Text",
+        "text": "H5 Heading",
+        "variant": "h5"
+      },
+      {
+        "id": "text-body",
+        "component": "Text",
+        "text": "Body Text — regular paragraph content, used for main reading experience.",
+        "variant": "body"
+      },
+      {
+        "id": "text-caption",
+        "component": "Text",
+        "text": "Caption — supplemental or helper text",
+        "variant": "caption"
+      },
+
+      {
+        "id": "section-image-header",
+        "component": "Text",
+        "text": "Image / Icon / Lottie",
+        "variant": "h3",
+        "styles": {
+          "margin": "8px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L2"}}
+        }
+      },
+      {
+        "id": "gallery-image",
+        "component": "Card",
+        "child": "image-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "image-card-content",
+        "component": "Column",
+        "children": ["image-label", "image-comp"],
+        "align": "stretch",
+        "styles": { "gap": "10px" }
+      },
+      {
+        "id": "image-label",
+        "component": "Text",
+        "text": "Image Component",
+        "variant": "h4"
+      },
+      {
+        "id": "image-comp",
+        "component": "Image",
+        "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=300&fit=crop",
+        "styles": {
+          "width": "100%",
+          "height": "200px",
+          "border-radius": "12px"
+        }
+      },
+
+      {
+        "id": "gallery-icon",
+        "component": "Card",
+        "child": "icon-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "icon-card-content",
+        "component": "Column",
+        "children": ["icon-label", "icon-row"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "icon-label",
+        "component": "Text",
+        "text": "Icon Component",
+        "variant": "h4"
+      },
+      {
+        "id": "icon-row",
+        "component": "Row",
+        "children": [
+          "icon-favorite", "icon-home", "icon-search", "icon-settings", "icon-star", "icon-share"
+        ],
+        "align": "center",
+        "justify": "center",
+        "styles": { "gap": "24px" }
+      },
+      {
+        "id": "icon-favorite",
+        "component": "Icon",
+        "name": "favorite",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+      {
+        "id": "icon-home",
+        "component": "Icon",
+        "name": "home",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+      {
+        "id": "icon-search",
+        "component": "Icon",
+        "name": "search",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+      {
+        "id": "icon-settings",
+        "component": "Icon",
+        "name": "settings",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+      {
+        "id": "icon-star",
+        "component": "Icon",
+        "name": "star",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+      {
+        "id": "icon-share",
+        "component": "Icon",
+        "name": "share",
+        "styles": { "width": "48px", "height": "48px" }
+      },
+
+      {
+        "id": "gallery-lottie",
+        "component": "Card",
+        "child": "lottie-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "lottie-card-content",
+        "component": "Column",
+        "children": ["lottie-label", "lottie-comp"],
+        "align": "center",
+        "styles": { "gap": "10px" }
+      },
+      {
+        "id": "lottie-label",
+        "component": "Text",
+        "text": "Lottie Animation",
+        "variant": "h4",
+        "styles": { "width": "100%" }
+      },
+      {
+        "id": "lottie-comp",
+        "component": "Lottie",
+        "url": "https://assets4.lottiefiles.com/packages/lf20_jbrw3hcz.json",
+        "autoPlay": true,
+        "loop": true,
+        "styles": {
+          "width": "200px",
+          "height": "200px"
+        }
+      },
+
+      {
+        "id": "section-layout-header",
+        "component": "Text",
+        "text": "Layout",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-column",
+        "component": "Card",
+        "child": "column-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "column-card-content",
+        "component": "Column",
+        "children": ["column-label", "column-demo"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "column-label",
+        "component": "Text",
+        "text": "Column Layout",
+        "variant": "h4"
+      },
+      {
+        "id": "column-demo",
+        "component": "Column",
+        "children": ["col-item1", "col-item2", "col-item3"],
+        "align": "stretch",
+        "styles": {
+          "gap": "8px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L1"}},
+          "border-radius": "8px",
+          "padding": "12px"
+        }
+      },
+      {
+        "id": "col-item1",
+        "component": "Text",
+        "text": "Row 1",
+        "variant": "body",
+        "styles": {
+          "text-align": "center",
+          "background-color": {"call": "token", "args": {"name": "Color_Ink_L2"}},
+          "padding": "8px",
+          "border-radius": "4px"
+        }
+      },
+      {
+        "id": "col-item2",
+        "component": "Text",
+        "text": "Row 2",
+        "variant": "body",
+        "styles": {
+          "text-align": "center",
+          "background-color": {"call": "token", "args": {"name": "Color_Ink_L1"}},
+          "padding": "8px",
+          "border-radius": "4px"
+        }
+      },
+      {
+        "id": "col-item3",
+        "component": "Text",
+        "text": "Row 3",
+        "variant": "body",
+        "styles": {
+          "text-align": "center",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L3"}},
+          "padding": "8px",
+          "border-radius": "4px"
+        }
+      },
+
+      {
+        "id": "gallery-row",
+        "component": "Card",
+        "child": "row-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "row-card-content",
+        "component": "Column",
+        "children": ["row-label", "row-demo"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "row-label",
+        "component": "Text",
+        "text": "Row Layout",
+        "variant": "h4"
+      },
+      {
+        "id": "row-demo",
+        "component": "Row",
+        "children": ["row-item1", "row-item2", "row-item3"],
+        "align": "center",
+        "justify": "center",
+        "styles": {
+          "gap": "12px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L1"}},
+          "border-radius": "8px",
+          "padding": "12px"
+        }
+      },
+      {
+        "id": "row-item1",
+        "component": "Text",
+        "text": "Left",
+        "variant": "body",
+        "styles": {
+          "background-color": {"call": "token", "args": {"name": "Color_Ink_L2"}},
+          "padding": "8px 16px",
+          "border-radius": "4px"
+        }
+      },
+      {
+        "id": "row-item2",
+        "component": "Text",
+        "text": "Center",
+        "variant": "body",
+        "styles": {
+          "background-color": {"call": "token", "args": {"name": "Color_Ink_L1"}},
+          "padding": "8px 16px",
+          "border-radius": "4px"
+        }
+      },
+      {
+        "id": "row-item3",
+        "component": "Text",
+        "text": "Right",
+        "variant": "body",
+        "styles": {
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L3"}},
+          "padding": "8px 16px",
+          "border-radius": "4px"
+        }
+      },
+
+      {
+        "id": "gallery-divider",
+        "component": "Card",
+        "child": "divider-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "divider-card-content",
+        "component": "Column",
+        "children": [
+          "divider-label",
+          "divider-text1", "divider1", "divider-text2", "divider2", "divider-text3"
+        ],
+        "align": "stretch",
+        "styles": { "gap": "10px" }
+      },
+      {
+        "id": "divider-label",
+        "component": "Text",
+        "text": "Divider Component",
+        "variant": "h4"
+      },
+      {
+        "id": "divider-text1",
+        "component": "Text",
+        "text": "Content Above Divider",
+        "variant": "body",
+        "styles": { "text-align": "center" }
+      },
+      {
+        "id": "divider1",
+        "component": "Divider",
+        "axis": "horizontal",
+        "styles": { "height": "2px", "color": {"call": "token", "args": {"name": "Color_Ink_L5"}} }
+      },
+      {
+        "id": "divider-text2",
+        "component": "Text",
+        "text": "Content Between Dividers",
+        "variant": "body",
+        "styles": { "text-align": "center" }
+      },
+      {
+        "id": "divider2",
+        "component": "Divider",
+        "axis": "horizontal",
+        "styles": { "height": "1px", "color": {"call": "token", "args": {"name": "Color_Ink_L3"}} }
+      },
+      {
+        "id": "divider-text3",
+        "component": "Text",
+        "text": "Content Below Divider",
+        "variant": "body",
+        "styles": { "text-align": "center" }
+      },
+
+      {
+        "id": "gallery-card",
+        "component": "Card",
+        "child": "card-outer-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "card-outer-content",
+        "component": "Column",
+        "children": ["card-label", "card-inner"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "card-label",
+        "component": "Text",
+        "text": "Card Component",
+        "variant": "h4"
+      },
+      {
+        "id": "card-inner",
+        "component": "Card",
+        "child": "card-inner-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "12px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L3"}},
+          "filter": "drop-shadow(0px 4px 16px 0px rgba(0,0,0,0.10))"
+        }
+      },
+      {
+        "id": "card-inner-content",
+        "component": "Column",
+        "children": ["card-inner-title", "card-inner-body"],
+        "align": "stretch",
+        "styles": { "gap": "8px" }
+      },
+      {
+        "id": "card-inner-title",
+        "component": "Text",
+        "text": "Card Title",
+        "styles": {
+          "font-size": "32px",
+          "font-weight": "bold",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+      {
+        "id": "card-inner-body",
+        "component": "Text",
+        "text": "This is a Card component with padding, border radius, background color and shadow effect.",
+        "styles": {
+          "font-size": "28px",
+          "color": {"call": "token", "args": {"name": "Color_Text_Body"}},
+          "line-height": "40px"
+        }
+      },
+
+      {
+        "id": "section-input-header",
+        "component": "Text",
+        "text": "Input & Interaction",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-button",
+        "component": "Card",
+        "child": "button-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "button-card-content",
+        "component": "Column",
+        "children": ["button-label", "btn-primary", "btn-secondary", "btn-outline"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "button-label",
+        "component": "Text",
+        "text": "Button Component",
+        "variant": "h4"
+      },
+      {
+        "id": "btn-primary",
+        "component": "Button",
+        "child": "btn-primary-text",
+        "styles": {
+          "width": "100%",
+          "height": "80px",
+          "padding": "18px 24px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_Brand"}}
+        },
+        "action": {
+          "functionCall": {
+            "call": "toast",
+            "args": { "value": "Primary Button Clicked" }
+          }
+        }
+      },
+      {
+        "id": "btn-primary-text",
+        "component": "Text",
+        "text": "Primary Button",
+        "styles": {
+          "font-size": "32px",
+          "line-height": "44px",
+          "text-align": "center",
+          "color": {"call": "token", "args": {"name": "Color_Text_Highlight"}}
+        }
+      },
+      {
+        "id": "btn-secondary",
+        "component": "Button",
+        "child": "btn-secondary-text",
+        "styles": {
+          "width": "100%",
+          "height": "80px",
+          "padding": "18px 24px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_Ink_L1"}}
+        },
+        "action": {
+          "functionCall": {
+            "call": "toast",
+            "args": { "value": "Secondary Button Clicked" }
+          }
+        }
+      },
+      {
+        "id": "btn-secondary-text",
+        "component": "Text",
+        "text": "Secondary Button",
+        "styles": {
+          "font-size": "32px",
+          "line-height": "44px",
+          "text-align": "center",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+      {
+        "id": "btn-outline",
+        "component": "Button",
+        "child": "btn-outline-text",
+        "styles": {
+          "width": "100%",
+          "height": "80px",
+          "padding": "18px 24px",
+          "border-radius": "16px",
+          "border-width": "1px",
+          "border-color": {"call": "token", "args": {"name": "Color_Gray_20"}}
+        },
+        "action": {
+          "functionCall": {
+            "call": "toast",
+            "args": { "value": "Outline Button Clicked" }
+          }
+        }
+      },
+      {
+        "id": "btn-outline-text",
+        "component": "Text",
+        "text": "Outline Button",
+        "styles": {
+          "font-size": "32px",
+          "line-height": "44px",
+          "text-align": "center",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-textfield",
+        "component": "Card",
+        "child": "textfield-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "textfield-card-content",
+        "component": "Column",
+        "children": ["textfield-label", "textfield-username", "textfield-password", "textfield-search"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "textfield-label",
+        "component": "Text",
+        "text": "TextField Component",
+        "variant": "h4"
+      },
+      {
+        "id": "textfield-username",
+        "component": "TextField",
+        "label": "Username",
+        "placeholder": "Please enter username",
+        "value": ""
+      },
+      {
+        "id": "textfield-password",
+        "component": "TextField",
+        "label": "Password",
+        "placeholder": "Please enter password",
+        "value": ""
+      },
+      {
+        "id": "textfield-search",
+        "component": "TextField",
+        "label": "Search",
+        "placeholder": "Search anything...",
+        "value": ""
+      },
+
+      {
+        "id": "gallery-checkbox",
+        "component": "Card",
+        "child": "checkbox-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "checkbox-card-content",
+        "component": "Column",
+        "children": ["checkbox-label", "checkbox-1", "checkbox-2", "checkbox-3"],
+        "align": "stretch",
+        "styles": { "gap": "10px" }
+      },
+      {
+        "id": "checkbox-label",
+        "component": "Text",
+        "text": "CheckBox Component",
+        "variant": "h4"
+      },
+      {
+        "id": "checkbox-1",
+        "component": "CheckBox",
+        "label": "Option 1 (checked)",
+        "value": true
+      },
+      {
+        "id": "checkbox-2",
+        "component": "CheckBox",
+        "label": "Option 2 (unchecked)",
+        "value": false
+      },
+      {
+        "id": "checkbox-3",
+        "component": "CheckBox",
+        "label": "Option 3 (checked)",
+        "value": true
+      },
+
+      {
+        "id": "gallery-slider",
+        "component": "Card",
+        "child": "slider-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "slider-card-content",
+        "component": "Column",
+        "children": ["slider-label", "slider-volume", "slider-label2", "slider-brightness"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "slider-label",
+        "component": "Text",
+        "text": "Slider Component — Volume",
+        "variant": "h4"
+      },
+      {
+        "id": "slider-volume",
+        "component": "Slider",
+        "value": 60,
+        "min": 0,
+        "max": 100
+      },
+      {
+        "id": "slider-label2",
+        "component": "Text",
+        "text": "Slider Component — Brightness",
+        "variant": "h4"
+      },
+      {
+        "id": "slider-brightness",
+        "component": "Slider",
+        "value": 30,
+        "min": 0,
+        "max": 100
+      },
+
+      {
+        "id": "gallery-choicepicker",
+        "component": "Card",
+        "child": "choicepicker-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "choicepicker-card-content",
+        "component": "Column",
+        "children": ["choicepicker-label", "choicepicker-single", "choicepicker-label2", "choicepicker-multi"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "choicepicker-label",
+        "component": "Text",
+        "text": "ChoicePicker — Single Select",
+        "variant": "h4"
+      },
+      {
+        "id": "choicepicker-single",
+        "component": "ChoicePicker",
+        "label": "Choose one option",
+        "variant": "mutuallyExclusive",
+        "options": [
+          { "label": "Option A", "value": "a" },
+          { "label": "Option B", "value": "b" },
+          { "label": "Option C", "value": "c" }
+        ],
+        "value": ["a"],
+        "styles": {
+          "orientation": "vertical",
+          "height": "auto",
+          "overflow-y": "scroll"
+        }
+      },
+      {
+        "id": "choicepicker-label2",
+        "component": "Text",
+        "text": "ChoicePicker — Multi Select",
+        "variant": "h4"
+      },
+      {
+        "id": "choicepicker-multi",
+        "component": "ChoicePicker",
+        "label": "Choose multiple options",
+        "variant": "multiSelect",
+        "options": [
+          { "label": "Feature X", "value": "x" },
+          { "label": "Feature Y", "value": "y" },
+          { "label": "Feature Z", "value": "z" }
+        ],
+        "value": ["x", "z"],
+        "styles": {
+          "orientation": "vertical",
+          "height": "auto",
+          "overflow-y": "scroll"
+        }
+      },
+
+      {
+        "id": "gallery-datetimeinput",
+        "component": "Card",
+        "child": "datetime-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "datetime-card-content",
+        "component": "Column",
+        "children": [
+          "datetime-label",
+          "datetime-date-title", "datetime-date-only",
+          "datetime-time-title", "datetime-time-only",
+          "datetime-both-title", "datetime-both"
+        ],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "datetime-label",
+        "component": "Text",
+        "text": "DateTimeInput Component",
+        "variant": "h4"
+      },
+      {
+        "id": "datetime-date-title",
+        "component": "Text",
+        "text": "Date Only",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "datetime-date-only",
+        "component": "DateTimeInput",
+        "label": "Date",
+        "value": "2026-03-22",
+        "enableDate": true,
+        "enableTime": false
+      },
+      {
+        "id": "datetime-time-title",
+        "component": "Text",
+        "text": "Time Only",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "datetime-time-only",
+        "component": "DateTimeInput",
+        "label": "Time",
+        "value": "14:30",
+        "enableDate": false,
+        "enableTime": true
+      },
+      {
+        "id": "datetime-both-title",
+        "component": "Text",
+        "text": "Date & Time",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "datetime-both",
+        "component": "DateTimeInput",
+        "label": "DateTime",
+        "value": "2026-03-22 14:30",
+        "enableDate": true,
+        "enableTime": true
+      },
+
+      {
+        "id": "section-navigation-header",
+        "component": "Text",
+        "text": "Navigation & Layout",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-tabs",
+        "component": "Card",
+        "child": "tabs-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "tabs-card-content",
+        "component": "Column",
+        "children": ["tabs-label", "tabs-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "tabs-label",
+        "component": "Text",
+        "text": "Tabs Component",
+        "variant": "h4"
+      },
+      {
+        "id": "tabs-comp",
+        "component": "Tabs",
+        "tabs": [
+          { "title": "Tab 1", "child": "tab-content-1" },
+          { "title": "Tab 2", "child": "tab-content-2" },
+          { "title": "Tab 3", "child": "tab-content-3" }
+        ],
+        "selectedIndex": 0
+      },
+      {
+        "id": "tab-content-1",
+        "component": "Text",
+        "text": "Tab 1 Content — Home panel with main information",
+        "variant": "body",
+        "styles": { "width": "100%", "text-align": "center", "padding": "16px" }
+      },
+      {
+        "id": "tab-content-2",
+        "component": "Text",
+        "text": "Tab 2 Content — Details panel with additional data",
+        "variant": "body",
+        "styles": { "width": "100%", "text-align": "center", "padding": "16px" }
+      },
+      {
+        "id": "tab-content-3",
+        "component": "Text",
+        "text": "Tab 3 Content — Settings panel for configuration",
+        "variant": "body",
+        "styles": { "width": "100%", "text-align": "center", "padding": "16px" }
+      },
+
+      {
+        "id": "gallery-list",
+        "component": "Card",
+        "child": "list-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "list-card-content",
+        "component": "Column",
+        "children": ["list-label", "list-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "list-label",
+        "component": "Text",
+        "text": "List Component",
+        "variant": "h4"
+      },
+      {
+        "id": "list-comp",
+        "component": "List",
+        "align": "center",
+        "children": ["list-item1", "list-item2", "list-item3", "list-item4", "list-item5"],
+        "styles": {
+          "height": "auto",
+          "border-radius": "8px",
+          "border-width": "1px",
+          "border-color": {"call": "token", "args": {"name": "Color_Ink_L3"}}
+        }
+      },
+      {
+        "id": "list-item1",
+        "component": "Text",
+        "text": "List Item 1 — First entry",
+        "variant": "body",
+        "styles": { "padding": "12px 16px" }
+      },
+      {
+        "id": "list-item2",
+        "component": "Text",
+        "text": "List Item 2 — Second entry",
+        "variant": "body",
+        "styles": { "padding": "12px 16px" }
+      },
+      {
+        "id": "list-item3",
+        "component": "Text",
+        "text": "List Item 3 — Third entry",
+        "variant": "body",
+        "styles": { "padding": "12px 16px" }
+      },
+      {
+        "id": "list-item4",
+        "component": "Text",
+        "text": "List Item 4 — Fourth entry",
+        "variant": "body",
+        "styles": { "padding": "12px 16px" }
+      },
+      {
+        "id": "list-item5",
+        "component": "Text",
+        "text": "List Item 5 — Fifth entry",
+        "variant": "body",
+        "styles": { "padding": "12px 16px" }
+      },
+
+      {
+        "id": "gallery-carousel",
+        "component": "Card",
+        "child": "carousel-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "carousel-card-content",
+        "component": "Column",
+        "children": ["carousel-label", "carousel-manual-title", "carousel-manual", "carousel-auto-title", "carousel-auto"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "carousel-label",
+        "component": "Text",
+        "text": "Carousel Component",
+        "variant": "h4"
+      },
+      {
+        "id": "carousel-manual-title",
+        "component": "Text",
+        "text": "Manual Drag (draggable: true)",
+        "variant": "caption",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "carousel-manual",
+        "component": "Carousel",
+        "autoplay": false,
+        "draggable": true,
+        "content": [
+          "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&h=200&fit=crop"
+        ],
+        "styles": { "width": "100%", "height": "200px" }
+      },
+      {
+        "id": "carousel-auto-title",
+        "component": "Text",
+        "text": "Auto Play (autoplay: true, interval: 3000ms)",
+        "variant": "caption",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "carousel-auto",
+        "component": "Carousel",
+        "autoplay": true,
+        "autoplaySpeed": 3000,
+        "draggable": true,
+        "content": [
+          "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=400&h=200&fit=crop"
+        ],
+        "styles": { "width": "100%", "height": "200px" }
+      },
+
+      {
+        "id": "gallery-modal",
+        "component": "Card",
+        "child": "modal-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "modal-card-content",
+        "component": "Column",
+        "children": ["modal-label", "modal-desc", "modal-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "modal-label",
+        "component": "Text",
+        "text": "Modal Component",
+        "variant": "h4"
+      },
+      {
+        "id": "modal-desc",
+        "component": "Text",
+        "text": "Click the trigger button below to open modal dialog",
+        "variant": "caption",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "modal-comp",
+        "component": "Modal",
+        "trigger": "modal-trigger-text",
+        "content": "modal-dialog-content",
+        "visible": false
+      },
+      {
+        "id": "modal-trigger-text",
+        "component": "Button",
+        "child": "modal-btn-label",
+        "styles": {
+          "width": "100%",
+          "height": "80px",
+          "border-radius": "12px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_Brand"}}
+        }
+      },
+      {
+        "id": "modal-btn-label",
+        "component": "Text",
+        "text": "Open Modal",
+        "styles": {
+          "font-size": "32px",
+          "text-align": "center",
+          "color": {"call": "token", "args": {"name": "Color_Text_Highlight"}}
+        }
+      },
+      {
+        "id": "modal-dialog-content",
+        "component": "Column",
+        "children": ["modal-dialog-title", "modal-dialog-body"],
+        "align": "center",
+        "styles": { "padding": "20px", "gap": "12px" }
+      },
+      {
+        "id": "modal-dialog-title",
+        "component": "Text",
+        "text": "Modal Dialog",
+        "variant": "h3",
+        "styles": { "text-align": "center" }
+      },
+      {
+        "id": "modal-dialog-body",
+        "component": "Text",
+        "text": "This is the modal dialog content. You can put any component here.",
+        "variant": "body",
+        "styles": { "text-align": "center" }
+      },
+
+      {
+        "id": "section-data-header",
+        "component": "Text",
+        "text": "Data Display",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-table",
+        "component": "Card",
+        "child": "table-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "table-card-content",
+        "component": "Column",
+        "children": ["table-label", "table-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "table-label",
+        "component": "Text",
+        "text": "Table Component",
+        "variant": "h4"
+      },
+      {
+        "id": "table-comp",
+        "component": "Table",
+        "columns": ["Name", "Age", "City", "Role"],
+        "rows": [
+          ["Alice", "25", "New York", "Engineer"],
+          ["Bob", "30", "London", "Designer"],
+          ["Charlie", "28", "Tokyo", "PM"],
+          ["Diana", "35", "Paris", "Architect"],
+          ["Eve", "27", "Berlin", "Developer"]
+        ],
+        "styles": {
+          "border-width": "1px",
+          "border-radius": "12px",
+          "border-color": {"call": "token", "args": {"name": "Color_Ink_L3"}},
+          "height": "auto",
+          "overflow-y": "scroll"
+        }
+      },
+
+      {
+        "id": "gallery-chart",
+        "component": "Card",
+        "child": "chart-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "chart-card-content",
+        "component": "Column",
+        "children": [
+          "chart-label",
+          "chart-bar-title", "chart-bar",
+          "chart-line-title", "chart-line",
+          "chart-donut-title", "chart-donut"
+        ],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "chart-label",
+        "component": "Text",
+        "text": "Chart Component",
+        "variant": "h4"
+      },
+      {
+        "id": "chart-bar-title",
+        "component": "Text",
+        "text": "Bar Chart",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "chart-bar",
+        "component": "Chart",
+        "chartType": "bar",
+        "data": {
+          "xAxis": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          "yAxis": ["Low", "Medium", "High"],
+          "series": [
+            {
+              "name": "Traffic",
+              "data": [
+                { "value": 1.0, "label": "1h 14m" },
+                { "value": 1.5, "label": "1h 30m" },
+                { "value": 1.8, "label": "1h 48m" },
+                { "value": 1.5, "label": "1h 30m" },
+                { "value": 2.5, "label": "2h 30m" },
+                { "value": 1.2, "label": "1h 12m" },
+                { "value": 0.8, "label": "48m" }
+              ]
+            }
+          ]
+        },
+        "styles": {
+          "width": "100%",
+          "height": "400px",
+          "padding": "20px",
+          "chartConfig": { "colors": ["#1677FF", "#4ECDC4", "#FF6B6B"] }
+        }
+      },
+      {
+        "id": "chart-line-title",
+        "component": "Text",
+        "text": "Line Chart",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "chart-line",
+        "component": "Chart",
+        "chartType": "line",
+        "data": {
+          "xAxis": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "yAxis": ["Low", "Medium", "High"],
+          "series": [
+            {
+              "name": "Series A",
+              "data": [
+                { "value": 1.0, "label": "" },
+                { "value": 2.0, "label": "" },
+                { "value": 1.5, "label": "" },
+                { "value": 2.8, "label": "" },
+                { "value": 2.5, "label": "" },
+                { "value": 3.0, "label": "" }
+              ]
+            },
+            {
+              "name": "Series B",
+              "data": [
+                { "value": 1.0, "label": "" },
+                { "value": 1.5, "label": "" },
+                { "value": 1.3, "label": "" },
+                { "value": 1.7, "label": "" },
+                { "value": 1.8, "label": "" },
+                { "value": 2.2, "label": "" }
+              ]
+            }
+          ]
+        },
+        "styles": {
+          "width": "100%",
+          "height": "400px",
+          "padding": "20px",
+          "chartConfig": { "colors": ["#1677FF", "#FF6B6B"] }
+        }
+      },
+      {
+        "id": "chart-donut-title",
+        "component": "Text",
+        "text": "Donut Chart",
+        "variant": "h5",
+        "styles": { "color": {"call": "token", "args": {"name": "Color_Text_L2"}} }
+      },
+      {
+        "id": "chart-donut",
+        "component": "Chart",
+        "chartType": "donut",
+        "data": {
+          "series": [
+            {
+              "name": "",
+              "data": [
+                { "label": "Public Transport", "value": 50 },
+                { "label": "Driving", "value": 30 },
+                { "label": "Walking", "value": 20 }
+              ]
+            }
+          ]
+        },
+        "styles": {
+          "width": "100%",
+          "height": "400px",
+          "padding": "20px",
+          "chartConfig": { "colors": ["#1677FF", "#4ECDC4", "#FF6B6B"] }
+        }
+      },
+
+      {
+        "id": "section-rich-header",
+        "component": "Text",
+        "text": "Rich Content",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-markdown",
+        "component": "Card",
+        "child": "markdown-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "markdown-card-content",
+        "component": "Column",
+        "children": ["markdown-label", "markdown-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "markdown-label",
+        "component": "Text",
+        "text": "Markdown Component",
+        "variant": "h4"
+      },
+      {
+        "id": "markdown-comp",
+        "component": "Markdown",
+        "content": "# Markdown Title\n\nThis is **bold** and *italic* text.\n\n## Features\n- Support **bold** text\n- Support *italic* text\n- Support `inline code`\n- Support unordered lists\n\n> Blockquote example\n\n```\nCode block example\n```"
+      },
+
+      {
+        "id": "gallery-richtext",
+        "component": "Card",
+        "child": "richtext-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "richtext-card-content",
+        "component": "Column",
+        "children": ["richtext-label", "richtext-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "richtext-label",
+        "component": "Text",
+        "text": "RichText Component",
+        "variant": "h4"
+      },
+      {
+        "id": "richtext-comp",
+        "component": "RichText",
+        "text": "<p>This is <strong>rich text</strong> content, supports <em>HTML</em> tags. <span style=\"color: #1677FF;\">Colored text</span> and <u>underline</u> are also supported.</p>",
+        "styles": { "fontSize": 32 }
+      },
+
+      {
+        "id": "section-media-header",
+        "component": "Text",
+        "text": "Media",
+        "variant": "h2",
+        "styles": {
+          "margin": "24px 0 4px 0",
+          "color": {"call": "token", "args": {"name": "Color_Text_L1"}}
+        }
+      },
+
+      {
+        "id": "gallery-audio",
+        "component": "Card",
+        "child": "audio-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "audio-card-content",
+        "component": "Column",
+        "children": ["audio-label", "audio-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "audio-label",
+        "component": "Text",
+        "text": "AudioPlayer Component",
+        "variant": "h4"
+      },
+      {
+        "id": "audio-comp",
+        "component": "AudioPlayer",
+        "url": "https://download.samplelib.com/mp3/sample-3s.mp3"
+      },
+
+      {
+        "id": "gallery-video",
+        "component": "Card",
+        "child": "video-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "video-card-content",
+        "component": "Column",
+        "children": ["video-label", "video-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "video-label",
+        "component": "Text",
+        "text": "Video Component",
+        "variant": "h4"
+      },
+      {
+        "id": "video-comp",
+        "component": "Video",
+        "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+        "autoPlay": false,
+        "controls": true,
+        "styles": {
+          "width": "100%",
+          "height": "auto",
+          "aspect-ratio": "16 / 9",
+          "border-radius": "12px"
+        }
+      },
+
+      {
+        "id": "gallery-web",
+        "component": "Card",
+        "child": "web-card-content",
+        "styles": {
+          "width": "100%",
+          "padding": "20px",
+          "border-radius": "16px",
+          "background-color": {"call": "token", "args": {"name": "Color_BG_L2"}},
+          "filter": "drop-shadow(0px 2px 8px 0px rgba(0,0,0,0.06))"
+        }
+      },
+      {
+        "id": "web-card-content",
+        "component": "Column",
+        "children": ["web-label", "web-comp"],
+        "align": "stretch",
+        "styles": { "gap": "12px" }
+      },
+      {
+        "id": "web-label",
+        "component": "Text",
+        "text": "Web Component",
+        "variant": "h4"
+      },
+      {
+        "id": "web-comp",
+        "component": "Web",
+        "source": "https://a2ui.org/",
+        "styles": {
+          "width": "100%",
+          "height": "500px",
+          "border-radius": "12px"
+        }
+      }
+    ]
+  }
+}

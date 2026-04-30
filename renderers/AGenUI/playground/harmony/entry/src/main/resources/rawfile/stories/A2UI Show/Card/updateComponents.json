@@ -1,0 +1,74 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "card_standard_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "card-demo"
+        ],
+        "align": "stretch",
+        "styles": {
+          "padding": "20px",
+          "gap": "16px",
+          "background-color": "#F5F5F5"
+        }
+      },
+      {
+        "id": "card-demo",
+        "component": "Card",
+        "child": "card-content",
+        "styles": {
+          "width": "auto",
+          "height": "auto",
+          "padding": "24px",
+          "border-radius": "16px",
+          "background-color": "#FFFFFF",
+          "filter": "drop-shadow(0px 6px 24px 0px rgba(0, 0, 0, 0.08))"
+        }
+      },
+      {
+        "id": "card-content",
+        "component": "Column",
+        "children": [
+          "card-title",
+          "card-body"
+        ],
+        "align": "stretch"
+      },
+      {
+        "id": "card-title",
+        "component": "Text",
+        "text": "Card Standard Style",
+        "styles": {
+          "width": "auto",
+          "height": "auto",
+          "font-size": "32px",
+          "font-weight": "bold",
+          "line-height": "44px",
+          "color": "#000000",
+          "font-family": "system",
+          "line-clamp": 0,
+          "text-align": "left"
+        }
+      },
+      {
+        "id": "card-body",
+        "component": "Text",
+        "text": "This is a Standard Card component with 24px padding, 16px border radius, white background and subtle shadow effect.",
+        "styles": {
+          "width": "auto",
+          "height": "auto",
+          "font-size": "28px",
+          "line-height": "40px",
+          "color": "#000000E6",
+          "font-family": "system",
+          "line-clamp": 0,
+          "text-align": "left"
+        }
+      }
+    ]
+  }
+}

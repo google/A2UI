@@ -1,0 +1,48 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "button_standard_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "button"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "button",
+        "component": "Button",
+        "child": "btn-text",
+        "styles": {
+          "width": "670px",
+          "height": "80px",
+          "padding": "18px 24px",
+          "border-radius": "16px",
+          "border-width": "1px",
+          "border-color": "rgba(0, 0, 0, 0.4)"
+        },"action": {
+          "functionCall": {
+            "call": "toast",
+            "args": {
+              "value": "Default Button"
+            }
+          }
+        }
+      },
+      {
+        "id": "btn-text",
+        "component": "Text",
+        "text": "Standard Button",
+        "styles": {
+          "font-size": "32px",
+          "line-height": "44px",
+          "text-align": "center",
+          "color": "#000000"
+        }
+      }
+    ]
+  }
+}

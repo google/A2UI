@@ -1,0 +1,9 @@
+{
+  "module": {
+    "name": "agenui",
+    "type": "har",
+    "deviceTypes": [
+      "phone"
+    ]
+  }
+}

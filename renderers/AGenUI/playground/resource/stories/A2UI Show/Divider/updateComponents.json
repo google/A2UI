@@ -1,0 +1,63 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "divider_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "text1",
+          "divider1",
+          "text2",
+          "divider2",
+          "text3"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "text1",
+        "component": "Text",
+        "text": "Content Above Divider",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "divider1",
+        "component": "Divider",
+        "axis": "horizontal",
+        "styles": {
+          "height": "2px",
+          "color": "#999999"
+        }
+      },
+      {
+        "id": "text2",
+        "component": "Text",
+        "text": "Content Between Dividers",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "divider2",
+        "component": "Divider",
+        "axis": "horizontal",
+        "styles": {
+          "height": "1px",
+          "color": "#E0E0E0"
+        }
+      },
+      {
+        "id": "text3",
+        "component": "Text",
+        "text": "Content Below Divider",
+        "styles": {
+          "text-align": "center"
+        }
+      }
+    ]
+  }
+}

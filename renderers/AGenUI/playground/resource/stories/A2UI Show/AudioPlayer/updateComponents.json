@@ -1,0 +1,13 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "audio_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "AudioPlayer",
+        "url": "https://download.samplelib.com/mp3/sample-3s.mp3"
+      }
+    ]
+  }
+}

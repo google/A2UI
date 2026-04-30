@@ -1,0 +1,86 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.amap.agenuiplayground'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.amap.agenuiplayground"
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    
+    // Configure source sets to include SDK root resource directory as assets source, preserving the directory structure
+    sourceSets {
+        main {
+            assets {
+                srcDirs = [
+                    'src/main/assets',
+                    file('../../resource').absolutePath
+                ]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+// ===== AGenUI SDK Dependency Mode Configuration =====
+def agenuiSdkSource = providers.gradleProperty('agenui.sdk.source').getOrElse('false').toBoolean()
+
+if (!agenuiSdkSource) {
+    // AAR mode: trigger SDK build + copy to app/libs/ before preBuild
+    afterEvaluate {
+        preBuild.dependsOn rootProject.tasks.named('copySdkAar')
+    }
+}
+
+dependencies {
+    if (agenuiSdkSource) {
+        // Source dependency: include the sibling SDK project directly
+        implementation project(':agenui-sdk')
+    } else {
+        // AAR artifact dependency (auto-updated by the copySdkAar task)
+        implementation files('libs/AGenUI-Client-Android-release.aar')
+
+        // SDK transitive dependencies (not auto-propagated from AAR file deps)
+        // appcompat/material/gson/lottie/markwon/picasso are declared at the top level; only add flexbox here
+        implementation libs.flexbox
+    }
+
+    implementation libs.mpandroidchart
+    implementation libs.lottie
+    implementation libs.markwon.core
+    implementation libs.markwon.ext.tables
+    implementation libs.markwon.html
+    implementation libs.picasso
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.gson
+    
+    // ZXing QR code scanning library
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.google.zxing:core:3.5.1'
+    
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}

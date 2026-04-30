@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+
+# CMake / NDK build intermediates
+.cxx/
+
+# Local configuration (SDK paths, etc.)
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# OS files
+*.DS_Store
+Thumbs.db

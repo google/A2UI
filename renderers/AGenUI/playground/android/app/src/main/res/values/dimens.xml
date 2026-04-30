@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playground layout dimensions -->
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="component_row_height">48dp</dimen>
+    <dimen name="logs_collapsed_height">48dp</dimen>
+    <dimen name="logs_expanded_max_height">300dp</dimen>
+    <dimen name="drawer_width">280dp</dimen>
+    
+    <!-- Spacing -->
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    
+    <!-- Text sizes -->
+    <dimen name="text_size_title">20sp</dimen>
+    <dimen name="text_size_body">16sp</dimen>
+    <dimen name="text_size_caption">12sp</dimen>
+    
+    <!-- Corner radius -->
+    <dimen name="corner_radius_small">4dp</dimen>
+    <dimen name="corner_radius_medium">8dp</dimen>
+</resources>

@@ -1,0 +1,158 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
+
+// ==================== Maven Publishing Configuration ====================
+// Coordinates: com.amap.genui:agenui-sdk:<version> (version in gradle.properties)
+//
+// Publish to local Maven (development):
+//   ./gradlew publishReleasePublicationToLocalMavenRepository
+//
+// Publish to remote Maven (production):
+//   Set env vars: MAVEN_URL / MAVEN_USERNAME / MAVEN_PASSWORD
+//   ./gradlew publishReleasePublicationToRemoteMavenRepository
+
+def localMavenDir = "${System.getProperty('user.home')}/.m2/repository"
+
+android {
+    namespace 'com.amap.a2ui_sdk'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 35
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        // C++ configuration
+        // Inject the repo root into CMake via -DAGENUI_REPO_ROOT to avoid using .. traversal in CMakeLists.
+        // rootProject.projectDir = platforms/android/, its parentFile = platforms/,
+        // and the next parentFile = the agenui/ repo root.
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11"
+                abiFilters 'arm64-v8a'
+                arguments "-DANDROID_STL=c++_static",
+                          "-DAGENUI_REPO_ROOT=${rootProject.projectDir.parentFile.parentFile.absolutePath}"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Debug"
+                }
+            }
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                }
+            }
+        }
+    }
+
+    // CMake configuration
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.18.1"
+        }
+    }
+
+    ndkVersion "27.3.13750724"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.flexbox
+    implementation libs.picasso
+    implementation libs.lottie
+    implementation libs.gson
+    // Markwon - Markdown rendering
+    implementation libs.markwon.core
+    implementation libs.markwon.ext.tables
+    implementation libs.markwon.html
+
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
+
+// ==================== afterEvaluate: Publishing ====================
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId    = SDK_GROUP_ID
+                artifactId = SDK_ARTIFACT_ID
+                version    = SDK_VERSION
+
+                def normalAar = file("${buildDir}/outputs/aar/${project.name}-release.aar")
+                artifact(normalAar)
+
+                pom {
+                    name        = 'AGenUI'
+                    description = 'A Native Renderer for A2UI - AGen UI SDK.'
+                    url         = 'https://github.com/AGenUI/AGenUI-Client-Android'
+
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url  = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+
+                    // Transitive dependency declarations
+                    withXml {
+                        def deps = asNode().appendNode('dependencies')
+                        configurations.releaseRuntimeClasspath
+                            .resolvedConfiguration
+                            .resolvedArtifacts
+                            .findAll { it.moduleVersion.id.group != project.group }
+                            .each { artifact ->
+                                def dep = deps.appendNode('dependency')
+                                dep.appendNode('groupId',    artifact.moduleVersion.id.group)
+                                dep.appendNode('artifactId', artifact.moduleVersion.id.name)
+                                dep.appendNode('version',    artifact.moduleVersion.id.version)
+                                dep.appendNode('scope',      'runtime')
+                            }
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = 'LocalMaven'
+                url  = uri(localMavenDir)
+            }
+
+            if (System.getenv('MAVEN_URL')) {
+                maven {
+                    name = 'RemoteMaven'
+                    url  = uri(System.getenv('MAVEN_URL'))
+                    credentials {
+                        username = System.getenv('MAVEN_USERNAME') ?: ''
+                        password = System.getenv('MAVEN_PASSWORD') ?: ''
+                    }
+                }
+            }
+        }
+    }
+}

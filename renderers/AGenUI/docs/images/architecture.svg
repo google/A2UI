@@ -1,0 +1,48 @@
+<svg width="720" height="325" viewBox="0 0 720 325" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- Your App -->
+  <rect x="40" y="20" width="640" height="54" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+  <text x="360" y="45" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="700" fill="#1D4ED8">Your App</text>
+  <text x="360" y="63" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#60A5FA">iOS App · Android App · HarmonyOS App</text>
+
+  <!-- Arrows: App → SDKs -->
+  <line x1="143" y1="74" x2="143" y2="98" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="360" y1="74" x2="360" y2="98" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="577" y1="74" x2="577" y2="98" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- iOS SDK -->
+  <rect x="40" y="100" width="207" height="73" rx="8" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5"/>
+  <text x="143" y="126" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#15803D">iOS SDK</text>
+  <text x="143" y="144" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#6B7280">Swift + Objective-C++ Bridge</text>
+  <text x="143" y="161" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#A1A1AA">platforms/ios/</text>
+
+  <!-- Android SDK -->
+  <rect x="257" y="100" width="207" height="73" rx="8" fill="#FFF7ED" stroke="#FB923C" stroke-width="1.5"/>
+  <text x="360" y="126" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#C2410C">Android SDK</text>
+  <text x="360" y="144" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#6B7280">Java + JNI Bridge</text>
+  <text x="360" y="161" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#A1A1AA">platforms/android/</text>
+
+  <!-- HarmonyOS SDK -->
+  <rect x="474" y="100" width="206" height="73" rx="8" fill="#FDF4FF" stroke="#C084FC" stroke-width="1.5"/>
+  <text x="577" y="126" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#7E22CE">HarmonyOS SDK</text>
+  <text x="577" y="144" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#6B7280">ArkTS + NAPI Bridge</text>
+  <text x="577" y="161" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#A1A1AA">platforms/harmony/</text>
+
+  <!-- Comb connector to C++ Engine -->
+  <line x1="143" y1="173" x2="143" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+  <line x1="360" y1="173" x2="360" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+  <line x1="577" y1="173" x2="577" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+  <line x1="143" y1="210" x2="577" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+  <line x1="360" y1="210" x2="360" y2="230" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- C++ Engine -->
+  <rect x="40" y="232" width="640" height="72" rx="8" fill="#FEFCE8" stroke="#EAB308" stroke-width="2"/>
+  <text x="360" y="258" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#854D0E">C++ Engine  (engine/)</text>
+  <text x="360" y="277" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#A16207">Parser · Virtual DOM Differ · Yoga Layout · Function Call Dispatch</text>
+  <text x="360" y="294" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#CA8A04">stream/ · surface/ · function_call/ · engine/include/</text>
+</svg>

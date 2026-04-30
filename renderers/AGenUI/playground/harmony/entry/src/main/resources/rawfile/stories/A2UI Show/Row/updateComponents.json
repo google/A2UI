@@ -1,0 +1,37 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "row_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Row",
+        "children": [
+          "text1",
+          "text2",
+          "text3"
+        ],
+        "align": "center",
+        "justify": "center"
+      },
+      {
+        "id": "text1",
+        "component": "Text",
+        "text": "Left",
+        "variant": "body"
+      },
+      {
+        "id": "text2",
+        "component": "Text",
+        "text": "Center",
+        "variant": "body"
+      },
+      {
+        "id": "text3",
+        "component": "Text",
+        "text": "Right",
+        "variant": "body"
+      }
+    ]
+  }
+}

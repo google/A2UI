@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Main content area -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
+
+        <!-- Top toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="?attr/colorPrimary"
+            app:title="@string/playground_title"
+            app:titleTextColor="@color/white"
+            app:menu="@menu/menu_playground"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <!-- Render preview area -->
+        <FrameLayout
+            android:id="@+id/renderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/render_background">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:scrollbars="none">
+
+                <FrameLayout
+                    android:id="@+id/renderContent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/surface_background" />
+
+            </ScrollView>
+
+        </FrameLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <!-- Bottom input area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white">
+
+            <!-- Image preview area -->
+            <HorizontalScrollView
+                android:id="@+id/imagePreviewScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:padding="8dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/imagePreviewContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+            </HorizontalScrollView>
+
+            <!-- Input field and button area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/etQueryInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Enter query..."
+                    android:background="@android:drawable/edit_text"
+                    android:textColor="@color/black"
+                    android:padding="12dp"
+                    android:textSize="14sp"
+                    android:maxLines="3"
+                    android:inputType="textMultiLine"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageButton
+                    android:id="@+id/btnSelectImage"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Select image"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnSendQuery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send"
+                    android:textSize="14sp"
+                    android:minWidth="80dp"
+                    android:backgroundTint="?attr/colorPrimary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <!-- Logs area -->
+        <LinearLayout
+            android:id="@+id/logsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/logs_background">
+
+            <!-- Logs header (clickable to collapse/expand) -->
+            <LinearLayout
+                android:id="@+id/logsHeader"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/logs_collapsed_height"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_medium"
+                android:paddingEnd="@dimen/spacing_medium"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/logs_label"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvLogsToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▼"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <!-- Logs content (hidden by default) -->
+            <ScrollView
+                android:id="@+id/logsScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/logs_expanded_max_height"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/logsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_small">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_no_logs"
+                        android:textSize="@dimen/text_size_caption"
+                        android:textColor="@color/text_hint"
+                        android:gravity="center"
+                        android:padding="@dimen/spacing_medium" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Performance overlay (floating on top) -->
+    <include layout="@layout/layout_performance_overlay" />
+
+    </FrameLayout>
+
+    <!-- Left navigation drawer -->
+    <include layout="@layout/drawer_navigation" />
+
+    <!-- Right editor drawer -->
+    <include
+        android:id="@+id/drawerJsonEditor"
+        layout="@layout/drawer_json_editor" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

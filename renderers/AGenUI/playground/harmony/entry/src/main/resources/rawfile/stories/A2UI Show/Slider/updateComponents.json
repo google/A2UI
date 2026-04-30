@@ -1,0 +1,15 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "slider_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Slider",
+        "value": 50,
+        "min": 0,
+        "max": 100
+      }
+    ]
+  }
+}

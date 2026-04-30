@@ -1,0 +1,46 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "column_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "text1",
+          "text2",
+          "text3"
+        ],
+        "justify": "center",
+        "align": "center"
+      },
+      {
+        "id": "text1",
+        "component": "Text",
+        "text": "First Row",
+        "variant": "body",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "text2",
+        "component": "Text",
+        "text": "Second Row",
+        "variant": "body",
+        "styles": {
+          "text-align": "center"
+        }
+      },
+      {
+        "id": "text3",
+        "component": "Text",
+        "text": "Third Row",
+        "variant": "body",
+        "styles": {
+          "text-align": "center"
+        }
+      }
+    ]
+  }
+}

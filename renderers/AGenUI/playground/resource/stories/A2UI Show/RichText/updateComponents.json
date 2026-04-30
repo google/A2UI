@@ -1,0 +1,16 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "richtext_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "RichText",
+        "text": "<p>This is<strong>rich text</strong>content, supports <em>HTML</em>tags.</p>",
+        "styles": {
+          "fontSize": 40
+        }
+      }
+    ]
+  }
+}

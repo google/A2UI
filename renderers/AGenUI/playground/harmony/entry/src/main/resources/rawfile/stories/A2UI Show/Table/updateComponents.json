@@ -1,0 +1,70 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "table_basic_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": [
+          "title",
+          "table_basic"
+        ],
+        "align": "stretch",
+        "styles": {
+          "padding": "16px"
+        }
+      },
+      {
+        "id": "title",
+        "component": "Text",
+        "text": "Basic Table Example",
+        "variant": "h3",
+        "styles": {
+          "margin-block-end": "16px"
+        }
+      },
+      {
+        "id": "table_basic",
+        "component": "Table",
+        "columns": [
+          "Name",
+          "Age",
+          "City"
+        ],
+        "rows": [
+          [
+            "Alice",
+            "25",
+            "New York"
+          ],
+          [
+            "Bob",
+            "30",
+            "London"
+          ],
+          [
+            "Charlie",
+            "28",
+            "Tokyo"
+          ],
+          [
+            "Diana",
+            "35",
+            "Paris"
+          ],
+          [
+            "Eve",
+            "27",
+            "Berlin"
+          ]
+        ],
+        "styles": {
+          "border-width": "1px",
+          "border-radius": "16px",
+          "border-color": "#E1E4E9"
+        }
+      }
+    ]
+  }
+}

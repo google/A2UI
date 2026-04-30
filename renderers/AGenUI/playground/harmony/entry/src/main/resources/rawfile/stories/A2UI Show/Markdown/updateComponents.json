@@ -1,0 +1,13 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "markdown_demo",
+    "components": [
+      {
+        "id": "root",
+        "component": "Markdown",
+        "content": "# Markdown Title\n\nThis is a **bold** and *italic* text.\n\n- List Item 1\n- List Item 2\n- List Item 3"
+      }
+    ]
+  }
+}

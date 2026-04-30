@@ -1,0 +1,23 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "image_demo",
+    "components": [
+        {
+          "id": "root",
+          "component": "Row",
+          "children": ["image"]
+        },
+      {
+        "id": "image",
+        "component": "Image",
+        "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+        "styles": {
+          "width": "100%",
+          "height": "200px",
+          "border-radius": "12px"
+        }
+      }
+    ]
+  }
+}

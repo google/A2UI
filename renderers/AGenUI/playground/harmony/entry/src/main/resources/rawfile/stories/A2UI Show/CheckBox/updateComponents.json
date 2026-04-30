@@ -1,0 +1,23 @@
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "checkbox_demo",
+    "components": [
+       {
+        "id": "root",
+        "component": "Row",
+        "children": [
+          "checkbox"
+        ],
+        "justify": "center",
+        "align": "center"
+      },
+      {
+        "id": "checkbox",
+        "component": "CheckBox",
+        "label": "Option 1",
+        "value": true
+      }
+    ]
+  }
+}
