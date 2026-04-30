@@ -18,6 +18,15 @@ import { Type } from '@angular/core';
 import { Catalog, ComponentApi } from '@a2ui/web_core/v0_9';
 
 /**
+ * Temporary type used during v0.9 schema alignment to bypass strict type checking.
+ * 
+ * To be removed once all fields conform to the A2UI v0.9 specifications.
+ * @see https://github.com/google/A2UI/issues/1303
+ */
+export type AnyDuringSchemaAlignment = any;
+
+
+/**
  * Extends the generic {@link ComponentApi} to include Angular-specific component metadata.
  */
 export interface AngularComponentImplementation extends ComponentApi {
