@@ -102,6 +102,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -169,6 +170,7 @@ describe('Complex Components', () => {
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('componentId', 'test-choice-picker');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -253,6 +255,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -303,6 +306,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -381,6 +385,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -468,6 +473,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -530,6 +536,7 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {

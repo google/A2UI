@@ -103,6 +103,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -148,6 +149,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -218,6 +220,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -308,6 +311,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -353,6 +357,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {
@@ -408,6 +413,7 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+      fixture.componentRef.setInput('props', {});
     });
 
     it('should create', () => {

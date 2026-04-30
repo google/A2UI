@@ -25,6 +25,15 @@ export interface Child {
   basePath: string;
 }
 
+/** A collection of child components. */
+export interface Children {
+  children: Child[];
+  /** Optional component ID to be used as a template when instantiating the children. */
+  templateId?: string;
+  /** Optional path to the list of children. */
+  path?: string;
+}
+
 /**
  * Binds A2UI ComponentModel properties to reactive Angular Signals.
  *
@@ -84,15 +93,18 @@ export class ComponentBinder {
         });
       } else if (key === 'children') {
         const originalSig = preactSig;
+        const templateId: string | undefined = value.componentId;
+        const path: string | undefined = value.path;
         preactSig = computed(() => {
           const val = originalSig.value;
           const arr = Array.isArray(val) ? val : [];
-          return arr.map(item => {
+          const children: Child[] = arr.map(item => {
             if (typeof item === 'object' && item !== null && 'id' in item) {
               return item;
             }
             return { id: item, basePath: context.dataContext.path };
           });
+          return { templateId, children, path };
         });
       }
 

@@ -42,6 +42,7 @@ describe('TextComponent', () => {
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
+    fixture.componentRef.setInput('props', {});
   });
 
   it('should create', () => {

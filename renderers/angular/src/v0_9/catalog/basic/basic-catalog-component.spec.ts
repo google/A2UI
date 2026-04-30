@@ -61,6 +61,9 @@ describe('BasicCatalogComponent', () => {
 
     fixture = TestBed.createComponent(TestBasicComp);
     rendererService = TestBed.inject(A2uiRendererService);
+    fixture.componentRef.setInput('props', {});
+    fixture.componentRef.setInput('surfaceId', 'test-surface');
+    fixture.componentRef.setInput('componentId', 'test-comp');
     rendererService.processMessages([
       {
         version: 'v0.9',
