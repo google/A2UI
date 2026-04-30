@@ -4,17 +4,27 @@ Renderers convert A2UI JSON messages into native UI components for different pla
 
 The [agents](agents.md) are responsible for generating the A2UI messages,
 and the [transports](../concepts/transports.md) are responsible for delivering the messages to the client.
-The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
+The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, render widgets, and route user actions back to the agent.
+
+Let's use the web as an analogy. The A2UI protocol is like HTML. It provides a language and the semantics of the UI model. The agent is like the server that serves HTML to the client. The renderer is like a browser. It talks to the agent, interprets the A2UI protocol, and renders the UI. Just like there are multiple browser engines for HTML, there are multiple different renderers for A2UI.
 
 You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.
 
 ## Maintained Renderers
+
+### Web
 
 | Renderer | Platform | v0.8 | v0.9 | Links |
 |----------|----------|------|------|-------|
 | **React** | Web | ✅ Stable | ❌ | [Code](https://github.com/google/A2UI/tree/main/renderers/react) |
 | **Lit (Web Components)** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
 | **Angular** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
+| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
+
+### Mobile
+
+| Renderer | Platform | v0.8 | v0.9 | Links |
+|----------|----------|------|------|-------|
 | **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
 | **SwiftUI** | iOS/macOS | — | 🚧 Planned Q2 | — |
 | **Jetpack Compose** | Android | — | 🚧 Planned Q2 | — |
@@ -33,14 +43,12 @@ See the **[full ecosystem renderers list](../ecosystem/renderers.md)** for more 
 
 ## How Renderers Work
 
-```
-A2UI JSON → Renderer → Native Components → Your App
-```
+The rendering process typically involves the following steps:
 
-1. **Receive** A2UI messages from the transport
-2. **Parse** the JSON and validate against the schema
-3. **Render** using platform-native components
-4. **Style** according to your app's theme
+1. **Receive** A2UI messages from the transport.
+2. **Parse** the JSON and validate against the schema.
+3. **Render** using platform-native components.
+4. **Style** according to your app's theme.
 
 ## Using a Renderer
 
@@ -59,17 +67,17 @@ Want to build a renderer for your platform?
 - Review existing renderers for patterns.
 - Check out our [Renderer Development Guide](../guides/renderer-development.md) for details on implementing a renderer.
 
-### Key requirements:
+A compliant renderer must meet the following key requirements:
 
-- Parse A2UI JSON messages, specifically the adjacency list format
-- Map A2UI components to native widgets
-- Handle data binding, lifecycle events
-- Process a sequence of incremental A2UI messages to build and update the UI
-- Support server initiated updates
-- Support user actions
+- Parse A2UI JSON messages, specifically the adjacency list format.
+- Map A2UI components to native widgets.
+- Handle data binding, lifecycle events.
+- Process a sequence of incremental A2UI messages to build and update the UI.
+- Support server-initiated updates.
+- Support user actions.
 
-### Next Steps
+For more information, see the following resources:
 
-- **[Client Setup Guide](../guides/client-setup.md)**: Integration instructions
-- **[Quickstart](../quickstart.md)**: Try the Lit renderer
-- **[Component Reference](components.md)**: What components to support
+- **[Client Setup Guide](../guides/client-setup.md)**: Integration instructions.
+- **[Quickstart](../quickstart.md)**: Try the Lit renderer.
+- **[Component Reference](components.md)**: What components to support.

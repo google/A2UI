@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/react",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "React renderer for A2UI (Agent-to-User Interface)",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -75,7 +75,7 @@
   "scripts": {
     "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
     "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
-    "build": "tsup && node scripts/postbuild.mjs",
+    "build": "npm run typecheck && tsup && node scripts/postbuild.mjs",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -90,6 +90,7 @@
     "test:demo": "cd a2ui_explorer && vitest run src"
   },
   "dependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it",
     "@a2ui/web_core": "file:../web_core",
     "clsx": "^2.1.0",
     "markdown-it": "^14.0.0",

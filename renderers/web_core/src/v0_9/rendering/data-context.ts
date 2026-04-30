@@ -1,3 +1,4 @@
+// Force rebuild by wireit
 /*
  * Copyright 2025 Google LLC
  *
@@ -223,6 +224,7 @@ export class DataContext {
       const stopper = effect(() => {
         try {
           const args = argsSig.value;
+
           if (abortController) abortController.abort();
           if (innerUnsubscribe) {
             innerUnsubscribe();

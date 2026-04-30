@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+from collections import OrderedDict
 from collections.abc import AsyncIterable
 from typing import Any, Optional, Dict
 
@@ -41,15 +42,13 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response
+from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import (
-    get_a2ui_agent_extension,
-    stream_response_to_parts,
-)
+from a2ui.schema.common_modifiers import remove_strict_validation
+from a2ui.a2a.extension import get_a2ui_agent_extension
+from a2ui.a2a.parts import parse_response_to_parts, stream_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,8 @@ class RestaurantAgent:
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
-    self._parsers = {}
+    self._parsers = OrderedDict()
+    self._max_parsers = 1000  # Max active sessions to keep in memory
 
     for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
@@ -169,7 +169,7 @@ class RestaurantAgent:
   async def stream(
       self, query, session_id, ui_version: Optional[str] = None
   ) -> AsyncIterable[dict[str, Any]]:
-    session_state = {"base_url": self.base_url}
+    session_state = {"base_url": self.base_url, "expression": "{expression}"}
 
     # Determine which runner to use based on whether the a2ui extension is active.
     if ui_version:
@@ -253,10 +253,14 @@ class RestaurantAgent:
                 yield p.text
 
       if selected_catalog:
-        from a2ui.core.parser.streaming import A2uiStreamParser
+        from a2ui.parser.streaming import A2uiStreamParser
 
-        if session_id not in self._parsers:
+        if session_id in self._parsers:
+          self._parsers.move_to_end(session_id)
+        else:
           self._parsers[session_id] = A2uiStreamParser(catalog=selected_catalog)
+          if len(self._parsers) > self._max_parsers:
+            self._parsers.popitem(last=False)
 
         async for part in stream_response_to_parts(
             self._parsers[session_id],
@@ -326,13 +330,16 @@ class RestaurantAgent:
 
       if is_valid:
         logger.info(
-            "--- RestaurantAgent.stream: Response is valid. Task complete"
+            "--- RestaurantAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
+        )
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
         )
 
         yield {
             "is_task_complete": True,
-            "parts": [],
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 

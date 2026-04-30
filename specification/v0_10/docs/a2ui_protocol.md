@@ -19,14 +19,16 @@ A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
 
-The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from a server (Agent). Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from an agent. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the renderer processes each message.
 
-Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
+Communication occurs via a stream of JSON objects. The renderer parses each object as a distinct message and incrementally builds or updates the UI. The agent-to-renderer protocol defines four message types:
 
-- `createSurface`: Signals the client to create a new surface and begin rendering it.
+- `createSurface`: Signals the renderer to create a new surface and begin rendering it.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
+
+End of agent turn is signaled by [transport layer](https://github.com/google/A2UI/tree/main/docs/concepts/transports.md).
 
 ## Changes from previous versions
 
@@ -171,7 +173,7 @@ The envelope defines several message types, and every message streamed by the se
 
 ### `createSurface`
 
-This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
+This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. It is an error to send `createSurface` for a `surfaceId` that already exists without first deleting it. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
 
 **Properties:**
 

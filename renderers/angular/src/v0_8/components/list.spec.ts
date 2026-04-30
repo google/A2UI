@@ -19,9 +19,8 @@ import { List } from './list';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
+import type { ListNode } from '../types';
+import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 @Directive({
@@ -43,7 +42,7 @@ describe('List Component', () => {
   let fixture: ComponentFixture<List>;
   let mockTheme: Theme;
 
-  const mockNode: Types.ListNode = {
+  const mockNode: ListNode = {
     id: 'list-1',
     type: 'List',
     weight: 1,

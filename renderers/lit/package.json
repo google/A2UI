@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/lit",
-  "version": "0.9.0",
+  "version": "0.9.3",
   "description": "A2UI Lit Library",
   "author": "Google",
   "license": "Apache-2.0",
@@ -51,20 +51,12 @@
     "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "npm run serve --watch",
     "test": "wireit",
-    "serve": "wireit"
+    "demo": "cd a2ui_explorer && npm run dev"
   },
   "wireit": {
-    "serve": {
-      "command": "vite dev",
-      "dependencies": [
-        "build"
-      ],
-      "service": true
-    },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js dist/src/v0_9/tests/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js dist/src/v0_9/tests/*.test.js dist/src/v0_9/tests/**/*.test.js",
       "dependencies": [
         "build"
       ]
@@ -101,6 +93,14 @@
     "jsdom": "^25.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
+  },
+  "peerDependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/markdown-it": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",

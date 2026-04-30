@@ -245,9 +245,10 @@ class DataModel {
 ```
 
 **JSON Pointer Implementation Rules**:
-1.  **Auto-typing (Auto-vivification)**: When setting a value at a nested path (e.g., `/a/b/0/c`), create intermediate segments. If the next segment is numeric (`0`), initialize as an Array `[]`, otherwise an Object `{}`.
-2.  **Notification Strategy (Bubble & Cascade)**: Notify exact matches, bubble up to all parent paths, and cascade down to all nested descendant paths.
-3.  **Undefined Handling**: Setting an object key to `undefined` removes the key. Setting an array index to `undefined` preserves length but empties the index (sparse array).
+1.  **A2UI Extension**: A2UI extends JSON Pointer to support **Relative Paths** that do not start with a forward slash `/` (e.g., `name` vs `/name`). These resolve relative to the current evaluation scope.
+2.  **Auto-typing (Auto-vivification)**: When setting a value at a nested path (e.g., `/a/b/0/c`), create intermediate segments. If the next segment is numeric (`0`), initialize as an Array `[]`, otherwise an Object `{}`.
+3.  **Notification Strategy (Bubble & Cascade)**: Notify exact matches, bubble up to all parent paths, and cascade down to all nested descendant paths.
+4.  **Undefined Handling**: Setting an object key to `undefined` removes the key. Setting an array index to `undefined` preserves length but empties the index (sparse array).
 
 **Type Coercion Standards**:
 | Input Type                 | Target Type | Result                                                                  |
@@ -317,6 +318,7 @@ When a surface is created with `sendDataModel: true`, the client is responsible 
 3.  The **Transport Layer** (e.g., A2A, MCP) calls `getClientDataModel()` before sending any message to the server.
 4.  If a non-empty data model map is returned, it is included in the transport's metadata field (e.g., `a2uiClientDataModel` in A2A metadata).
 
+*   **Surface Lifecycle**: It is an error to receive a `createSurface` message for a `surfaceId` that is already active. The processor MUST throw an error or report a validation failure if this occurs.
 *   **Component Lifecycle**: If an `updateComponents` message provides an existing `id` but a *different* `type`, the processor MUST remove the old component and create a fresh one to ensure framework renderers correctly reset their internal state.
 
 #### Generating Client Capabilities and Schema Types

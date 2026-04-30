@@ -14,37 +14,45 @@
  * limitations under the License.
  */
 
-import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
+import { A2uiRendererService } from '@a2ui/angular/v0_9';
 import * as Types from '@a2ui/web_core/types/types';
 import { inject, Injectable, signal } from '@angular/core';
+import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
-  private processor = inject(MessageProcessor);
+  private readonly renderer = inject(A2uiRendererService);
+  private contextId?: string;
 
   readonly isLoading = signal(false);
 
-  constructor() {
-    this.processor.events.subscribe(async (event) => {
-      try {
-        const messages = await this.makeRequest(event.message);
-        event.completion.next(messages);
-        event.completion.complete();
-      } catch (err) {
-        event.completion.error(err);
-      }
-    });
+  async handleAction(userAction: A2uiClientAction) {
+    try {
+      const messages = await this.makeRequest({userAction});
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async makeRequest(request: Types.A2UIClientEventMessage | string): Promise<Types.ServerToClientMessage[]> {
     let messages: Types.ServerToClientMessage[] = [];
     try {
       this.isLoading.set(true);
-      // Clear surfaces at the start of a new request
-      this.processor.clearSurfaces();
+
+      // Clear existing surfaces on interaction
+      const surfaceGroup = this.renderer.surfaceGroup;
+      for (const surfaceId of Array.from(surfaceGroup.surfacesMap.keys())) {
+        surfaceGroup.deleteSurface(surfaceId);
+      }
+
+      const isString = typeof request === 'string';
+      const bodyData = isString
+        ? { query: request, contextId: this.contextId }
+        : { event: request, contextId: this.contextId };
 
       const response = await fetch('/a2a', {
-        body: JSON.stringify(request as Types.A2UIClientEventMessage),
+        body: JSON.stringify(bodyData),
         method: 'POST',
       });
 
@@ -96,18 +104,22 @@ export class Client {
         if (line.startsWith('data: ')) {
           const jsonStr = line.slice(6);
           try {
-            const data = JSON.parse(jsonStr) as A2AServerPayload;
-            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, data);
+            const responseData = JSON.parse(jsonStr);
+            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, responseData);
 
-            if ('error' in data) {
-              throw new Error(data.error);
+            if (responseData.error) {
+              throw new Error(responseData.error);
             } else {
+              if (responseData.contextId) {
+                this.contextId = responseData.contextId;
+              }
+              const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
               console.log(
-                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${data.length} parts`
+                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${parts.length} parts`
               );
               // Use a microtask to ensure we don't block the stream reader
               await Promise.resolve();
-              const newMessages = this.processParts(data as any[]);
+              const newMessages = this.processParts(parts);
               messages.push(...newMessages);
             }
           } catch (e) {
@@ -122,45 +134,32 @@ export class Client {
     response: Response,
     messages: Types.ServerToClientMessage[]
   ): Promise<void> {
-    const data = (await response.json()) as any[];
-    console.log(`[client] Received JSON response:`, data);
-    const newMessages = this.processParts(data);
+    const responseData = await response.json();
+    console.log(`[client] Received JSON response:`, responseData);
+
+    if (responseData.contextId) {
+      this.contextId = responseData.contextId;
+    }
+    const parts = responseData.parts || (Array.isArray(responseData) ? responseData : []);
+    const newMessages = this.processParts(parts);
     messages.push(...newMessages);
   }
 
   private processParts(parts: any[]): Types.ServerToClientMessage[] {
     const messages: Types.ServerToClientMessage[] = [];
     for (const item of parts) {
+      if (item.kind === 'text') continue;
       if (item.data) {
-        messages.push(item.data);
-      } else if (item.kind === 'text' || item.text) {
-        const text = item.text || '';
-        const match = text.match(/<a2ui-json>(.*?)<\/a2ui-json>/s);
-        if (match) {
-          try {
-            const parsed = JSON.parse(match[1]);
-            const commands = Array.isArray(parsed) ? parsed : [parsed];
-            for (const cmd of commands) {
-              if (this.isValidA2uiCommand(cmd)) {
-                messages.push(cmd);
-              } else {
-                console.warn('[client] Ignored invalid A2UI command from text:', cmd);
-              }
-            }
-          } catch (e) {
-            console.error('Failed to parse a2ui-json from text:', e);
-          }
+        if (Array.isArray(item.data)) {
+          messages.push(...item.data);
+        } else {
+          messages.push(item.data);
         }
       }
     }
     if (messages.length > 0) {
-      console.log(`[client] Processing ${messages.length} A2UI commands:`, messages);
-      this.processor.processMessages(messages);
+      this.renderer.processMessages(messages as unknown as A2uiMessage[]);
     }
     return messages;
-  }
-
-  private isValidA2uiCommand(cmd: any): boolean {
-    return !!(cmd.surfaceUpdate || cmd.dataModelUpdate || cmd.beginRendering || cmd.deleteSurface);
   }
 }

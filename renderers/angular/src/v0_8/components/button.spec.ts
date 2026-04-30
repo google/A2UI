@@ -20,8 +20,8 @@ import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input } from '@angular/core';
+import type { Action, ButtonNode, A2UIClientEventMessage } from '../types';
+import { Directive, Input } from '@angular/core';
 
 // Mock Renderer directive to avoid full tree rendering issues for isolated unit tests
 @Directive({
@@ -39,12 +39,12 @@ describe('Button Component', () => {
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
   let mockTheme: Theme;
 
-  const mockAction: Types.Action = {
+  const mockAction: Action = {
     name: 'testAction',
     context: [],
   };
 
-  const mockButtonNode: Types.ButtonNode = {
+  const mockButtonNode: ButtonNode = {
     id: 'btn-1',
     type: 'Button',
     weight: 1,
@@ -109,8 +109,7 @@ describe('Button Component', () => {
     buttonEl.click();
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent()
-      .args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('testAction');
     expect(message.userAction!.sourceComponentId).toBe('btn-1');
   });

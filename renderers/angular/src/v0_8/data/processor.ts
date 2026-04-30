@@ -18,11 +18,11 @@ import { Injectable, signal } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import * as WebCore from '@a2ui/web_core/v0_8';
 
-import { Types } from '../types';
+import type { A2UIClientEventMessage, AnyComponentNode, ServerToClientMessage } from '../types';
 
 export interface A2UIClientEvent {
-  message: Types.A2UIClientEventMessage;
-  completion: Subject<Types.ServerToClientMessage[]>;
+  message: A2UIClientEventMessage;
+  completion: Subject<ServerToClientMessage[]>;
 }
 
 export type DispatchedEvent = A2UIClientEvent;
@@ -35,8 +35,8 @@ export class MessageProcessor {
 
   private readonly eventsSubject = new Subject<A2UIClientEvent>();
   readonly events: Observable<A2UIClientEvent> = this.eventsSubject.asObservable();
-  // Signal to track the version of the data in the MessageProcessor. Since the base processor updates 
-  // surfaces in-place (mutating the Map), we use this to force Angular's change detection to 
+  // Signal to track the version of the data in the MessageProcessor. Since the base processor updates
+  // surfaces in-place (mutating the Map), we use this to force Angular's change detection to
   // re-evaluate any components or effects that depend on getSurfaces().
   private readonly versionSignal = signal(0);
   readonly version = this.versionSignal.asReadonly();
@@ -53,14 +53,14 @@ export class MessageProcessor {
     this.versionSignal.update((v) => v + 1);
   }
 
-  processMessages(messages: Types.ServerToClientMessage[]) {
+  processMessages(messages: ServerToClientMessage[]) {
     this.baseProcessor.processMessages(messages as WebCore.ServerToClientMessage[]);
     this.notify();
   }
 
-  dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
-    const completion = new Subject<Types.ServerToClientMessage[]>();
-    const promise = new Promise<Types.ServerToClientMessage[]>((resolve, reject) => {
+  dispatch(message: A2UIClientEventMessage): Promise<ServerToClientMessage[]> {
+    const completion = new Subject<ServerToClientMessage[]>();
+    const promise = new Promise<ServerToClientMessage[]>((resolve, reject) => {
       completion.subscribe({
         next: (msgs) => resolve(msgs),
         error: (err) => reject(err),
@@ -71,7 +71,7 @@ export class MessageProcessor {
     return promise;
   }
 
-  getData(node: Types.AnyComponentNode, path: string, surfaceId?: string | null): unknown {
+  getData(node: AnyComponentNode, path: string, surfaceId?: string | null): unknown {
     return this.baseProcessor.getData(
       node as WebCore.AnyComponentNode,
       path,
@@ -79,7 +79,7 @@ export class MessageProcessor {
     );
   }
 
-  setData(node: Types.AnyComponentNode | null, path: string, value: any, surfaceId: string) {
+  setData(node: AnyComponentNode | null, path: string, value: any, surfaceId: string) {
     this.baseProcessor.setData(node as WebCore.AnyComponentNode | null, path, value, surfaceId);
     this.notify();
   }
@@ -90,7 +90,14 @@ export class MessageProcessor {
 
   getSurfaces(): ReadonlyMap<string, WebCore.Surface> {
     this.versionSignal(); // Track dependency
-    return this.baseProcessor.getSurfaces();
+    const allSurfaces = this.baseProcessor.getSurfaces();
+    const readySurfaces = new Map<string, WebCore.Surface>();
+    for (const [id, surface] of allSurfaces.entries()) {
+      if (surface.rootComponentId != null) {
+        readySurfaces.set(id, surface);
+      }
+    }
+    return readySurfaces;
   }
 
   clearSurfaces() {

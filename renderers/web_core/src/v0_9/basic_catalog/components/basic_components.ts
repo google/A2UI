@@ -283,6 +283,10 @@ export const ListApi = {
         .default('stretch')
         .describe('Defines the alignment of children along the cross axis.')
         .optional(),
+      listStyle: z
+        .enum(['ordered', 'unordered', 'none'])
+        .describe('The style of the list (ordered, unordered, or none).')
+        .optional(),
     })
     .strict(),
 } satisfies ComponentApi;
@@ -480,6 +484,10 @@ export const SliderApi = {
         .describe('The minimum value of the slider.')
         .optional(),
       max: z.number().describe('The maximum value of the slider.'),
+      step: z
+        .number()
+        .describe('The granularity or step size of the slider.')
+        .optional(),
       value: DynamicNumberSchema.describe('The current value of the slider.'),
       checks: CheckableSchema.shape.checks,
     })

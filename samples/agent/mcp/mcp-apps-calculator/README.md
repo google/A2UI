@@ -2,6 +2,19 @@
 
 A demo of an MCP server exposing a Calculator as an MCP Application Resource.
 
+## Building the Application
+
+The application UI is written in TypeScript and must be built before running the server.
+
+Run this in the `apps/src` directory:
+```bash
+cd apps/src
+npm install
+npm run build
+```
+This will bundle the TypeScript code and generate the self-contained `apps/public/calculator.html` file.
+
+
 ## Usage
 
 1. Start the server using either stdio (default) or SSE transport:

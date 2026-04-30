@@ -36,16 +36,16 @@ export class A2aService implements A2aServiceInterface {
             "supportedCatalogIds": currentCatalogUris
           }
         },
-        'context_id': this.contextId
+        'contextId': this.contextId
       }),
       method: 'POST',
       signal,
     });
 
     if (response.ok) {
-      const json = await response.json() as SendMessageSuccessResponse & { context_id?: string };
-      if (json.context_id) {
-        this.contextId = json.context_id;
+      const json = await response.json() as SendMessageSuccessResponse & { contextId?: string };
+      if (json.contextId || json.result?.contextId) {
+        this.contextId = json.contextId || json.result?.contextId;
       }
       return json;
     }

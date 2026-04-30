@@ -18,6 +18,7 @@
 
 import { CopilotKitProvider } from "@copilotkit/react-core/v2";
 import { WidgetsProvider } from "@/contexts/widgets-context";
+import { SpecVersionProvider } from "@/contexts/spec-version-context";
 import { Sidebar } from "./sidebar";
 
 interface AppShellProps {
@@ -27,9 +28,10 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   return (
     <CopilotKitProvider runtimeUrl="/api/copilotkit" showDevConsole="auto">
+      <SpecVersionProvider>
       <WidgetsProvider>
         <div className="relative flex h-screen overflow-hidden bg-palette-surface-main p-2">
-          {/* Background blur circles - Glassy effect from dojo */}
+          {/* Background blur circles - Glassy effect from theater */}
           {/* Ellipse 1351 - Orange glow top right */}
           <div
             className="absolute w-[445.84px] h-[445.84px] left-[1040px] top-[11px] rounded-full z-0 pointer-events-none"
@@ -83,6 +85,7 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </div>
       </WidgetsProvider>
+      </SpecVersionProvider>
     </CopilotKitProvider>
   );
 }

@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import type { ResolvedTextField, StringValue, TextFieldNode } from '../types';
 
 @Component({
   selector: 'a2ui-text-field',
@@ -41,10 +41,10 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextField extends DynamicComponent<Types.TextFieldNode> {
-  readonly label = input.required<Types.StringValue | null>();
-  readonly text = input<Types.StringValue | null>(null);
-  readonly textFieldType = input<Types.ResolvedTextField['textFieldType']>('shortText');
+export class TextField extends DynamicComponent<TextFieldNode> {
+  readonly label = input.required<StringValue | null>();
+  readonly text = input<StringValue | null>(null);
+  readonly textFieldType = input<ResolvedTextField['textFieldType']>('shortText');
 
   protected readonly inputId = super.getUniqueId('a2ui-text-field');
 
@@ -67,13 +67,18 @@ export class TextField extends DynamicComponent<Types.TextFieldNode> {
     const textNode = this.text();
     if (textNode && typeof textNode === 'object' && 'path' in textNode && textNode.path) {
       // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
-      this.processor.processMessages([{
-        dataModelUpdate: {
-          surfaceId: this.surfaceId()!,
-          path: this.processor.resolvePath(textNode.path as string, this.component().dataContextPath),
-          contents: [{ key: '.', valueString: value }],
+      this.processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: this.surfaceId()!,
+            path: this.processor.resolvePath(
+              textNode.path as string,
+              this.component().dataContextPath,
+            ),
+            contents: [{ key: '.', valueString: value }],
+          },
         },
-      }]);
+      ]);
     } else {
       this.handleAction('input', { value });
     }

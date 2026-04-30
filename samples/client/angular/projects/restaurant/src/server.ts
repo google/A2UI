@@ -30,7 +30,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 let client: A2AClient | null = null;
-const enableStreaming = process.env['ENABLE_STREAMING'] === 'true';
+const enableStreaming = process.env['ENABLE_STREAMING'] !== 'false';
 
 app.use(
   express.static(browserDistFolder, {
@@ -51,25 +51,58 @@ app.post('/a2a', (req, res) => {
     let sendParams: MessageSendParams;
 
     if (isJson(originalBody)) {
-      console.log('[a2a-middleware] Received JSON UI event:', originalBody);
+      const requestData = JSON.parse(originalBody);
+      const contextId = requestData.contextId;
 
-      const clientEvent = JSON.parse(originalBody);
-      sendParams = {
-        message: {
-          messageId: uuidv4(),
-          role: 'user',
-          parts: [
-            {
-              kind: 'data',
-              data: clientEvent,
-              metadata: { 'mimeType': 'application/json+a2ui' },
-            } as Part,
-          ],
-          kind: 'message',
-        },
-      };
+      if (requestData.event) {
+        console.log('[a2a-middleware] Received JSON UI event:', requestData.event);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [
+              {
+                kind: 'data',
+                data: requestData.event,
+                metadata: { 'mimeType': 'application/json+a2ui' },
+              } as Part,
+            ],
+            kind: 'message',
+          },
+        };
+      } else if (requestData.query) {
+        console.log('[a2a-middleware] Received text query:', requestData.query);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [{ kind: 'text', text: requestData.query }],
+            kind: 'message',
+          },
+        };
+      } else {
+        // Fallback for legacy JSON event
+        console.log('[a2a-middleware] Received legacy JSON event:', originalBody);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [
+              {
+                kind: 'data',
+                data: requestData,
+                metadata: { 'mimeType': 'application/json+a2ui' },
+              } as Part,
+            ],
+            kind: 'message',
+          },
+        };
+      }
     } else {
-      console.log('[a2a-middleware] Received text query:', originalBody);
+      console.log('[a2a-middleware] Received plain text query:', originalBody);
       sendParams = {
         message: {
           messageId: uuidv4(),
@@ -80,9 +113,8 @@ app.post('/a2a', (req, res) => {
       };
     }
 
-    const client = await createOrGetClient();
-
     try {
+      const client = await createOrGetClient();
       if (enableStreaming) {
         await handleStreamingResponse(client, sendParams, res);
       } else {
@@ -122,7 +154,11 @@ async function handleStreamingResponse(client: A2AClient, sendParams: MessageSen
     if (parts.length > 0) {
       console.log(`[server] Streaming ${parts.length} parts to client`);
       console.log(`[server] Streaming parts: ${JSON.stringify(parts)}`);
-      res.write(`data: ${JSON.stringify(parts)}\n\n`);
+      const responseData = {
+        parts,
+        contextId: (event as any).contextId || (event as any).status?.message?.contextId
+      };
+      res.write(`data: ${JSON.stringify(responseData)}\n\n`);
     }
   }
   res.end();
@@ -141,7 +177,10 @@ async function handleNonStreamingResponse(client: A2AClient, sendParams: Message
   }
 
   const result = (response as SendMessageSuccessResponse).result as Task;
-  res.json(result.kind === 'task' ? result.status.message?.parts || [] : []);
+  res.json({
+    parts: result.kind === 'task' ? result.status.message?.parts || [] : [],
+    contextId: result.contextId
+  });
 }
 
 app.use((req, res, next) => {
@@ -164,7 +203,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
-  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.8');
+  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.9');
   const newInit = { ...init, headers };
   return fetch(url, newInit);
 }

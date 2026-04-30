@@ -19,9 +19,8 @@ import { Column } from './column';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
+import type { ColumnNode } from '../types';
+import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
   selector: '[a2ui-renderer]',
@@ -37,14 +36,12 @@ class MockRenderer {
   }
 }
 
-import { By } from '@angular/platform-browser';
-
 describe('Column Component', () => {
   let component: Column;
   let fixture: ComponentFixture<Column>;
   let mockTheme: Theme;
 
-  const mockNode: Types.ColumnNode = {
+  const mockNode: ColumnNode = {
     id: 'col-1',
     type: 'Column',
     weight: 1,

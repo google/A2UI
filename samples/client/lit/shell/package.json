@@ -1,8 +1,8 @@
 {
   "name": "@a2ui/shell",
   "private": true,
-  "version": "0.8.1",
-  "description": "A2UI Universal Shell",
+  "version": "0.9.0",
+  "description": "A2UI Universal Shell (Protocol v0.9)",
   "main": "./dist/shell.js",
   "types": "./dist/shell.d.ts",
   "type": "module",
@@ -13,7 +13,6 @@
     "dev": "npm run serve --watch",
     "test": "wireit",
     "serve": "wireit",
-    "demo:contact": "(cd ../../../agent/adk/contact_lookup && uv run .)",
     "demo:restaurant": "(cd ../../../agent/adk/restaurant_finder && uv run .)"
   },
   "wireit": {
@@ -79,6 +78,7 @@
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
     "@a2ui/lit": "file:../../../../renderers/lit",
+    "@a2ui/web_core": "file:../../../../renderers/web_core",
     "@a2ui/markdown-it": "file:../../../../renderers/markdown/markdown-it",
     "@google/genai": "^1.22.0",
     "@lit-labs/signals": "^0.1.3",

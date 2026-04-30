@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import type { AudioPlayerNode, StringValue } from '../types';
 
 @Component({
   selector: 'a2ui-audio',
@@ -33,7 +33,7 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AudioPlayer extends DynamicComponent<Types.AudioPlayerNode> {
-  readonly url = input.required<Types.StringValue | null>();
+export class AudioPlayer extends DynamicComponent<AudioPlayerNode> {
+  readonly url = input.required<StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular
@@ -43,9 +43,9 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm run build:renderer
 
-      - name: Build contact sample
-        working-directory: ./samples/client/angular
-        run: npm run build contact
+      - name: Test Angular renderer
+        working-directory: ./renderers/angular
+        run: npm run test:ci
 
       - name: Build restaurant sample
         working-directory: ./samples/client/angular

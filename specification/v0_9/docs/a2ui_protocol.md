@@ -176,7 +176,7 @@ The envelope defines four primary message types, and every message streamed by t
 
 ### `createSurface`
 
-This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
+This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. It is an error to send `createSurface` for a `surfaceId` that already exists without first deleting it. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
 
 **Properties:**
 
@@ -391,6 +391,9 @@ This section describes how UI components **represent** and reference data from t
 ### Path resolution & scope
 
 Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
+
+> [!NOTE]
+> A2UI extends JSON Pointer to support **Relative Paths** that do not start with a forward slash `/`. This is a deviation from strict RFC 6901 to support template-based list rendering.
 
 > **Note on progressive rendering:** During the initial streaming phase, data paths may resolve to `undefined` if the `updateDataModel` message containing that data has not yet arrived. Renderers should handle `undefined` values gracefully (e.g., by treating them as empty strings or showing a loading indicator) to support progressive rendering.
 

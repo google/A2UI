@@ -31,9 +31,9 @@ standardized agent communication.  An A2A extension provides easy integration wi
 
 **Benefits:**
 
-- Security and authentication built-in
-- Bindings for many message formats, auth, and transport protocols
-- Clean separation of concerns
+- Security and authentication built-in.
+- Bindings for many message formats, auth, and transport protocols.
+- Clean separation of concerns.
 
 If you are using A2A, this should be nearly automatic.
 
@@ -43,11 +43,9 @@ TODO: Add a detailed guide.
 
 ## AG UI
 
-[AG UI](https://ag-ui.com/) translates from A2UI messages to AG UI messages, and handles transport and state sync automatically.
+[AG UI](https://ag-ui.com/) translates A2UI messages to AG UI events and handles transport and state sync automatically. It is the recommended transport for React / Next.js clients.
 
-If you are using AG UI, this should be automatic.
-
-TODO: Add a detailed guide.
+**See:** [Use A2UI with Any Agent Framework (Using AG-UI)](../guides/a2ui-with-any-agent-framework.md) — guide to setting up CopilotKit with your agent framework of choice and enabling A2UI rendering.
 
 ## Custom Transports
 

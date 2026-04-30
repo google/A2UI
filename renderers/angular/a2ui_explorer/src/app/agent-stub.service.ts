@@ -118,7 +118,7 @@ export class AgentStubService {
    */
   initializeDemo(initialMessages: A2uiMessage[]) {
     // Before replaying initial messages (which contains createSurface),
-    // ensure any existing surface with the same ID is cleared.
+    // this ensures any existing surface with the same ID is cleared.
     if (this.rendererService.surfaceGroup) {
       for (const msg of initialMessages) {
         if ('createSurface' in msg) {

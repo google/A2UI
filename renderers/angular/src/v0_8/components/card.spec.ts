@@ -19,9 +19,8 @@ import { Card } from './card';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
+import type { CardNode } from '../types';
+import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
   selector: '[a2ui-renderer]',
@@ -37,14 +36,12 @@ class MockRenderer {
   }
 }
 
-import { By } from '@angular/platform-browser';
-
 describe('Card Component', () => {
   let component: Card;
   let fixture: ComponentFixture<Card>;
   let mockTheme: Theme;
 
-  const mockNode: Types.CardNode = {
+  const mockNode: CardNode = {
     id: 'card-1',
     type: 'Card',
     weight: 1,

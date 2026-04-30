@@ -38,7 +38,12 @@ import kotlinx.serialization.json.jsonPrimitive
  *
  * @param catalog The localized contextual A2UI catalog utilized for schema validation.
  */
-class A2uiValidator(private val catalog: A2uiCatalog) {
+class A2uiValidator
+@JvmOverloads
+constructor(
+  private val catalog: A2uiCatalog,
+  private val schemaMappings: Map<String, String> = emptyMap(),
+) {
   private val validator: JsonSchema = buildValidator()
   private val mapper = ObjectMapper()
 
@@ -123,6 +128,7 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
     val factory =
       JsonSchemaFactory.builder(JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012))
         .schemaMappers { schemaMappers ->
+          schemaMappings.forEach { (prefix, target) -> schemaMappers.mapPrefix(prefix, target) }
           schemaMappers.mapPrefix(FILE_COMMON_TYPES, commonTypesUri)
         }
         .build()
@@ -139,6 +145,9 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
     val config = SchemaValidatorsConfig.builder().build()
     val factory =
       JsonSchemaFactory.builder(JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012))
+        .schemaMappers { schemaMappers ->
+          schemaMappings.forEach { (prefix, target) -> schemaMappers.mapPrefix(prefix, target) }
+        }
         .build()
 
     val jsonFmt = Json { prettyPrint = false }
@@ -176,12 +185,22 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
     }
 
     // Integrity validation
-    val rootId = findRootId(messages)
-    val topologyValidator = A2uiTopologyValidator(catalog, rootId)
-    val recursionValidator = A2uiRecursionValidator()
+    val surfaceRootIds = calculateSurfaceRootIds(messages)
 
     for (message in messages) {
       if (message !is JsonObject) continue
+
+      val surfaceId =
+        when {
+          MSG_SURFACE_UPDATE in message ->
+            (message[MSG_SURFACE_UPDATE] as? JsonObject)?.get("surfaceId")?.jsonPrimitive?.content
+          MSG_UPDATE_COMPONENTS in message ->
+            (message[MSG_UPDATE_COMPONENTS] as? JsonObject)
+              ?.get("surfaceId")
+              ?.jsonPrimitive
+              ?.content
+          else -> null
+        }
 
       val components =
         when {
@@ -195,27 +214,54 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
           else -> null
         }
 
-      components?.let { topologyValidator.validate(it) }
+      components?.let {
+        val rootId = surfaceRootIds[surfaceId]
+        val topologyValidator = A2uiTopologyValidator(catalog, rootId)
+        topologyValidator.validate(it)
+      }
 
+      val recursionValidator = A2uiRecursionValidator()
       recursionValidator.validate(message)
     }
   }
 
-  private fun findRootId(messages: JsonArray): String {
+  private fun calculateSurfaceRootIds(messages: JsonArray): Map<String, String> {
+    val surfaceRootIds = mutableMapOf<String, String>()
     for (message in messages) {
-      if (message is JsonObject && MSG_BEGIN_RENDERING in message) {
+      if (message !is JsonObject) continue
+
+      if (MSG_BEGIN_RENDERING in message) {
         val beginRendering = message[MSG_BEGIN_RENDERING] as? JsonObject
-        val rootObj = beginRendering?.get(ROOT) as? JsonObject
-        return rootObj?.get(ID)?.jsonPrimitive?.content ?: ROOT
+        val msgSurfaceId = requireNotNull(beginRendering?.get("surfaceId")?.jsonPrimitive?.content) {
+          "surfaceId is required in beginRendering"
+        }
+        if (!surfaceRootIds.containsKey(msgSurfaceId)) {
+          val rootElem = beginRendering?.get(ROOT)
+          val rootId =
+            when (rootElem) {
+              is JsonPrimitive -> rootElem.content
+              is JsonObject -> rootElem[ID]?.jsonPrimitive?.content ?: ROOT
+              else -> ROOT
+            }
+          surfaceRootIds[msgSurfaceId] = rootId
+        }
+      }
+
+      if (MSG_CREATE_SURFACE in message) {
+        val createSurface = message[MSG_CREATE_SURFACE] as? JsonObject
+        val msgSurfaceId = requireNotNull(createSurface?.get("surfaceId")?.jsonPrimitive?.content) {
+          "surfaceId is required in createSurface"
+        }
+        surfaceRootIds.putIfAbsent(msgSurfaceId, ROOT)
       }
     }
-    return ROOT
+    return surfaceRootIds
   }
 
   /** Validates component graph topology, including cycles, orphans, and missing references. */
   private class A2uiTopologyValidator(
     private val catalog: A2uiCatalog,
-    private val rootId: String,
+    private val rootId: String?,
   ) {
 
     fun validate(components: JsonArray) {
@@ -334,7 +380,7 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
         }
       }
 
-      if (rootId !in ids) {
+      if (rootId != null && rootId !in ids) {
         throw IllegalArgumentException("Missing root component: No component has id='$rootId'")
       }
 
@@ -401,12 +447,21 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
         recursionStack.remove(nodeId)
       }
 
-      if (rootId in allIds) dfs(rootId, 0)
+      if (rootId != null) {
+        if (rootId in allIds) dfs(rootId, 0)
 
-      val orphans = allIds - visited
-      if (orphans.isNotEmpty()) {
-        val firstOrphan = orphans.sorted().first()
-        throw IllegalArgumentException("Component '$firstOrphan' is not reachable from '$rootId'")
+        val orphans = allIds - visited
+        if (orphans.isNotEmpty()) {
+          val firstOrphan = orphans.sorted().first()
+          throw IllegalArgumentException("Component '$firstOrphan' is not reachable from '$rootId'")
+        }
+      } else {
+        // No root provided: traverse everything to check for cycles
+        for (nodeId in allIds.sorted()) {
+          if (nodeId !in visited) {
+            dfs(nodeId, 0)
+          }
+        }
       }
     }
 
@@ -438,10 +493,11 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
       refFieldsMap: Map<String, Pair<Set<String>, Set<String>>>,
     ): Sequence<Pair<String, String>> = sequence {
       val (singleRefs, listRefs) = refFieldsMap[compType] ?: (emptySet<String>() to emptySet())
-
       for ((key, value) in props) {
+        val isSingle = key in singleRefs || key in HEURISTIC_SINGLE_REFS
+        val isList = key in listRefs || key in HEURISTIC_LIST_REFS
         when {
-          key in singleRefs -> {
+          isSingle -> {
             when {
               value is JsonPrimitive && value.isString -> yield(value.content to key)
               value is JsonObject && PROP_COMPONENT_ID in value -> {
@@ -451,7 +507,7 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
               }
             }
           }
-          key in listRefs -> {
+          isList -> {
             when (value) {
               is JsonArray -> {
                 for (item in value) {
@@ -551,6 +607,11 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
     private const val MSG_SURFACE_UPDATE = "surfaceUpdate"
     private const val MSG_UPDATE_COMPONENTS = "updateComponents"
     private const val MSG_BEGIN_RENDERING = "beginRendering"
+    private const val MSG_CREATE_SURFACE = "createSurface"
+
+    private val HEURISTIC_SINGLE_REFS =
+      setOf("child", "contentChild", "entryPointChild", "detail", "summary", "root")
+    private val HEURISTIC_LIST_REFS = setOf("children", "explicitList", "template")
 
     // JSON Schema standard keys
     private const val KEY_DOLLAR_SCHEMA = "\$schema"

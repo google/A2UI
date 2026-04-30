@@ -17,7 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
-import { Types } from '../types';
+import type { ImageNode, ResolvedImage } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -49,10 +49,10 @@ import { DynamicComponent } from '../rendering/dynamic-component';
     }
   `,
 })
-export class Image extends DynamicComponent<Types.ImageNode> {
+export class Image extends DynamicComponent<ImageNode> {
   readonly url = input<Primitives.StringValue | null>(null);
-  readonly usageHint = input<Types.ResolvedImage['usageHint'] | null>(null);
-  readonly fit = input<Types.ResolvedImage['fit'] | null>(null);
+  readonly usageHint = input<ResolvedImage['usageHint'] | null>(null);
+  readonly fit = input<ResolvedImage['fit'] | null>(null);
   readonly altText = input<Primitives.StringValue | null>(null);
 
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));

@@ -41,6 +41,7 @@
           "options": {
             "browser": "a2ui_explorer/src/main.ts",
             "tsConfig": "a2ui_explorer/tsconfig.app.json",
+            "preserveSymlinks": false,
             "assets": [
               {
                 "glob": "**/*",

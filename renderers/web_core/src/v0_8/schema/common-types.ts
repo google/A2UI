@@ -304,7 +304,7 @@ export const CheckboxSchema = z.object({
 export const TextFieldSchema = z.object({
   text: StringValueSchema.optional(),
   label: StringValueSchema.describe("A label, title, or placeholder text."),
-  textFieldType: z.enum(["shortText", "number", "date", "longText"]).optional(),
+  textFieldType: z.enum(["shortText", "number", "date", "longText", "obscured"]).optional(),
   validationRegexp: z
     .string()
     .optional()

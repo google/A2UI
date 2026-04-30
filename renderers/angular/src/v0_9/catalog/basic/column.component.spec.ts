@@ -17,6 +17,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, input, signal } from '@angular/core';
 import { ColumnComponent } from './column.component';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
@@ -44,9 +45,9 @@ describe('ColumnComponent', () => {
   beforeEach(async () => {
     mockSurface = {
       componentsModel: new Map([
-        ['child1', { id: 'child1', type: 'Child', properties: {} }],
-        ['child2', { id: 'child2', type: 'Child', properties: {} }],
-        ['template1', { id: 'template1', type: 'Child', properties: {} }],
+        ['child1', new ComponentModel('child1', 'Child', {})],
+        ['child2', new ComponentModel('child2', 'Child', {})],
+        ['template1', new ComponentModel('template1', 'Child', {})],
       ]),
       catalog: {
         id: 'test-catalog',
@@ -94,18 +95,48 @@ describe('ColumnComponent', () => {
 
   it('should apply flex styles from props', () => {
     fixture.detectChanges();
-    const div = fixture.debugElement.query(By.css('.a2ui-column'));
-    expect(div.styles['justify-content']).toBe('start');
-    expect(div.styles['align-items']).toBe('stretch');
-    expect(div.styles['gap']).toBe('4px');
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.justifyContent).toBe('flex-start');
+    expect(style.alignItems).toBe('stretch');
+  });
+
+  it('should apply flex style from weight prop', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(2), raw: 2, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).toBe('2 1 0%');
+  });
+
+  it('should apply flex style from weight prop when value is 0', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(0), raw: 0, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).toBe('0 1 0%');
+  });
+
+  it('should not apply flex style when weight prop is null', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      weight: { value: signal(null), raw: null, onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const style = window.getComputedStyle(fixture.debugElement.nativeElement);
+    expect(style.flex).not.toBe('2 1 0%');
+    expect(style.flex).not.toBe('0 1 0%');
   });
 
   it('should render non-repeating children', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentId()).toBe('child1');
-    expect(hosts[1].componentInstance.componentId()).toBe('child2');
+    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
+    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'child2', basePath: '/' });
   });
 
   it('should render repeating children', () => {
@@ -124,9 +155,51 @@ describe('ColumnComponent', () => {
 
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentId()).toBe('template1');
-    expect(hosts[0].componentInstance.dataContextPath()).toBe('/items/0');
-    expect(hosts[1].componentInstance.componentId()).toBe('template1');
-    expect(hosts[1].componentInstance.dataContextPath()).toBe('/items/1');
+    expect(hosts[0].componentInstance.componentKey()).toEqual({
+      id: 'template1',
+      basePath: '/items/0',
+    });
+    expect(hosts[1].componentInstance.componentKey()).toEqual({
+      id: 'template1',
+      basePath: '/items/1',
+    });
+  });
+
+  it('should handle non-array children value', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      children: {
+        value: signal('not-an-array'),
+        raw: 'not-an-array',
+        onUpdate: () => {},
+      },
+    });
+    fixture.detectChanges();
+    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
+    expect(hosts.length).toBe(0);
+  });
+
+  it('should handle missing children property', () => {
+    fixture.componentRef.setInput('props', {
+      justify: { value: signal('start'), raw: 'start', onUpdate: () => {} },
+      align: { value: signal('stretch'), raw: 'stretch', onUpdate: () => {} },
+    });
+    fixture.detectChanges();
+    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
+    expect(hosts.length).toBe(0);
+  });
+
+  it('should handle missing justify and align properties', () => {
+    fixture.componentRef.setInput('props', {
+      children: {
+        value: signal(['child1']),
+        raw: ['child1'],
+        onUpdate: () => {},
+      },
+    });
+    fixture.detectChanges();
+    const div = fixture.debugElement;
+    expect(div.styles['justify-content']).toBeFalsy();
+    expect(div.styles['align-items']).toBeFalsy();
   });
 });

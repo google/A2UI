@@ -17,24 +17,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextFieldComponent } from './text-field.component';
 import { signal } from '@angular/core';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
+import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '../../core/a2ui-renderer.service';
 import { By } from '@angular/platform-browser';
 
 describe('TextFieldComponent', () => {
   let component: TextFieldComponent;
   let fixture: ComponentFixture<TextFieldComponent>;
-  let mockRendererService: any;
 
   beforeEach(async () => {
-    mockRendererService = {};
-
     await TestBed.configureTestingModule({
       imports: [TextFieldComponent],
-      providers: [{ provide: A2uiRendererService, useValue: mockRendererService }],
+      providers: [
+        A2uiRendererService,
+        { provide: A2UI_RENDERER_CONFIG, useValue: { catalogs: [] } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextFieldComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
       label: { value: signal('Username'), raw: 'Username', onUpdate: () => {} },
       value: {
@@ -97,6 +98,49 @@ describe('TextFieldComponent', () => {
     input.nativeElement.value = 'newuser';
     input.triggerEventHandler('input', { target: input.nativeElement });
 
-    expect(component.props()['value'].onUpdate).toHaveBeenCalledWith('newuser');
+    expect(component.props()['value']!.onUpdate).toHaveBeenCalledWith('newuser');
+  });
+
+  it('should show error messages when checks fail', async () => {
+    const isValidSig = signal(true);
+    const errorsSig = signal<string[]>([]);
+
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      isValid: { value: isValidSig, raw: true, onUpdate: () => {} },
+      validationErrors: { value: errorsSig, raw: [], onUpdate: () => {} },
+    });
+
+    fixture.detectChanges();
+
+    const errorMsgBefore = fixture.debugElement.query(By.css('.a2ui-error-message'));
+    expect(errorMsgBefore).toBeFalsy();
+
+    isValidSig.set(false);
+    errorsSig.set(['Value is required']);
+    fixture.detectChanges();
+
+    const errorMsgAfter = fixture.debugElement.query(By.css('.a2ui-error-message'));
+    expect(errorMsgAfter).toBeTruthy();
+    expect(errorMsgAfter.nativeElement.textContent).toContain('Value is required');
+  });
+
+  it('should handle multiple error messages', () => {
+    fixture.componentRef.setInput('props', {
+      ...component.props(),
+      isValid: { value: signal(false), raw: false, onUpdate: () => {} },
+      validationErrors: {
+        value: signal(['Error 1', 'Error 2']),
+        raw: ['Error 1', 'Error 2'],
+        onUpdate: () => {},
+      },
+    });
+
+    fixture.detectChanges();
+
+    const errorMsgs = fixture.debugElement.queryAll(By.css('.a2ui-error-message'));
+    expect(errorMsgs.length).toBe(2);
+    expect(errorMsgs[0].nativeElement.textContent).toContain('Error 1');
+    expect(errorMsgs[1].nativeElement.textContent).toContain('Error 2');
   });
 });

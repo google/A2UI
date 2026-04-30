@@ -50,6 +50,7 @@ dependencies {
 
   testImplementation(kotlin("test"))
   testImplementation("io.mockk:mockk:1.13.11")
+  testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2")
 }
 
 tasks.test {
@@ -88,12 +89,12 @@ sourceSets {
 }
 
 fun findRepoRoot(): File {
-  var currentDir = project.projectDir
+  var currentDir: File? = project.projectDir
   while (currentDir != null) {
-    if (File(currentDir, ".git").exists()) {
+    if (File(currentDir, "specification").isDirectory) {
       return currentDir
     }
     currentDir = currentDir.parentFile
   }
-  throw GradleException("Could not find repository root.")
+  throw GradleException("Could not find repository root containing specification directory.")
 }
