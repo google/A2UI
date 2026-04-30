@@ -43,7 +43,8 @@ TEST(CatalogTest, LoadCatalog) {
     fs::path repo_root = find_repo_root();
     ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
     
-    fs::path catalog_path = repo_root / "agent_sdks" / "conformance" / "simplified_catalog_v08.json";
+    fs::path catalog_path = repo_root / "agent_sdks" / "conformance" / "test_data" / "simplified_catalog_v08.json";
+
     
     a2ui::CatalogConfig config = a2ui::CatalogConfig::from_path("test_catalog", catalog_path.string());
     nlohmann::json schema = config.provider->load();
@@ -61,6 +62,21 @@ TEST(CatalogTest, ResolveExamplesPath) {
     EXPECT_THROW(a2ui::resolve_examples_path("http://example.com"), std::runtime_error);
 }
 
+TEST(CatalogTest, LoadExamplesWithSpecialChars) {
+    fs::path repo_root = find_repo_root();
+    ASSERT_FALSE(repo_root.empty()) << "Could not find repo root";
+    
+    a2ui::A2uiCatalog catalog("0.9", "test", nlohmann::json::object(), nlohmann::json::object(), nlohmann::json::object());
+    
+    EXPECT_NO_THROW(catalog.load_examples((repo_root / "agent_sdks" / "conformance" / "test_data" / "*+.json").string(), false));
+}
+
+TEST(CatalogTest, LoadExamplesInvalidGlobThrows) {
+    a2ui::A2uiCatalog catalog("0.9", "test", nlohmann::json::object(), nlohmann::json::object(), nlohmann::json::object());
+    
+    EXPECT_THROW(catalog.load_examples("[", false), std::runtime_error);
+}
+
 TEST(CatalogTest, BasicCatalogConfig) {
     auto config = a2ui::basic_catalog::BasicCatalog::get_config("0.9");
     EXPECT_EQ(config.name, "basic");
@@ -70,5 +86,3 @@ TEST(CatalogTest, BasicCatalogConfig) {
     EXPECT_TRUE(schema.contains("catalogId"));
     EXPECT_TRUE(schema.contains("components"));
 }
-
-

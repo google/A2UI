@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AudioPlayer } from './audio';
-import { Types } from '../types';
+import type { AudioPlayerNode } from '../types';
 import { Theme } from '../rendering/theming';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { MessageProcessor } from '../data/processor';
@@ -28,7 +28,7 @@ describe('AudioPlayer Component', () => {
   let mockTheme: Theme;
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
 
-  const mockAudioNode: Types.AudioPlayerNode = {
+  const mockAudioNode: AudioPlayerNode = {
     id: 'audio-1',
     type: 'AudioPlayer',
     weight: 1,

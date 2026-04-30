@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DateTimeInput } from './datetime-input';
-import { Types } from '../types';
+import type { A2UIClientEventMessage, DateTimeInputNode } from '../types';
 import { Theme } from '../rendering/theming';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { MessageProcessor } from '../data/processor';
@@ -28,7 +28,7 @@ describe('DateTimeInput Component', () => {
   let mockTheme: Theme;
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
 
-  const mockDatetimeNode: Types.DateTimeInputNode = {
+  const mockDatetimeNode: DateTimeInputNode = {
     id: 'dt-1',
     type: 'DateTimeInput',
     weight: 1,
@@ -114,8 +114,7 @@ describe('DateTimeInput Component', () => {
     inputEl.dispatchEvent(new Event('change'));
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent()
-      .args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('change');
 
     // Verify context

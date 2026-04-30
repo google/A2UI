@@ -75,7 +75,7 @@
   "scripts": {
     "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
     "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
-    "build": "tsup && node scripts/postbuild.mjs",
+    "build": "npm run typecheck && tsup && node scripts/postbuild.mjs",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -208,13 +208,13 @@ describe('Complex Components', () => {
       fixture.detectChanges();
       const inputs = fixture.nativeElement.querySelectorAll('input');
       inputs[1].click();
-      expect(onUpdateSpy).toHaveBeenCalledWith('2');
+      expect(onUpdateSpy).toHaveBeenCalledWith(['2']);
     });
 
     it('should render chips and toggle selection', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
       fixture.componentRef.setInput('props', {
-        choices: createBoundProperty([
+        options: createBoundProperty([
           { label: 'Chip 1', value: 'c1' },
           { label: 'Chip 2', value: 'c2' },
         ]),
@@ -443,7 +443,7 @@ describe('Complex Components', () => {
     it('should apply horizontal orientation class', () => {
       fixture.componentRef.setInput('props', {
         children: createBoundProperty(['child-1']),
-        orientation: createBoundProperty('horizontal'),
+        direction: createBoundProperty('horizontal'),
       });
       fixture.detectChanges();
       const list = fixture.nativeElement.querySelector('.a2ui-list');

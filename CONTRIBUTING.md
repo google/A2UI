@@ -59,3 +59,6 @@ Please refer to the following guidelines for detailed information on:
 
 We expect all contributors to adhere to these styles.
 
+## Internal information
+
+For Google-internal information see go/a2ui-internal.

@@ -19,7 +19,7 @@ import { Card } from './card';
 import { MessageProcessor } from '../data/processor';
 import { Theme } from '../rendering/theming';
 import { Catalog } from '../rendering/catalog';
-import { Types } from '../types';
+import type { CardNode } from '../types';
 import { Directive, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Directive({
@@ -41,7 +41,7 @@ describe('Card Component', () => {
   let fixture: ComponentFixture<Card>;
   let mockTheme: Theme;
 
-  const mockNode: Types.CardNode = {
+  const mockNode: CardNode = {
     id: 'card-1',
     type: 'Card',
     weight: 1,

@@ -346,5 +346,5 @@ See the full [Agent Development Guide](agent-development.md) for details on sche
 
 - [A2UI Specification](../specification/v0.9-a2ui.md) — full protocol reference
 - [Component Gallery](../reference/components.md) — browse available components
-- [MCP Apps in A2UI Surface](mcp-apps-in-a2ui-surface.md) — embed HTML-based MCP apps inside A2UI
+- [MCP Apps in A2UI Surface](mcp-apps-in-a2ui.md) — embed HTML-based MCP apps inside A2UI
 - [Client Setup](client-setup.md) — build a renderer that displays A2UI

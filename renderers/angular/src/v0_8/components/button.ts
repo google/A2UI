@@ -15,7 +15,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Types } from '../types';
+import type { ButtonNode, Action, AnyComponentNode } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -46,9 +46,9 @@ import { Renderer } from '../rendering/renderer';
     }
   `,
 })
-export class Button extends DynamicComponent<Types.ButtonNode> {
-  readonly action = input<Types.Action | null>(null);
-  readonly child = input<Types.AnyComponentNode | null>(null);
+export class Button extends DynamicComponent<ButtonNode> {
+  readonly action = input<Action | null>(null);
+  readonly child = input<AnyComponentNode | null>(null);
   // This is currently not handled by the template.
   readonly primary = input<boolean | null>(false);
 

@@ -15,6 +15,9 @@
  */
 
 import { Signal } from '@angular/core';
+import { z } from 'zod';
+import { ComponentApi, DataBindingSchema, FunctionCallSchema } from '@a2ui/web_core/v0_9';
+import { Child } from './component-binder.service';
 
 /**
  * Represents a component property bound to an Angular Signal and update logic.
@@ -50,3 +53,41 @@ export interface BoundProperty<T = any> {
    */
   readonly onUpdate: (newValue: T) => void;
 }
+
+type DataBindingType = z.infer<typeof DataBindingSchema>;
+type FunctionCallType = z.infer<typeof FunctionCallSchema>;
+type DynamicSchemaValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
+
+type InferredInterfaceToProps<InferredSchema> = {
+  [K in keyof InferredSchema]: K extends 'children' | 'child' | 'trigger' | 'content'
+  ? BoundProperty<Child>
+  : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>
+}
+
+interface CheckProps {
+  isValid: boolean;
+  validationErrors: string[];
+}
+
+/** The binder can add some properties to the Props object. This util adds them to the type. */
+export type ExtendedProps<ComponentProps extends { [key: string]: any }> =
+  'checks' extends keyof ComponentProps ? Omit<ComponentProps, 'checks'> & CheckProps : ComponentProps;
+
+/**
+* Utility to convert a component Api Type to the props Type, where the
+* values are wrapped in BoundProperty. This is used to correctly type the props()
+* in a UI component
+* 
+* @example
+* export const TextComponentApi = {
+*   name: 'Text',
+*   schema: z.object({
+*     text: z.string(),
+*   })
+*   .strict(),
+* } satisfies ComponentApi;
+* export type TextComponentProps = ComponentApiToProps<typeof TextComponentApi>; // outputs { text: BoundProperty<string>; }
+*/
+export type ComponentApiToProps<Api extends ComponentApi> = InferredInterfaceToProps<ExtendedProps<z.infer<
+  Api['schema']
+>>>;
