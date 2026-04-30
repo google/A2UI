@@ -97,7 +97,7 @@ The safety net of the SDK.
 
 ## 3. Schema Management & Loading
 
-The SDK does not define component schemas programmatically in code. Instead, it **loads basic catalog JSON Schema definitions packed into the SDK resources** at runtime. Porting the SDK to a new language requires implementing a resource loader and a schema parser for that language's ecosystem (e.g., using `Pydantic` in Python or `kotlinx.serialization` in Kotlin). 
+The SDK does not define component schemas programmatically in code. Instead, it **loads basic catalog JSON Schema definitions packed into the SDK resources** at runtime. Porting the SDK to a new language requires implementing a resource loader and a schema parser for that language's ecosystem (e.g., using `Pydantic` in Python, `kotlinx.serialization` in Kotlin, or `encoding/json` in Go). 
 
 Loading from the workspace's `specification/` directory is supported but should be treated as a **fallback for local development**.
 
@@ -206,6 +206,7 @@ Once validated, the A2UI payload must be transmitted over the network. In typica
 The SDK should provide an out-of-the-box configuration for the **A2UI Basic Catalog** (Button, Text, Row, Column, etc.). This ensures that "Hello, World" agents can be built without defining custom schemas.
 
 *   In Python, this is provided by `BasicCatalog.get_config()`.
+*   In Go, this is provided by `basiccatalog.GetConfig()`.
 *   Your language SDK should provide a similar singleton or preset that points to the standard basic catalog files in the `specification` folder.
 
 ---
