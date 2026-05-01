@@ -17,7 +17,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { getPackageGraph, runCommand, ROOT_DIR } from './lib/workspace.mjs';
+import { getPackageGraph, ROOT_DIR, ansi, maybeRunCommand } from './lib/workspace.mjs';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
@@ -26,10 +26,7 @@ const GCS_URI =
   process.env.A2UI_NPM_MANIFEST_GCS_URI ||
   'gs://oss-exit-gate-prod-projects-bucket/a2ui/npm/manifests';
 
-// Some ANSI escape codes to colorize the output.
-const yellow = '\x1b[33m';
-const red = '\x1b[31m';
-const reset = '\x1b[0m';
+const { yellow, red, green, reset } = ansi;
 
 /**
  * Generates and uploads the npm manifest to GCS.
@@ -40,7 +37,7 @@ const reset = '\x1b[0m';
  * @param {Function} [mocks.writeFileSync] - Optional mock for writeFileSync.
  */
 export async function main(args, mocks = {}) {
-  const runCmd = mocks.runCommand || runCommand;
+  const runCmd = mocks.runCommand;
   const writeFile = mocks.writeFileSync || writeFileSync;
   const options = {
     package: {
@@ -107,14 +104,9 @@ export async function main(args, mocks = {}) {
   const manifestFileName = `manifest-${mainVersion}-${timestamp}.json`;
 
   try {
-    if (isDryRun) {
-      console.warn(`${yellow}[DRY RUN] Did NOT execute:${reset} gcloud storage cp ${manifestPath} ${GCS_URI}/${manifestFileName}`);
-      console.warn(`${yellow}To upload the manifest to GCS, pass the --no-dry-run flag.${reset}`);
-    } else {
-      console.log(`--- Uploading manifest to GCS: ${GCS_URI}/${manifestFileName}`);
-      runCmd('gcloud', ['storage', 'cp', manifestPath, `${GCS_URI}/${manifestFileName}`]);
-      console.log('Manifest uploaded successfully.');
-    }
+    console.log(`--- Uploading manifest to GCS: ${GCS_URI}/${manifestFileName}`);
+    maybeRunCommand('gcloud', ['storage', 'cp', manifestPath, `${GCS_URI}/${manifestFileName}`], {}, { dryRun: isDryRun, runCommand: runCmd });
+    console.log(`${green}Done.${reset}`);
   } catch (error) {
     throw new Error('Failed to upload manifest. Ensure gcloud is authenticated and you have permissions.', { cause: error });
   }
