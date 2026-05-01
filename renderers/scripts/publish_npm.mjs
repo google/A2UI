@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-import { getPackageGraph, runCommand as defaultRunCommand } from './lib/workspace.mjs';
+import { getPackageGraph, runCommand } from './lib/workspace.mjs';
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import * as readline from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { ansi, maybeRunCommand } from './lib/workspace.mjs';
@@ -223,9 +222,8 @@ function buildAndTestPackages(packages, runCmd, skipTests) {
 
 
 export async function main(args, mocks = {}) {
-  const runCmd = mocks.runCommand || defaultRunCommand;
+  const runCmd = mocks.runCommand || runCommand;
   const exec = mocks.execSync || execSync;
-  const readLine = mocks.readline;
 
   const options = {
     package: {
