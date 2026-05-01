@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-import { getPackageGraph, runCommand } from './lib/workspace.mjs';
+import { ansi, getPackageGraph, maybeRunCommand, runCommand } from './lib/workspace.mjs';
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { ansi, maybeRunCommand } from './lib/workspace.mjs';
 
 const { yellow, red, green, reset } = ansi;
 
