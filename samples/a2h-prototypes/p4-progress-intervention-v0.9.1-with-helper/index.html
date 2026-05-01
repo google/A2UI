@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 4 — Progress + Intervention v0.9.1 (with Helper)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem; gap: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; }
+
+    .stats {
+      text-align: center; font-size: 0.85rem; color: #5f6368;
+      max-width: 520px;
+    }
+    .stats strong { color: #1a73e8; }
+    .stats .highlight { color: #0d652d; font-weight: 500; }
+
+    .surface { max-width: 480px; width: 100%; }
+
+    /* Component styles */
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #f8f9fa; box-shadow: none; border: 1px solid #e0e0e0;
+    }
+    .c-Card .c-Card .c-Card,
+    .c-Card:has(> .c-Column > [data-comp="approve-title"]) {
+      background: #fff8e1; border-color: #ffe082;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.6rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.15rem 0; }
+
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #5f6368; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #80868b; font-family: monospace; }
+
+    .c-KeyValue {
+      display: flex; flex-direction: row; gap: 0.75rem; align-items: baseline;
+    }
+    .c-KeyValue-label {
+      font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 90px;
+    }
+    .c-KeyValue-value {
+      font-size: 0.9rem; color: #202124; font-family: 'Roboto Mono', monospace;
+    }
+
+    /* ProgressIndicator */
+    .c-ProgressIndicator {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; flex-shrink: 0;
+    }
+    .c-ProgressIndicator[data-mode="none"] {
+      border: 2px solid #dadce0; border-radius: 50; opacity: 0.4;
+    }
+    .c-ProgressIndicator[data-mode="none"]::after {
+      content: ''; display: block; width: 20px; height: 20px;
+      border: 2.5px solid #dadce0; border-radius: 50%;
+    }
+    .c-ProgressIndicator[data-mode="indeterminate"]::after {
+      content: ''; display: block; width: 20px; height: 20px;
+      border: 2.5px solid #dadce0; border-top-color: #1a73e8;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    .c-ProgressIndicator[data-mode="complete"]::after {
+      content: '✓'; font-size: 16px; font-weight: 700; color: #0d652d;
+    }
+    .c-ProgressIndicator[data-mode="paused"]::after {
+      content: '⏸'; font-size: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px;
+      padding: 0.5rem 1.25rem; font-family: inherit;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    #status { max-width: 480px; width: 100%; font-size: 0.85rem; color: #666; text-align: center; }
+    #msg-log {
+      max-width: 480px; width: 100%;
+      background: #263238; color: #aed581;
+      border-radius: 8px; padding: 1rem;
+      font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log {
+      max-width: 480px; width: 100%;
+      background: #263238; color: #aed581;
+      border-radius: 8px; padding: 1rem;
+      font-family: 'Roboto Mono', monospace; font-size: 0.8rem;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Click Approve or Rollback to see events…';
+      color: #607d8b;
+    }
+
+    .approve-card-inner {
+      background: #fff8e1 !important;
+      border-color: #ffe082 !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — P4: Progress + Intervention v0.9.1</h1>
+
+  <div class="stats">
+    v0.9.0: <strong>9 messages</strong> (4× updateComponents) &nbsp;|&nbsp;
+    v0.9.1: <strong>6 messages</strong> (0× updateComponents after init)<br>
+    <span class="highlight">visible binding eliminates ALL mid-flow component rebuilds</span>
+  </div>
+
+  <div id="status">Loading pipeline…</div>
+  <div class="surface" id="surface"></div>
+
+  <h1>Message Log</h1>
+  <div id="msg-log"></div>
+
+  <h1>Event Log</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    const response = await fetch('./deploy-pipeline.json');
+    const messages = await response.json();
+
+    let surfaceConfig = null;
+    let components = {};
+    let dataModel = {};
+    let msgCount = 0;
+
+    const msgLog = document.getElementById('msg-log');
+
+    function logMsg(msg) {
+      msgCount++;
+      const type = msg.createSurface ? 'createSurface' : msg.updateComponents ? 'updateComponents' : msg.updateDataModel ? 'updateDataModel' : 'unknown';
+      const comment = msg._comment ? ` // ${msg._comment}` : '';
+      msgLog.textContent += `#${msgCount} ${type}${comment}\n`;
+      msgLog.scrollTop = msgLog.scrollHeight;
+    }
+
+    function resolve(val) {
+      if (val && typeof val === 'object' && val.path) {
+        const parts = val.path.split('/').filter(Boolean);
+        let cur = dataModel;
+        for (const p of parts) cur = cur?.[p];
+        return cur ?? val.path;
+      }
+      return val;
+    }
+
+    function isVisible(comp) {
+      if (!comp.visible) return true;
+      const vis = comp.visible;
+      if (vis.fn === 'equals' && Array.isArray(vis.args)) {
+        return resolve(vis.args[0]) === vis.args[1];
+      }
+      return true;
+    }
+
+    function render(id) {
+      const comp = components[id];
+      if (!comp) return document.createTextNode('');
+      if (!isVisible(comp)) {
+        const el = document.createElement('span');
+        el.style.display = 'none';
+        return el;
+      }
+
+      switch (comp.component) {
+        case 'Card': {
+          const el = document.createElement('div');
+          el.className = 'c-Card';
+          if (id === 'approve-card') el.classList.add('approve-card-inner');
+          if (comp.child) el.appendChild(render(comp.child));
+          return el;
+        }
+        case 'Column': {
+          const el = document.createElement('div');
+          el.className = 'c-Column';
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Row': {
+          const el = document.createElement('div');
+          el.className = 'c-Row';
+          if (comp.justify) el.dataset.justify = comp.justify;
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Divider': {
+          const el = document.createElement('hr');
+          el.className = 'c-Divider';
+          return el;
+        }
+        case 'Icon': {
+          const el = document.createElement('span');
+          el.className = 'c-Icon';
+          el.textContent = resolve(comp.name);
+          return el;
+        }
+        case 'Text': {
+          const el = document.createElement('span');
+          el.className = 'c-Text';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          el.textContent = resolve(comp.text);
+          return el;
+        }
+        case 'KeyValue': {
+          const el = document.createElement('div');
+          el.className = 'c-KeyValue';
+          const label = document.createElement('span');
+          label.className = 'c-KeyValue-label';
+          label.textContent = resolve(comp.label) + ':';
+          const value = document.createElement('span');
+          value.className = 'c-KeyValue-value';
+          value.textContent = resolve(comp.value);
+          el.append(label, value);
+          return el;
+        }
+        case 'ProgressIndicator': {
+          const el = document.createElement('div');
+          el.className = 'c-ProgressIndicator';
+          const mode = resolve(comp.mode) || 'none';
+          el.dataset.mode = mode;
+          return el;
+        }
+        case 'Button': {
+          const el = document.createElement('button');
+          el.className = 'c-Button';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          if (comp.label) {
+            el.textContent = resolve(comp.label);
+          } else if (comp.child) {
+            const ch = components[comp.child];
+            el.textContent = ch ? resolve(ch.text) : comp.child;
+          }
+          if (comp.action?.event) {
+            el.addEventListener('click', () => {
+              const evt = comp.action.event;
+              const ctx = {};
+              for (const [k, v] of Object.entries(evt.context || {})) ctx[k] = resolve(v);
+              const payload = { eventName: evt.name, context: ctx, timestamp: new Date().toISOString() };
+              const log = document.getElementById('event-log');
+              log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+              log.scrollTop = log.scrollHeight;
+            });
+          }
+          return el;
+        }
+        default: return document.createTextNode(`[unknown: ${comp.component}]`);
+      }
+    }
+
+    function applyMessage(msg) {
+      if (msg.createSurface) surfaceConfig = msg.createSurface;
+      if (msg.updateDataModel) dataModel = msg.updateDataModel.value;
+      if (msg.updateComponents) {
+        for (const c of msg.updateComponents.components) components[c.id] = c;
+      }
+    }
+
+    function rerender() {
+      const el = document.getElementById('surface');
+      el.innerHTML = '';
+      el.appendChild(render('root'));
+    }
+
+    // Timed playback: createSurface + updateComponents are instant,
+    // then each updateDataModel plays with realistic delays
+    const delays = [0, 0, 500, 2000, 2500, 3000];
+    const statusLabels = [
+      '', '', 'Pipeline started — building…',
+      'Build complete — running tests…',
+      'Tests passed — staging…',
+      'Staged — awaiting deploy approval'
+    ];
+
+    const statusEl = document.getElementById('status');
+
+    for (let i = 0; i < messages.length; i++) {
+      await new Promise(r => setTimeout(r, delays[i] || 0));
+      logMsg(messages[i]);
+      applyMessage(messages[i]);
+      if (i >= 1) rerender();  // render after components exist
+      if (statusLabels[i]) statusEl.textContent = statusLabels[i];
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "a2h-collect-shipping-001",
+      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "a2h-collect-shipping-001",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "main-col"
+        },
+        {
+          "id": "main-col",
+          "component": "Column",
+          "children": [
+            "header-row",
+            "subtitle",
+            "divider-top",
+            "name-field",
+            "street-field",
+            "city-state-row",
+            "zip-field",
+            "phone-field",
+            "divider-mid",
+            "speed-label",
+            "speed-choice",
+            "divider-bot",
+            "submit-row"
+          ]
+        },
+        {
+          "id": "header-row",
+          "component": "Row",
+          "children": ["header-icon", "header-text"],
+          "align": "center"
+        },
+        {
+          "id": "header-icon",
+          "component": "Icon",
+          "name": "shoppingCart"
+        },
+        {
+          "id": "header-text",
+          "component": "Text",
+          "text": "Where should we ship your order?",
+          "variant": "h3"
+        },
+        {
+          "id": "subtitle",
+          "component": "Text",
+          "text": "We'll confirm the address before charging your card.",
+          "variant": "body"
+        },
+        { "id": "divider-top", "component": "Divider" },
+        {
+          "id": "name-field",
+          "component": "TextField",
+          "label": "Full name",
+          "value": { "path": "/shipping/name" }
+        },
+        {
+          "id": "street-field",
+          "component": "TextField",
+          "label": "Street address",
+          "value": { "path": "/shipping/street" }
+        },
+        {
+          "id": "city-state-row",
+          "component": "Row",
+          "children": ["city-field", "state-field"]
+        },
+        {
+          "id": "city-field",
+          "component": "TextField",
+          "label": "City",
+          "value": { "path": "/shipping/city" }
+        },
+        {
+          "id": "state-field",
+          "component": "TextField",
+          "label": "State",
+          "value": { "path": "/shipping/state" }
+        },
+        {
+          "id": "zip-field",
+          "component": "TextField",
+          "label": "ZIP code",
+          "value": { "path": "/shipping/zip" }
+        },
+        {
+          "id": "phone-field",
+          "component": "TextField",
+          "label": "Phone number",
+          "value": { "path": "/shipping/phone" }
+        },
+        { "id": "divider-mid", "component": "Divider" },
+        {
+          "id": "speed-label",
+          "component": "Text",
+          "text": "Delivery speed",
+          "variant": "caption"
+        },
+        {
+          "id": "speed-choice",
+          "component": "ChoicePicker",
+          "label": "Delivery speed",
+          "value": { "path": "/shipping/speed" },
+          "variant": "mutuallyExclusive",
+          "displayStyle": "chips",
+          "options": [
+            { "label": "Standard (5–7 days)", "value": "standard" },
+            { "label": "Express (2–3 days)", "value": "express" },
+            { "label": "Overnight", "value": "overnight" }
+          ]
+        },
+        { "id": "divider-bot", "component": "Divider" },
+        {
+          "id": "submit-row",
+          "component": "Row",
+          "children": ["submit-btn"],
+          "justify": "end"
+        },
+        {
+          "id": "submit-btn-text",
+          "component": "Text",
+          "text": "Submit shipping info"
+        },
+        {
+          "id": "submit-btn",
+          "component": "Button",
+          "variant": "primary",
+          "child": "submit-btn-text",
+          "action": {
+            "event": {
+              "name": "a2h.collect.submit",
+              "context": {}
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "a2h-collect-shipping-001",
+      "value": {
+        "shipping": {
+          "name": "Jane Doe",
+          "street": "742 Evergreen Terrace",
+          "city": "Springfield",
+          "state": "IL",
+          "zip": "62704",
+          "phone": "",
+          "speed": ["standard"]
+        }
+      }
+    }
+  }
+]
