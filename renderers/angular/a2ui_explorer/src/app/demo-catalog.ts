@@ -29,6 +29,7 @@ export const customSliderApi = {
     max: z.number().optional(),
   }) as any,
 } satisfies ComponentApi;
+
 /**
  * A catalog specific to the demo, extending the basic catalog with custom components.
  */
