@@ -522,6 +522,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
           visited,
           dataContextPath,
           idSuffix,
+          key === "action"
         );
       }
     }
@@ -776,9 +777,10 @@ export class A2uiMessageProcessor implements MessageProcessor {
     visited: Set<string>,
     dataContextPath: string,
     idSuffix = "",
+    isInsideAction = false,
   ): ResolvedValue {
     // 1. If it's a string that matches a component ID, build that node.
-    if (typeof value === "string" && surface.components.has(value)) {
+    if (!isInsideAction && typeof value === "string" && surface.components.has(value)) {
       return this.buildNodeRecursive(
         value,
         surface,
@@ -790,7 +792,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
     // 2. If it's a ComponentArrayReference (e.g., a `children` property),
     //    resolve the list and return an array of nodes.
-    if (isComponentArrayReference(value)) {
+    if (!isInsideAction && isComponentArrayReference(value)) {
       if (value.explicitList) {
         return value.explicitList.map((id) =>
           this.buildNodeRecursive(
@@ -865,6 +867,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
           visited,
           dataContextPath,
           idSuffix,
+          isInsideAction,
         ),
       );
     }
@@ -894,6 +897,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
           visited,
           dataContextPath,
           idSuffix,
+          isInsideAction || key === "action",
         );
       }
       return newObj;
