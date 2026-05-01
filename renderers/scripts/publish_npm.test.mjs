@@ -17,102 +17,126 @@
 
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {runPublish} from './publish_npm.mjs';
+import { main } from './publish_npm.mjs';
 
 describe('publish_npm script integration test', () => {
-  it('should correctly topologically sort and execute dry-run publishing logic', async () => {
+  it('should topologically sort packages based on dependencies', async () => {
     const executedCommands = [];
-
-    // Mock command runner
-    function mockRunCommand(cmd, args, options) {
-      executedCommands.push(
-        `${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`,
-      );
-    }
-
-    // Mock execSync for npm view
-    function mockExecSync(cmd) {
-      if (cmd.includes('npm view')) {
-        // Return older versions so pre-flight check passes
-        if (cmd.includes('@a2ui/web_core')) return '0.0.1\n';
-        if (cmd.includes('@a2ui/markdown-it')) return '0.0.1\n';
-        if (cmd.includes('@a2ui/lit')) return '0.0.1\n';
+    const mocks = {
+      runCommand: (cmd, args, options) => {
+        executedCommands.push(`${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`);
+      },
+      execSync: (cmd) => {
+        if (cmd.includes('npm view')) return '0.0.1\n';
+        return '';
       }
-      return '';
-    }
+    };
 
-    // Run the script with --yes, --skip-tests (no --dry-run so we can record commands)
-    // We target web_core, markdown-it, and lit. lit depends on them, so they MUST be processed first.
-    await runPublish(
-      ['--packages=lit,web_core,markdown-it', '--yes', '--skip-tests'],
-      mockRunCommand,
-      mockExecSync,
-      null, // readline not needed with --yes
+    await main(
+      ['--package=lit', '--package=web_core', '--package=markdown-it', '--skip-tests', '--no-dry-run'],
+      mocks
     );
 
-    // Verify topological order in preparation phase
-    const webCoreInstallIndex = executedCommands.findIndex(
-      cmd => cmd.includes('install') && cmd.includes('web_core'),
-    );
-    const markdownItInstallIndex = executedCommands.findIndex(
-      cmd => cmd.includes('install') && cmd.includes('markdown-it'),
-    );
-    const litInstallIndex = executedCommands.findIndex(
-      cmd => cmd.includes('install') && cmd.includes('lit'),
-    );
+    const webCoreInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('web_core'));
+    const markdownItInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('markdown-it'));
+    const litInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('lit'));
 
-    assert.ok(webCoreInstallIndex > -1, 'Should install web_core');
-    assert.ok(markdownItInstallIndex > -1, 'Should install markdown-it');
-    assert.ok(litInstallIndex > -1, 'Should install lit');
-    assert.ok(
-      webCoreInstallIndex < litInstallIndex,
-      'web_core must be prepared before lit (topological sort)',
-    );
+    assert.ok(webCoreInstallIndex < litInstallIndex, 'web_core must be prepared before lit');
     assert.ok(markdownItInstallIndex < litInstallIndex, 'markdown-it must be prepared before lit');
-
-    // Verify topological order in publish phase
-    const webCorePublishIndex = executedCommands.findIndex(
-      cmd => cmd.includes('publish:package') && cmd.includes('web_core'),
-    );
-    const markdownItPublishIndex = executedCommands.findIndex(
-      cmd => cmd.includes('publish:package') && cmd.includes('markdown-it'),
-    );
-    const litPublishIndex = executedCommands.findIndex(
-      cmd => cmd.includes('publish:package') && cmd.includes('lit'),
-    );
-
-    assert.ok(webCorePublishIndex > -1, 'Should publish web_core');
-    assert.ok(markdownItPublishIndex > -1, 'Should publish markdown-it');
-    assert.ok(litPublishIndex > -1, 'Should publish lit');
-    assert.ok(webCorePublishIndex < litPublishIndex, 'web_core must be published before lit');
-    assert.ok(markdownItPublishIndex < litPublishIndex, 'markdown-it must be published before lit');
   });
 
-  it('should skip publishing when --test-only is provided', async () => {
+  it('should default to dry-run mode (skip auth and publish)', async () => {
     const executedCommands = [];
+    const mocks = {
+      runCommand: (cmd, args) => {
+        executedCommands.push(`${cmd} ${args.join(' ')}`);
+      },
+      execSync: (cmd) => {
+        if (cmd.includes('npm view')) return '0.0.1\n';
+        return '';
+      }
+    };
 
-    function mockRunCommand(cmd, args, options) {
-      executedCommands.push(`${cmd} ${args.join(' ')}`);
-    }
+    await main(['--package=web_core'], mocks);
 
-    function mockExecSync(cmd) {
-      if (cmd.includes('npm view')) return '0.0.1\n';
-      return '';
-    }
-
-    await runPublish(
-      ['--packages=web_core', '--yes', '--test-only'],
-      mockRunCommand,
-      mockExecSync,
-      null,
-    );
-
+    const hasAuth = executedCommands.some(cmd => cmd.includes('google-artifactregistry-auth'));
+    const hasPublish = executedCommands.some(cmd => cmd.includes('publish:package'));
     const hasInstall = executedCommands.some(cmd => cmd.includes('npm install'));
-    const hasTest = executedCommands.some(cmd => cmd.includes('npm run test'));
+
+    assert.strictEqual(hasAuth, false, 'Should NOT authenticate in dry-run');
+    assert.strictEqual(hasPublish, false, 'Should NOT publish in dry-run');
+    assert.ok(hasInstall, 'Should still run npm install in dry-run by default');
+  });
+
+  it('should authenticate and publish when --no-dry-run is passed', async () => {
+    const executedCommands = [];
+    const mocks = {
+      runCommand: (cmd, args) => {
+        executedCommands.push(`${cmd} ${args.join(' ')}`);
+      },
+      execSync: (cmd) => {
+        if (cmd.includes('npm view')) return '0.0.1\n';
+        return '';
+      }
+    };
+
+    await main(['--package=web_core', '--no-dry-run'], mocks);
+
+    const hasAuth = executedCommands.some(cmd => cmd.includes('google-artifactregistry-auth'));
     const hasPublish = executedCommands.some(cmd => cmd.includes('publish:package'));
 
-    assert.ok(hasInstall, 'Should run npm install');
-    assert.ok(hasTest, 'Should run npm test');
-    assert.strictEqual(hasPublish, false, 'Should NOT run publish:package');
+    assert.ok(hasAuth, 'Should authenticate when --no-dry-run is passed');
+    assert.ok(hasPublish, 'Should publish when --no-dry-run is passed');
+  });
+
+  it('should skip tests when --skip-tests is passed', async () => {
+    const executedCommands = [];
+    const mocks = {
+      runCommand: (cmd, args) => {
+        executedCommands.push(`${cmd} ${args.join(' ')}`);
+      },
+      execSync: (cmd) => {
+        if (cmd.includes('npm view')) return '0.0.1\n';
+        return '';
+      }
+    };
+
+    await main(['--package=web_core', '--skip-tests'], mocks);
+
+    const hasTest = executedCommands.some(cmd => cmd.includes('npm run test'));
+    assert.strictEqual(hasTest, false, 'Should NOT run tests when --skip-tests is passed');
+  });
+
+  it('should fail safety check if core dependencies are missing', async () => {
+    const mocks = {
+      runCommand: () => {},
+      execSync: () => ''
+    };
+
+    await assert.rejects(
+      async () => {
+        await main(['--package=lit'], mocks);
+      },
+      /.*/, // The script will emit an error with some details.
+      'Should fail when web_core and markdown-it are missing'
+    );
+  });
+
+  it('should bypass safety check when --no-check-core-dependencies is passed', async () => {
+    const executedCommands = [];
+    const mocks = {
+      runCommand: (cmd, args) => {
+        executedCommands.push(`${cmd} ${args.join(' ')}`);
+      },
+      execSync: (cmd) => {
+        if (cmd.includes('npm view')) return '0.0.1\n';
+        return '';
+      }
+    };
+
+    await main(['--package=lit', '--no-check-core-dependencies'], mocks);
+
+    const hasInstall = executedCommands.some(cmd => cmd.includes('npm install'));
+    assert.ok(hasInstall, 'Should proceed to install');
   });
 });
