@@ -233,4 +233,4 @@ Current application:
 
 ### Renderer status
 
-Renderer status terminology is still being worked out (see [#1240](https://github.com/google/A2UI/issues/1240) for the parallel discussion on specs). For now the [Roadmap](roadmap.md) uses the informal labels **Stable**, **Planned**, and **Proposed**.
+Renderer status terminology is still being worked out in [#1321](https://github.com/google/A2UI/issues/1321) (parallel to the spec discussion in [#1240](https://github.com/google/A2UI/issues/1240)). For now the [Roadmap](roadmap.md) uses the informal labels **Stable**, **Planned**, and **Proposed**.
