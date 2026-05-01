@@ -23,6 +23,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = resolve(__dirname, '../../../');
 
 /**
+ * ANSI escape codes for colorizing terminal output.
+ */
+export const ansi = {
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  reset: '\x1b[0m'
+};
+
+/**
  * Finds all package.json files in the repository, excluding node_modules.
  */
 export function findPackages(dir = ROOT_DIR, packageList = []) {
@@ -121,10 +131,19 @@ export function incrementVersion(version) {
 }
 
 /**
+ * Converts a command and arguments to a readable string.
+ */
+function commandToString(command, args, options = {}) {
+  const cwdMsg = options.cwd ? ` in ${options.cwd}` : '';
+  return `${command} ${args.join(' ')}${cwdMsg}`;
+}
+
+/**
  * Runs a shell command and returns the result.
  */
 export function runCommand(command, args, options = {}) {
-  console.log(`> Running: ${command} ${args.join(' ')} ${options.cwd ? `in ${options.cwd}` : ''}`);
+  const commandStr = commandToString(command, args, options);
+  console.log(`> Running: ${commandStr}`);
   const result = spawnSync(command, args, {
     stdio: 'inherit',
     shell: true,
@@ -132,8 +151,33 @@ export function runCommand(command, args, options = {}) {
   });
 
   if (result.status !== 0) {
-    throw new Error(`Command failed: ${command} ${args.join(' ')}`);
+    throw new Error(`Command failed with exit code ${result.status}: ${commandStr}`);
   }
 
   return result;
+}
+
+/**
+ * Runs a command or logs that it was skipped if in dry-run mode.
+ *
+ * The signature is similar to that of runCommand above, but with additional options for dry-run mode,
+ * and to add the ability to mock the runCommand implementation (which is used as the default when a
+ * mock is not provided).
+ *
+ * @param {string} command - The command to run.
+ * @param {string[]} args - The arguments for the command.
+ * @param {Object} [options={}] - Options for the command (e.g., cwd).
+ * @param {Object} [settings={}] - Settings for execution.
+ * @param {boolean} [settings.dryRun=false] - Whether dry-run mode is enabled.
+ * @param {Function} [settings.runCommand] - Optional mock for runCommand.
+ */
+export function maybeRunCommand(command, args, options = {}, settings = {}) {
+  const dryRun = settings.dryRun ?? false;
+  const run = settings.runCommand || runCommand;
+
+  if (dryRun) {
+    console.log(`${ansi.yellow}[DRY RUN] Did NOT execute:${ansi.reset} ${commandToString(command, args, options)}`);
+  } else {
+    run(command, args, options);
+  }
 }
