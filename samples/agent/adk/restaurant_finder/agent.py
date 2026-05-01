@@ -236,6 +236,7 @@ class RestaurantAgent:
       )
 
       full_content_list = []
+      parts_streamed = False
 
       async def token_stream():
         async for event in runner.run_async(
@@ -266,6 +267,7 @@ class RestaurantAgent:
             self._parsers[session_id],
             token_stream(),
         ):
+          parts_streamed = True
           yield {
               "is_task_complete": False,
               "parts": [part],
@@ -339,7 +341,7 @@ class RestaurantAgent:
 
         yield {
             "is_task_complete": True,
-            "parts": final_parts,
+            "parts": [] if parts_streamed else final_parts,
         }
         return  # We're done, exit the generator
 
