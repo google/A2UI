@@ -2409,7 +2409,7 @@
 <p>Before diving into the protocol details, let's get a working example running. The A2UI repo includes a ready-to-go MCP recipe demo.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Clone the repo (if you haven&#39;t already)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/google/A2UI.git
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">cd</span><span class="w"> </span>A2UI/samples/agent/mcp/a2ui-over-mcp-recipe
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">cd</span><span class="w"> </span>A2UI/samples/mcp/a2ui-over-mcp-recipe
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Start the MCP server (SSE transport on port 8000)</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>uv<span class="w"> </span>run<span class="w"> </span>.
@@ -2430,7 +2430,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>a2ui-agent-sdk
 </span></code></pre></div></p>
 </blockquote>
-<p>See all samples at <a href="https://github.com/google/A2UI/tree/main/samples/agent/mcp"><code>samples/agent/mcp/</code></a>.</p>
+<p>See all samples at <a href="https://github.com/google/A2UI/tree/main/samples/mcp"><code>samples/mcp/</code></a>.</p>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p>An MCP server returns A2UI content as <strong>Embedded Resources</strong> inside tool responses. The client detects the <code>application/json+a2ui</code> MIME type and routes the payload to an A2UI renderer.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Client → tools/call → MCP Server

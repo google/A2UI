@@ -1079,7 +1079,7 @@
 <li><strong><a href="https://nodejs.org/">Node.js 18+</a></strong> (for the MCP Inspector)</li>
 </ul>
 <h2 id="quick-start-run-the-sample">Quick Start: Run the Sample<a class="headerlink" href="#quick-start-run-the-sample" title="Permanent link">¶</a></h2>
-<p>For detailed instructions on how to run this sample, please refer to the <a href="https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/README.md">README.md</a>.</p>
+<p>For detailed instructions on how to run this sample, please refer to the <a href="https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/README.md">README.md</a>.</p>
 <h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">¶</a></h2>
 <p>The system consists of three main actors interacting through a chain of communication:</p>
 <ol>
@@ -1161,7 +1161,7 @@
 <p>MCP Apps are typically delivered as a single HTML resource from the MCP Server. To achieve this with a modern framework like Angular or React:</p>
 <ol>
 <li>Build your application normally to produce static assets (<code>index.html</code>, <code>.js</code>, <code>.css</code>).</li>
-<li>Use a post-build script (like the <a href="https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/inline.js"><code>inline.js</code></a> script in the sample) to read the <code>index.html</code> and replace external <code>&lt;script src="..."&gt;</code> and <code>&lt;link rel="stylesheet" href="..."&gt;</code> tags with inline <code>&lt;script&gt;</code> and <code>&lt;style&gt;</code> tags containing the actual file contents.</li>
+<li>Use a post-build script (like the <a href="https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/server/apps/src/inline.js"><code>inline.js</code></a> script in the sample) to read the <code>index.html</code> and replace external <code>&lt;script src="..."&gt;</code> and <code>&lt;link rel="stylesheet" href="..."&gt;</code> tags with inline <code>&lt;script&gt;</code> and <code>&lt;style&gt;</code> tags containing the actual file contents.</li>
 <li>This produces a self-contained HTML file that can be safely loaded via <code>srcdoc</code> in the restricted iframe.</li>
 </ol>
 <div class="admonition tip">
@@ -1234,7 +1234,7 @@ This will ensure that all JS and CSS assets are inlined into the <code>index.htm
 <h3 id="step-3-handling-user-actions-on-a2ui-components">Step 3: Handling User Actions on A2UI Components<a class="headerlink" href="#step-3-handling-user-actions-on-a2ui-components" title="Permanent link">¶</a></h3>
 <p>To handle interactivity within the rendered A2UI surface, your MCP App must capture A2UI events and forward them to the Host using JSON-RPC.</p>
 <p><strong>Example: Handling User Actions</strong></p>
-<div class="language-typescript highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1">// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/src/main.ts))</span>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1">// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/server/apps/src/src/main.ts))</span>
 </span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">event</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">userAction</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
 </span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>
