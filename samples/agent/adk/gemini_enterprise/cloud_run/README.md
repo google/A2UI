@@ -63,38 +63,43 @@ Now that your agent is deployed, you need to register it with Gemini Enterprise
 to make it discoverable. This is done programmatically using the Discovery
 Engine API.
 
-**1. Get your Gemini Enterprise Engine ID:**
+**1. Get your Gemini Enterprise App ID:**
 
-You can create or find an existing Engine ID (a.k.a. App ID) in the Google Cloud
+You can create or find an existing Gemini Enterprise App ID in the Google Cloud
 Console.
 
 **2. Register the agent:**
 
-Execute the following `curl` command, replacing the placeholders with your own
-values:
+Set your environment variables and execute the following commands to create the payload file and register the agent:
 
 ```bash
-curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json" https://discoveryengine.googleapis.com/v1alpha/projects/PROJECT_NUMBER/locations/LOCATION/collections/default_collection/engines/ENGINE_ID/assistants/default_assistant/agents -d '{
-  "name": "AGENT_NAME",
-  "displayName": "AGENT_DISPLAY_NAME",
-  "description": "AGENT_DESCRIPTION",
+# Set your variables
+PROJECT_NUMBER="TODO" # Your Google Cloud project number.
+LOCATION="global" # The location of your Discovery Engine instance
+GEMINI_ENTERPRISE_APP_ID="TODO" # The ID of your Gemini Enterprise engine (a.k.a App ID).
+AGENT_NAME="A2UI Contact Demo Agent" # A unique name for your agent.
+AGENT_DISPLAY_NAME="A2UI Contact Demo Agent" # The name that will be displayed in the Gemini Enterprise UI.
+AGENT_DESCRIPTION="A demo agent that uses A2UI components to display rich contact content."
+AGENT_URL="TODO" # The service URL of your deployed agent which was printed in the previous step.
+
+# Create the add agent payload
+cat <<EOF > agent_request.json
+{
+  "name": "$AGENT_NAME",
+  "displayName": "$AGENT_DISPLAY_NAME",
+  "description": "$AGENT_DESCRIPTION",
   "a2aAgentDefinition": {
-     "jsonAgentCard": "{\"protocolVersion\": \"0.3.0\", \"name\": \"AGENT_NAME\", \"description\": \"AGENT_DESCRIPTION\", \"url\": \"AGENT_URL\", \"version\": \"1.0.0\", \"capabilities\": {\"streaming\": true, \"extensions\": [{\"uri\": \"https://a2ui.org/a2a-extension/a2ui/v0.8\", \"description\": \"Ability to render A2UI\", \"required\": false, \"params\": {\"supportedCatalogIds\": [\"https://a2ui.org/specification/v0_8/standard_catalog_definition.json\"]}}]}, \"skills\": [], \"defaultInputModes\": [\"text/plain\"], \"defaultOutputModes\": [\"text/plain\"]}"
+     "jsonAgentCard": "{\"protocolVersion\": \"0.3.0\", \"name\": \"$AGENT_NAME\", \"description\": \"$AGENT_DESCRIPTION\", \"url\": \"$AGENT_URL\", \"version\": \"1.0.0\", \"capabilities\": {\"streaming\": false, \"preferredTransport\": \"JSONRPC\", \"extensions\": [{\"uri\": \"https://a2ui.org/a2a-extension/a2ui/v0.8\", \"description\": \"Ability to render A2UI\", \"required\": false, \"params\": {\"supportedCatalogIds\": [\"https://a2ui.org/specification/v0_8/standard_catalog_definition.json\"]}}]}, \"skills\": [], \"defaultInputModes\": [\"text\", \"text/plain\"], \"defaultOutputModes\": [\"text\", \"text/plain\"]}"
   }
-}'
+}
+EOF
+
+# Send the request
+curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+     -H "Content-Type: application/json" \
+     https://discoveryengine.googleapis.com/v1alpha/projects/$PROJECT_NUMBER/locations/$LOCATION/collections/default_collection/engines/$GEMINI_ENTERPRISE_APP_ID/assistants/default_assistant/agents \
+     -d @agent_request.json
 ```
-
-**Placeholder Descriptions:**
-
-*   `PROJECT_NUMBER`: Your Google Cloud project number.
-*   `LOCATION`: The location of your Discovery Engine instance (e.g., `global`).
-*   `ENGINE_ID`: The ID of your Gemini Enterprise engine (a.k.a App ID).
-*   `AGENT_NAME`: A unique name for your agent.
-*   `AGENT_DISPLAY_NAME`: The name that will be displayed in the Gemini
-    Enterprise UI.
-*   `AGENT_DESCRIPTION`: A brief description of your agent's capabilities.
-*   `AGENT_URL`: The service URL of your deployed agent which was printed in the
-    previous step.
 
 **3. Locate the agent on the Gemini Enterprise UI:**
 

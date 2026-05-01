@@ -73,7 +73,8 @@ const PROXY_READY_NOTIFICATION: McpUiSandboxProxyReadyNotification["method"] =
 
 window.addEventListener("message", async (event) => {
   if (event.source === window.parent) {
-    if (event.origin !== EXPECTED_HOST_ORIGIN) {
+    const normalizeOrigin = (origin: string) => origin.replace("://127.0.0.1", "://localhost");
+    if (normalizeOrigin(event.origin) !== normalizeOrigin(EXPECTED_HOST_ORIGIN)) {
       console.error(
         "[Sandbox] Rejecting message from unexpected origin:",
         event.origin,
@@ -95,34 +96,32 @@ window.addEventListener("message", async (event) => {
       if (typeof html === "string") {
         const sendInit = () => {
           if (inner.contentWindow) {
-            inner.contentWindow.postMessage({ type: "sandbox-init" }, OWN_ORIGIN);
+            // Use "*" because sandboxed iframes with no 'allow-same-origin' have a "null" origin.
+            // A specific target origin will fail matching and block delivery.
+            inner.contentWindow.postMessage({ type: "sandbox-init" }, "*");
           }
         };
         inner.onload = sendInit;
 
-        const doc = inner.contentDocument || inner.contentWindow?.document;
-        if (doc) {
-          doc.open();
-          doc.write(html);
-          doc.close();
-          // doc.write doesn't always trigger iframe onload reliably.
-          Promise.resolve().then(sendInit);
-        } else {
-          inner.srcdoc = html;
-        }
+        inner.srcdoc = html;
       }
     } else {
       if (inner && inner.contentWindow) {
-        inner.contentWindow.postMessage(event.data, OWN_ORIGIN);
+        // Same rationale as above: target origin must be "*" to reach sandboxed 'null' windows.
+        inner.contentWindow.postMessage(event.data, "*");
       }
     }
   } else if (event.source === inner.contentWindow) {
-    if (event.origin !== OWN_ORIGIN) {
+    // MUST allow the string "null" as the origin. Without 'allow-same-origin',
+    // browsers force sandboxed frames to an anonymous, unique origin that serializes to "null".
+    // Security verification relies primarily on ensuring 'event.source === inner.contentWindow'.
+    if (event.origin !== OWN_ORIGIN && event.origin !== "null") {
       console.error(
         "[Sandbox] Rejecting message from inner iframe with unexpected origin:",
         event.origin,
         "expected:",
-        OWN_ORIGIN
+        OWN_ORIGIN,
+        "or null"
       );
       return;
     }

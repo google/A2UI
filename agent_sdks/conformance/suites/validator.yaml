@@ -49,9 +49,7 @@
     version: "0.9"
     common_types_schema: "test_data/simplified_common_types_v09.json"
     s2c_schema: "test_data/simplified_s2c_v09.json"
-    catalog_schema:
-      catalogId: standard
-      components: {}
+    catalog_schema: "test_data/simplified_catalog_v09.json"
   action: validate
   steps:
   - payload:
@@ -1950,9 +1948,7 @@
     version: "0.9"
     common_types_schema: "test_data/simplified_common_types_v09.json"
     s2c_schema: "test_data/simplified_s2c_v09.json"
-    catalog_schema:
-      catalogId: standard
-      components: {}
+    catalog_schema: "test_data/simplified_catalog_v09.json"
   action: validate
   payload:
   - version: v0.9
@@ -2653,4 +2649,110 @@
         component:
           Container:
             child: 123
-  expect_error: string
+  expect_error: "123 is not of type 'string'"
+
+- name: test_custom_catalog_validation_success_v09
+  description: Tests validation success with a custom catalog in v0.9.
+  catalog:
+    version: "0.9"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: "https://example.com/custom_catalog"
+      components:
+        Text:
+          type: object
+          properties:
+            component: {const: "Text"}
+            text: {type: string}
+          required: [component, text]
+      $defs:
+        anyComponent:
+          oneOf:
+            - $ref: "#/components/Text"
+          discriminator: {propertyName: "component"}
+  action: validate
+  payload:
+  - version: "v0.9"
+    updateComponents:
+      surfaceId: "s1"
+      components:
+      - id: "root"
+        component: "Text"
+        text: "hello"
+
+- name: test_custom_catalog_validation_success_v08
+  description: Tests validation success with a custom catalog in v0.8.
+  catalog:
+    version: "0.8"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: "custom"
+      components:
+        Text:
+          type: object
+          properties:
+            text: {type: string}
+  action: validate
+  payload:
+  - surfaceUpdate:
+      surfaceId: "s1"
+      components:
+      - id: "root"
+        component:
+          Text:
+            text: "hello"
+
+- name: test_custom_catalog_validation_failure_v08
+  description: Tests validation failure with a custom catalog in v0.8.
+  catalog:
+    version: "0.8"
+    s2c_schema: "test_data/simplified_s2c_v08.json"
+    catalog_schema:
+      catalogId: "custom"
+      components:
+        Text:
+          type: object
+          properties:
+            text: {type: string}
+  action: validate
+  payload:
+  - surfaceUpdate:
+      surfaceId: "s1"
+      components:
+        - id: "root"
+          component:
+             Text:
+              text: 123
+  expect_error: "123 is not of type 'string'"
+
+- name: test_custom_catalog_validation_failure_v09
+  description: Tests validation failure with a custom catalog in v0.9.
+  catalog:
+    version: "0.9"
+    common_types_schema: "test_data/simplified_common_types_v09.json"
+    s2c_schema: "test_data/simplified_s2c_v09.json"
+    catalog_schema:
+      catalogId: "custom"
+      components:
+        Text:
+          type: object
+          properties:
+            component: {const: "Text"}
+            text: {type: string}
+          required: [component, text]
+      $defs:
+        anyComponent:
+          oneOf:
+            - $ref: "#/components/Text"
+          discriminator: {propertyName: "component"}
+  action: validate
+  payload:
+  - version: "v0.9"
+    updateComponents:
+      surfaceId: "s1"
+      components:
+        - id: "root"
+          component: "Text"
+          text: 123
+  expect_error: "123 is not of type 'string'"
