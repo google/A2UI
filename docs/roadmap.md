@@ -6,12 +6,7 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 ### Protocol
 
-Each specification version is labeled with one of the following statuses:
-
-- **draft**: not ready for use yet
-- **candidate**: ready for experiments, but not finalized
-- **final**: active development is finished here
-- **deprecated**: a version that is not recommended for use
+Each specification version is labeled with one of the statuses defined in the [Specification Version Status](glossary.md#specification-version-status) section of the glossary (`draft`, `candidate`, `final`, `deprecated`).
 
 | Version | Status | Notes |
 |---------|--------|-------|
@@ -27,7 +22,7 @@ Each specification version is labeled with one of the following statuses:
 | **Web Core Lib** | ✅ Stable | Web | Shared core lib for all web renderers |
 | **Web Components (Lit)** | ✅ Stable | Web | Framework-agnostic, works anywhere |
 | **Angular** | ✅ Stable | Web | Full Angular integration |
-| **React** | ✅ Available | Web | Official React renderer |
+| **React** | ✅ Stable | Web | Official React renderer |
 | **Flutter (GenUI SDK)** | ✅ Stable | Multi-platform | Works on mobile, web, desktop |
 | **Markdown (`@a2ui/markdown-it`)** | ✅ Stable | Web | Markdown rendering for Text widgets in all web renderers |
 | **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |

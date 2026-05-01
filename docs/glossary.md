@@ -207,3 +207,30 @@ Information, categorized as **not accessible by AI** (for example, credit card i
 Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
 
 This term is important in the GenUI context, because end users want to **clearly see** what their input is allowed to go to the AI and what is not allowed.
+
+## Project status terminology
+
+Labels used in the [Roadmap](roadmap.md) and elsewhere to describe the maturity and support level of A2UI artifacts.
+
+### Specification version status
+
+Each version of the A2UI specification is labeled with one of the following statuses. This taxonomy was agreed in [#1240](https://github.com/google/A2UI/issues/1240).
+
+- **draft**: not ready for use yet — under active development, may change significantly.
+- **candidate**: ready for experiments, but not finalized — being implemented in one or more SDKs as a proof of concept; small refinements are still expected.
+- **final**: active development is finished — will only be modified to correct ambiguities or errors. SDKs can and should implement it.
+- **deprecated**: a version that is not recommended for use.
+
+Note that "latest" is intentionally not a status — the latest version is implied by the semver number. Multiple versions can simultaneously hold `final` status, and the ecosystem is expected to support more than one version at a time.
+
+Current application:
+
+| Version | Status |
+|---------|--------|
+| v0.8    | final |
+| v0.9    | final |
+| v0.10   | draft |
+
+### Renderer status
+
+Renderer status terminology is still being worked out (see [#1240](https://github.com/google/A2UI/issues/1240) for the parallel discussion on specs). For now the [Roadmap](roadmap.md) uses the informal labels **Stable**, **Planned**, and **Proposed**.
