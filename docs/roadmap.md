@@ -89,7 +89,7 @@ Many research projects across multiple Google teams, including integration into 
 
 ## Upcoming Milestones
 
-### Q2 2026 v0.9 & v0.10
+### Q2 2026 v0.9
 
 **Jetpack Compose Renderer (Android):**
 
