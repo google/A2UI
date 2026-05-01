@@ -27,9 +27,11 @@ Each specification version is labeled with one of the following statuses:
 | **Web Core Lib** | ✅ Stable | Web | Shared core lib for all web renderers |
 | **Web Components (Lit)** | ✅ Stable | Web | Framework-agnostic, works anywhere |
 | **Angular** | ✅ Stable | Web | Full Angular integration |
+| **React** | ✅ Available | Web | Official React renderer |
 | **Flutter (GenUI SDK)** | ✅ Stable | Multi-platform | Works on mobile, web, desktop |
-| **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q2 2026 |
-| **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |
+| **Markdown (`@a2ui/markdown-it`)** | ✅ Stable | Web | Markdown rendering for Text widgets in all web renderers |
+| **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q3 2026 |
+| **Jetpack Compose** | 📋 Planned | Android | Planned for Q3 2026 |
 | **Vue** | 💡 Proposed | Web | Community interest |
 | [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web | [Community interest](https://news.ycombinator.com/item?id=46287728) |
 | **ShadCN (React)** | 💡 Proposed | Web | Community interest |
@@ -160,6 +162,18 @@ Support for more complex UI interactions:
 - Agent marketplace integration
 - Enterprise features and support
 
+## Community Requests
+
+Features requested by the community (in no particular order):
+
+- **More renderer integrations**: Map from your client library to A2UI
+- **More agent frameworks**: Map from your agent framework to A2UI
+- **More transports**: Map from your transport to A2UI
+- **Community component library**: Share custom components with the community
+- **Community samples**: Share custom samples with the community
+- **Community evaluations**: Generative UI evaluation scenarios and labeled datasets
+- **Developer Ergonomics**: If you can build a better A2UI experience, share it with the community
+
 ## How to Influence the Roadmap
 
 We welcome community input on priorities:
@@ -183,6 +197,14 @@ A2UI follows [Semantic Versioning](https://semver.org/):
 - **MAJOR**: Incompatible protocol changes
 - **MINOR**: Backward-compatible functionality additions
 - **PATCH**: Backward-compatible bug fixes
+
+## Get Involved
+
+Want to contribute to the roadmap?
+
+- **Propose features** in [GitHub Discussions](https://github.com/google/A2UI/discussions)
+- **Build prototypes** and share them with the community
+- **Join the conversation** on GitHub Issues
 
 ## Stay Updated
 

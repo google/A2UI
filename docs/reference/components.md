@@ -205,7 +205,7 @@ Display images from URLs.
 
 ### Icon
 
-Display icons from the basic set defined in the catalog.
+Display icons from the [predefined list](https://github.com/google/A2UI/blob/main/specification/v0_9/json/basic_catalog.json#L108-L166) defined in the basic catalog.
 
 === "v0.8"
 

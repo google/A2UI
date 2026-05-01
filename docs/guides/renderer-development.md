@@ -113,21 +113,21 @@ Implement the following communication features:
   - Send the complete `userAction` object to the server's event handling endpoint.
 - **Client Capabilities Reporting**:
   - In **every** A2A message sent to the server (as part of the metadata), include an `a2uiClientCapabilities` object.
-  - This object should declare the component catalog your client supports via `supportedCatalogIds` (e.g., including the URI for the basic 0.8 catalog).
+  - This object should declare the component catalog your client supports via `supportedCatalogIds` (e.g., including the URI for the basic 0.9 catalog).
   - Optionally, if the server supports it, provide `inlineCatalogs` for custom, on-the-fly component definitions.
 - **Error Reporting**: Implement a mechanism to send an `error` message to the server to report any client-side errors (e.g., failed data binding, unknown component type).
 
 ## II. Basic Component Catalog Checklist
 
-To ensure a consistent user experience across platforms, A2UI defines a basic set of components. Your client should map these abstract definitions to their corresponding native UI widgets.
+To ensure you can start using A2UI immediately, A2UI defines a basic set of components. Your client should map these abstract definitions to their corresponding native UI widgets.
 
 ### Basic Content
 
-The basic catalog includes the following basic content components:
+The basic catalog includes the following content components:
 
 - **Text**: Render text content. Must support data binding on `text` and a `usageHint` for styling (h1-h5, body, caption).
 - **Image**: Render an image from a URL. Must support `fit` (cover, contain, etc.) and `usageHint` (avatar, hero, etc.) properties.
-- **Icon**: Render a predefined icon from the basic set specified in the catalog.
+- **Icon**: Render an icon from the [predefined list](https://github.com/google/A2UI/blob/main/specification/v0_9/json/basic_catalog.json#L108-L166).
 - **Video**: Render a video player for a given URL.
 - **AudioPlayer**: Render an audio player for a given URL, optionally with a description.
 - **Divider**: Render a visual separator, supporting both `horizontal` and `vertical` axes.

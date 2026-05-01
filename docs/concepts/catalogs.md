@@ -61,7 +61,7 @@ Whether you are building a simple prototype or a complex production application,
 
 To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
 
-This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for. 
+This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we provide so the package has "batteries included". Our renderers are able to handle any catalog as long as you conform to the API in `web_core`; the basic catalog is just a convenience so you can get started immediately. You can create your own custom catalogs to perfectly match the design language of your app.
 
 The basic catalog allows you to bootstrap an application or validate A2UI concepts without needing to write your own schema from scratch. It is intentionally sparse to remain easily implementable by different renderers.
 
