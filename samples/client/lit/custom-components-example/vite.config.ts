@@ -39,7 +39,12 @@ export default async () => {
         configureServer(server) {
           server.middlewares.use((req, _res, next) => {
             if (req.url?.startsWith(`/${SANDBOX_BASE_PATH}`)) {
-              req.url = '/@fs' + resolve(__dirname, '../../' + req.url.slice(1));
+              let targetPath = req.url.slice(1);
+              // Normalize .js requests from HTML back to source .ts files for Vite bundling
+              if (targetPath.endsWith(".js")) {
+                targetPath = targetPath.slice(0, -3) + ".ts";
+              }
+              req.url = '/@fs' + resolve(__dirname, '../../' + targetPath);
             }
             next();
           });
@@ -68,6 +73,12 @@ export default async () => {
     },
     server: {
       host: true, // Listen on all network interfaces (0.0.0.0), enabling both localhost and 127.0.0.1 simultaneously
+      fs: {
+        allow: [
+          "../../",
+          "./",
+        ]
+      }
     },
   } satisfies UserConfig;
 };
