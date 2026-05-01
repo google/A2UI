@@ -284,7 +284,6 @@ export async function main(args, mocks = {}) {
   checkNpmVersions(packageObjects, exec);
   // Ensure packages can be built and tested.
   buildAndTestPackages(packageObjects, runCmd, skipTests);
-  // Confirm that the user wants to proceed with publishing.
 
   console.log('\n--- Proceeding to publish ---');
   console.log('\n--- Authenticating with Google Artifact Registry ---');
