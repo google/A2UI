@@ -30,8 +30,8 @@ Each specification version is labeled with one of the following statuses:
 | **React** | ✅ Available | Web | Official React renderer |
 | **Flutter (GenUI SDK)** | ✅ Stable | Multi-platform | Works on mobile, web, desktop |
 | **Markdown (`@a2ui/markdown-it`)** | ✅ Stable | Web | Markdown rendering for Text widgets in all web renderers |
+| **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |
 | **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q3 2026 |
-| **Jetpack Compose** | 📋 Planned | Android | Planned for Q3 2026 |
 | **Vue** | 💡 Proposed | Web | Community interest |
 | [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web | [Community interest](https://news.ycombinator.com/item?id=46287728) |
 | **ShadCN (React)** | 💡 Proposed | Web | Community interest |
@@ -89,13 +89,15 @@ Many research projects across multiple Google teams, including integration into 
 
 ## Upcoming Milestones
 
-### Q3 2026 v0.9 & v0.10
+### Q2 2026 v0.9 & v0.10
 
 **Jetpack Compose Renderer (Android):**
 
 - Native Compose UI components
 - Material Design 3 support
 - Android platform integration
+
+### Q3 2026 v0.9 & v0.10
 
 **SwiftUI Renderer (iOS/macOS):**
 
