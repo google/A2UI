@@ -223,13 +223,6 @@ Each version of the A2UI specification is labeled with one of the following stat
 
 Note that "latest" is intentionally not a status — the latest version is implied by the semver number. Multiple versions can simultaneously hold `final` status, and the ecosystem is expected to support more than one version at a time.
 
-Current application:
-
-| Version | Status |
-|---------|--------|
-| v0.8    | final |
-| v0.9    | final |
-| v0.10   | draft |
 
 ### Renderer status
 
