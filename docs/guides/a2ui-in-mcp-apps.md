@@ -11,7 +11,7 @@ This guide shows you how to serve rich, interactive A2UI interfaces within [MCP 
 
 ## Quick Start: Run the Sample
 
-For detailed instructions on how to run this sample, please refer to the [README.md](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/README.md).
+For detailed instructions on how to run this sample, please refer to the [README.md](https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/README.md).
 
 ## Architecture Overview
 
@@ -102,7 +102,7 @@ To build your own MCP App with A2UI capabilities, follow these steps:
 MCP Apps are typically delivered as a single HTML resource from the MCP Server. To achieve this with a modern framework like Angular or React:
 
 1.  Build your application normally to produce static assets (`index.html`, `.js`, `.css`).
-2.  Use a post-build script (like the [`inline.js`](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/inline.js) script in the sample) to read the `index.html` and replace external `<script src="...">` and `<link rel="stylesheet" href="...">` tags with inline `<script>` and `<style>` tags containing the actual file contents.
+2.  Use a post-build script (like the [`inline.js`](https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/server/apps/src/inline.js) script in the sample) to read the `index.html` and replace external `<script src="...">` and `<link rel="stylesheet" href="...">` tags with inline `<script>` and `<style>` tags containing the actual file contents.
 3.  This produces a self-contained HTML file that can be safely loaded via `srcdoc` in the restricted iframe.
 
 !!! tip "Using Vite to inline "
@@ -186,7 +186,7 @@ To handle interactivity within the rendered A2UI surface, your MCP App must capt
 **Example: Handling User Actions**
 
 ```typescript
-// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/agent/mcp/a2ui-in-mcpapps/server/apps/src/src/main.ts))
+// Subscribing to A2UI events in the MCP App ([main.ts](https://github.com/google/A2UI/blob/main/samples/mcp/a2ui-in-mcpapps/server/apps/src/src/main.ts))
 this.processor.events.subscribe(async (event) => {
   if (!event.message.userAction) return;
   
