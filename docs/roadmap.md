@@ -6,10 +6,17 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 ### Protocol
 
+Each specification version is labeled with one of the following statuses:
+
+- **draft**: not ready for use yet
+- **candidate**: ready for experiments, but not finalized
+- **final**: active development is finished here
+- **deprecated**: a version that is not recommended for use
+
 | Version | Status | Notes |
 |---------|--------|-------|
-| **v0.8** | 🆗 Prior | Initial public release, minimal support |
-| **v0.9** | ✅ Current | Feature complete, supported |
+| **v0.8** | ✅ Final | Initial public release |
+| **v0.9** | ✅ Final | Feature complete, supported |
 | **v0.10** | 🚧 Draft | Minimal changes to spec, new features |
 | **v1.0** | 🚧 Draft | Stable and complete |
 
