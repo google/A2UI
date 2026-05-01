@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BoundProperty } from '@a2ui/angular/v0_9';
+import { CatalogComponent } from 'src/v0_9/core/catalog_component';
+import { customSliderApi } from './demo-catalog';
 
 /**
  * A custom component not part of any catalog, used to verify the renderer's
@@ -28,12 +29,12 @@ import { BoundProperty } from '@a2ui/angular/v0_9';
   imports: [CommonModule],
   template: `
     <div class="custom-slider-container">
-      <label>{{ props['label']?.value() || 'Value' }}: {{ props['value']?.value() }}</label>
+      <label>{{ props()['label']?.value() || 'Value' }}: {{ props()['value']?.value() }}</label>
       <input
         type="range"
-        [min]="props['min']?.value() || 0"
-        [max]="props['max']?.value() || 100"
-        [value]="props['value']?.value() || 0"
+        [min]="props()['min']?.value() || 0"
+        [max]="props()['max']?.value() || 100"
+        [value]="props()['value']?.value() || 0"
         (input)="handleInput($event)"
       />
     </div>
@@ -52,11 +53,9 @@ import { BoundProperty } from '@a2ui/angular/v0_9';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomSliderComponent {
-  @Input() props: Record<string, BoundProperty> = {};
-
+export class CustomSliderComponent extends CatalogComponent<typeof customSliderApi> {
   handleInput(event: Event) {
     const val = Number((event.target as HTMLInputElement).value);
-    this.props['value']?.onUpdate(val);
+    this.props()['value']?.onUpdate(val);
   }
 }
