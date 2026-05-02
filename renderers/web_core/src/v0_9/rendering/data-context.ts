@@ -30,6 +30,17 @@ import {isSignal} from '../catalog/types.js';
 import {FunctionInvoker} from '../catalog/function_invoker.js';
 import {SurfaceModel} from '../state/surface-model.js';
 
+function getUnsubscribe(value: unknown): (() => void) | undefined {
+  if (
+    value &&
+    typeof value === 'object' &&
+    typeof (value as {unsubscribe?: unknown}).unsubscribe === 'function'
+  ) {
+    return (value as {unsubscribe: () => void}).unsubscribe.bind(value);
+  }
+  return undefined;
+}
+
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
  * DynamicValues (literals, data paths, function calls) within a specific scope.
@@ -184,7 +195,11 @@ export class DataContext {
     // 2. Path Check
     if ('path' in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
-      return this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
+      const sig = this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
+      (sig as any).unsubscribe = () => {
+        this.dataModel.releaseSignal(absolutePath);
+      };
+      return sig;
     }
 
     // 3. Function Call
@@ -196,22 +211,12 @@ export class DataContext {
         argSignals[key] = this.resolveSignal(argVal);
       }
 
-      if (Object.keys(argSignals).length === 0) {
-        const abortController = new AbortController();
-        const result = this.evaluateFunctionReactive<V>(
-          call.call,
-          {},
-          abortController.signal,
-        );
-        const sig = result instanceof Signal ? result : signal(result);
-        (sig as any).unsubscribe = () => abortController.abort();
-        return sig;
-      }
-
       const keys = Object.keys(argSignals);
       const resultSig = signal<V | undefined>(undefined);
       let abortController: AbortController | undefined;
       let innerUnsubscribe: (() => void) | undefined;
+      let functionResultUnsubscribe: (() => void) | undefined;
+      let hasReactiveError = false;
 
       const argsSig = computed(() => {
         const argsRecord: Record<string, any> = {};
@@ -220,6 +225,21 @@ export class DataContext {
         }
         return argsRecord;
       });
+
+      const stopCurrentResult = () => {
+        if (innerUnsubscribe) {
+          innerUnsubscribe();
+          innerUnsubscribe = undefined;
+        }
+        if (functionResultUnsubscribe) {
+          functionResultUnsubscribe();
+          functionResultUnsubscribe = undefined;
+        }
+        if (abortController) {
+          abortController.abort();
+          abortController = undefined;
+        }
+      };
 
       const stopper = effect(() => {
         try {
@@ -230,6 +250,9 @@ export class DataContext {
             innerUnsubscribe();
             innerUnsubscribe = undefined;
           }
+
+          const args = argsSig.value;
+          stopCurrentResult();
           abortController = new AbortController();
 
           const res = this.evaluateFunctionReactive<V>(
@@ -237,25 +260,36 @@ export class DataContext {
             args,
             abortController.signal,
           );
+          functionResultUnsubscribe = getUnsubscribe(res);
 
           if (isSignal(res)) {
             innerUnsubscribe = effect(() => {
-              resultSig.value = res.value;
+              try {
+                resultSig.value = res.value;
+                hasReactiveError = false;
+              } catch (e: any) {
+                hasReactiveError = true;
+                this.dispatchExpressionError(e, call.call);
+                resultSig.value = undefined;
+              }
             });
           } else {
             resultSig.value = res;
+            hasReactiveError = false;
           }
         } catch (e: any) {
+          hasReactiveError = true;
           this.dispatchExpressionError(e, call.call);
           // In reactive mode, we should not throw. Instead, reset the signal value.
           resultSig.value = undefined;
         }
       });
 
+      (resultSig as any).__a2uiHasError = () => hasReactiveError;
+
       (resultSig as any).unsubscribe = () => {
         stopper();
-        if (innerUnsubscribe) innerUnsubscribe();
-        if (abortController) abortController.abort();
+        stopCurrentResult();
         for (let i = 0; i < keys.length; i++) {
           const argSig = argSignals[keys[i]];
           if ((argSig as any).unsubscribe) {
