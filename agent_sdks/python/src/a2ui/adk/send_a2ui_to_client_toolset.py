@@ -130,7 +130,8 @@ A2uiEnabledProvider: TypeAlias = Callable[
     [readonly_context.ReadonlyContext], Union[bool, Awaitable[bool]]
 ]
 A2uiCatalogProvider: TypeAlias = Callable[
-    [readonly_context.ReadonlyContext], Union[catalog.A2uiCatalog, Awaitable[catalog.A2uiCatalog]]
+    [readonly_context.ReadonlyContext],
+    Union[catalog.A2uiCatalog, Awaitable[catalog.A2uiCatalog]],
 ]
 A2uiExamplesProvider: TypeAlias = Callable[
     [readonly_context.ReadonlyContext], Union[str, Awaitable[str]]
@@ -190,7 +191,9 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
       logger.info("A2UI is DISABLED, not adding ui tools")
       return []
 
-  async def get_part_converter(self, ctx: readonly_context.ReadonlyContext) -> "A2uiPartConverter":
+  async def get_part_converter(
+      self, ctx: readonly_context.ReadonlyContext
+  ) -> "A2uiPartConverter":
     """Returns a configured A2uiPartConverter for the given context.
 
     Args:
@@ -218,13 +221,12 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
       super().__init__(
           name=self.TOOL_NAME,
           description=(
-              "Sends A2UI JSON to the client to render rich UI for the user."
-              " This tool can be called multiple times in the same call to"
-              " render multiple UI surfaces.Args:   "
-              f" {self.A2UI_JSON_ARG_NAME}: Valid A2UI JSON Schema to send to"
-              " the client. The A2UI JSON Schema definition is between"
-              f" {constants.A2UI_SCHEMA_BLOCK_START} and {constants.A2UI_SCHEMA_BLOCK_END} in"
-              " the system instructions."
+              "Sends A2UI JSON to the client to render rich UI for the user. This tool"
+              " can be called multiple times in the same call to render multiple UI"
+              f" surfaces.Args:    {self.A2UI_JSON_ARG_NAME}: Valid A2UI JSON Schema to"
+              " send to the client. The A2UI JSON Schema definition is between"
+              f" {constants.A2UI_SCHEMA_BLOCK_START} and"
+              f" {constants.A2UI_SCHEMA_BLOCK_END} in the system instructions."
           ),
       )
 
@@ -244,7 +246,9 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           ),
       )
 
-    async def _resolve_a2ui_examples(self, ctx: readonly_context.ReadonlyContext) -> str:
+    async def _resolve_a2ui_examples(
+        self, ctx: readonly_context.ReadonlyContext
+    ) -> str:
       """The resolved self.a2ui_examples field to construct instruction for this agent.
 
       Args:
@@ -261,7 +265,9 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           a2ui_examples = await a2ui_examples
         return a2ui_examples
 
-    async def _resolve_a2ui_catalog(self, ctx: readonly_context.ReadonlyContext) -> catalog.A2uiCatalog:
+    async def _resolve_a2ui_catalog(
+        self, ctx: readonly_context.ReadonlyContext
+    ) -> catalog.A2uiCatalog:
       """The resolved self.a2ui_catalog field to construct instruction for this agent.
 
       Args:
@@ -279,7 +285,10 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
         return a2ui_catalog
 
     async def process_llm_request(
-        self, *, tool_context: tool_context.ToolContext, llm_request: models.LlmRequest
+        self,
+        *,
+        tool_context: tool_context.ToolContext,
+        llm_request: models.LlmRequest,
     ) -> None:
       await super().process_llm_request(
           tool_context=tool_context, llm_request=llm_request
@@ -336,7 +345,9 @@ class A2uiPartConverter:
   catalog to validate and fix JSON payloads.
   """
 
-  def __init__(self, a2ui_catalog: catalog.A2uiCatalog, bypass_tool_check: bool = False):
+  def __init__(
+      self, a2ui_catalog: catalog.A2uiCatalog, bypass_tool_check: bool = False
+  ):
     self._catalog = a2ui_catalog
     self._bypass_tool_check = bypass_tool_check
 
@@ -425,7 +436,9 @@ class A2uiEventConverter:
       part_converter_func: "GenAIPartToA2APartConverter" = part_converter.convert_genai_part_to_a2a_part,
   ) -> list["A2AEvent"]:
     """Converts an ADK event to A2A events, using the session catalog if available."""
-    from google.adk.a2a.converters.event_converter import convert_event_to_a2a_events
+    from google.adk.a2a.converters.event_converter import (
+        convert_event_to_a2a_events,
+    )
 
     catalog = invocation_context.session.state.get(self._catalog_key)
     if catalog:
