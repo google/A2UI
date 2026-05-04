@@ -32,7 +32,7 @@ This test verifies the sandbox with a Lit-based client and an ADK-based A2A agen
 This test verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
 
 - **MCP Server (Calculator)**:
-  - Path: `../../../agent/mcp/mcp-apps-calculator/`
+  - Path: `../../../mcp/mcp-apps-calculator/`
   - Command: `uv run .` (runs on port 8000)
 - **MCP Apps Proxy Agent**:
   - Path: `../../../agent/adk/mcp_app_proxy/`

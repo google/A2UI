@@ -518,9 +518,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
       this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
     }
-    if (this.examples.length > 0) {
-      this.selectExample(this.examples[0]);
-    }
+    this.selectExampleFromUrl();
   }
 
   /**
@@ -535,6 +533,8 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.currentDataModel = {};
     this.eventsLog = [];
     this.cdr.detectChanges();
+
+    window.location.hash = this.slugify(example.name);
 
     // Clean up previous subscriptions
     if (this.dataModelSub) {
@@ -672,5 +672,16 @@ export class DemoComponent implements OnInit, OnDestroy {
     if (this.actionSub) {
       this.actionSub.unsubscribe();
     }
+  }
+
+  private slugify(text: string): string {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  private selectExampleFromUrl(): void {
+    const hash = window.location.hash.substring(1) || '';
+    const example: Example | undefined = this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
+    if (!example) return;
+    this.selectExample(example);
   }
 }
