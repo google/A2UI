@@ -101,7 +101,7 @@ class ConformanceTest {
         val jsonStr = jsonMapper.writeValueAsString(payloadObj)
         val payload = Json.parseToJsonElement(jsonStr)
 
-        ValidateStep(payload = payload, expectError = step["expect_error"] as? String ?: case["expect_error"] as? String)
+        ValidateStep(payload = payload, expectError = step[ConformanceTestHelper.KEY_EXPECT_ERROR] as? String ?: case[ConformanceTestHelper.KEY_EXPECT_ERROR] as? String)
       }
 
       ConformanceTestCase(name, catalog, validate, schemaMappings)
@@ -230,7 +230,7 @@ class ConformanceTest {
       if (action == "load" && (args["path"] as? String)?.let { it.contains("*") || it.contains("[") || it.contains("?") } == true) {
         return@mapNotNull null
       }
-      if (action == "load" && case.containsKey("expect_error")) {
+      if (action == "load" && case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
         // Kotlin loadExamples skips invalid files instead of throwing, so it's not conformant with error expectation
         return@mapNotNull null
       }
@@ -244,7 +244,7 @@ class ConformanceTest {
           "prune" -> {
             val allowedComponents = args["allowed_components"] as? List<String> ?: emptyList()
             val pruned = catalog!!.withPrunedComponents(allowedComponents)
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             if (expect.containsKey("catalog_schema")) {
               val expectSchema = jsonMapper.writeValueAsString(expect["catalog_schema"])
               assertEquals(Json.parseToJsonElement(expectSchema), pruned.catalogSchema)
@@ -255,8 +255,8 @@ class ConformanceTest {
             val fullPath = path?.let { File(conformanceDir, it).absolutePath }
             val validate = args["validate"] as? Boolean ?: false
             
-            if (case.containsKey("expect_error")) {
-               val expectError = case["expect_error"] as String
+            if (case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
+               val expectError = case[ConformanceTestHelper.KEY_EXPECT_ERROR] as String
                val exception = assertFailsWith<IllegalArgumentException> {
                    catalog!!.loadExamples(fullPath, validate = validate)
                }
@@ -273,7 +273,7 @@ class ConformanceTest {
             val jsonElement = Json.parseToJsonElement(jsonStr) as JsonObject
             val modified = SchemaModifiers.removeStrictValidation(jsonElement)
             
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             val expectSchemaStr = jsonMapper.writeValueAsString(expect["schema"])
             val expectSchema = Json.parseToJsonElement(expectSchemaStr) as JsonObject
             assertEquals(expectSchema, modified)
@@ -319,8 +319,8 @@ class ConformanceTest {
             val capsJsonStr = jsonMapper.writeValueAsString(clientCapabilities)
             val capsJson = Json.parseToJsonElement(capsJsonStr) as JsonObject
 
-            if (case.containsKey("expect_error")) {
-              val expectError = case["expect_error"] as String
+            if (case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
+              val expectError = case[ConformanceTestHelper.KEY_EXPECT_ERROR] as String
               val exception = assertFailsWith<IllegalArgumentException> {
                 manager.getSelectedCatalog(capsJson)
               }
@@ -360,7 +360,7 @@ class ConformanceTest {
             )
 
             val selected = manager.getSelectedCatalog()
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             
             if (expect.containsKey("catalog_schema")) {
               val expectSchemaStr = jsonMapper.writeValueAsString(expect["catalog_schema"])
@@ -444,8 +444,8 @@ class ConformanceTest {
       DynamicTest.dynamicTest(name) {
         when (action) {
           "parse_full" -> {
-            if (case.containsKey("expect_error")) {
-              val expectError = case["expect_error"] as String
+            if (case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
+              val expectError = case[ConformanceTestHelper.KEY_EXPECT_ERROR] as String
               val exception = assertFailsWith<IllegalArgumentException> {
                 parseResponseToParts(input)
               }
@@ -455,7 +455,7 @@ class ConformanceTest {
               )
             } else {
               val parts = parseResponseToParts(input)
-              val expect = case["expect"] as List<*>
+              val expect = case[ConformanceTestHelper.KEY_EXPECT] as List<*>
               assertEquals(expect.size, parts.size)
               for (i in expect.indices) {
                 val exp = expect[i] as Map<*, *>
@@ -474,14 +474,14 @@ class ConformanceTest {
           }
           "fix_payload" -> {
              val result = PayloadFixer.parseAndFix(input)
-             val expect = case["expect"] as List<*>
+             val expect = case[ConformanceTestHelper.KEY_EXPECT] as List<*>
              val expectJsonStr = jsonMapper.writeValueAsString(expect)
              val expectJson = Json.parseToJsonElement(expectJsonStr) as JsonArray
              assertEquals(expectJson, result)
           }
           "has_parts" -> {
              val result = hasA2uiParts(input)
-             val expect = case["expect"] as Boolean
+             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
              assertEquals(expect, result)
           }
         }

@@ -24,6 +24,16 @@ object ConformanceTestHelper {
   private const val SPECIFICATION_DIR = "specification"
   const val CONFORMANCE_DIR_PATH = "agent_sdks/conformance/"
 
+  const val KEY_NAME = "name"
+  const val KEY_ACTION = "action"
+  const val KEY_ARGS = "args"
+  const val KEY_CATALOG = "catalog"
+  const val KEY_STEPS = "steps"
+  const val KEY_PAYLOAD = "payload"
+  const val KEY_VALIDATE = "validate"
+  const val KEY_EXPECT_ERROR = "expect_error"
+  const val KEY_EXPECT = "expect"
+
   private fun findRepoRoot(): File {
     var currentDir: File? = File(System.getProperty("user.dir"))
     while (currentDir != null) {
