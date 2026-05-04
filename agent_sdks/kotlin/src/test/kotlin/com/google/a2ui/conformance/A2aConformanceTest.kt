@@ -55,11 +55,6 @@ class A2aConformanceTest {
   private val yamlMapper = ObjectMapper(YAMLFactory())
   private val jsonMapper = ObjectMapper()
 
-  private fun getConformanceFile(filename: String): File {
-    val userDir = System.getProperty("user.dir")
-    return File(userDir, "../conformance/suites/$filename")
-  }
-
   private fun anyToJsonElement(any: Any?): JsonElement =
     when (any) {
       null -> JsonNull
@@ -78,7 +73,7 @@ class A2aConformanceTest {
 
   @TestFactory
   fun testA2aIntegrationConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile("a2a_integration.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/a2a_integration.yaml")
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.map { caseObj ->

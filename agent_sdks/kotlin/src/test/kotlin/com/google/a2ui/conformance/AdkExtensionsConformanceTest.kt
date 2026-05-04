@@ -57,15 +57,9 @@ class AdkExtensionsConformanceTest {
   private val yamlMapper = ObjectMapper(YAMLFactory())
   private val jsonMapper = ObjectMapper()
 
-  private fun getConformanceFile(filename: String): File {
-    val userDir = System.getProperty("user.dir")
-    // Assuming tests are run from agent_sdks/kotlin
-    return File(userDir, "../conformance/suites/$filename")
-  }
-
   @TestFactory
   fun testAdkExtensionsConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile("adk_extensions.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/adk_extensions.yaml")
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.map { caseObj ->

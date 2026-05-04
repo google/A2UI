@@ -51,9 +51,7 @@ class ConformanceTest {
   private val yamlMapper = ObjectMapper(YAMLFactory())
   private val jsonMapper = ObjectMapper()
 
-  private fun getConformanceFile(filename: String): File {
-    return File(REPO_ROOT, "$CONFORMANCE_DIR_PATH$filename")
-  }
+
 
   private fun loadJsonFile(file: File): JsonObject {
     val jsonStr = file.readText()
@@ -64,13 +62,23 @@ class ConformanceTest {
     val rawList = yamlMapper.readValue(file, Any::class.java) as List<*>
 
     val baseSchemaMappings = mutableMapOf<String, String>()
-    conformanceDir
-      .listFiles { _, name -> name.endsWith(".json") }
-      ?.forEach { f ->
-        baseSchemaMappings["$URL_PREFIX_V09${f.name}"] = f.toURI().toString()
-        baseSchemaMappings["$URL_PREFIX_V08${f.name}"] = f.toURI().toString()
-        baseSchemaMappings[f.name] = f.toURI().toString()
-      }
+    val repoRoot = ConformanceTestHelper.repoRoot
+    val jsonDirs = listOf(
+      conformanceDir to listOf(URL_PREFIX_V09, URL_PREFIX_V08),
+      File(conformanceDir, "test_data") to listOf(URL_PREFIX_V09, URL_PREFIX_V08),
+      File(repoRoot, "specification/v0_9/json") to listOf(URL_PREFIX_V09),
+      File(repoRoot, "specification/v0_8/json") to listOf(URL_PREFIX_V08)
+    )
+
+    jsonDirs.forEach { (dir, prefixes) ->
+      dir.listFiles { _, name -> name.endsWith(".json") }
+        ?.forEach { f ->
+          prefixes.forEach { prefix ->
+            baseSchemaMappings["$prefix${f.name}"] = f.toURI().toString()
+          }
+          baseSchemaMappings[f.name] = f.toURI().toString()
+        }
+    }
 
     return rawList.map { caseObj ->
       val case = caseObj as Map<*, *>
@@ -116,9 +124,14 @@ class ConformanceTest {
     val catalogSchemaObj = catalogMap["catalog_schema"]
     val schemaMappings = HashMap(baseSchemaMappings)
 
+    val urlPrefix = if (version == A2uiVersion.VERSION_0_8) URL_PREFIX_V08 else URL_PREFIX_V09
+
     val catalogSchema =
       if (catalogSchemaObj is String) {
-        loadJsonFile(File(conformanceDir, catalogSchemaObj))
+        val file = File(conformanceDir, catalogSchemaObj)
+        schemaMappings["catalog.json"] = file.toURI().toString()
+        schemaMappings["${urlPrefix}catalog.json"] = file.toURI().toString()
+        loadJsonFile(file)
       } else if (catalogSchemaObj is Map<*, *>) {
         val jsonStr = jsonMapper.writeValueAsString(catalogSchemaObj)
 
@@ -128,6 +141,8 @@ class ConformanceTest {
         schemaMappings["$URL_PREFIX_V09$SIMPLIFIED_CATALOG_V09"] =
           tempFile.toURI().toString()
         schemaMappings[SIMPLIFIED_CATALOG_V09] = tempFile.toURI().toString()
+        schemaMappings["catalog.json"] = tempFile.toURI().toString()
+        schemaMappings["${urlPrefix}catalog.json"] = tempFile.toURI().toString()
 
         Json.parseToJsonElement(jsonStr) as JsonObject
       } else if (catalogSchemaObj == null) {
@@ -154,8 +169,8 @@ class ConformanceTest {
 
   @TestFactory
   fun testValidatorConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile(VALIDATOR_YAML_FILE)
-    val conformanceDir = File(REPO_ROOT, CONFORMANCE_DIR_PATH)
+    val conformanceFile = ConformanceTestHelper.getConformanceFile(VALIDATOR_YAML_FILE)
+    val conformanceDir = ConformanceTestHelper.getConformanceDir()
     val cases = parseConformanceYaml(conformanceFile, conformanceDir)
 
     return cases.map { case ->
@@ -200,8 +215,8 @@ class ConformanceTest {
 
   @TestFactory
   fun testCatalogConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile("suites/catalog.yaml")
-    val conformanceDir = File(REPO_ROOT, CONFORMANCE_DIR_PATH)
+    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/catalog.yaml")
+    val conformanceDir = ConformanceTestHelper.getConformanceDir()
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.mapNotNull { caseObj ->
@@ -272,8 +287,8 @@ class ConformanceTest {
 
   @TestFactory
   fun testSchemaManagerConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile("suites/schema_manager.yaml")
-    val conformanceDir = File(REPO_ROOT, CONFORMANCE_DIR_PATH)
+    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/schema_manager.yaml")
+    val conformanceDir = ConformanceTestHelper.getConformanceDir()
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.mapNotNull { caseObj ->
@@ -419,7 +434,7 @@ class ConformanceTest {
 
   @TestFactory
   fun testParserConformance(): List<DynamicTest> {
-    val conformanceFile = getConformanceFile("suites/parser.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/parser.yaml")
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.mapNotNull { caseObj ->
@@ -477,23 +492,6 @@ class ConformanceTest {
   }
 
   private companion object {
-    private val REPO_ROOT = findRepoRoot()
-
-    private fun findRepoRoot(): File {
-      var currentDir: File? = File(System.getProperty("user.dir"))
-      while (currentDir != null) {
-        if (File(currentDir, SPECIFICATION_DIR).isDirectory) {
-          return currentDir
-        }
-        currentDir = currentDir.parentFile
-      }
-      throw IllegalStateException(
-        "Could not find repository root containing specification directory."
-      )
-    }
-
-    private const val SPECIFICATION_DIR = "specification"
-    private const val CONFORMANCE_DIR_PATH = "agent_sdks/conformance/"
     private const val SIMPLIFIED_CATALOG_V09 = "simplified_catalog_v09.json"
     private const val URL_PREFIX_V09 = "https://a2ui.org/specification/v0_9/"
     private const val URL_PREFIX_V08 = "https://a2ui.org/specification/v0_8/"
