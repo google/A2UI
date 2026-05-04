@@ -108,7 +108,7 @@ from a2ui.a2a import parts
 from a2ui.parser.parser import has_a2ui_parts
 from a2ui.parser.payload_fixer import parse_and_fix
 from a2ui.schema import catalog
-from a2ui.schema.constants import constants
+from a2ui.schema import constants
 from google.adk import models
 from google.adk.a2a.converters import part_converter
 from google.adk.agents import readonly_context
