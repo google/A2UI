@@ -22,7 +22,7 @@ Before diving into the protocol details, let's get a working example running. Th
 ```bash
 # Clone the repo (if you haven't already)
 git clone https://github.com/google/A2UI.git
-cd A2UI/samples/agent/mcp/a2ui-over-mcp-recipe
+cd A2UI/samples/mcp/a2ui-over-mcp-recipe
 
 # Start the MCP server (SSE transport on port 8000)
 uv run .
@@ -48,7 +48,7 @@ In the Inspector:
 > pip install a2ui-agent-sdk
 > ```
 
-See all samples at [`samples/agent/mcp/`](https://github.com/google/A2UI/tree/main/samples/agent/mcp).
+See all samples at [`samples/mcp/`](https://github.com/google/A2UI/tree/main/samples/mcp).
 
 ## How It Works
 
