@@ -145,8 +145,6 @@ class ConformanceTest {
         schemaMappings["${urlPrefix}catalog.json"] = tempFile.toURI().toString()
 
         Json.parseToJsonElement(jsonStr) as JsonObject
-      } else if (catalogSchemaObj == null) {
-        JsonObject(emptyMap())
       } else {
         throw IllegalArgumentException("catalog_schema is required in conformance test catalog config")
       }
