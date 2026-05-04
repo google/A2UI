@@ -213,7 +213,7 @@ class ConformanceTest {
 
   @TestFactory
   fun testCatalogConformance(): List<DynamicTest> {
-    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/catalog.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile(CATALOG_YAML_FILE)
     val conformanceDir = ConformanceTestHelper.getConformanceDir()
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
@@ -285,7 +285,7 @@ class ConformanceTest {
 
   @TestFactory
   fun testSchemaManagerConformance(): List<DynamicTest> {
-    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/schema_manager.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile(SCHEMA_MANAGER_YAML_FILE)
     val conformanceDir = ConformanceTestHelper.getConformanceDir()
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
@@ -432,7 +432,7 @@ class ConformanceTest {
 
   @TestFactory
   fun testParserConformance(): List<DynamicTest> {
-    val conformanceFile = ConformanceTestHelper.getConformanceFile("suites/parser.yaml")
+    val conformanceFile = ConformanceTestHelper.getConformanceFile(PARSER_YAML_FILE)
     val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
 
     return rawList.mapNotNull { caseObj ->
@@ -496,6 +496,9 @@ class ConformanceTest {
     private const val VERSION_0_8_STR = "0.8"
     private const val TEST_CATALOG_NAME = "test_catalog"
     private const val VALIDATOR_YAML_FILE = "suites/validator.yaml"
+    private const val CATALOG_YAML_FILE = "suites/catalog.yaml"
+    private const val SCHEMA_MANAGER_YAML_FILE = "suites/schema_manager.yaml"
+    private const val PARSER_YAML_FILE = "suites/parser.yaml"
   }
 }
 
