@@ -17,7 +17,18 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CatalogComponent } from 'src/v0_9/core/catalog_component';
-import { customSliderApi } from './demo-catalog';
+import z from 'zod';
+import { ComponentApi } from '@a2ui/web_core/v0_9';
+
+export const customSliderApi = {
+  name: 'CustomSlider',
+  schema: z.object({
+    label: z.string().optional(),
+    value: z.number().optional(),
+    min: z.number().optional(),
+    max: z.number().optional(),
+  }) as any,
+} satisfies ComponentApi;
 
 /**
  * A custom component not part of any catalog, used to verify the renderer's
@@ -59,3 +70,5 @@ export class CustomSliderComponent extends CatalogComponent<typeof customSliderA
     this.props()['value']?.onUpdate(val);
   }
 }
+
+export const CustomSliderComponentDeclaration = { ...customSliderApi, component: CustomSliderComponent };
