@@ -1,0 +1,105 @@
+{
+  "name": "booking-form",
+  "description": "An interactive reservation form with date/time picker, party size input, dietary requirements, and a submit button. Uses data binding for live form state.",
+  "version": "1.0.0",
+  "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+  "dataSchema": {
+    "type": "object",
+    "required": ["booking"],
+    "properties": {
+      "booking": {
+        "type": "object",
+        "required": ["restaurantName"],
+        "properties": {
+          "restaurantName": { "type": "string", "description": "Name of the restaurant to book." },
+          "imageUrl": { "type": "string", "description": "Restaurant image URL." },
+          "address": { "type": "string", "description": "Restaurant address." },
+          "minDate": { "type": "string", "format": "date", "description": "Earliest available booking date (ISO 8601)." },
+          "defaultPartySize": { "type": "number", "description": "Suggested party size." }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "root",
+      "component": "Column",
+      "children": [
+        "form-title",
+        "restaurant-image",
+        "restaurant-address",
+        "party-size-field",
+        "datetime-field",
+        "dietary-field",
+        "submit-btn"
+      ]
+    },
+    {
+      "id": "form-title",
+      "component": "Text",
+      "variant": "h2",
+      "text": "Book a Table at {{booking.restaurantName}}"
+    },
+    {
+      "id": "restaurant-image",
+      "component": "Image",
+      "url": "{{booking.imageUrl}}",
+      "description": "Photo of {{booking.restaurantName}}"
+    },
+    {
+      "id": "restaurant-address",
+      "component": "Text",
+      "variant": "caption",
+      "text": "{{booking.address}}"
+    },
+    {
+      "id": "party-size-field",
+      "component": "TextField",
+      "label": "Party Size",
+      "value": { "path": "/partySize" },
+      "variant": "number"
+    },
+    {
+      "id": "datetime-field",
+      "component": "DateTimeInput",
+      "label": "Date & Time",
+      "value": { "path": "/reservationTime" },
+      "enableDate": true,
+      "enableTime": true,
+      "min": "{{booking.minDate}}"
+    },
+    {
+      "id": "dietary-field",
+      "component": "TextField",
+      "label": "Dietary Requirements",
+      "value": { "path": "/dietary" }
+    },
+    {
+      "id": "submit-btn-text",
+      "component": "Text",
+      "text": "Submit Reservation"
+    },
+    {
+      "id": "submit-btn",
+      "component": "Button",
+      "child": "submit-btn-text",
+      "variant": "primary",
+      "action": {
+        "event": {
+          "name": "submit_booking",
+          "context": {
+            "restaurantName": "{{booking.restaurantName}}",
+            "partySize": { "path": "/partySize" },
+            "reservationTime": { "path": "/reservationTime" },
+            "dietary": { "path": "/dietary" }
+          }
+        }
+      }
+    }
+  ],
+  "dataModel": {
+    "partySize": "{{booking.defaultPartySize}}",
+    "reservationTime": "",
+    "dietary": ""
+  }
+}

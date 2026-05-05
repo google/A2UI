@@ -1,0 +1,95 @@
+{
+  "name": "product-detail",
+  "description": "Displays a product with title, image, price, description, and an add-to-cart button.",
+  "version": "1.0.0",
+  "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+  "dataSchema": {
+    "type": "object",
+    "required": ["product"],
+    "properties": {
+      "product": {
+        "type": "object",
+        "required": ["title", "price", "description"],
+        "properties": {
+          "title": { "type": "string", "description": "Product name." },
+          "price": { "type": "string", "description": "Formatted price string (e.g. '$29.99')." },
+          "description": { "type": "string", "description": "Product description." },
+          "imageUrl": { "type": "string", "description": "Product image URL." },
+          "sku": { "type": "string", "description": "Stock-keeping unit identifier." }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "root",
+      "component": "Card",
+      "child": "product-layout"
+    },
+    {
+      "id": "product-layout",
+      "component": "Column",
+      "children": [
+        "product-image",
+        "product-title",
+        "product-price",
+        "divider-1",
+        "product-desc",
+        "cart-btn"
+      ]
+    },
+    {
+      "id": "product-image",
+      "component": "Image",
+      "url": "{{product.imageUrl}}",
+      "description": "Image of {{product.title}}",
+      "variant": "largeFeature"
+    },
+    {
+      "id": "product-title",
+      "component": "Text",
+      "variant": "h2",
+      "text": "{{product.title}}"
+    },
+    {
+      "id": "product-price",
+      "component": "Text",
+      "variant": "h3",
+      "text": "{{product.price}}"
+    },
+    {
+      "id": "divider-1",
+      "component": "Divider"
+    },
+    {
+      "id": "product-desc",
+      "component": "Text",
+      "text": "{{product.description}}"
+    },
+    {
+      "id": "cart-btn-text",
+      "component": "Text",
+      "text": "Add to Cart"
+    },
+    {
+      "id": "cart-btn",
+      "component": "Button",
+      "child": "cart-btn-text",
+      "variant": "primary",
+      "action": {
+        "event": {
+          "name": "add_to_cart",
+          "context": {
+            "productTitle": "{{product.title}}",
+            "productSku": "{{product.sku}}",
+            "productPrice": "{{product.price}}"
+          }
+        }
+      }
+    }
+  ],
+  "dataModel": {
+    "productTitle": "{{product.title}}",
+    "productPrice": "{{product.price}}"
+  }
+}
