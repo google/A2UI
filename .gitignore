@@ -24,8 +24,8 @@ agent_sdks/python/src/a2ui/assets/**/*.json
 samples/client/angular/projects/mcp_calculator/public/mcp_apps_inner_iframe/
 
 ## Generated files for a2ui-in-mcpapps
-samples/agent/mcp/a2ui-in-mcpapps/server/apps/dist
-samples/agent/mcp/a2ui-in-mcpapps/server/apps/public
+samples/mcp/a2ui-in-mcpapps/server/apps/dist
+samples/mcp/a2ui-in-mcpapps/server/apps/public
 
 # Vite cache
 .vite/

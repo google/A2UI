@@ -168,7 +168,7 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 #### Step 1: Start the MCP Server (Calculator)
 
 ```bash
-cd samples/agent/mcp/mcp-apps-calculator/
+cd samples/mcp/mcp-apps-calculator/
 uv run .
 ```
 =======
@@ -206,7 +206,7 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 #### Step 1: Start the MCP Server (Calculator)
 
 ```bash
-cd samples/agent/mcp/mcp-apps-calculator/
+cd samples/mcp/mcp-apps-calculator/
 uv run .
 ```
 >>>>>>> e3c17f1f (docs: add npm install step to MCP guide)
