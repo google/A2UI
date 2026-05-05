@@ -34,7 +34,7 @@ How components connect to application state using JSON Pointer paths. Covers rea
     - **`beginRendering`**: Signal the client to render
     - **`deleteSurface`**: Remove a UI surface
 
-=== "v0.9 (Draft)"
+=== "v0.9 (Final)"
 
     Version 0.9 uses the following message types:
 
