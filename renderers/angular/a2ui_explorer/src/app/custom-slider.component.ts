@@ -20,7 +20,7 @@ import { CatalogComponent } from 'src/v0_9/core/catalog_component';
 import z from 'zod';
 import { ComponentApi } from '@a2ui/web_core/v0_9';
 
-export const customSliderApi = {
+const customSliderApi = {
   name: 'CustomSlider',
   schema: z.object({
     label: z.string().optional(),
@@ -71,4 +71,4 @@ export class CustomSliderComponent extends CatalogComponent<typeof customSliderA
   }
 }
 
-export const CustomSliderComponentDeclaration = { ...customSliderApi, component: CustomSliderComponent };
+export const customSliderComponentDeclaration = { ...customSliderApi, component: CustomSliderComponent };

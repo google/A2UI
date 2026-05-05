@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { z } from 'zod';
 import { BasicCatalogBase, BASIC_FUNCTIONS } from '@a2ui/angular/v0_9';
-import { CustomSliderComponentDeclaration } from './custom-slider.component';
+import { customSliderComponentDeclaration } from './custom-slider.component';
 import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_core/v0_9';
 
 /**
@@ -47,7 +47,7 @@ export class DemoCatalog extends BasicCatalogBase {
     super({
       id: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
       components: {},
-      extraComponents: [CustomSliderComponentDeclaration],
+      extraComponents: [customSliderComponentDeclaration],
       functions,
     });
   }
