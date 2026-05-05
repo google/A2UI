@@ -1,4 +1,5 @@
 import pytest
+import os
 from a2ui_eval.solvers import a2ui_system_prompt
 from inspect_ai.solver import TaskState
 from inspect_ai.model import ChatMessage, ModelName
@@ -6,9 +7,10 @@ from inspect_ai.model import ChatMessage, ModelName
 @pytest.mark.asyncio
 async def test_a2ui_system_prompt(tmp_path):
     schema_file = tmp_path / "schema.json"
-    schema_file.write_text("schema content")
+    schema_file.write_text("schema content") # Ignored by new implementation
     catalog_file = tmp_path / "catalog.json"
-    catalog_file.write_text("catalog content")
+    # Write valid JSON catalog
+    catalog_file.write_text('{"catalogId": "https://a2ui.org/test_catalog", "components": {}}')
     
     solver = a2ui_system_prompt(str(schema_file), str(catalog_file))
     
@@ -27,9 +29,9 @@ async def test_a2ui_system_prompt(tmp_path):
     
     assert len(state.messages) == 1
     assert state.messages[0].role == "system"
-    assert "schema content" in state.messages[0].content
-    assert "catalog content" in state.messages[0].content
+    # Check if catalog ID is in the content (rendered by SDK)
+    assert "https://a2ui.org/test_catalog" in state.messages[0].content
 
 def test_a2ui_system_prompt_file_not_found():
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(OSError): # SDK raises OSError/IOError
         a2ui_system_prompt("non_existent_schema.json", "non_existent_catalog.json")

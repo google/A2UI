@@ -14,6 +14,7 @@ To run the evaluations, you need to use the Inspect AI CLI via `uv`. Make sure y
 ### Prerequisites
 
 Set your Gemini API key:
+
 ```bash
 export GEMINI_API_KEY="your_api_key"
 ```
@@ -21,6 +22,7 @@ export GEMINI_API_KEY="your_api_key"
 ### Run Evals
 
 To run the evaluations with a specific model (e.g., Gemini 2.0 Flash):
+
 ```bash
 uv run env PYTHONPATH=. inspect eval tasks.py --model google/gemini-3-flash-preview --display plain
 ```
@@ -31,21 +33,27 @@ uv run env PYTHONPATH=. inspect eval tasks.py --model google/gemini-3-flash-prev
 Inspect AI provides a web-based log viewer to explore the results of your evaluations.
 
 To start the log viewer:
+
 ```bash
 uv run inspect view start
 ```
+
 This will start a local web server (usually at `http://localhost:7575`) and open the viewer in your browser. It will automatically load logs from the `logs/` directory.
 
 ## Listing Available Models
 
 To list the available Gemini models supported by your API key:
+
 ```bash
 uv run env PYTHONPATH=. inspect eval tasks.py -T list_models=True --model google/gemini-3-flash-preview
 ```
 
+(the `--model` flag is required even though it is ignored)
+
 ## Running Unit Tests
 
 To run the unit tests for the evaluation framework (dataset loader, solvers, scorers):
+
 ```bash
 uv run python -m pytest
 ```

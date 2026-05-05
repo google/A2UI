@@ -11,7 +11,7 @@ from inspect_ai.dataset import MemoryDataset, Sample
 from inspect_ai.scorer import scorer, Score
 from a2ui_eval.dataset import load_a2ui_dataset
 from a2ui_eval.solvers import a2ui_system_prompt
-from a2ui_eval.scorers import a2ui_schema_scorer, a2ui_semantic_scorer
+from a2ui_eval.scorers import a2ui_scorer
 
 # Paths relative to the eval directory where we run inspect
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -53,5 +53,5 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
             a2ui_system_prompt(SCHEMA_PATH, CATALOG_PATH),
             generate()
         ],
-        scorer=[a2ui_schema_scorer(), a2ui_semantic_scorer()]
+        scorer=[a2ui_scorer(CATALOG_PATH)]
     )

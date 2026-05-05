@@ -15,11 +15,23 @@ The framework adopts the three-pillar architecture of Inspect AI—Tasks, Solver
 | Inspect Component | A2UI Implementation Detail                                                     | Primary Responsibility                                            |
 | :---------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | Dataset           | Encrypted archives resolved into EvalSet JSON.                                 | Providing structured prompts and ground-truth UI targets.         |
-| Solver            | A multi-turn chain including `system_prompt`, `generate`, and `self_critique`. | Orchestrating the model's attempt to generate a valid UI payload. |
-| Scorer            | A hybrid of Pydantic structural validation and LLM-as-a-judge.                 | Determining the accuracy and usability of the generated JSON.     |
+| Solver            | Uses `A2uiSchemaManager` to inject system prompt, then generates response.     | Orchestrating the model's attempt to generate a valid UI payload. |
+| Scorer            | A hybrid of SDK-based validation and LLM-as-a-judge.                           | Determining the accuracy and usability of the generated JSON.     |
 | Model Provider    | Support for Gemini, OpenAI, Anthropic, and local vLLM.                         | Standardizing API interactions across diverse model families.     |
 
-The interaction flow begins with the resolution of a dataset sample. A solver then prepares the environment, often providing the model with a "catalog" of available A2UI components—a critical constraint of the A2UI security model, which restricts agents to a pre-approved list of trusted UI elements. The model generates a response, which is then passed through a series of Scorers to assess its technical validity and semantic alignment with the user's intent.
+The interaction flow begins with the resolution of a dataset sample. A solver then prepares the environment, using `A2uiSchemaManager` to provide the model with the correct protocol schemas and a "catalog" of available A2UI components—a critical constraint of the A2UI security model. The model generates a response, which is then parsed and corrected using the SDK's parser tools, and finally passed through a series of Scorers to assess its technical validity and semantic alignment with the user's intent.
+
+### **Integration with A2UI Python SDK**
+
+To ensure consistency between the evaluation framework and the actual agent implementation, the framework integrates the A2UI Python SDK. This reduces duplication of logic and leverages the SDK's robust parsing and validation capabilities.
+
+| SDK Component | Role in Evaluation | Benefit |
+| :--- | :--- | :--- |
+| `A2uiSchemaManager` | Generates the system prompt for the Solver. | Ensures the model receives the correct schema and catalog definitions without manual hardcoding in eval scripts. |
+| `A2uiValidator` | Used in Stage 1 Scorer for schema validation. | Centralizes validation logic, ensuring evals match runtime validation. |
+| `parse_response` | Used to parse the model's completion. | Handles extraction of JSON payloads from markdown and handles common LLM formatting artifacts. |
+| `payload_fixer` | Applied before validation to correct common errors. | Allows focusing evaluation on intent rather than minor formatting issues that are easily fixed in production. |
+
 
 ### **Replicating and Enhancing the Eval Lifecycle**
 
@@ -100,7 +112,7 @@ Evaluating an A2UI response requires more than just checking if the output is va
 
 ### **Stage 1: Structural & Schema Validation (Programmatic)**
 
-The first line of defense is a non-LLM based programmatic scorer. Using Pydantic models derived from the A2UI specification, this scorer validates the generated JSON for schema compliance and hierarchy validity. This stage provides a binary "Pass/Fail" based on strict adherence to the protocol.
+The first line of defense is a non-LLM based programmatic scorer. Using the `A2uiValidator` from the A2UI Python SDK, this scorer validates the generated JSON for schema compliance and hierarchy validity. Before validation, the output is processed by `parse_response` and `payload_fixer` to handle common LLM formatting quirks. This stage provides a binary "Pass/Fail" based on strict adherence to the protocol.
 
 ### **Stage 2: Programmatic Semantic Checks**
 

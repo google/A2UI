@@ -1,20 +1,26 @@
+import os
 import pytest
-from a2ui_eval.scorers import a2ui_schema_scorer, a2ui_semantic_scorer
+from a2ui_eval.scorers import a2ui_scorer
 from inspect_ai.scorer import Target
 from inspect_ai.solver import TaskState
 from inspect_ai.model import ModelOutput, ModelName
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+CATALOG_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../../specification/v0_9/json/basic_catalog.json"))
+
 @pytest.mark.asyncio
-async def test_schema_scorer_valid_json():
-    scorer = a2ui_schema_scorer()
+async def test_scorer_valid_json():
+    scorer = a2ui_scorer(CATALOG_PATH)
     valid_json = """
+    <a2ui-json>
     {
       "version": "v0.9",
       "createSurface": {
         "surfaceId": "main",
-        "catalogId": "mycompany.com:somecatalog"
+        "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
       }
     }
+    </a2ui-json>
     """
     state = TaskState(
         model=ModelName("mock/model"),
@@ -27,38 +33,11 @@ async def test_schema_scorer_valid_json():
     
     score = await scorer(state, Target(""))
     assert score.value == 1.0
-    assert "Valid schema" in score.explanation
+    assert "Valid A2UI payload" in score.explanation
 
 @pytest.mark.asyncio
-async def test_schema_scorer_valid_json_with_fences():
-    scorer = a2ui_schema_scorer()
-    valid_json = """
-    ```json
-    {
-      "version": "v0.9",
-      "createSurface": {
-        "surfaceId": "main",
-        "catalogId": "mycompany.com:somecatalog"
-      }
-    }
-    ```
-    """
-    state = TaskState(
-        model=ModelName("mock/model"),
-        sample_id=1,
-        epoch=1,
-        input="test",
-        messages=[],
-        output=ModelOutput(model="mock/model", completion=valid_json)
-    )
-    
-    score = await scorer(state, Target(""))
-    assert score.value == 1.0
-    assert "Valid schema" in score.explanation
-
-@pytest.mark.asyncio
-async def test_schema_scorer_invalid_json():
-    scorer = a2ui_schema_scorer()
+async def test_scorer_invalid_json():
+    scorer = a2ui_scorer(CATALOG_PATH)
     state = TaskState(
         model=ModelName("mock/model"),
         sample_id=1,
@@ -69,18 +48,32 @@ async def test_schema_scorer_invalid_json():
     )
     score = await scorer(state, Target(""))
     assert score.value == 0.0
-    assert "Invalid JSON" in score.explanation
+    assert "tags '<a2ui-json>' and '</a2ui-json>' not found" in score.explanation
 
 @pytest.mark.asyncio
-async def test_schema_scorer_invalid_schema():
-    scorer = a2ui_schema_scorer()
-    invalid_schema_json = """
-    {
-      "version": "v0.9",
-      "createSurface": {
-        "surfaceId": "main"
+async def test_scorer_missing_root():
+    scorer = a2ui_scorer(CATALOG_PATH)
+    payload = """
+    <a2ui-json>
+    [
+      {
+        "version": "v0.9",
+        "createSurface": {
+          "surfaceId": "main",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+        }
+      },
+      {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "main",
+          "components": [
+            {"id": "not-root", "component": "Text", "text": "Hello"}
+          ]
+        }
       }
-    }
+    ]
+    </a2ui-json>
     """
     state = TaskState(
         model=ModelName("mock/model"),
@@ -88,23 +81,106 @@ async def test_schema_scorer_invalid_schema():
         epoch=1,
         input="test",
         messages=[],
-        output=ModelOutput(model="mock/model", completion=invalid_schema_json)
+        output=ModelOutput(model="mock/model", completion=payload)
     )
     score = await scorer(state, Target(""))
     assert score.value == 0.0
-    assert "Schema validation failed" in score.explanation
+    assert "Missing root component" in score.explanation
 
 @pytest.mark.asyncio
-async def test_semantic_scorer_dummy():
-    scorer = a2ui_semantic_scorer()
+async def test_scorer_duplicate_ids():
+    scorer = a2ui_scorer(CATALOG_PATH)
+    payload = """
+    <a2ui-json>
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "main",
+        "components": [
+          {"id": "root", "component": "Column", "children": ["child1", "child2"]},
+          {"id": "child1", "component": "Text", "text": "1"},
+          {"id": "child1", "component": "Text", "text": "2"}
+        ]
+      }
+    }
+    </a2ui-json>
+    """
     state = TaskState(
         model=ModelName("mock/model"),
         sample_id=1,
         epoch=1,
         input="test",
         messages=[],
-        output=ModelOutput(model="mock/model", completion="{}")
+        output=ModelOutput(model="mock/model", completion=payload)
     )
     score = await scorer(state, Target(""))
-    assert score.value == 1.0
-    assert "Semantic checks passed" in score.explanation
+    assert score.value == 0.0
+    assert "Duplicate component ID" in score.explanation
+
+@pytest.mark.asyncio
+async def test_scorer_broken_relationship():
+    scorer = a2ui_scorer(CATALOG_PATH)
+    payload = """
+    <a2ui-json>
+    [
+      {
+        "version": "v0.9",
+        "createSurface": {
+          "surfaceId": "main",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+        }
+      },
+      {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "main",
+          "components": [
+            {"id": "root", "component": "Column", "children": ["child1", "missing-child"]},
+            {"id": "child1", "component": "Text", "text": "1"}
+          ]
+        }
+      }
+    ]
+    </a2ui-json>
+    """
+    state = TaskState(
+        model=ModelName("mock/model"),
+        sample_id=1,
+        epoch=1,
+        input="test",
+        messages=[],
+        output=ModelOutput(model="mock/model", completion=payload)
+    )
+    score = await scorer(state, Target(""))
+    assert score.value == 0.0
+    assert "references non-existent component" in score.explanation
+
+@pytest.mark.asyncio
+async def test_scorer_circular_reference():
+    scorer = a2ui_scorer(CATALOG_PATH)
+    payload = """
+    <a2ui-json>
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "main",
+        "components": [
+          {"id": "root", "component": "Column", "children": ["nodeA"]},
+          {"id": "nodeA", "component": "Row", "children": ["nodeB"]},
+          {"id": "nodeB", "component": "Row", "children": ["nodeA"]}
+        ]
+      }
+    }
+    </a2ui-json>
+    """
+    state = TaskState(
+        model=ModelName("mock/model"),
+        sample_id=1,
+        epoch=1,
+        input="test",
+        messages=[],
+        output=ModelOutput(model="mock/model", completion=payload)
+    )
+    score = await scorer(state, Target(""))
+    assert score.value == 0.0
+    assert "Circular reference detected" in score.explanation
