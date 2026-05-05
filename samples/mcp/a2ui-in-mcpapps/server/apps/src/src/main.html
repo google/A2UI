@@ -20,7 +20,7 @@
     <button (click)="fetchCounterA2UI()" [disabled]="isLoading()">Fetch Counter A2UI</button>
     <span class="status-badge" [class.loading]="isLoading()">Status: {{ status() }}</span>
   </div>
-  
+
   <div class="surface-area">
     <div class="surface-label">A2UI Rendering Surface</div>
     @if (surfaces().length === 0) {

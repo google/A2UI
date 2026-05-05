@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { DomSanitizer } from '@angular/platform-browser';
-import { RizzchartsMarkdownRendererService } from './markdown-renderer.service';
+import {TestBed} from '@angular/core/testing';
+import {DomSanitizer} from '@angular/platform-browser';
+import {RizzchartsMarkdownRendererService} from './markdown-renderer.service';
 
 describe('RizzchartsMarkdownRendererService', () => {
   let service: RizzchartsMarkdownRendererService;

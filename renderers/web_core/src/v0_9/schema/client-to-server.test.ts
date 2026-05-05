@@ -16,10 +16,7 @@
 
 import {describe, it} from 'node:test';
 import * as assert from 'node:assert';
-import {
-  A2uiClientMessageSchema,
-  A2uiClientDataModelSchema,
-} from './client-to-server.js';
+import {A2uiClientMessageSchema, A2uiClientDataModelSchema} from './client-to-server.js';
 
 describe('Client-to-Server Schema Verification', () => {
   it('validates a valid action message', () => {

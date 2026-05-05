@@ -23,21 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "balance",
-              "updated",
-              "divider",
-              "actions"
-            ]
+            "children": ["header", "balance", "updated", "divider", "actions"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "account-icon",
-              "account-name"
-            ],
+            "children": ["account-icon", "account-name"],
             "align": "center"
           },
           {
@@ -83,10 +74,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "transfer-btn",
-              "pay-btn"
-            ]
+            "children": ["transfer-btn", "pay-btn"]
           },
           {
             "id": "transfer-btn-text",

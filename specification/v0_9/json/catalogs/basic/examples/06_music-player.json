@@ -23,13 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "album-art",
-              "track-info",
-              "progress",
-              "time-row",
-              "controls"
-            ],
+            "children": ["album-art", "track-info", "progress", "time-row", "controls"],
             "align": "center"
           },
           {
@@ -43,10 +37,7 @@
           {
             "id": "track-info",
             "component": "Column",
-            "children": [
-              "song-title",
-              "artist"
-            ],
+            "children": ["song-title", "artist"],
             "align": "center"
           },
           {
@@ -76,10 +67,7 @@
           {
             "id": "time-row",
             "component": "Row",
-            "children": [
-              "current-time",
-              "total-time"
-            ],
+            "children": ["current-time", "total-time"],
             "justify": "spaceBetween"
           },
           {
@@ -101,11 +89,7 @@
           {
             "id": "controls",
             "component": "Row",
-            "children": [
-              "prev-btn",
-              "play-btn",
-              "next-btn"
-            ],
+            "children": ["prev-btn", "play-btn", "next-btn"],
             "justify": "center"
           },
           {

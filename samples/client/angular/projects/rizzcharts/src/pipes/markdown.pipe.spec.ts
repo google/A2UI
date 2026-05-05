@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MarkdownPipe } from './markdown.pipe';
+import {TestBed} from '@angular/core/testing';
+import {DomSanitizer} from '@angular/platform-browser';
+import {MarkdownPipe} from './markdown.pipe';
 
 describe('MarkdownPipe', () => {
   let pipe: MarkdownPipe;
@@ -47,7 +47,6 @@ describe('MarkdownPipe', () => {
     const result = pipe.transform(markdown);
     expect(result).toContain('<strong>bold</strong>');
   });
-
 
   it('should open links in new tab', () => {
     const markdown = '[link](http://example.com)';

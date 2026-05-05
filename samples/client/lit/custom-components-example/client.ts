@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-import { v0_8 } from "@a2ui/lit";
-import { registerContactComponents } from "./ui/custom-components/register-components.js";
+import {v0_8} from '@a2ui/lit';
+import {registerContactComponents} from './ui/custom-components/register-components.js';
 type A2TextPayload = {
-  kind: "text";
+  kind: 'text';
   text: string;
 };
 
 type A2DataPayload = {
-  kind: "data";
+  kind: 'data';
   data: v0_8.Types.ServerToClientMessage;
 };
 
-type A2AServerPayload =
-  | Array<A2DataPayload | A2TextPayload>
-  | { error: string };
+type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | {error: string};
 
-import { componentRegistry } from "@a2ui/lit/ui";
+import {componentRegistry} from '@a2ui/lit/ui';
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
@@ -42,51 +40,51 @@ export class A2UIClient {
 
   async send(
     message: v0_8.Types.A2UIClientEventMessage,
-    onChunk?: (messages: v0_8.Types.ServerToClientMessage[]) => void
+    onChunk?: (messages: v0_8.Types.ServerToClientMessage[]) => void,
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     const catalog = componentRegistry.getInlineCatalog();
     const finalMessage = {
       ...message,
       metadata: {
-        "a2uiClientCapabilities": {
-          "inlineCatalogs": [catalog],
+        a2uiClientCapabilities: {
+          inlineCatalogs: [catalog],
         },
       },
     };
 
-    const response = await fetch("/a2a", {
+    const response = await fetch('/a2a', {
       body: JSON.stringify({
         event: finalMessage,
-        contextId: this.#contextId
+        contextId: this.#contextId,
       }),
-      method: "POST",
+      method: 'POST',
     });
 
     if (!response.ok) {
-      const error = (await response.json()) as { error: string };
+      const error = (await response.json()) as {error: string};
       throw new Error(error.error);
     }
 
-    const contentType = response.headers.get("content-type");
+    const contentType = response.headers.get('content-type');
     const messages: v0_8.Types.ServerToClientMessage[] = [];
 
-    if (contentType?.includes("text/event-stream")) {
+    if (contentType?.includes('text/event-stream')) {
       const reader = response.body?.getReader();
-      if (!reader) throw new Error("No response body");
+      if (!reader) throw new Error('No response body');
       const decoder = new TextDecoder();
-      let buffer = "";
+      let buffer = '';
 
       while (true) {
-        const { done, value } = await reader.read();
+        const {done, value} = await reader.read();
         if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
+        buffer += decoder.decode(value, {stream: true});
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const jsonStr = line.replace(/^data:\s*/, "");
+          if (line.startsWith('data: ')) {
+            const jsonStr = line.replace(/^data:\s*/, '');
             try {
               const responseData = JSON.parse(jsonStr);
               if (responseData.error) {
@@ -103,7 +101,7 @@ export class A2UIClient {
                 }
               }
             } catch (e) {
-              console.error("Error parsing SSE data:", e, jsonStr);
+              console.error('Error parsing SSE data:', e, jsonStr);
             }
           }
         }
@@ -112,7 +110,7 @@ export class A2UIClient {
     }
 
     const responseData = (await response.json()) as any;
-    if (responseData && typeof responseData === 'object' && "error" in responseData) {
+    if (responseData && typeof responseData === 'object' && 'error' in responseData) {
       throw new Error(responseData.error);
     } else {
       if (responseData.contextId) {
@@ -135,19 +133,21 @@ export class A2UIClient {
     } else {
       items = Array.isArray(data)
         ? data
-        : (data.kind === "message" && Array.isArray(data.parts) ? data.parts : [data]);
+        : data.kind === 'message' && Array.isArray(data.parts)
+          ? data.parts
+          : [data];
     }
 
     const messages: v0_8.Types.ServerToClientMessage[] = [];
     for (const item of items) {
-      if (item.kind === "message" && Array.isArray(item.parts)) {
+      if (item.kind === 'message' && Array.isArray(item.parts)) {
         for (const part of item.parts) {
           if (part.data) {
             messages.push(part.data);
           }
         }
       } else {
-        if (item.kind === "text") continue;
+        if (item.kind === 'text') continue;
         if (item.data) {
           messages.push(item.data);
         }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { getPackageGraph } from './lib/workspace.mjs';
+import {readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync} from 'node:fs';
+import {join, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {getPackageGraph} from './lib/workspace.mjs';
 
 // This script prepares a package for publishing.
 // Arguments:
@@ -43,14 +43,14 @@ const resolvedDistDir = resolve(packageDir, distDir);
 const rootDir = resolve(scriptDir, '../../');
 
 if (!existsSync(resolvedDistDir)) {
-  mkdirSync(resolvedDistDir, { recursive: true });
+  mkdirSync(resolvedDistDir, {recursive: true});
 }
 
 const graph = getPackageGraph();
 const pkg = JSON.parse(readFileSync(resolvedSourcePkg, 'utf8'));
 
 // 2. Update internal @a2ui dependencies
-const updateInternalDeps = (deps) => {
+const updateInternalDeps = deps => {
   if (!deps) return;
   for (const name in deps) {
     const version = deps[name];

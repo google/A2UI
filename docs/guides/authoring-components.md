@@ -111,10 +111,10 @@ Implement your component using your client-side framework. For Angular, your com
 In the [`rizzcharts`](../../samples/client/angular/projects/rizzcharts/README.md) example, the `Chart` component is defined in [`chart.ts`](../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/chart.ts).
 
 ```typescript
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, computed, input, Signal, signal } from '@angular/core';
+import {Component, computed, input, Signal, signal} from '@angular/core';
 
 @Component({
   selector: 'a2ui-chart',
@@ -138,6 +138,7 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
 ```
 
 Keep these key points in mind when implementing components:
+
 - **Extend `DynamicComponent`**: This gives you access to `resolvePrimitive` for data binding resolution.
 - **Use Angular Inputs**: Map properties from the schema to Angular inputs.
 
@@ -150,14 +151,14 @@ Once the component is implemented, register it in your client catalog. This maps
 In the [`rizzcharts`](../../samples/agent/adk/rizzcharts/python/README.md) example, this is done in [`catalog.ts`](../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
 
 ```typescript
-import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import {Catalog, DEFAULT_CATALOG} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
 export const RIZZ_CHARTS_CATALOG = {
   ...DEFAULT_CATALOG,
   Chart: {
-    type: () => import('./chart').then((r) => r.Chart),
-    bindings: ({ properties }) => [
+    type: () => import('./chart').then(r => r.Chart),
+    bindings: ({properties}) => [
       inputBinding('type', () => ('type' in properties && properties['type']) || undefined),
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
       inputBinding(
@@ -170,6 +171,7 @@ export const RIZZ_CHARTS_CATALOG = {
 ```
 
 Key points for registration:
+
 - **Lazy Loading**: Use `import()` to lazy-load the component code.
 - **Input Bindings**: Use `inputBinding` to map properties from the schema to Angular inputs.
 
@@ -240,4 +242,3 @@ from a2ui.adk.send_a2ui_to_client_toolset import (
 
 config = A2aAgentExecutorConfig(event_converter=A2uiEventConverter())
 ```
-

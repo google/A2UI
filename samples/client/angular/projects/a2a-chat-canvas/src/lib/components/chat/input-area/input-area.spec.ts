@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { InputArea } from './input-area';
+import {InputArea} from './input-area';
 
 describe('InputArea', () => {
   let component: InputArea;

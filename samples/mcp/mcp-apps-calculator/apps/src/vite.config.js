@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { defineConfig } from "vite";
-import { viteSingleFile } from "vite-plugin-singlefile";
-import path from "path";
+import {defineConfig} from 'vite';
+import {viteSingleFile} from 'vite-plugin-singlefile';
+import path from 'path';
 
 export default defineConfig({
   plugins: [viteSingleFile()],
   build: {
-    outDir: path.resolve(__dirname, "../public"),
+    outDir: path.resolve(__dirname, '../public'),
     emptyOutDir: true,
     rollupOptions: {
-      input: path.resolve(__dirname, "calculator.html"),
+      input: path.resolve(__dirname, 'calculator.html'),
     },
   },
 });

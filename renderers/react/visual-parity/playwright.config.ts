@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { defineConfig, devices } from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 /**
  * Playwright configuration for A2UI visual parity tests.
@@ -29,10 +29,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
 
-  reporter: [
-    ['html', { open: 'never' }],
-    ['list'],
-  ],
+  reporter: [['html', {open: 'never'}], ['list']],
 
   use: {
     trace: 'on-first-retry',
@@ -44,7 +41,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
+        viewport: {width: 1280, height: 720},
       },
     },
   ],

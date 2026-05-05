@@ -23,22 +23,13 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "steps-display",
-              "goal-text",
-              "divider",
-              "stats-row"
-            ],
+            "children": ["header", "steps-display", "goal-text", "divider", "stats-row"],
             "align": "center"
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "steps-icon",
-              "title"
-            ],
+            "children": ["steps-icon", "title"],
             "align": "center"
           },
           {
@@ -85,19 +76,13 @@
           {
             "id": "stats-row",
             "component": "Row",
-            "children": [
-              "distance-col",
-              "calories-col"
-            ],
+            "children": ["distance-col", "calories-col"],
             "justify": "spaceAround"
           },
           {
             "id": "distance-col",
             "component": "Column",
-            "children": [
-              "distance-value",
-              "distance-label"
-            ],
+            "children": ["distance-value", "distance-label"],
             "align": "center"
           },
           {
@@ -121,10 +106,7 @@
           {
             "id": "calories-col",
             "component": "Column",
-            "children": [
-              "calories-value",
-              "calories-label"
-            ],
+            "children": ["calories-value", "calories-label"],
             "align": "center"
           },
           {

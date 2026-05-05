@@ -23,6 +23,7 @@ The application in `src/` is a basic Angular application (`basic-mcp-app-angular
 Due to MCP App security isolation requirements (often relying on sandboxed iframes), the application is built and then processed by `inline.js` (located in `src/`).
 
 This process:
+
 - Collects raw Angular build outputs from `dist/raw`.
 - Dynamically inlines all JavaScript and CSS files directly into `index.html`.
 - Outputs a single, self-contained `app.html` file into the `public/` directory.
@@ -34,9 +35,11 @@ This self-contained file is then served by the host server.
 The server serves a bundled `app.html` artifact located in `public/app.html`. If you modify the source code in `src/`, you must regenerate this artifact:
 
 Run this in the `src/` directory:
+
 ```bash
 cd src
 npm install
 npm run build:all
 ```
-*(Runs Angular compilation and triggers `node inline.js` to single-file inline it into `public/app.html`)*
+
+_(Runs Angular compilation and triggers `node inline.js` to single-file inline it into `public/app.html`)_

@@ -16,16 +16,16 @@ name: Validate A2UI specification examples
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'specification/**/json/**'
-      - '.github/workflows/validate_specifications.yml'
-      - 'specification/scripts/validate.py'
+      - "specification/**/json/**"
+      - ".github/workflows/validate_specifications.yml"
+      - "specification/scripts/validate.py"
   pull_request:
     paths:
-      - 'specification/**/json/**'
-      - '.github/workflows/validate_specifications.yml'
-      - 'specification/scripts/validate.py'
+      - "specification/**/json/**"
+      - ".github/workflows/validate_specifications.yml"
+      - "specification/scripts/validate.py"
 
 jobs:
   validate:
@@ -42,12 +42,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install dependencies
         working-directory: ./specification/v0_9/test
