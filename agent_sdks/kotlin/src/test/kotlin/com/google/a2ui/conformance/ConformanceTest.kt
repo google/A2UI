@@ -225,13 +225,16 @@ class ConformanceTest {
 
       // Filter out non-conformant tests for Kotlin
       if (action == "prune" && (args.containsKey("allowed_messages") || name.contains("common_types"))) {
+        println("Skipping non-conformant test (prune messages/common_types): $name")
         return@mapNotNull null
       }
       if (action == "load" && (args[KEY_PATH] as? String)?.let { it.contains("*") || it.contains("[") || it.contains("?") } == true) {
+        println("Skipping non-conformant test (load with glob): $name")
         return@mapNotNull null
       }
       if (action == "load" && case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
         // Kotlin loadExamples skips invalid files instead of throwing, so it's not conformant with error expectation
+        println("Skipping non-conformant test (load expecting error): $name")
         return@mapNotNull null
       }
       DynamicTest.dynamicTest(name) {
