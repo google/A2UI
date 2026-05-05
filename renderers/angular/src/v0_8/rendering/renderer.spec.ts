@@ -231,4 +231,17 @@ describe('v0.8 Renderer Regression Tests', () => {
     expect(setCapture.children).toEqual([{ id: 'child-1' }]);
     expect(setCapture.child).toEqual({ id: 'child-2' });
   });
+
+  it('should gracefully handle components with missing properties', async () => {
+    // This covers the fix where node.properties might be undefined.
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
+      type: 'CompWithInputs',
+      // Notice: No 'properties' key here.
+    };
+
+    expect(() => {
+      fixture.detectChanges();
+    }).not.toThrow();
+  });
 });

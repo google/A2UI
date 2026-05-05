@@ -165,14 +165,16 @@ export class Renderer {
     componentRef.setInput('component', node);
     componentRef.setInput('weight', node.weight ?? 0);
 
-    const props = node.properties as Record<string, unknown>;
-    for (const [key, value] of Object.entries(props)) {
-      try {
-        componentRef.setInput(key, value);
-      } catch (e) {
-        console.warn(
-          `[Renderer] Property "${key}" could not be set on component ${node.type}. If this property is required by the specification, ensure the component declares it as an input.`,
-        );
+    if (node.properties) {
+      const props = node.properties as Record<string, unknown>;
+      for (const [key, value] of Object.entries(props)) {
+        try {
+          componentRef.setInput(key, value);
+        } catch (e) {
+          console.warn(
+            `[Renderer] Property "${key}" could not be set on component ${node.type}. If this property is required by the specification, ensure the component declares it as an input.`,
+          );
+        }
       }
     }
     componentRef.changeDetectorRef.markForCheck();
