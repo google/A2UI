@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { DestroyRef } from '@angular/core';
-import { signal as preactSignal } from '@preact/signals-core';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
-import { ComponentBinder, Children } from './component-binder.service';
+import {TestBed} from '@angular/core/testing';
+import {DestroyRef} from '@angular/core';
+import {signal as preactSignal} from '@preact/signals-core';
+import {ComponentContext} from '@a2ui/web_core/v0_9';
+import {ComponentBinder, Children} from './component-binder.service';
 
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
@@ -171,7 +171,7 @@ describe('ComponentBinder', () => {
     expect(boundChildren.path).toBe('/list/data');
     expect(Array.isArray(boundChildren.children)).toBe(true);
     expect(boundChildren.children.length).toBe(2);
-    expect(boundChildren.children[0]).toEqual({ id: 'item-comp', basePath: '/list/data/0' });
-    expect(boundChildren.children[1]).toEqual({ id: 'item-comp', basePath: '/list/data/1' });
+    expect(boundChildren.children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
+    expect(boundChildren.children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
   });
 });

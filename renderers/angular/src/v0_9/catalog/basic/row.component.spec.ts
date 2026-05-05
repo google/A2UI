@@ -83,8 +83,8 @@ describe('RowComponent', () => {
       children: {
         value: signal({
           children: [
-            { id: 'child1', basePath: '/' },
-            { id: 'child2', basePath: '/' },
+            {id: 'child1', basePath: '/'},
+            {id: 'child2', basePath: '/'},
           ],
         }),
         raw: ['child1', 'child2'],
@@ -121,8 +121,8 @@ describe('RowComponent', () => {
           templateId: 'template1',
           path: 'items',
           children: [
-            { id: 'child1', basePath: '/items/0' },
-            { id: 'child2', basePath: '/items/1' },
+            {id: 'child1', basePath: '/items/0'},
+            {id: 'child2', basePath: '/items/1'},
           ],
         }),
         raw: {
@@ -174,7 +174,7 @@ describe('RowComponent', () => {
     fixture.componentRef.setInput('props', {
       children: {
         value: signal({
-          children: [{ id: 'child1', basePath: '/' }],
+          children: [{id: 'child1', basePath: '/'}],
         }),
         raw: ['child1'],
         onUpdate: () => {},

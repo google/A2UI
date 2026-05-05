@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Signal } from '@angular/core';
-import { z } from 'zod';
-import { ComponentApi, DataBindingSchema, FunctionCallSchema } from '@a2ui/web_core/v0_9';
-import { Child, Children } from './component-binder.service';
+import {Signal} from '@angular/core';
+import {z} from 'zod';
+import {ComponentApi, DataBindingSchema, FunctionCallSchema} from '@a2ui/web_core/v0_9';
+import {Child, Children} from './component-binder.service';
 
 /**
  * Represents a component property bound to an Angular Signal and update logic.
@@ -59,10 +59,12 @@ type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 type DynamicSchemaValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
 
 type InferredInterfaceToProps<InferredSchema> = {
-  [K in keyof InferredSchema]: K extends 'children' ? BoundProperty<Children> : K extends 'child' | 'trigger' | 'content'
-  ? BoundProperty<Child>
-  : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>
-}
+  [K in keyof InferredSchema]: K extends 'children'
+    ? BoundProperty<Children>
+    : K extends 'child' | 'trigger' | 'content'
+      ? BoundProperty<Child>
+      : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>;
+};
 
 interface CheckProps {
   isValid: boolean;
@@ -70,8 +72,10 @@ interface CheckProps {
 }
 
 /** The binder can add some properties to the Props object. This util adds them to the type. */
-export type ExtendedProps<ComponentProps extends { [key: string]: unknown }> =
-  'checks' extends keyof ComponentProps ? Omit<ComponentProps, 'checks'> & CheckProps : ComponentProps;
+export type ExtendedProps<ComponentProps extends {[key: string]: unknown}> =
+  'checks' extends keyof ComponentProps
+    ? Omit<ComponentProps, 'checks'> & CheckProps
+    : ComponentProps;
 
 /**
  * Utility to convert a component Api Type to the props Type, where the

@@ -94,7 +94,10 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   });
 
   protected getNormalizedPath(index: number) {
-    return getNormalizedPath(this.props()['children']?.value()?.path, this.dataContextPath(), index);
+    return getNormalizedPath(
+      this.props()['children']?.value()?.path,
+      this.dataContextPath(),
+      index,
+    );
   }
 }
-

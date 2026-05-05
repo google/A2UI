@@ -106,7 +106,7 @@ export class ComponentBinder {
             }
             return {id: item, basePath: context.dataContext.path};
           });
-          return { templateId, children, path };
+          return {templateId, children, path};
         });
       }
 
