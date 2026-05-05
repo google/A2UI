@@ -180,6 +180,7 @@ For the complete component gallery with examples, see [Component Reference](../r
 ## Static vs. Dynamic Children
 
 **Static (`explicitList`)** - Fixed list of child IDs:
+
 ```json
 {
   "children": {
@@ -189,6 +190,7 @@ For the complete component gallery with examples, see [Component Reference](../r
 ```
 
 **Dynamic (`template`)** - Generate children from data array:
+
 ```json
 {
   "children": {

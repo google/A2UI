@@ -31,7 +31,7 @@ describe('ComponentBinder', () => {
     });
 
     TestBed.configureTestingModule({
-      providers: [ComponentBinder, { provide: DestroyRef, useValue: mockDestroyRef }],
+      providers: [ComponentBinder, {provide: DestroyRef, useValue: mockDestroyRef}],
     });
 
     binder = TestBed.inject(ComponentBinder);
@@ -81,7 +81,7 @@ describe('ComponentBinder', () => {
   it('should add update() method for data bindings (two-way binding)', () => {
     const mockComponentModel = {
       properties: {
-        value: { path: '/data/text' },
+        value: {path: '/data/text'},
       },
     };
 
@@ -141,7 +141,7 @@ describe('ComponentBinder', () => {
   it('should expand ChildList object templates', () => {
     const mockComponentModel = {
       properties: {
-        children: { componentId: 'item-comp', path: '/list/data' },
+        children: {componentId: 'item-comp', path: '/list/data'},
       },
     };
 
@@ -153,7 +153,7 @@ describe('ComponentBinder', () => {
       }),
       nested: jasmine.createSpy('nested').and.callFake((path: string) => ({
         path,
-        nested: (sub: string) => ({ path: `${path}/${sub}` }),
+        nested: (sub: string) => ({path: `${path}/${sub}`}),
       })),
       set: jasmine.createSpy('set'),
     };

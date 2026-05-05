@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, input, signal } from '@angular/core';
-import { ButtonComponent } from './button.component';
-import { ComponentModel } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentBinder } from '../../core/component-binder.service';
-import { By } from '@angular/platform-browser';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, input, signal} from '@angular/core';
+import {ButtonComponent} from './button.component';
+import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentBinder} from '../../core/component-binder.service';
+import {By} from '@angular/platform-browser';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -33,7 +33,7 @@ describe('ButtonComponent', () => {
     mockSurface = {
       dispatchAction: jasmine.createSpy('dispatchAction'),
       componentsModel: new Map([
-        ['child1', new ComponentModel('child1', 'Text', { text: 'Child Content' })],
+        ['child1', new ComponentModel('child1', 'Text', {text: 'Child Content'})],
       ]),
       catalog: {
         id: 'test-catalog',
@@ -70,13 +70,13 @@ describe('ButtonComponent', () => {
     };
 
     const mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
-    mockBinder.bind.and.returnValue({ text: { value: () => 'bound text' } });
+    mockBinder.bind.and.returnValue({text: {value: () => 'bound text'}});
 
     await TestBed.configureTestingModule({
       imports: [ButtonComponent],
       providers: [
-        { provide: A2uiRendererService, useValue: mockRendererService },
-        { provide: ComponentBinder, useValue: mockBinder },
+        {provide: A2uiRendererService, useValue: mockRendererService},
+        {provide: ComponentBinder, useValue: mockBinder},
       ],
     }).compileComponents();
 
@@ -85,11 +85,11 @@ describe('ButtonComponent', () => {
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('componentId', 'comp1');
     fixture.componentRef.setInput('props', {
-      variant: { value: signal('primary'), raw: 'primary', onUpdate: () => {} },
-      child: { value: signal({ id: 'child1', basePath: '/' }), raw: 'child1', onUpdate: () => {} },
+      variant: {value: signal('primary'), raw: 'primary', onUpdate: () => {}},
+      child: {value: signal({id: 'child1', basePath: '/'}), raw: 'child1', onUpdate: () => {}},
       action: {
-        value: signal({ type: 'test-action', data: {} }),
-        raw: { type: 'test-action', data: {} },
+        value: signal({type: 'test-action', data: {}}),
+        raw: {type: 'test-action', data: {}},
         onUpdate: () => {},
       },
     });
@@ -139,13 +139,13 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeTruthy();
-    expect(host.componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
+    expect(host.componentInstance.componentKey()).toEqual({id: 'child1', basePath: '/'});
   });
 
   it('should not show child component host if child prop is absent', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      child: { value: signal(null), raw: null, onUpdate: () => {} },
+      child: {value: signal(null), raw: null, onUpdate: () => {}},
     });
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
@@ -157,7 +157,7 @@ describe('ButtonComponent', () => {
 
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      isValid: { value: isValidSig, raw: true, onUpdate: () => {} },
+      isValid: {value: isValidSig, raw: true, onUpdate: () => {}},
     });
 
     fixture.detectChanges();
@@ -170,7 +170,7 @@ describe('ButtonComponent', () => {
   });
 
   it('should override the button default background color when primary color is set', () => {
-    mockSurface.theme = { primaryColor: 'red' };
+    mockSurface.theme = {primaryColor: 'red'};
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
     const computedStyle = window.getComputedStyle(button.nativeElement);

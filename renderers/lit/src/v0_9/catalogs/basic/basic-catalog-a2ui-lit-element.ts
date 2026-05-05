@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentApi } from "@a2ui/web_core/v0_9";
-import { A2uiLitElement } from "../../a2ui-lit-element.js";
-import { injectBasicCatalogStyles } from "@a2ui/web_core/v0_9/basic_catalog";
+import {ComponentApi} from '@a2ui/web_core/v0_9';
+import {A2uiLitElement} from '../../a2ui-lit-element.js';
+import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * A base class for A2UI basic catalog components.

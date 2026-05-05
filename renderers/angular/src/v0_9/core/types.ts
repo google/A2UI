@@ -74,20 +74,20 @@ export type ExtendedProps<ComponentProps extends { [key: string]: unknown }> =
   'checks' extends keyof ComponentProps ? Omit<ComponentProps, 'checks'> & CheckProps : ComponentProps;
 
 /**
-* Utility to convert a component Api Type to the props Type, where the
-* values are wrapped in BoundProperty. This is used to correctly type the props()
-* in a UI component
-* 
-* @example
-* export const TextComponentApi = {
-*   name: 'Text',
-*   schema: z.object({
-*     text: z.string(),
-*   })
-*   .strict(),
-* } satisfies ComponentApi;
-* export type TextComponentProps = ComponentApiToProps<typeof TextComponentApi>; // outputs { text: BoundProperty<string>; }
-*/
-export type ComponentApiToProps<Api extends ComponentApi> = InferredInterfaceToProps<ExtendedProps<z.infer<
-  Api['schema']
->>>;
+ * Utility to convert a component Api Type to the props Type, where the
+ * values are wrapped in BoundProperty. This is used to correctly type the props()
+ * in a UI component
+ *
+ * @example
+ * export const TextComponentApi = {
+ *   name: 'Text',
+ *   schema: z.object({
+ *     text: z.string(),
+ *   })
+ *   .strict(),
+ * } satisfies ComponentApi;
+ * export type TextComponentProps = ComponentApiToProps<typeof TextComponentApi>; // outputs { text: BoundProperty<string>; }
+ */
+export type ComponentApiToProps<Api extends ComponentApi> = InferredInterfaceToProps<
+  ExtendedProps<z.infer<Api['schema']>>
+>;

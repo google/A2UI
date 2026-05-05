@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Directive, computed, HostBinding, inject } from '@angular/core';
-import { injectBasicCatalogStyles } from '@a2ui/web_core/v0_9/basic_catalog';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentApi } from '@a2ui/web_core/v0_9';
-import { CatalogComponent } from '../../core/catalog_component';
+import {Directive, computed, HostBinding, inject} from '@angular/core';
+import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentApi} from '@a2ui/web_core/v0_9';
+import {CatalogComponent} from '../../core/catalog_component';
 
 /**
  * Base class for A2UI basic catalog components in Angular.
@@ -27,7 +27,9 @@ import { CatalogComponent } from '../../core/catalog_component';
  * Also binds the primary brand color to the host element.
  */
 @Directive()
-export abstract class BasicCatalogComponent<Api extends ComponentApi> extends CatalogComponent<Api> {
+export abstract class BasicCatalogComponent<
+  Api extends ComponentApi,
+> extends CatalogComponent<Api> {
   protected rendererService = inject(A2uiRendererService);
 
   readonly surface = computed(() => {
@@ -63,4 +65,3 @@ export abstract class BasicCatalogComponent<Api extends ComponentApi> extends Ca
     return this.primaryColor() || null;
   }
 }
-

@@ -128,8 +128,7 @@ describe('InferredComponentApiSchemaType', () => {
       : false;
 
     // typesMatchExact only accepts "true" if `TypesAreEquivalent`
-    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> =
-      true;
+    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> = true;
 
     // Appease linter by using the variables
     assert.ok(mockApi);

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import type { MarkdownRenderer as MarkdownRendererType, MarkdownRendererOptions } from '../types';
+import {Injectable} from '@angular/core';
+import type {MarkdownRenderer as MarkdownRendererType, MarkdownRendererOptions} from '../types';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,7 @@ export class DefaultMarkdownRenderer extends MarkdownRenderer {
   override async render(markdown: string, options?: MarkdownRendererOptions): Promise<string> {
     try {
       // @ts-ignore - optional peer dependency
-      const { renderMarkdown } = await import('@a2ui/markdown-it');
+      const {renderMarkdown} = await import('@a2ui/markdown-it');
       return await renderMarkdown(markdown, options);
     } catch (e) {
       if (!DefaultMarkdownRenderer.warningLogged) {
@@ -57,5 +57,5 @@ export function provideMarkdownRenderer(renderFn?: MarkdownRendererType) {
       },
     };
   }
-  return { provide: MarkdownRenderer, useClass: DefaultMarkdownRenderer };
+  return {provide: MarkdownRenderer, useClass: DefaultMarkdownRenderer};
 }

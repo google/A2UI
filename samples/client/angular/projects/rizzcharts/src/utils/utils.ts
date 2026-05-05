@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Part } from '@a2a-js/sdk';
+import {Part} from '@a2a-js/sdk';
 
 /**
  * Returns true if the part is a thought.
@@ -27,6 +27,6 @@ export function isAgentThought(part: Part): boolean {
     return false;
   }
 
-  const metadata = part.metadata as { adk_thought: boolean };
+  const metadata = part.metadata as {adk_thought: boolean};
   return metadata.adk_thought;
 }

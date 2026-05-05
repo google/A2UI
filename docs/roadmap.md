@@ -6,10 +6,10 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 ### Protocol
 
-| Version | Status | Notes |
-|---------|--------|-------|
-| **v0.8** | ✅ Stable | Initial public release |
-| **v0.9** | 🚧 Draft | Prompt-First specification improvements |
+| Version  | Status    | Notes                                   |
+| -------- | --------- | --------------------------------------- |
+| **v0.8** | ✅ Stable | Initial public release                  |
+| **v0.9** | 🚧 Draft  | Prompt-First specification improvements |
 
 Key features:
 
@@ -21,51 +21,51 @@ Key features:
 
 ### Renderers
 
-| Client libraries | Status | Platform | Notes |
-|-----------------|--------|----------|-------|
-| **Web Components (Lit)** | ✅ Stable | Web | Framework-agnostic, works anywhere |
-| **Angular** | ✅ Stable | Web | Full Angular integration |
-| **Flutter (GenUI SDK)** | ✅ Stable | Multi-platform | Works on mobile, web, desktop |
-| **React** | 🚧 In Progress | Web | Coming Q1 2026 |
-| **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q2 2026 |
-| **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |
-| **Vue** | 💡 Proposed | Web | Community interest |
-| [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web | [Community interest](https://news.ycombinator.com/item?id=46287728) |
-| **ShadCN (React)** | 💡 Proposed | Web | Community interest |
+| Client libraries                                           | Status         | Platform       | Notes                                                               |
+| ---------------------------------------------------------- | -------------- | -------------- | ------------------------------------------------------------------- |
+| **Web Components (Lit)**                                   | ✅ Stable      | Web            | Framework-agnostic, works anywhere                                  |
+| **Angular**                                                | ✅ Stable      | Web            | Full Angular integration                                            |
+| **Flutter (GenUI SDK)**                                    | ✅ Stable      | Multi-platform | Works on mobile, web, desktop                                       |
+| **React**                                                  | 🚧 In Progress | Web            | Coming Q1 2026                                                      |
+| **SwiftUI**                                                | 📋 Planned     | iOS/macOS      | Planned for Q2 2026                                                 |
+| **Jetpack Compose**                                        | 📋 Planned     | Android        | Planned for Q2 2026                                                 |
+| **Vue**                                                    | 💡 Proposed    | Web            | Community interest                                                  |
+| [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed    | Web            | [Community interest](https://news.ycombinator.com/item?id=46287728) |
+| **ShadCN (React)**                                         | 💡 Proposed    | Web            | Community interest                                                  |
 
 ### Transports
 
-| Transport | Status | Notes |
-|-------------|--------|-------|
-| **A2A Protocol** | ✅ Complete | Native A2A transport |
-| **AG UI** | ✅ Complete | Day-zero compatibility |
-| **REST API** | 📋 Planned | Bidirectional communication |
-| **WebSockets** | 💡 Proposed | Bidirectional communication |
-| **SSE (Server-Sent Events)** | 💡 Proposed | Web streaming |
-| **MCP (Model Context Protocol)** | 💡 Proposed | Community interest |
+| Transport                        | Status      | Notes                       |
+| -------------------------------- | ----------- | --------------------------- |
+| **A2A Protocol**                 | ✅ Complete | Native A2A transport        |
+| **AG UI**                        | ✅ Complete | Day-zero compatibility      |
+| **REST API**                     | 📋 Planned  | Bidirectional communication |
+| **WebSockets**                   | 💡 Proposed | Bidirectional communication |
+| **SSE (Server-Sent Events)**     | 💡 Proposed | Web streaming               |
+| **MCP (Model Context Protocol)** | 💡 Proposed | Community interest          |
 
 ### Agent UI toolkits
 
-| Agent UI toolkit | Status | Notes |
-|-------------|--------|-------|
-| **CopilotKit** | ✅ Complete | Day-zero compatibility thanks to AG UI |
-| **Open AI ChatKit** | 💡 Proposed | Community interest |
-| **Vecel AI SDK UI** | 💡 Proposed | Community interest |
+| Agent UI toolkit    | Status      | Notes                                  |
+| ------------------- | ----------- | -------------------------------------- |
+| **CopilotKit**      | ✅ Complete | Day-zero compatibility thanks to AG UI |
+| **Open AI ChatKit** | 💡 Proposed | Community interest                     |
+| **Vecel AI SDK UI** | 💡 Proposed | Community interest                     |
 
 ### Agent frameworks
 
-| Integration | Status | Notes |
-|-------------|--------|-------|
-| **Any agent with A2A support** | ✅ Complete | Day-zero compatibility thanks to A2A protocol |
-| **ADK** | 📋 Planned | Still designing developer ergonomics, see [samples](../samples/agent/adk) |
-| **Genkit** | 💡 Proposed | Community interest |
-| **LangGraph** | 💡 Proposed | Community interest |
-| **CrewAI** | 💡 Proposed | Community interest |
-| **AG2** | ✅ Complete | [A2UIAgent](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent) |
-| **Claude Agent SDK** | 💡 Proposed | Community interest |
-| **OpenAI Agent SDK** | 💡 Proposed | Community interest |
-| **Microsoft Agent Framework** | 💡 Proposed | Community interest |
-| **AWS Strands Agent SDK** | 💡 Proposed | Community interest |
+| Integration                    | Status      | Notes                                                                              |
+| ------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
+| **Any agent with A2A support** | ✅ Complete | Day-zero compatibility thanks to A2A protocol                                      |
+| **ADK**                        | 📋 Planned  | Still designing developer ergonomics, see [samples](../samples/agent/adk)          |
+| **Genkit**                     | 💡 Proposed | Community interest                                                                 |
+| **LangGraph**                  | 💡 Proposed | Community interest                                                                 |
+| **CrewAI**                     | 💡 Proposed | Community interest                                                                 |
+| **AG2**                        | ✅ Complete | [A2UIAgent](https://docs.ag2.ai/latest/docs/user-guide/reference-agents/a2uiagent) |
+| **Claude Agent SDK**           | 💡 Proposed | Community interest                                                                 |
+| **OpenAI Agent SDK**           | 💡 Proposed | Community interest                                                                 |
+| **Microsoft Agent Framework**  | 💡 Proposed | Community interest                                                                 |
+| **AWS Strands Agent SDK**      | 💡 Proposed | Community interest                                                                 |
 
 ## Recent Milestones
 

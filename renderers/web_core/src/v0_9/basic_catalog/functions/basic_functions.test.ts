@@ -51,57 +51,30 @@ describe('BASIC_FUNCTIONS', () => {
     it('add', () => {
       assert.strictEqual(invoke('add', {a: 1, b: 2}, context), 3);
       assert.strictEqual(invoke('add', {a: '1', b: '2'}, context), 3);
-      assert.throws(
-        () => invoke('add', {a: 10, b: undefined}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('add', {a: 10, b: undefined}, context), A2uiExpressionError);
       assert.throws(() => invoke('add', {a: 10}, context), A2uiExpressionError);
     });
     it('subtract', () => {
       assert.strictEqual(invoke('subtract', {a: 5, b: 3}, context), 2);
-      assert.throws(
-        () => invoke('subtract', {a: 10, b: undefined}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('subtract', {a: 10}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('subtract', {a: 10, b: undefined}, context), A2uiExpressionError);
+      assert.throws(() => invoke('subtract', {a: 10}, context), A2uiExpressionError);
     });
     it('multiply', () => {
       assert.strictEqual(invoke('multiply', {a: 4, b: 2}, context), 8);
-      assert.throws(
-        () => invoke('multiply', {a: 10, b: undefined}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('multiply', {a: 10}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('multiply', {a: 10, b: undefined}, context), A2uiExpressionError);
+      assert.throws(() => invoke('multiply', {a: 10}, context), A2uiExpressionError);
     });
     it('divide', () => {
       assert.strictEqual(invoke('divide', {a: 10, b: 2}, context), 5);
       assert.strictEqual(invoke('divide', {a: 10, b: 0}, context), Infinity);
-      assert.throws(
-        () => invoke('divide', {a: 10, b: undefined}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('divide', {a: undefined, b: 10}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('divide', {a: 10, b: undefined}, context), A2uiExpressionError);
+      assert.throws(() => invoke('divide', {a: undefined, b: 10}, context), A2uiExpressionError);
       assert.throws(
         () => invoke('divide', {a: undefined, b: undefined}, context),
         A2uiExpressionError,
       );
-      assert.throws(
-        () => invoke('divide', {a: 10, b: null}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('divide', {a: 10, b: 'invalid'}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('divide', {a: 10, b: null}, context), A2uiExpressionError);
+      assert.throws(() => invoke('divide', {a: 10, b: 'invalid'}, context), A2uiExpressionError);
       assert.strictEqual(invoke('divide', {a: 10, b: '2'}, context), 5);
       assert.strictEqual(invoke('divide', {a: '10', b: '2'}, context), 5);
     });
@@ -111,25 +84,13 @@ describe('BASIC_FUNCTIONS', () => {
     it('equals', () => {
       assert.strictEqual(invoke('equals', {a: 1, b: 1}, context), true);
       assert.strictEqual(invoke('equals', {a: 1, b: 2}, context), false);
-      assert.throws(
-        () => invoke('equals', {a: 1}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('equals', {b: 1}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('equals', {a: 1}, context), A2uiExpressionError);
+      assert.throws(() => invoke('equals', {b: 1}, context), A2uiExpressionError);
     });
     it('not_equals', () => {
       assert.strictEqual(invoke('not_equals', {a: 1, b: 2}, context), true);
-      assert.throws(
-        () => invoke('not_equals', {a: 1}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('not_equals', {b: 1}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('not_equals', {a: 1}, context), A2uiExpressionError);
+      assert.throws(() => invoke('not_equals', {b: 1}, context), A2uiExpressionError);
     });
     it('greater_than', () => {
       assert.strictEqual(invoke('greater_than', {a: 5, b: 3}, context), true);
@@ -138,45 +99,21 @@ describe('BASIC_FUNCTIONS', () => {
         () => invoke('greater_than', {a: 10, b: undefined}, context),
         A2uiExpressionError,
       );
-      assert.throws(
-        () => invoke('greater_than', {a: 10, b: null}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('greater_than', {a: 10, b: null}, context), A2uiExpressionError);
       assert.throws(
         () => invoke('greater_than', {a: 10, b: 'invalid'}, context),
         A2uiExpressionError,
       );
-      assert.throws(
-        () => invoke('greater_than', {a: 10}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('greater_than', {b: 10}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('greater_than', {a: 10}, context), A2uiExpressionError);
+      assert.throws(() => invoke('greater_than', {b: 10}, context), A2uiExpressionError);
     });
     it('less_than', () => {
       assert.strictEqual(invoke('less_than', {a: 3, b: 5}, context), true);
-      assert.throws(
-        () => invoke('less_than', {a: 3, b: undefined}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('less_than', {a: 3, b: null}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('less_than', {a: 3, b: 'invalid'}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('less_than', {a: 3}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('less_than', {b: 3}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('less_than', {a: 3, b: undefined}, context), A2uiExpressionError);
+      assert.throws(() => invoke('less_than', {a: 3, b: null}, context), A2uiExpressionError);
+      assert.throws(() => invoke('less_than', {a: 3, b: 'invalid'}, context), A2uiExpressionError);
+      assert.throws(() => invoke('less_than', {a: 3}, context), A2uiExpressionError);
+      assert.throws(() => invoke('less_than', {b: 3}, context), A2uiExpressionError);
     });
   });
 
@@ -184,26 +121,14 @@ describe('BASIC_FUNCTIONS', () => {
     it('and', () => {
       // Checks args['values'] array OR args['a'] && args['b'].
       assert.strictEqual(invoke('and', {values: [true, true]}, context), true);
-      assert.strictEqual(
-        invoke('and', {values: [true, false]}, context),
-        false,
-      );
-      assert.throws(
-        () => invoke('and', {values: [true]}, context),
-        A2uiExpressionError,
-      );
+      assert.strictEqual(invoke('and', {values: [true, false]}, context), false);
+      assert.throws(() => invoke('and', {values: [true]}, context), A2uiExpressionError);
       assert.throws(() => invoke('and', {}, context), A2uiExpressionError);
     });
     it('or', () => {
       assert.strictEqual(invoke('or', {values: [false, true]}, context), true);
-      assert.strictEqual(
-        invoke('or', {values: [false, false]}, context),
-        false,
-      );
-      assert.throws(
-        () => invoke('or', {values: [true]}, context),
-        A2uiExpressionError,
-      );
+      assert.strictEqual(invoke('or', {values: [false, false]}, context), false);
+      assert.throws(() => invoke('or', {values: [true]}, context), A2uiExpressionError);
       assert.throws(() => invoke('or', {}, context), A2uiExpressionError);
     });
     it('not', () => {
@@ -216,53 +141,25 @@ describe('BASIC_FUNCTIONS', () => {
   describe('String', () => {
     it('contains', () => {
       assert.strictEqual(
-        invoke(
-          'contains',
-          {string: 'hello world', substring: 'world'},
-          context,
-        ),
+        invoke('contains', {string: 'hello world', substring: 'world'}, context),
         true,
       );
       assert.strictEqual(
         invoke('contains', {string: 'hello world', substring: 'foo'}, context),
         false,
       );
-      assert.throws(
-        () => invoke('contains', {string: 'hello'}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('contains', {substring: 'hello'}, context),
-        A2uiExpressionError,
-      );
+      assert.throws(() => invoke('contains', {string: 'hello'}, context), A2uiExpressionError);
+      assert.throws(() => invoke('contains', {substring: 'hello'}, context), A2uiExpressionError);
     });
     it('starts_with', () => {
-      assert.strictEqual(
-        invoke('starts_with', {string: 'hello', prefix: 'he'}, context),
-        true,
-      );
-      assert.throws(
-        () => invoke('starts_with', {string: 'hello'}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('starts_with', {prefix: 'he'}, context),
-        A2uiExpressionError,
-      );
+      assert.strictEqual(invoke('starts_with', {string: 'hello', prefix: 'he'}, context), true);
+      assert.throws(() => invoke('starts_with', {string: 'hello'}, context), A2uiExpressionError);
+      assert.throws(() => invoke('starts_with', {prefix: 'he'}, context), A2uiExpressionError);
     });
     it('ends_with', () => {
-      assert.strictEqual(
-        invoke('ends_with', {string: 'hello', suffix: 'lo'}, context),
-        true,
-      );
-      assert.throws(
-        () => invoke('ends_with', {string: 'hello'}, context),
-        A2uiExpressionError,
-      );
-      assert.throws(
-        () => invoke('ends_with', {suffix: 'lo'}, context),
-        A2uiExpressionError,
-      );
+      assert.strictEqual(invoke('ends_with', {string: 'hello', suffix: 'lo'}, context), true);
+      assert.throws(() => invoke('ends_with', {string: 'hello'}, context), A2uiExpressionError);
+      assert.throws(() => invoke('ends_with', {suffix: 'lo'}, context), A2uiExpressionError);
     });
   });
 
@@ -275,64 +172,34 @@ describe('BASIC_FUNCTIONS', () => {
     });
 
     it('length', () => {
-      assert.strictEqual(
-        invoke('length', {value: 'abc', min: 2}, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke('length', {value: 'abc', max: 2}, context),
-        false,
-      );
+      assert.strictEqual(invoke('length', {value: 'abc', min: 2}, context), true);
+      assert.strictEqual(invoke('length', {value: 'abc', max: 2}, context), false);
       assert.throws(() => invoke('length', {}, context), A2uiExpressionError);
     });
 
     it('numeric', () => {
-      assert.strictEqual(
-        invoke('numeric', {value: 10, min: 5, max: 15}, context),
-        true,
-      );
+      assert.strictEqual(invoke('numeric', {value: 10, min: 5, max: 15}, context), true);
       assert.strictEqual(invoke('numeric', {value: 3, min: 5}, context), false);
       assert.throws(() => invoke('numeric', {}, context), A2uiExpressionError);
     });
 
     it('email', () => {
-      assert.strictEqual(
-        invoke('email', {value: 'test@example.com'}, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke('email', {value: 'test.name@example.com'}, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke('email', {value: 'test+label@example.com'}, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke('email', {value: 'test@example-domain.com'}, context),
-        true,
-      );
+      assert.strictEqual(invoke('email', {value: 'test@example.com'}, context), true);
+      assert.strictEqual(invoke('email', {value: 'test.name@example.com'}, context), true);
+      assert.strictEqual(invoke('email', {value: 'test+label@example.com'}, context), true);
+      assert.strictEqual(invoke('email', {value: 'test@example-domain.com'}, context), true);
 
       assert.strictEqual(invoke('email', {value: 'invalid'}, context), false);
       assert.strictEqual(invoke('email', {value: 'test@test'}, context), false);
-      assert.strictEqual(
-        invoke('email', {value: 'test@test.c'}, context),
-        false,
-      );
+      assert.strictEqual(invoke('email', {value: 'test@test.c'}, context), false);
       assert.strictEqual(invoke('email', {value: 'test@.com'}, context), false);
 
       assert.throws(() => invoke('email', {}, context), A2uiExpressionError);
     });
 
     it('regex', () => {
-      assert.strictEqual(
-        invoke('regex', {value: 'abc', pattern: '^[a-z]+$'}, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke('regex', {value: '123', pattern: '^[a-z]+$'}, context),
-        false,
-      );
+      assert.strictEqual(invoke('regex', {value: 'abc', pattern: '^[a-z]+$'}, context), true);
+      assert.strictEqual(invoke('regex', {value: '123', pattern: '^[a-z]+$'}, context), false);
     });
 
     it('regex handles invalid pattern', () => {
@@ -403,16 +270,12 @@ describe('BASIC_FUNCTIONS', () => {
 
     it('formatString (with function call)', (_, done) => {
       // Need a functionInvoker for function calls
-      const ctxWithInvoker = createTestDataContext(
-        dataModel,
-        '/',
-        (name: string, args: any) => {
-          if (name === 'add') {
-            return Number(args['a']) + Number(args['b']);
-          }
-          return null;
-        },
-      );
+      const ctxWithInvoker = createTestDataContext(dataModel, '/', (name: string, args: any) => {
+        if (name === 'add') {
+          return Number(args['a']) + Number(args['b']);
+        }
+        return null;
+      });
 
       const result = invoke(
         'formatString',
@@ -436,25 +299,15 @@ describe('BASIC_FUNCTIONS', () => {
 
     it('formatNumber', () => {
       // Test basic output as Intl behavior varies by environment.
-      const result = invoke(
-        'formatNumber',
-        {value: 1234.56, decimals: 1},
-        context,
-      );
+      const result = invoke('formatNumber', {value: 1234.56, decimals: 1}, context);
       assert.ok(typeof result === 'string');
       assert.ok(
-        result.includes('1,234.6') ||
-          result.includes('1234.6') ||
-          result.includes('1 234,6'),
+        result.includes('1,234.6') || result.includes('1234.6') || result.includes('1 234,6'),
       );
     });
 
     it('formatCurrency', () => {
-      const result = invoke(
-        'formatCurrency',
-        {value: 1234.56, currency: 'USD'},
-        context,
-      );
+      const result = invoke('formatCurrency', {value: 1234.56, currency: 'USD'}, context);
       assert.ok(typeof result === 'string');
       assert.ok(result.includes('1,234.56') || result.includes('1234.56'));
       assert.ok(result.includes('$') || result.includes('USD'));
@@ -477,11 +330,7 @@ describe('BASIC_FUNCTIONS', () => {
     });
 
     it('formatDate handles invalid dates', () => {
-      const result = invoke(
-        'formatDate',
-        {value: 'invalid-date', format: 'yyyy'},
-        context,
-      );
+      const result = invoke('formatDate', {value: 'invalid-date', format: 'yyyy'}, context);
       assert.strictEqual(result, '');
     });
 
@@ -521,10 +370,7 @@ describe('BASIC_FUNCTIONS', () => {
       try {
         invoke('openUrl', {url: 'https://google.com'}, context);
         assert.strictEqual(openedUrl, 'https://google.com');
-        assert.throws(
-          () => invoke('openUrl', {}, context),
-          A2uiExpressionError,
-        );
+        assert.throws(() => invoke('openUrl', {}, context), A2uiExpressionError);
       } finally {
         (global as any).window = originalWindow;
       }

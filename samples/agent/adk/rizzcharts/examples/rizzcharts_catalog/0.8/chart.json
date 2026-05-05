@@ -14,9 +14,7 @@
           "component": {
             "Canvas": {
               "children": {
-                "explicitList": [
-                  "chart-container"
-                ]
+                "explicitList": ["chart-container"]
               }
             }
           }
@@ -26,9 +24,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "sales-chart"
-                ]
+                "explicitList": ["sales-chart"]
               },
               "alignment": "center"
             }

@@ -12,12 +12,12 @@
         "supportedCatalogIds": {
           "type": "array",
           "description": "The URI of each of the component and function catalogs that is supported by the client.",
-          "items": { "type": "string" }
+          "items": {"type": "string"}
         },
         "inlineCatalogs": {
           "type": "array",
           "description": "An array of inline catalog definitions, which can contain both components and functions. This should only be provided if the agent declares 'acceptsInlineCatalogs: true' in its capabilities.",
-          "items": { "$ref": "#/$defs/Catalog" }
+          "items": {"$ref": "#/$defs/Catalog"}
         }
       },
       "required": ["supportedCatalogIds"]
@@ -44,15 +44,7 @@
         },
         "returnType": {
           "type": "string",
-          "enum": [
-            "string",
-            "number",
-            "boolean",
-            "array",
-            "object",
-            "any",
-            "void"
-          ],
+          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
           "description": "The type of value this function returns."
         }
       },

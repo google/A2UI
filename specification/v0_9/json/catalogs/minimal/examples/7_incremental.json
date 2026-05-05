@@ -59,11 +59,7 @@
           {
             "id": "restaurant_card",
             "component": "Column",
-            "children": [
-              "rc_title",
-              "rc_subtitle",
-              "rc_address"
-            ]
+            "children": ["rc_title", "rc_subtitle", "rc_address"]
           },
           {
             "id": "rc_title",
@@ -109,12 +105,7 @@
           {
             "id": "restaurant_card",
             "component": "Column",
-            "children": [
-              "rc_title",
-              "rc_subtitle",
-              "rc_address",
-              "rc_button"
-            ]
+            "children": ["rc_title", "rc_subtitle", "rc_address", "rc_button"]
           },
           {
             "id": "rc_button",

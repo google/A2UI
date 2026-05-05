@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Signal, signal as angularSignal } from '@angular/core';
-import { Signal as PreactSignal, effect, signal as preactSignal } from '@a2ui/web_core/v0_9';
-export { preactSignal };
+import {DestroyRef, Signal, signal as angularSignal} from '@angular/core';
+import {Signal as PreactSignal, effect, signal as preactSignal} from '@a2ui/web_core/v0_9';
+export {preactSignal};
 
 /**
  * Bridges a Preact Signal (from A2UI web_core) to a reactive Angular Signal.
@@ -32,7 +32,7 @@ export { preactSignal };
  *               (necessary for correct change detection in OnPush components).
  * @returns A read-only Angular Signal.
  */
-import { NgZone } from '@angular/core';
+import {NgZone} from '@angular/core';
 
 export function toAngularSignal<T>(
   preactSignal: PreactSignal<T>,

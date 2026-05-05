@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-import "./generation_flow";
-import "./evaluation_flow";
+import './generation_flow';
+import './evaluation_flow';

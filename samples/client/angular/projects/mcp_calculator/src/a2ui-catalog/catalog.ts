@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Catalog } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import {Catalog} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
 export const DEMO_CATALOG = {
   McpApp: {
-    type: () => import('./mcp-app').then((r) => r.McpApp),
-    bindings: ({ properties }) => [
+    type: () => import('./mcp-app').then(r => r.McpApp),
+    bindings: ({properties}) => [
       inputBinding(
         'content',
         () => ('content' in properties && properties['content']) || undefined,
@@ -29,8 +29,8 @@ export const DEMO_CATALOG = {
     ],
   },
   PongScoreBoard: {
-    type: () => import('./pong-scoreboard').then((r) => r.PongScoreBoard),
-    bindings: ({ properties }) => [
+    type: () => import('./pong-scoreboard').then(r => r.PongScoreBoard),
+    bindings: ({properties}) => [
       inputBinding(
         'playerScore',
         () => ('playerScore' in properties && properties['playerScore']) || undefined,
@@ -42,21 +42,22 @@ export const DEMO_CATALOG = {
     ],
   },
   PongLayout: {
-    type: () => import('./pong-layout').then((r) => r.PongLayout),
-    bindings: ({ properties }) => [
+    type: () => import('./pong-layout').then(r => r.PongLayout),
+    bindings: ({properties}) => [
       inputBinding(
         'mcpComponent',
         () => ('mcpComponent' in properties && properties['mcpComponent']) || undefined,
       ),
       inputBinding(
         'scoreboardComponent',
-        () => ('scoreboardComponent' in properties && properties['scoreboardComponent']) || undefined,
+        () =>
+          ('scoreboardComponent' in properties && properties['scoreboardComponent']) || undefined,
       ),
     ],
   },
   Column: {
-    type: () => import('@a2ui/angular').then((r) => r.Column),
-    bindings: ({ properties }) => [
+    type: () => import('@a2ui/angular').then(r => r.Column),
+    bindings: ({properties}) => [
       inputBinding(
         'alignment',
         () => ('alignment' in properties && properties['alignment']) || undefined,

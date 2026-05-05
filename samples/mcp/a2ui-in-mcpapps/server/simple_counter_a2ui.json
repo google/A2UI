@@ -28,10 +28,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "ping-text",
-                  "controls-row"
-                ]
+                "explicitList": ["ping-text", "controls-row"]
               }
             }
           }
@@ -52,10 +49,7 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": [
-                  "score-card",
-                  "ping-btn"
-                ]
+                "explicitList": ["score-card", "ping-btn"]
               },
               "alignment": "center"
             }
@@ -96,10 +90,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "score-label",
-                  "score-value"
-                ]
+                "explicitList": ["score-label", "score-value"]
               },
               "alignment": "center"
             }

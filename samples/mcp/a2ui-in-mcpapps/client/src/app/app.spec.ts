@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import {TestBed} from '@angular/core/testing';
+import {App} from './app';
 
 describe('App', () => {
   beforeEach(async () => {

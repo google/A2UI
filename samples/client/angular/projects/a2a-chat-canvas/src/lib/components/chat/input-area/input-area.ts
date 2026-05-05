@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
-import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+import {ChangeDetectionStrategy, Component, ElementRef, inject, viewChild} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {MatIconButton} from '@angular/material/button';
+import {MatFormField} from '@angular/material/form-field';
+import {MatIcon} from '@angular/material/icon';
+import {MatInput} from '@angular/material/input';
+import {MatTooltip} from '@angular/material/tooltip';
 
 /** Input area for the user to enter text. */
 @Component({
