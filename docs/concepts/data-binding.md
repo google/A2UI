@@ -10,6 +10,7 @@ A2UI separates:
 2. **Application State** (Data Model): What data it displays
 
 This enables:
+
 - Reactive updates.
 - Data-driven UIs.
 - Reusable templates.
@@ -105,7 +106,7 @@ Components bound to data paths automatically update when the data changes:
   "id": "status",
   "component": {
     "Text": {
-      "text": { "path": "/order/status" }
+      "text": {"path": "/order/status"}
     }
   }
 }
@@ -137,11 +138,12 @@ Use templates to render arrays:
 ```
 
 **Data:**
+
 ```json
 {
   "products": [
-    { "name": "Widget", "price": 9.99 },
-    { "name": "Gadget", "price": 19.99 }
+    {"name": "Widget", "price": 9.99},
+    {"name": "Gadget", "price": 19.99}
   ]
 }
 ```
@@ -157,7 +159,7 @@ Inside a template, paths are scoped to the array item:
   "id": "product-name",
   "component": {
     "Text": {
-      "text": { "path": "/name" }
+      "text": {"path": "/name"}
     }
   }
 }
@@ -172,32 +174,32 @@ Adding/removing items automatically updates the rendered components.
 
 Interactive components update the data model bidirectionally:
 
-| Component | Example | User Action | Data Update |
-|-----------|---------|-------------|-------------|
-| **TextField** | `{"text": {"path": "/form/name"}}` | Types "Alice" | `/form/name` = "Alice" |
-| **CheckBox** | `{"value": {"path": "/form/agreed"}}` | Checks box | `/form/agreed` = true |
+| Component          | Example                                     | User Action      | Data Update              |
+| ------------------ | ------------------------------------------- | ---------------- | ------------------------ |
+| **TextField**      | `{"text": {"path": "/form/name"}}`          | Types "Alice"    | `/form/name` = "Alice"   |
+| **CheckBox**       | `{"value": {"path": "/form/agreed"}}`       | Checks box       | `/form/agreed` = true    |
 | **MultipleChoice** | `{"selections": {"path": "/form/country"}}` | Selects "Canada" | `/form/country` = ["ca"] |
 
 ## Best Practices
 
 - **Use granular updates**: Update only changed paths.
+
   ```json
   {
     "dataModelUpdate": {
       "path": "/user",
-      "contents": [
-        { "key": "name", "valueString": "Alice" }
-      ]
+      "contents": [{"key": "name", "valueString": "Alice"}]
     }
   }
   ```
 
 - **Organize by domain**: Group related data.
+
   ```json
   {"user": {...}, "cart": {...}, "ui": {...}}
   ```
 
 - **Pre-compute display values**: Formats data (currency, dates) on the agent before sending.
   ```json
-  {"price": "$19.99"}  // Not: {"price": 19.99}
+  {"price": "$19.99"} // Not: {"price": 19.99}
   ```

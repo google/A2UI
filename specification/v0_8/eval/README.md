@@ -25,7 +25,7 @@ You also need to install dependencies before running:
 pnpm install
 ```
 
-## Running all evals (warning: can use *lots* of model quota)
+## Running all evals (warning: can use _lots_ of model quota)
 
 To run the flow, use the following command:
 

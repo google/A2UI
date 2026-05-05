@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { LitElement, nothing } from "lit";
-import { property } from "lit/decorators.js";
-import { ComponentContext, ComponentApi } from "@a2ui/web_core/v0_9";
-import { renderA2uiNode } from "./surface/render-a2ui-node.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {LitElement, nothing} from 'lit';
+import {property} from 'lit/decorators.js';
+import {ComponentContext, ComponentApi} from '@a2ui/web_core/v0_9';
+import {renderA2uiNode} from './surface/render-a2ui-node.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
 /**
  * Represents a reference to a child component that should be rendered.
@@ -33,7 +33,7 @@ import { A2uiController } from "@a2ui/lit/v0_9";
  *
  * (This probably should come from the binder in web_core!)
  */
-type A2uiChildRef = string | { id?: string; basePath?: string; type?: string };
+type A2uiChildRef = string | {id?: string; basePath?: string; type?: string};
 
 /**
  * A base class for A2UI Lit elements that manages the A2uiController lifecycle.
@@ -45,10 +45,8 @@ type A2uiChildRef = string | { id?: string; basePath?: string; type?: string };
  *
  * @template Api The specific A2UI component API defining the schema for this element.
  */
-export abstract class A2uiLitElement<
-  Api extends ComponentApi,
-> extends LitElement {
-  @property({ type: Object }) accessor context!: ComponentContext;
+export abstract class A2uiLitElement<Api extends ComponentApi> extends LitElement {
+  @property({type: Object}) accessor context!: ComponentContext;
   protected controller!: A2uiController<Api>;
 
   /**
@@ -76,7 +74,7 @@ export abstract class A2uiLitElement<
   protected renderNode(childRef?: A2uiChildRef, customPath?: string) {
     if (!childRef) return nothing;
     let model: any = childRef;
-    const { surface, path: parentPath } = this.context.dataContext;
+    const {surface, path: parentPath} = this.context.dataContext;
 
     // Path is resolved in the following order:
     //   customPath > childRef.basePath > parentPath
@@ -85,12 +83,7 @@ export abstract class A2uiLitElement<
     // We check !childRef.type because an inline component definition (e.g. { type: 'Button' })
     // should be passed directly to the ComponentContext. If it doesn't have a .type,
     // we treat it as a child reference object (e.g. { id: 'foo', basePath: '/bar' }).
-    if (
-      typeof childRef === "object" &&
-      childRef !== null &&
-      childRef.id &&
-      !childRef.type
-    ) {
+    if (typeof childRef === 'object' && childRef !== null && childRef.id && !childRef.type) {
       model = childRef.id;
       path = path ?? childRef.basePath;
     }
@@ -98,10 +91,7 @@ export abstract class A2uiLitElement<
     // Fallback to the current component's context.
     path = path ?? parentPath;
 
-    return renderA2uiNode(
-      new ComponentContext(surface, model, path),
-      surface.catalog,
-    );
+    return renderA2uiNode(new ComponentContext(surface, model, path), surface.catalog);
   }
 
   /**
@@ -113,7 +103,7 @@ export abstract class A2uiLitElement<
    */
   willUpdate(changedProperties: Map<string, any>) {
     super.willUpdate(changedProperties);
-    if (changedProperties.has("context") && this.context) {
+    if (changedProperties.has('context') && this.context) {
       if (this.controller) {
         this.removeController(this.controller);
         this.controller.dispose();

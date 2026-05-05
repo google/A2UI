@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { Chat } from './chat';
+import {Chat} from './chat';
 
 describe('Chat', () => {
   let component: Chat;

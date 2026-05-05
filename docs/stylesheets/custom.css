@@ -31,12 +31,12 @@
 /* --- Dark/Light Mode Utilities --- */
 
 /* Hide elements meant for dark mode when in light (default) mode */
-[data-md-color-scheme="default"] .dark-mode-only {
+[data-md-color-scheme='default'] .dark-mode-only {
   display: none !important;
 }
 
 /* Hide elements meant for light mode when in dark (slate) mode */
-[data-md-color-scheme="slate"] .light-mode-only {
+[data-md-color-scheme='slate'] .light-mode-only {
   display: none !important;
 }
 
@@ -68,17 +68,17 @@
 }
 
 /* Dark mode overrides */
-[data-md-color-scheme="slate"] .version-badge.stable {
+[data-md-color-scheme='slate'] .version-badge.stable {
   background-color: #1b5e20;
   color: #a5d6a7;
   border-color: #2e7d32;
 }
-[data-md-color-scheme="slate"] .version-badge.draft {
+[data-md-color-scheme='slate'] .version-badge.draft {
   background-color: #e65100;
   color: #ffe0b2;
   border-color: #ef6c00;
 }
-[data-md-color-scheme="slate"] .version-badge.info {
+[data-md-color-scheme='slate'] .version-badge.info {
   background-color: #01579b;
   color: #b3e5fc;
   border-color: #0277bd;

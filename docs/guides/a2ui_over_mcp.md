@@ -44,6 +44,7 @@ In the Inspector:
 > NOTE: Note
 >
 > The sample uses a local path reference to the A2UI Agent SDK. For your own projects, install from PyPI:
+>
 > ```bash
 > pip install a2ui-agent-sdk
 > ```
@@ -90,9 +91,7 @@ MCP is a stateful session protocol, so the most efficient approach is to declare
       "a2ui": {
         "clientCapabilities": {
           "v0.9": {
-            "supportedCatalogIds": [
-              "https://a2ui.org/specification/v0_9/basic_catalog.json"
-            ]
+            "supportedCatalogIds": ["https://a2ui.org/specification/v0_9/basic_catalog.json"]
           }
         }
       }
@@ -114,14 +113,12 @@ If your server must remain stateless, the client can pass A2UI capabilities in t
   "id": "id-123",
   "params": {
     "name": "generate_report",
-    "arguments": { "date": "2026-03-01" },
+    "arguments": {"date": "2026-03-01"},
     "_meta": {
       "a2ui": {
         "clientCapabilities": {
           "v0.9": {
-            "supportedCatalogIds": [
-              "https://a2ui.org/specification/v0_9/basic_catalog.json"
-            ],
+            "supportedCatalogIds": ["https://a2ui.org/specification/v0_9/basic_catalog.json"],
             "inlineCatalogs": []
           }
         }
@@ -312,10 +309,10 @@ a2ui_resource = types.EmbeddedResource(
 )
 ```
 
-| Audience | Behavior |
-|----------|----------|
-| *(empty)* | Visible to both user and LLM |
-| `["user"]` | Rendered for the user; hidden from LLM context |
+| Audience        | Behavior                                               |
+| --------------- | ------------------------------------------------------ |
+| _(empty)_       | Visible to both user and LLM                           |
+| `["user"]`      | Rendered for the user; hidden from LLM context         |
 | `["assistant"]` | Available to LLM for follow-up reasoning; not rendered |
 
 ## Using the A2UI Agent SDK

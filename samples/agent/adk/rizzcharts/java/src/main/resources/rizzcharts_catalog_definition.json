@@ -21,20 +21,10 @@
         "usageHint": {
           "type": "string",
           "description": "A hint for the base text style. One of:\n- `h1`: Largest heading.\n- `h2`: Second largest heading.\n- `h3`: Third largest heading.\n- `h4`: Fourth largest heading.\n- `h5`: Fifth largest heading.\n- `caption`: Small text for captions.\n- `body`: Standard body text.",
-          "enum": [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "caption",
-            "body"
-          ]
+          "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
         }
       },
-      "required": [
-        "text"
-      ]
+      "required": ["text"]
     },
     "Image": {
       "type": "object",
@@ -56,30 +46,15 @@
         "fit": {
           "type": "string",
           "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
-          "enum": [
-            "contain",
-            "cover",
-            "fill",
-            "none",
-            "scale-down"
-          ]
+          "enum": ["contain", "cover", "fill", "none", "scale-down"]
         },
         "usageHint": {
           "type": "string",
           "description": "A hint for the image size and style. One of:\n- `icon`: Small square icon.\n- `avatar`: Circular avatar image.\n- `smallFeature`: Small feature image.\n- `mediumFeature`: Medium feature image.\n- `largeFeature`: Large feature image.\n- `header`: Full-width, full bleed, header image.",
-          "enum": [
-            "icon",
-            "avatar",
-            "smallFeature",
-            "mediumFeature",
-            "largeFeature",
-            "header"
-          ]
+          "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"]
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Icon": {
       "type": "object",
@@ -149,9 +124,7 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "Video": {
       "type": "object",
@@ -171,9 +144,7 @@
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "AudioPlayer": {
       "type": "object",
@@ -206,9 +177,7 @@
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Row": {
       "type": "object",
@@ -237,39 +206,22 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "distribution": {
           "type": "string",
           "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
-          "enum": [
-            "center",
-            "end",
-            "spaceAround",
-            "spaceBetween",
-            "spaceEvenly",
-            "start"
-          ]
+          "enum": ["center", "end", "spaceAround", "spaceBetween", "spaceEvenly", "start"]
         },
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Column": {
       "type": "object",
@@ -298,39 +250,22 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "distribution": {
           "type": "string",
           "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "spaceBetween",
-            "spaceAround",
-            "spaceEvenly"
-          ]
+          "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly"]
         },
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "center",
-            "end",
-            "start",
-            "stretch"
-          ]
+          "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "List": {
       "type": "object",
@@ -359,35 +294,22 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "direction": {
           "type": "string",
           "description": "The direction in which the list items are laid out.",
-          "enum": [
-            "vertical",
-            "horizontal"
-          ]
+          "enum": ["vertical", "horizontal"]
         },
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Card": {
       "type": "object",
@@ -398,9 +320,7 @@
           "description": "The ID of the component to be rendered inside the card."
         }
       },
-      "required": [
-        "child"
-      ]
+      "required": ["child"]
     },
     "Tabs": {
       "type": "object",
@@ -430,16 +350,11 @@
                 "type": "string"
               }
             },
-            "required": [
-              "title",
-              "child"
-            ]
+            "required": ["title", "child"]
           }
         }
       },
-      "required": [
-        "tabItems"
-      ]
+      "required": ["tabItems"]
     },
     "Divider": {
       "type": "object",
@@ -448,10 +363,7 @@
         "axis": {
           "type": "string",
           "description": "The orientation of the divider.",
-          "enum": [
-            "horizontal",
-            "vertical"
-          ]
+          "enum": ["horizontal", "vertical"]
         }
       }
     },
@@ -468,10 +380,7 @@
           "description": "The ID of the component to be displayed inside the modal."
         }
       },
-      "required": [
-        "entryPointChild",
-        "contentChild"
-      ]
+      "required": ["entryPointChild", "contentChild"]
     },
     "Button": {
       "type": "object",
@@ -522,22 +431,14 @@
                     }
                   }
                 },
-                "required": [
-                  "key",
-                  "value"
-                ]
+                "required": ["key", "value"]
               }
             }
           },
-          "required": [
-            "name"
-          ]
+          "required": ["name"]
         }
       },
-      "required": [
-        "child",
-        "action"
-      ]
+      "required": ["child", "action"]
     },
     "CheckBox": {
       "type": "object",
@@ -570,10 +471,7 @@
           }
         }
       },
-      "required": [
-        "label",
-        "value"
-      ]
+      "required": ["label", "value"]
     },
     "TextField": {
       "type": "object",
@@ -608,22 +506,14 @@
         "textFieldType": {
           "type": "string",
           "description": "The type of input field to display.",
-          "enum": [
-            "date",
-            "longText",
-            "number",
-            "shortText",
-            "obscured"
-          ]
+          "enum": ["date", "longText", "number", "shortText", "obscured"]
         },
         "validationRegexp": {
           "type": "string",
           "description": "A regular expression used for client-side validation of the input."
         }
       },
-      "required": [
-        "label"
-      ]
+      "required": ["label"]
     },
     "DateTimeInput": {
       "type": "object",
@@ -651,17 +541,12 @@
           "description": "If true, allows the user to select a time."
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     },
     "MultipleChoice": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "selections",
-        "options"
-      ],
+      "required": ["selections", "options"],
       "properties": {
         "selections": {
           "type": "object",
@@ -704,10 +589,7 @@
                 "description": "The value to be associated with this option when selected."
               }
             },
-            "required": [
-              "label",
-              "value"
-            ]
+            "required": ["label", "value"]
           }
         },
         "maxAllowedSelections": {
@@ -717,10 +599,7 @@
         "variant": {
           "type": "string",
           "description": "The display style of the component.",
-          "enum": [
-            "checkbox",
-            "chips"
-          ]
+          "enum": ["checkbox", "chips"]
         },
         "filterable": {
           "type": "boolean",
@@ -754,9 +633,7 @@
           "description": "The maximum value of the slider."
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     },
     "Canvas": {
       "type": "object",
@@ -775,9 +652,7 @@
           }
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Chart": {
       "type": "object",
@@ -786,10 +661,7 @@
         "type": {
           "type": "string",
           "description": "The type of chart to render.",
-          "enum": [
-            "doughnut",
-            "pie"
-          ]
+          "enum": ["doughnut", "pie"]
         },
         "title": {
           "type": "object",
@@ -831,17 +703,11 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "label",
-                        "value"
-                      ]
+                      "required": ["label", "value"]
                     }
                   }
                 },
-                "required": [
-                  "label",
-                  "value"
-                ]
+                "required": ["label", "value"]
               }
             },
             "path": {
@@ -850,10 +716,7 @@
           }
         }
       },
-      "required": [
-        "type",
-        "chartData"
-      ]
+      "required": ["type", "chartData"]
     },
     "GoogleMap": {
       "type": "object",
@@ -873,10 +736,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "lat",
-                "lng"
-              ]
+              "required": ["lat", "lng"]
             },
             "path": {
               "type": "string"
@@ -929,11 +789,7 @@
                     "description": "Hex color code for the pin's glyph/icon (e.g., '#000000')."
                   }
                 },
-                "required": [
-                  "lat",
-                  "lng",
-                  "name"
-                ]
+                "required": ["lat", "lng", "name"]
               }
             },
             "path": {
@@ -942,10 +798,7 @@
           }
         }
       },
-      "required": [
-        "center",
-        "zoom"
-      ]
+      "required": ["center", "zoom"]
     }
   }
 }

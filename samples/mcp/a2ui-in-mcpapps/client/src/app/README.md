@@ -8,13 +8,13 @@ This application acts as a host container for Model Context Protocol (MCP) Appli
 
 ## Key Features
 
-*   **Security Isolation**: Implements a secure **double-iframe proxy pattern** to isolation-test untrusted components, preventing security leaks while maintaining functionality.
-*   **Host Container**: Acts as the main container for the outer safe iframe.
-*   **Tool & Message Passthrough**: Operates as a communication bridge, routing custom tools and layout messages between the isolated iframe and the database/MCP server.
-*   **UI-Agnostic Isolation Infrastructure**: Holds zero A2UI or app-specific rendering knowledge; it solely manages the infrastructure frames necessary for the isolation sandbox.
+- **Security Isolation**: Implements a secure **double-iframe proxy pattern** to isolation-test untrusted components, preventing security leaks while maintaining functionality.
+- **Host Container**: Acts as the main container for the outer safe iframe.
+- **Tool & Message Passthrough**: Operates as a communication bridge, routing custom tools and layout messages between the isolated iframe and the database/MCP server.
+- **UI-Agnostic Isolation Infrastructure**: Holds zero A2UI or app-specific rendering knowledge; it solely manages the infrastructure frames necessary for the isolation sandbox.
 
 ## Architecture Context
 
-*   **Client (This app)**: The Angular host container.
-*   **Server**: Python-based MCP server providing tools and micro-app resources.
-*   **Isolated Micro-Apps**: Served by the server and rendered inside this host.
+- **Client (This app)**: The Angular host container.
+- **Server**: Python-based MCP server providing tools and micro-app resources.
+- **Isolated Micro-Apps**: Served by the server and rendered inside this host.

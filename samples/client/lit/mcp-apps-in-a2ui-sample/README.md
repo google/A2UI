@@ -16,23 +16,30 @@ This sample demonstrates how a sandboxed MCP (Model Context Protocol) applicatio
 ## Rationale for Implementation Pattern
 
 This sample follows the pattern established in the `custom-components-example` (specifically the floor plan map):
+
 - It uses **raw postMessage** communication in the iframe instead of loading external scripts like `AppBridge` from `unpkg.com`. This makes it robust against network issues and CSP restrictions in the sandbox.
 - It relies on the A2UI host to act as the orchestrator, translating MCP tool calls into A2UI actions.
 
 ## How to Run
 
 ### 1. Run the Agent
+
 Navigate to the agent sample directory and run the agent:
+
 ```bash
 cd samples/agent/adk/mcp-apps-in-a2ui-sample
 uv run agent.py
 ```
+
 The agent will start on `http://localhost:8000`.
 
 ### 2. Run the Client
+
 Navigate to the client sample directory and start the dev server:
+
 ```bash
 cd samples/client/lit/mcp-apps-in-a2ui-sample
 npm run dev
 ```
+
 The client will start (typically on `http://localhost:5173/`). Open this URL in your browser to interact with the sample.

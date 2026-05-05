@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, signal as angularSignal, input } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { DividerComponent } from './divider.component';
-import { ImageComponent } from './image.component';
-import { IconComponent } from './icon.component';
-import { VideoComponent } from './video.component';
-import { AudioPlayerComponent } from './audio-player.component';
-import { ComponentModel } from '@a2ui/web_core/v0_9';
-import { CardComponent } from './card.component';
-import { BoundProperty } from '../../core/types';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentBinder } from '../../core/component-binder.service';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, signal as angularSignal, input} from '@angular/core';
+import {By} from '@angular/platform-browser';
+import {DividerComponent} from './divider.component';
+import {ImageComponent} from './image.component';
+import {IconComponent} from './icon.component';
+import {VideoComponent} from './video.component';
+import {AudioPlayerComponent} from './audio-player.component';
+import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {CardComponent} from './card.component';
+import {BoundProperty} from '../../core/types';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentBinder} from '../../core/component-binder.service';
 
 describe('Simple Components', () => {
   let mockRendererService: any;
@@ -37,25 +37,19 @@ describe('Simple Components', () => {
       surfaceGroup: {
         getSurface: jasmine.createSpy('getSurface').and.returnValue({
           componentsModel: new Map([
-            ['child-1', new ComponentModel('child-1', 'Text', { text: { value: 'Child 1' } })],
-            ['child-2', new ComponentModel('child-2', 'Text', { text: { value: 'Child 2' } })],
-            [
-              'content-1',
-              new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } }),
-            ],
-            [
-              'content-2',
-              new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } }),
-            ],
-            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', { text: { value: 'Open' } })],
+            ['child-1', new ComponentModel('child-1', 'Text', {text: {value: 'Child 1'}})],
+            ['child-2', new ComponentModel('child-2', 'Text', {text: {value: 'Child 2'}})],
+            ['content-1', new ComponentModel('content-1', 'Text', {text: {value: 'Content 1'}})],
+            ['content-2', new ComponentModel('content-2', 'Text', {text: {value: 'Content 2'}})],
+            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', {text: {value: 'Open'}})],
             [
               'modal-content',
-              new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } }),
+              new ComponentModel('modal-content', 'Text', {text: {value: 'Modal'}}),
             ],
           ]),
           catalog: {
             id: 'mock-catalog',
-            components: new Map([['Text', { type: 'Text', component: DummyTextComponent }]]),
+            components: new Map([['Text', {type: 'Text', component: DummyTextComponent}]]),
           },
         }),
       },
@@ -92,8 +86,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [DividerComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -137,8 +131,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [ImageComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -207,8 +201,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [IconComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -281,7 +275,7 @@ describe('Simple Components', () => {
 
     it('should render path icon', () => {
       fixture.componentRef.setInput('props', {
-        name: createBoundProperty({ path: 'M10 10...' }),
+        name: createBoundProperty({path: 'M10 10...'}),
       });
       fixture.detectChanges();
       const svg = fixture.nativeElement.querySelector('svg');
@@ -297,8 +291,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [VideoComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -342,8 +336,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [AudioPlayerComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -397,8 +391,8 @@ describe('Simple Components', () => {
       await TestBed.configureTestingModule({
         imports: [CardComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
     });
@@ -417,12 +411,12 @@ describe('Simple Components', () => {
 
     it('should render component-host for child', () => {
       fixture.componentRef.setInput('props', {
-        child: createBoundProperty({ id: 'child-1', basePath: '/' }),
+        child: createBoundProperty({id: 'child-1', basePath: '/'}),
       });
       fixture.detectChanges();
       const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
       expect(host).toBeTruthy();
-      expect(host.componentInstance.componentKey()).toEqual({ id: 'child-1', basePath: '/' });
+      expect(host.componentInstance.componentKey()).toEqual({id: 'child-1', basePath: '/'});
     });
   });
 });
