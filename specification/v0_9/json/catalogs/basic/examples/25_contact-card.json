@@ -23,14 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "avatar-image",
-              "name",
-              "title",
-              "divider",
-              "contact-info",
-              "actions"
-            ],
+            "children": ["avatar-image", "name", "title", "divider", "contact-info", "actions"],
             "align": "center"
           },
           {
@@ -65,19 +58,12 @@
           {
             "id": "contact-info",
             "component": "Column",
-            "children": [
-              "phone-row",
-              "email-row",
-              "location-row"
-            ]
+            "children": ["phone-row", "email-row", "location-row"]
           },
           {
             "id": "phone-row",
             "component": "Row",
-            "children": [
-              "phone-icon",
-              "phone-text"
-            ],
+            "children": ["phone-icon", "phone-text"],
             "align": "center"
           },
           {
@@ -96,10 +82,7 @@
           {
             "id": "email-row",
             "component": "Row",
-            "children": [
-              "email-icon",
-              "email-text"
-            ],
+            "children": ["email-icon", "email-text"],
             "align": "center"
           },
           {
@@ -118,10 +101,7 @@
           {
             "id": "location-row",
             "component": "Row",
-            "children": [
-              "location-icon",
-              "location-text"
-            ],
+            "children": ["location-icon", "location-text"],
             "align": "center"
           },
           {
@@ -140,10 +120,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "call-btn",
-              "message-btn"
-            ]
+            "children": ["call-btn", "message-btn"]
           },
           {
             "id": "call-btn-text",

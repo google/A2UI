@@ -19,10 +19,7 @@
         {
           "id": "main-column",
           "component": "Column",
-          "children": [
-            "recipe-image",
-            "content"
-          ]
+          "children": ["recipe-image", "content"]
         },
         {
           "id": "recipe-image",
@@ -38,12 +35,7 @@
         {
           "id": "content",
           "component": "Column",
-          "children": [
-            "title",
-            "rating-row",
-            "times-row",
-            "servings"
-          ]
+          "children": ["title", "rating-row", "times-row", "servings"]
         },
         {
           "id": "title",
@@ -56,11 +48,7 @@
         {
           "id": "rating-row",
           "component": "Row",
-          "children": [
-            "star-icon",
-            "rating",
-            "review-count"
-          ],
+          "children": ["star-icon", "rating", "review-count"],
           "align": "center"
         },
         {
@@ -87,18 +75,12 @@
         {
           "id": "times-row",
           "component": "Row",
-          "children": [
-            "prep-time",
-            "cook-time"
-          ]
+          "children": ["prep-time", "cook-time"]
         },
         {
           "id": "prep-time",
           "component": "Row",
-          "children": [
-            "prep-icon",
-            "prep-text"
-          ],
+          "children": ["prep-icon", "prep-text"],
           "align": "center"
         },
         {
@@ -117,10 +99,7 @@
         {
           "id": "cook-time",
           "component": "Row",
-          "children": [
-            "cook-icon",
-            "cook-text"
-          ],
+          "children": ["cook-icon", "cook-text"],
           "align": "center"
         },
         {

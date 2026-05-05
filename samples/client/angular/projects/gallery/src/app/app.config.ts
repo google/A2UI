@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
-import { IMAGE_CONFIG } from '@angular/common';
+import {DEFAULT_CATALOG, provideA2UI} from '@a2ui/angular';
+import {IMAGE_CONFIG} from '@angular/common';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { theme } from './theme';
+import {provideClientHydration, withEventReplay} from '@angular/platform-browser';
+import {theme} from './theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [

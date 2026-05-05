@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { css } from "lit";
+import {css} from 'lit';
 
 /**
  * Styles for the LocalGallery component.
@@ -185,7 +185,7 @@ export const appStyles = css`
     flex: 1;
     overflow-y: auto;
     padding: 16px;
-    font-family: "JetBrains Mono", monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     white-space: pre-wrap;
   }

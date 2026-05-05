@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { DestroyRef } from '@angular/core';
-import { signal as preactSignal } from '@preact/signals-core';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
-import { ComponentBinder } from './component-binder.service';
+import {TestBed} from '@angular/core/testing';
+import {DestroyRef} from '@angular/core';
+import {signal as preactSignal} from '@preact/signals-core';
+import {ComponentContext} from '@a2ui/web_core/v0_9';
+import {ComponentBinder} from './component-binder.service';
 
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
@@ -31,7 +31,7 @@ describe('ComponentBinder', () => {
     });
 
     TestBed.configureTestingModule({
-      providers: [ComponentBinder, { provide: DestroyRef, useValue: mockDestroyRef }],
+      providers: [ComponentBinder, {provide: DestroyRef, useValue: mockDestroyRef}],
     });
 
     binder = TestBed.inject(ComponentBinder);
@@ -81,7 +81,7 @@ describe('ComponentBinder', () => {
   it('should add update() method for data bindings (two-way binding)', () => {
     const mockComponentModel = {
       properties: {
-        value: { path: '/data/text' },
+        value: {path: '/data/text'},
       },
     };
 
@@ -141,7 +141,7 @@ describe('ComponentBinder', () => {
   it('should expand ChildList object templates', () => {
     const mockComponentModel = {
       properties: {
-        children: { componentId: 'item-comp', path: '/list/data' },
+        children: {componentId: 'item-comp', path: '/list/data'},
       },
     };
 
@@ -153,7 +153,7 @@ describe('ComponentBinder', () => {
       }),
       nested: jasmine.createSpy('nested').and.callFake((path: string) => ({
         path,
-        nested: (sub: string) => ({ path: `${path}/${sub}` }),
+        nested: (sub: string) => ({path: `${path}/${sub}`}),
       })),
       set: jasmine.createSpy('set'),
     };
@@ -169,7 +169,7 @@ describe('ComponentBinder', () => {
     const children = bound['children'].value();
     expect(Array.isArray(children)).toBe(true);
     expect(children.length).toBe(2);
-    expect(children[0]).toEqual({ id: 'item-comp', basePath: '/list/data/0' });
-    expect(children[1]).toEqual({ id: 'item-comp', basePath: '/list/data/1' });
+    expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
+    expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
   });
 });

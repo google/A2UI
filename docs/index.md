@@ -22,10 +22,10 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 ## Specification Versions
 
-| Version | Status | Description |
-|---------|--------|-------------|
-| **[v0.8](specification/v0.8-a2ui.md)** | **Stable** | Current production release. Surfaces, components, data binding, adjacency list model. |
-| **[v0.9](specification/v0.9-a2ui.md)** | **Draft** | Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. [Evolution guide →](specification/v0.9-evolution-guide.md) |
+| Version                                | Status     | Description                                                                                                                                               |
+| -------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **[v0.8](specification/v0.8-a2ui.md)** | **Stable** | Current production release. Surfaces, components, data binding, adjacency list model.                                                                     |
+| **[v0.9](specification/v0.9-a2ui.md)** | **Draft**  | Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. [Evolution guide →](specification/v0.9-evolution-guide.md) |
 
 A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
@@ -36,6 +36,7 @@ A2UI solves the following problem: **how can AI agents safely send rich UIs acro
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
 This repository contains:
+
 - **[A2UI specifications](specification/v0.8-a2ui.md)** (v0.8 stable, v0.9 draft).
 - **Implementations for [renderers](reference/renderers.md)** (Angular, Flutter, Lit, Markdown, etc.) on the client side.
 - **Transports like [A2A](concepts/transports.md)** which communicate A2UI messages between agents and clients.
@@ -44,27 +45,27 @@ This repository contains:
 
 - :material-shield-check: **Secure by Design**
 
-    ---
+  ***
 
-    Declarative data format, not executable code. Agents can only use pre-approved components from your catalog—no UI injection attacks.
+  Declarative data format, not executable code. Agents can only use pre-approved components from your catalog—no UI injection attacks.
 
 - :material-rocket-launch: **LLM-Friendly**
 
-    ---
+  ***
 
-    Flat, streaming JSON structure designed for easy generation. LLMs can build UIs incrementally without perfect JSON in one shot.
+  Flat, streaming JSON structure designed for easy generation. LLMs can build UIs incrementally without perfect JSON in one shot.
 
 - :material-devices: **Framework-Agnostic**
 
-    ---
+  ***
 
-    One agent response works everywhere. Render the same UI on Angular, Flutter, React, or native mobile with your own styled components.
+  One agent response works everywhere. Render the same UI on Angular, Flutter, React, or native mobile with your own styled components.
 
 - :material-chart-timeline: **Progressive Rendering**
 
-    ---
+  ***
 
-    Stream UI updates as they're generated. Users see the interface building in real-time instead of waiting for complete responses.
+  Stream UI updates as they're generated. Users see the interface building in real-time instead of waiting for complete responses.
 
 </div>
 
@@ -74,59 +75,59 @@ This repository contains:
 
 - :material-clock-fast:{ .lg .middle } **[Quickstart Restaurant Finder Demo](quickstart.md)**
 
-    ---
+  ***
 
-    Run the full-stack demo locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case.
+  Run the full-stack demo locally with a Gemini powered ADK agent and Lit renderer. Learn A2UI end-to-end and customize to your use case.
 
-    [:octicons-arrow-right-24: Run the demo](quickstart.md)
+  [:octicons-arrow-right-24: Run the demo](quickstart.md)
 
 - :material-react:{ .lg .middle } **[A2UI + AG-UI (React)](guides/a2ui-with-any-agent-framework.md)**
 
-    ---
+  ***
 
-    Scaffold a Next.js app wired to any agent framework via AG-UI. This is a React + A2UI app, ready to ship.
+  Scaffold a Next.js app wired to any agent framework via AG-UI. This is a React + A2UI app, ready to ship.
 
-    [:octicons-arrow-right-24: Use with any agent](guides/a2ui-with-any-agent-framework.md)
+  [:octicons-arrow-right-24: Use with any agent](guides/a2ui-with-any-agent-framework.md)
 
 - :material-palette-outline:{ .lg .middle } **[A2UI Composer](https://a2ui-composer.ag-ui.com/)**
 
-    ---
+  ***
 
-    Generate A2UI JSON from a visual editor — no install required. Paste the output into any agent prompt.
+  Generate A2UI JSON from a visual editor — no install required. Paste the output into any agent prompt.
 
-    [:octicons-arrow-right-24: Open the composer](https://a2ui-composer.ag-ui.com/)
+  [:octicons-arrow-right-24: Open the composer](https://a2ui-composer.ag-ui.com/)
 
 - :material-play-circle-outline:{ .lg .middle } **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)**
 
-    ---
+  ***
 
-    Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers. See the protocol in motion before writing code.
+  Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers. See the protocol in motion before writing code.
 
-    [:octicons-arrow-right-24: Open the playground](https://a2ui-composer.ag-ui.com/theater)
+  [:octicons-arrow-right-24: Open the playground](https://a2ui-composer.ag-ui.com/theater)
 
 - :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
 
-    ---
+  ***
 
-    Understand surfaces, components, data binding, and the adjacency list model.
+  Understand surfaces, components, data binding, and the adjacency list model.
 
-    [:octicons-arrow-right-24: Learn concepts](concepts/overview.md)
+  [:octicons-arrow-right-24: Learn concepts](concepts/overview.md)
 
 - :material-code-braces:{ .lg .middle } **[Developer Guides](guides/client-setup.md)**
 
-    ---
+  ***
 
-    Integrate A2UI renderers into your app or build agents that generate UIs.
+  Integrate A2UI renderers into your app or build agents that generate UIs.
 
-    [:octicons-arrow-right-24: Start building](guides/client-setup.md)
+  [:octicons-arrow-right-24: Start building](guides/client-setup.md)
 
 - :material-file-document:{ .lg .middle } **Protocol Specifications**
 
-    ---
+  ***
 
-    Dive into the complete technical specs: [v0.8 (stable)](specification/v0.8-a2ui.md) · [v0.9 (draft)](specification/v0.9-a2ui.md)
+  Dive into the complete technical specs: [v0.8 (stable)](specification/v0.8-a2ui.md) · [v0.9 (draft)](specification/v0.9-a2ui.md)
 
-    [:octicons-arrow-right-24: Read the v0.8 spec](specification/v0.8-a2ui.md)
+  [:octicons-arrow-right-24: Read the v0.8 spec](specification/v0.8-a2ui.md)
 
 </div>
 
@@ -178,4 +179,3 @@ The typical interaction flow consists of these steps:
 CopilotKit has a public [A2UI Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder) to try out as well.
 
 [![A2UI Composer](assets/A2UI-widget-builder.png)](https://go.copilotkit.ai/A2UI-widget-builder)
-

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TextComponent } from './text.component';
-import { By } from '@angular/platform-browser';
-import { signal } from '@angular/core';
-import { MarkdownRenderer } from '../../core/markdown';
-import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '../../core/a2ui-renderer.service';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TextComponent} from './text.component';
+import {By} from '@angular/platform-browser';
+import {signal} from '@angular/core';
+import {MarkdownRenderer} from '../../core/markdown';
+import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '../../core/a2ui-renderer.service';
 
 describe('TextComponent', () => {
   let component: TextComponent;
@@ -33,9 +33,9 @@ describe('TextComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TextComponent],
       providers: [
-        { provide: MarkdownRenderer, useValue: mockMarkdownRenderer },
+        {provide: MarkdownRenderer, useValue: mockMarkdownRenderer},
         A2uiRendererService,
-        { provide: A2UI_RENDERER_CONFIG, useValue: { catalogs: [] } },
+        {provide: A2UI_RENDERER_CONFIG, useValue: {catalogs: []}},
       ],
     }).compileComponents();
 
@@ -46,7 +46,7 @@ describe('TextComponent', () => {
 
   it('should create', () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
+      text: {value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {}},
     });
     fixture.detectChanges();
     expect(component).toBeTruthy();
@@ -54,7 +54,7 @@ describe('TextComponent', () => {
 
   it('should render the markdown text', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
+      text: {value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -67,8 +67,8 @@ describe('TextComponent', () => {
 
   it('should handle variant h1', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
-      variant: { value: signal('h1'), raw: 'h1', onUpdate: () => {} },
+      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
+      variant: {value: signal('h1'), raw: 'h1', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -79,8 +79,8 @@ describe('TextComponent', () => {
 
   it('should handle variant caption', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Caption'), raw: 'Caption', onUpdate: () => {} },
-      variant: { value: signal('caption'), raw: 'caption', onUpdate: () => {} },
+      text: {value: signal('Caption'), raw: 'Caption', onUpdate: () => {}},
+      variant: {value: signal('caption'), raw: 'caption', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -91,8 +91,8 @@ describe('TextComponent', () => {
 
   it('should handle variant h2', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
-      variant: { value: signal('h2'), raw: 'h2', onUpdate: () => {} },
+      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
+      variant: {value: signal('h2'), raw: 'h2', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -103,8 +103,8 @@ describe('TextComponent', () => {
 
   it('should handle variant h3', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
-      variant: { value: signal('h3'), raw: 'h3', onUpdate: () => {} },
+      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
+      variant: {value: signal('h3'), raw: 'h3', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -115,8 +115,8 @@ describe('TextComponent', () => {
 
   it('should handle variant h4', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
-      variant: { value: signal('h4'), raw: 'h4', onUpdate: () => {} },
+      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
+      variant: {value: signal('h4'), raw: 'h4', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -127,8 +127,8 @@ describe('TextComponent', () => {
 
   it('should handle variant h5', async () => {
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Heading'), raw: 'Heading', onUpdate: () => {} },
-      variant: { value: signal('h5'), raw: 'h5', onUpdate: () => {} },
+      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
+      variant: {value: signal('h5'), raw: 'h5', onUpdate: () => {}},
     });
     fixture.detectChanges();
     await fixture.whenStable();

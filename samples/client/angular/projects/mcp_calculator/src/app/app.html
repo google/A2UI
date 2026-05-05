@@ -20,27 +20,23 @@
 
 <ng-template #welcomeMessage>
   <div class="empty-history">
-      <div class="agent-header">
-        <div class="agent-header-part agent-name">
-          <strong>{{ agentName() }}</strong>
-        </div>
+    <div class="agent-header">
+      <div class="agent-header-part agent-name">
+        <strong>{{ agentName() }}</strong>
       </div>
-      <br />
+    </div>
+    <br />
 
-      <p class="empty-history-text">
-        I summon a calculator app served from an MCP server over A2UI.
-      </p>
-      <div class="suggestion-chips">
-        <button mat-stroked-button class="chip" (click)="sendMessage('Open Calculator')">
-          <span class="material-icons-outlined">calculate</span>
-          Open Calculator from MCP Server
-        </button>
-        <button mat-stroked-button class="chip" (click)="sendMessage('Open Pong')">
-          <span class="material-icons-outlined">videogame_asset</span>
-          Open Pong from HTML File
-        </button>
-      </div>
+    <p class="empty-history-text">I summon a calculator app served from an MCP server over A2UI.</p>
+    <div class="suggestion-chips">
+      <button mat-stroked-button class="chip" (click)="sendMessage('Open Calculator')">
+        <span class="material-icons-outlined">calculate</span>
+        Open Calculator from MCP Server
+      </button>
+      <button mat-stroked-button class="chip" (click)="sendMessage('Open Pong')">
+        <span class="material-icons-outlined">videogame_asset</span>
+        Open Pong from HTML File
+      </button>
+    </div>
   </div>
 </ng-template>
-
-

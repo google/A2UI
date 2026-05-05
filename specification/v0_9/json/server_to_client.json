@@ -5,10 +5,10 @@
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces.",
   "type": "object",
   "oneOf": [
-    { "$ref": "#/$defs/CreateSurfaceMessage" },
-    { "$ref": "#/$defs/UpdateComponentsMessage" },
-    { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" }
+    {"$ref": "#/$defs/CreateSurfaceMessage"},
+    {"$ref": "#/$defs/UpdateComponentsMessage"},
+    {"$ref": "#/$defs/UpdateDataModelMessage"},
+    {"$ref": "#/$defs/DeleteSurfaceMessage"}
   ],
   "$defs": {
     "CreateSurfaceMessage": {

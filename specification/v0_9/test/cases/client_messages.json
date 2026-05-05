@@ -1,7 +1,6 @@
 {
   "schema": "client_to_server.json",
   "tests": [
-
     {
       "description": "Valid action message",
       "valid": true,

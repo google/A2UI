@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CatalogComponent } from 'src/v0_9/core/catalog_component';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {CatalogComponent} from 'src/v0_9/core/catalog_component';
 import z from 'zod';
-import { ComponentApi } from '@a2ui/web_core/v0_9';
+import {ComponentApi} from '@a2ui/web_core/v0_9';
 
 const customSliderApi = {
   name: 'CustomSlider',
@@ -71,4 +71,7 @@ export class CustomSliderComponent extends CatalogComponent<typeof customSliderA
   }
 }
 
-export const customSliderComponentDeclaration = { ...customSliderApi, component: CustomSliderComponent };
+export const customSliderComponentDeclaration = {
+  ...customSliderApi,
+  component: CustomSliderComponent,
+};

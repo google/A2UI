@@ -14,26 +14,24 @@ create a simple "MCP Apps Proxy" agent that is hosted as an A2A server.
 1. Run the MCP Server that serves the MCP Apps. ([Link to
    instructions](../../mcp/mcp-apps-calculator/README.md))
 
-
 2. Navigate to the samples directory:
 
-    ```bash
-    cd samples/agent/adk/mcp_app_proxy
-    ```
+   ```bash
+   cd samples/agent/adk/mcp_app_proxy
+   ```
 
-2. Create an environment file with your API key:
+3. Create an environment file with your API key:
 
    ```bash
    cp .env.example .env
    # Edit .env with your actual API key (do not commit .env)
    ```
 
-3. Run the server:
+4. Run the server:
 
    ```bash
    uv run .
    ```
-
 
 ## Disclaimer
 

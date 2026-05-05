@@ -14,41 +14,36 @@
  * limitations under the License.
  */
 
-import { SignalWatcher } from "@lit-labs/signals";
-import { provide } from "@lit/context";
-import {
-  LitElement,
-  html,
-  css,
-  nothing,
-} from "lit";
-import { customElement, state, query } from "lit/decorators.js";
+import {SignalWatcher} from '@lit-labs/signals';
+import {provide} from '@lit/context';
+import {LitElement, html, css, nothing} from 'lit';
+import {customElement, state, query} from 'lit/decorators.js';
 import {
   SnackbarAction,
   SnackbarMessage,
   SnackbarUUID,
   SnackType,
-} from "../custom-components-example/types/types.js";
-import { type Snackbar } from "../custom-components-example/ui/snackbar.js";
-import { repeat } from "lit/directives/repeat.js";
+} from '../custom-components-example/types/types.js';
+import {type Snackbar} from '../custom-components-example/ui/snackbar.js';
+import {repeat} from 'lit/directives/repeat.js';
 
 // A2UI
-import * as v0_9 from "@a2ui/web_core/v0_9";
-import { basicCatalog, Context } from "@a2ui/lit/v0_9";
-import { renderMarkdown } from "@a2ui/markdown-it";
+import * as v0_9 from '@a2ui/web_core/v0_9';
+import {basicCatalog, Context} from '@a2ui/lit/v0_9';
+import {renderMarkdown} from '@a2ui/markdown-it';
 
 // Configurations
-import { A2UIClient } from "./client.js";
-import { restaurantConfig, AppConfig } from "./configs/configs.js";
-import { styleMap } from "lit/directives/style-map.js";
+import {A2UIClient} from './client.js';
+import {restaurantConfig, AppConfig} from './configs/configs.js';
+import {styleMap} from 'lit/directives/style-map.js';
 
 const configs: Record<string, AppConfig> = {
   restaurant: restaurantConfig,
 };
 
-@customElement("a2ui-shell")
+@customElement('a2ui-shell')
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: Context.markdown })
+  @provide({context: Context.markdown})
   accessor markdownRenderer: any = renderMarkdown;
 
   @state()
@@ -87,8 +82,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         margin-bottom: var(--bb-grid-size-6);
         display: block;
         margin: 0 auto;
-        background: var(--background-image-light) center center / contain
-          no-repeat;
+        background: var(--background-image-light) center center / contain no-repeat;
       }
 
       #surfaces {
@@ -147,8 +141,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       }
 
       .material-symbols {
-        font-family: "Material Symbols Outlined", sans-serif;
-        font-variation-settings: "FILL" 1;
+        font-family: 'Material Symbols Outlined', sans-serif;
+        font-variation-settings: 'FILL' 1;
         font-weight: normal;
         font-style: normal;
         font-size: 24px;
@@ -204,18 +198,18 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         font-size: 32px;
 
         & .material-symbols {
-          font-family: "Material Symbols Outlined";
+          font-family: 'Material Symbols Outlined';
           pointer-events: none;
 
           &::before {
-            content: "dark_mode";
+            content: 'dark_mode';
           }
         }
       }
 
       @container style(--color-scheme: dark) {
         .theme-toggle .material-symbols::before {
-          content: "light_mode";
+          content: 'light_mode';
           color: var(--n-90);
         }
 
@@ -276,9 +270,9 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   #processor = new v0_9.MessageProcessor(
     [basicCatalog],
     async (action: v0_9.A2uiClientAction): Promise<any> => {
-      console.debug("Handling action", action);
+      console.debug('Handling action', action);
 
-      const context: Record<string, any> = { ...action.context };
+      const context: Record<string, any> = {...action.context};
 
       // Do we need to update this to a more strict v0.9 type?
       const message = {
@@ -295,7 +289,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     },
   );
   #a2uiClient = new A2UIClient();
-  @query("ui-snackbar")
+  @query('ui-snackbar')
   accessor #snackbar!: Snackbar;
 
   #pendingSnackbarMessages: Array<{
@@ -316,7 +310,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const appKey = urlParams.get("app");
+    const appKey = urlParams.get('app');
     if (appKey && !configs[appKey]) {
       this.#pendingSnackbarMessages.push({
         message: {
@@ -331,11 +325,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     this.config = (appKey && configs[appKey]) || restaurantConfig;
 
     // Set the CSS Overrides for the given appKey.
-    if (this.config.cssOverrides && !document.adoptedStyleSheets.includes(this.config.cssOverrides)) {
-      document.adoptedStyleSheets = [
-        ...document.adoptedStyleSheets,
-        this.config.cssOverrides,
-      ];
+    if (
+      this.config.cssOverrides &&
+      !document.adoptedStyleSheets.includes(this.config.cssOverrides)
+    ) {
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, this.config.cssOverrides];
     }
     document.title = this.config.title;
 
@@ -345,7 +339,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   protected firstUpdated() {
     if (this.#pendingSnackbarMessages.length > 0) {
-      for (const { message, replaceAll } of this.#pendingSnackbarMessages) {
+      for (const {message, replaceAll} of this.#pendingSnackbarMessages) {
         this.#snackbar.show(message, replaceAll);
       }
       this.#pendingSnackbarMessages = [];
@@ -367,13 +361,13 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       <button
         @click=${(evt: Event) => {
           if (!(evt.target instanceof HTMLButtonElement)) return;
-          const { colorScheme } = window.getComputedStyle(evt.target);
-          if (colorScheme === "dark") {
-            document.body.classList.add("light");
-            document.body.classList.remove("dark");
+          const {colorScheme} = window.getComputedStyle(evt.target);
+          if (colorScheme === 'dark') {
+            document.body.classList.add('light');
+            document.body.classList.remove('dark');
           } else {
-            document.body.classList.add("dark");
-            document.body.classList.remove("light");
+            document.body.classList.add('dark');
+            document.body.classList.remove('light');
           }
         }}
         class="theme-toggle"
@@ -394,7 +388,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
           return;
         }
         const data = new FormData(evt.target);
-        const body = data.get("body") ?? null;
+        const body = data.get('body') ?? null;
         if (!body) {
           return;
         }
@@ -405,8 +399,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       ${this.config.heroImage
         ? html`<div
             style=${styleMap({
-              "--background-image-light": `url(${this.config.heroImage})`,
-              "--background-image-dark": `url(${
+              '--background-image-light': `url(${this.config.heroImage})`,
+              '--background-image-dark': `url(${
                 this.config.heroImageDark ?? this.config.heroImage
               })`,
             })}
@@ -432,15 +426,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
 
   #startLoadingAnimation() {
-    if (
-      this.config.loadingText &&
-      this.config.loadingText.length > 1
-    ) {
+    if (this.config.loadingText && this.config.loadingText.length > 1) {
       this.#loadingTextIndex = 0;
       this.#loadingInterval = window.setInterval(() => {
-        this.#loadingTextIndex =
-          (this.#loadingTextIndex + 1) %
-          this.config.loadingText!.length;
+        this.#loadingTextIndex = (this.#loadingTextIndex + 1) % this.config.loadingText!.length;
       }, 2000);
     }
   }
@@ -476,7 +465,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     if (this.#requesting) {
       const text = this.config.loadingText
         ? this.config.loadingText[this.#loadingTextIndex]
-        : "Awaiting an answer...";
+        : 'Awaiting an answer...';
 
       return html` <div class="pending">
         <div class="spinner"></div>
@@ -488,16 +477,14 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     if (surfaces.length === 0) {
       return nothing;
     }
-    console.debug("Rendering surfaces", surfaces);
+    console.debug('Rendering surfaces', surfaces);
 
     return html`<section id="surfaces">
       ${repeat(
         surfaces,
         ([surfaceId]) => surfaceId,
         ([_, surface]) => {
-          return html`<a2ui-surface
-              .surface=${surface}
-            ></a2ui-surface>`;
+          return html`<a2ui-surface .surface=${surface}></a2ui-surface>`;
         },
       )}
     </section>`;
@@ -505,15 +492,13 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   async #sendAndProcessMessage(request) {
     const messages = await this.#sendMessage(request);
-    console.debug("Received messages", messages);
+    console.debug('Received messages', messages);
 
     this.#lastMessages = messages;
 
     // this.#processor.clearSurfaces();
     // Why? Shouldn't `deleteSurface` be sent from the agent to the client?
-    for (const surfaceId of Array.from(
-      this.#processor.model.surfacesMap.keys(),
-    )) {
+    for (const surfaceId of Array.from(this.#processor.model.surfacesMap.keys())) {
       this.#processor.model.deleteSurface(surfaceId);
     }
 

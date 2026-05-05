@@ -33,8 +33,8 @@ chmod +x deploy.sh
 ./deploy.sh <YOUR_PROJECT_ID> <YOUR_SERVICE_NAME> [MODEL_NAME]
 ```
 
-*   `MODEL_NAME`: Optional. Can be `gemini-2.5-pro` or `gemini-2.5-flash`.
-    Defaults to `gemini-2.5-flash` if not specified.
+- `MODEL_NAME`: Optional. Can be `gemini-2.5-pro` or `gemini-2.5-flash`.
+  Defaults to `gemini-2.5-flash` if not specified.
 
 For example:
 

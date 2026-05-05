@@ -16,7 +16,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { parseArgs } from 'node:util';
+import {parseArgs} from 'node:util';
 
 /**
  * The default output file path where the generated examples bundle will be written.
@@ -37,11 +37,11 @@ const DEFAULT_CATALOGS = ['minimal', 'basic'];
  * The options that this script accepts.
  */
 const options = {
-  help: { type: 'boolean', short: 'h' },
-  'out-file': { type: 'string', short: 'o', default: DEFAULT_OUT_FILE },
-  'spec-path': { type: 'string', short: 's', default: DEFAULT_SPEC_PATH },
-  catalog: { type: 'string', short: 'c', multiple: true, default: DEFAULT_CATALOGS },
-  'override-minimal-catalog-id': { type: 'boolean', default: true },
+  help: {type: 'boolean', short: 'h'},
+  'out-file': {type: 'string', short: 'o', default: DEFAULT_OUT_FILE},
+  'spec-path': {type: 'string', short: 's', default: DEFAULT_SPEC_PATH},
+  catalog: {type: 'string', short: 'c', multiple: true, default: DEFAULT_CATALOGS},
+  'override-minimal-catalog-id': {type: 'boolean', default: true},
 };
 
 /**
@@ -62,7 +62,7 @@ Options:
  * preserving the version in the path.
  */
 function overrideMessagesCatalogId(messages) {
-  const overrideCatalogId = (catalogId) => {
+  const overrideCatalogId = catalogId => {
     return catalogId.replace('catalogs/minimal/minimal_catalog.json', 'basic_catalog.json');
   };
   for (const msg of messages) {
@@ -83,7 +83,7 @@ function overrideMessagesCatalogId(messages) {
  * Parses arguments, reads catalog examples, and generates the TypeScript bundle.
  */
 async function main() {
-  const { values } = parseArgs({ options, allowNegative: true });
+  const {values} = parseArgs({options, allowNegative: true});
 
   if (values.help) {
     console.log(HELP_MESSAGE);
@@ -96,7 +96,7 @@ async function main() {
   const overrideCatalogId = values['override-minimal-catalog-id'];
 
   if (!fs.existsSync(outDir)) {
-    fs.mkdirSync(outDir, { recursive: true });
+    fs.mkdirSync(outDir, {recursive: true});
   }
 
   const catalogs = values.catalog;
@@ -107,7 +107,7 @@ async function main() {
     if (fs.existsSync(examplesDir)) {
       const files = fs
         .readdirSync(examplesDir)
-        .filter((f) => f.endsWith('.json'))
+        .filter(f => f.endsWith('.json'))
         .sort();
       for (const file of files) {
         const filePath = path.join(examplesDir, file);
@@ -120,7 +120,7 @@ async function main() {
             .replace('.json', '')
             .replace(/^[0-9]+_/, '')
             .replace(/[-_]/g, ' ')
-            .replace(/\b\w/g, (l) => l.toUpperCase());
+            .replace(/\b\w/g, l => l.toUpperCase());
 
           // Ensure it's in the Example format
           if (Array.isArray(data)) {
@@ -145,7 +145,7 @@ async function main() {
 
           examples.push(example);
         } catch (e) {
-          throw new Error(`Error parsing ${filePath}`, { cause: e });
+          throw new Error(`Error parsing ${filePath}`, {cause: e});
         }
       }
     } else {
@@ -173,7 +173,7 @@ export const EXAMPLES: Example[] = ${JSON.stringify(examples, null, 2)};
 /**
  * Entry point of the script.
  */
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
   process.exit(1);
 });

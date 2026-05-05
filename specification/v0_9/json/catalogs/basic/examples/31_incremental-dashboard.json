@@ -17,10 +17,7 @@
           {
             "id": "root",
             "component": "Column",
-            "children": [
-              "header",
-              "content-grid"
-            ],
+            "children": ["header", "content-grid"],
             "align": "stretch"
           },
           {
@@ -32,10 +29,7 @@
           {
             "id": "content-grid",
             "component": "Row",
-            "children": [
-              "left-panel",
-              "right-panel"
-            ]
+            "children": ["left-panel", "right-panel"]
           },
           {
             "id": "left-panel",
@@ -111,7 +105,7 @@
           {
             "id": "log-template",
             "component": "Text",
-            "text": { "path": "message" },
+            "text": {"path": "message"},
             "variant": "caption"
           }
         ]
@@ -123,9 +117,9 @@
         "surfaceId": "gallery-incremental-dashboard",
         "value": {
           "logs": [
-            { "message": "System boot complete." },
-            { "message": "All services healthy." },
-            { "message": "Waiting for user input." }
+            {"message": "System boot complete."},
+            {"message": "All services healthy."},
+            {"message": "Waiting for user input."}
           ]
         }
       }

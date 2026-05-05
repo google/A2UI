@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { getPackageGraph, incrementVersion, runCommand } from './lib/workspace.mjs';
+import {readFileSync, writeFileSync} from 'node:fs';
+import {getPackageGraph, incrementVersion, runCommand} from './lib/workspace.mjs';
 
 const args = process.argv.slice(2);
 const skipSync = args.includes('--skip-sync');
@@ -63,7 +63,7 @@ if (dependents.length > 0 && !skipSync) {
     }
     console.log(`- Syncing ${dep.name} in ${dep.dir}`);
     // Update lockfiles normally, but ignore scripts to prevent postinstall esbuild errors
-    runCommand('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], { cwd: dep.dir });
+    runCommand('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {cwd: dep.dir});
   }
 }
 

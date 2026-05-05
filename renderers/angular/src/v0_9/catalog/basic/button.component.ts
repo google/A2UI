@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ComponentHostComponent } from '../../core/component-host.component';
-import { DataContext } from '@a2ui/web_core/v0_9';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { ButtonApi } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {ComponentHostComponent} from '../../core/component-host.component';
+import {DataContext} from '@a2ui/web_core/v0_9';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Button component (v0.9).
@@ -96,7 +96,6 @@ import { ButtonApi } from '@a2ui/web_core/v0_9/basic_catalog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent extends BasicCatalogComponent<typeof ButtonApi> {
-
   readonly variant = computed(() => this.props()['variant']?.value() ?? 'default');
   readonly child = computed(() => this.props()['child']?.value());
   readonly action = computed(() => this.props()['action']?.value());
