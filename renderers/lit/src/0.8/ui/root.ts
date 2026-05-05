@@ -30,7 +30,7 @@ import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { StringValue } from "@a2ui/web_core/types/primitives";
-import { AnyComponentNode, SurfaceID, Theme } from "@a2ui/web_core/types/types";
+import { AnyComponentNode, DataValue, SurfaceID, Theme } from "@a2ui/web_core/types/types";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 import { componentRegistry } from "./component-registry.js";
@@ -75,6 +75,19 @@ export class Root extends SignalWatcher(LitElement) {
   }
 
   #weight: string | number = 1;
+
+  protected updateBoundData(relativePath: string, value: DataValue) {
+    if (!this.processor) {
+      return;
+    }
+    this.processor.setData(
+      this.component,
+      relativePath,
+      value,
+      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
+    );
+    this.requestUpdate();
+  }
 
   static styles = [
     structuralStyles,

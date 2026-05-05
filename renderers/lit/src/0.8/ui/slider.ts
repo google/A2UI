@@ -19,7 +19,6 @@ import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import * as Primitives from "@a2ui/web_core/types/primitives";
-import * as Types from "@a2ui/web_core/types/types";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
@@ -62,24 +61,10 @@ export class Slider extends Root {
   ];
 
   #setBoundValue(value: string) {
-    if (!this.value || !this.processor) {
+    if (!this.value || !("path" in this.value) || !this.value.path) {
       return;
     }
-
-    if (!("path" in this.value)) {
-      return;
-    }
-
-    if (!this.value.path) {
-      return;
-    }
-
-    this.processor.setData(
-      this.component,
-      this.value.path,
-      value,
-      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
-    );
+    this.updateBoundData(this.value.path, value);
   }
 
   #renderField(value: string | number) {
