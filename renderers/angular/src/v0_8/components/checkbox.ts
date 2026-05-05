@@ -42,15 +42,15 @@ import type { BooleanValue, CheckboxNode, StringValue } from '../types';
 })
 export class Checkbox extends DynamicComponent<CheckboxNode> {
   readonly label = input.required<StringValue | null>();
-  readonly checked = input.required<BooleanValue | null>();
+  readonly value = input.required<BooleanValue | null>();
 
-  protected inputChecked = computed(() => super.resolvePrimitive(this.checked()) ?? false);
+  protected inputChecked = computed(() => super.resolvePrimitive(this.value()) ?? false);
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
   protected readonly inputId = super.getUniqueId('a2ui-checkbox');
 
   onToggle(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    const checkedNode = this.checked();
+    const checkedNode = this.value();
     if (
       checkedNode &&
       typeof checkedNode === 'object' &&

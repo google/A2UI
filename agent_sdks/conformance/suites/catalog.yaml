@@ -197,23 +197,13 @@
     ---BEGIN A2UI JSON SCHEMA---
 
     ### Server To Client Schema:
-    {
-      "s2c": "schema"
-    }
+    {"s2c":"schema"}
 
     ### Common Types Schema:
-    {
-      "$defs": {
-        "common": "types"
-      }
-    }
+    {"$defs":{"common":"types"}}
 
     ### Catalog Schema:
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "catalog": "schema",
-      "catalogId": "id_basic"
-    }
+    {"$schema":"https://json-schema.org/draft/2020-12/schema","catalog":"schema","catalogId":"id_basic"}
 
     ---END A2UI JSON SCHEMA---
 
@@ -232,16 +222,10 @@
     ---BEGIN A2UI JSON SCHEMA---
 
     ### Server To Client Schema:
-    {
-      "s2c": "schema"
-    }
+    {"s2c":"schema"}
 
     ### Catalog Schema:
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "catalog": "schema",
-      "catalogId": "id_basic"
-    }
+    {"$schema":"https://json-schema.org/draft/2020-12/schema","catalog":"schema","catalogId":"id_basic"}
 
     ---END A2UI JSON SCHEMA---
 
@@ -249,6 +233,7 @@
   description: Tests loading examples from a directory.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "test_data/load_examples/basic"
@@ -291,6 +276,7 @@
   description: Tests loading examples with glob patterns.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "test_data/load_examples/glob_recursive/**/*.json"
@@ -307,6 +293,7 @@
   description: Tests filtering examples with glob prefix.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "test_data/load_examples/glob_filter/user_*.json"
@@ -323,6 +310,7 @@
   description: Tests character range in glob.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "test_data/load_examples/glob_range/step[1-2].json"
@@ -339,6 +327,7 @@
   description: Tests negation in glob.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "test_data/load_examples/glob_negation/[!i]*.json"
@@ -351,6 +340,7 @@
   description: Tests that loading with None path returns empty string.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: null
@@ -360,6 +350,7 @@
   description: Tests that loading with non-existent path returns empty string.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: load
   args:
     path: "/non/existent/path"
@@ -369,6 +360,7 @@
   description: Tests the remove_strict_validation modifier.
   catalog:
     version: "0.8"
+    catalog_schema: {catalogId: basic}
   action: remove_strict_validation
   args:
     schema:
@@ -388,6 +380,14 @@
           type: array
           items: {type: object}
 
-
-
+- name: test_remove_strict_validation_keeps_true
+  description: Tests that remove_strict_validation keeps additionalProperties true.
+  catalog:
+    version: "0.8"
+    catalog_schema: {catalogId: basic}
+  action: remove_strict_validation
+  args:
+    schema: {type: object, additionalProperties: true}
+  expect:
+    schema: {type: object, additionalProperties: true}
 

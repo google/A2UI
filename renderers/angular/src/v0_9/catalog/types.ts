@@ -16,6 +16,7 @@
 
 import { Type } from '@angular/core';
 import { Catalog, ComponentApi } from '@a2ui/web_core/v0_9';
+import { CatalogComponentInstance } from '../core/catalog_component';
 
 /**
  * Temporary type used during basic catalog schema alignment to bypass strict type checking.
@@ -37,7 +38,7 @@ export interface AngularComponentImplementation extends ComponentApi {
    * This class must be an Angular {@link Type} (e.g., a standalone component class)
    * that accepts `props`, `surfaceId`, and `dataContextPath` as inputs.
    */
-  readonly component: Type<any>;
+  readonly component: Type<CatalogComponentInstance>;
 }
 
 /**
