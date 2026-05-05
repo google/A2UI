@@ -580,7 +580,7 @@ describe('MessageProcessor', () => {
     }, /Catalog not found: unknown-catalog/);
   });
 
-  it('ignores duplicate surface created instead of throwing', () => {
+  it('throws when duplicate surface created', () => {
     processor.processMessages([
       {
         version: 'v0.9',
@@ -588,16 +588,14 @@ describe('MessageProcessor', () => {
       },
     ]);
 
-    // Should not throw
-    processor.processMessages([
-      {
-        version: 'v0.9',
-        createSurface: {surfaceId: 's1', catalogId: 'test-catalog'},
-      },
-    ]);
-
-    const surface = processor.model.getSurface('s1');
-    assert.ok(surface);
+    assert.throws(() => {
+      processor.processMessages([
+        {
+          version: 'v0.9',
+          createSurface: {surfaceId: 's1', catalogId: 'test-catalog'},
+        },
+      ]);
+    }, /Surface s1 already exists/);
   });
 
   it('throws when updating non-existent surface', () => {

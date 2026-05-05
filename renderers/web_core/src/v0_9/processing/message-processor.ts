@@ -279,8 +279,9 @@ export class MessageProcessor<T extends ComponentApi> {
       throw new A2uiStateError(`Catalog not found: ${catalogId}`);
     }
 
-    // We don't throw here if surface already exists to support cumulative payloads in streaming mode.
-    // SurfaceGroupModel.addSurface will handle duplicates by ignoring them and logging a warning.
+    if (this.model.getSurface(surfaceId)) {
+      throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
+    }
 
     const surface = new SurfaceModel<T>(
       surfaceId,

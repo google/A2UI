@@ -85,6 +85,12 @@ export class A2UIClient {
       } as Part];
     }
 
+    parts.push({
+      kind: "data",
+      data: { useStreaming: false },
+      mimeType: "application/json",
+    } as Part);
+
     const response = await client.sendMessage({
       message: {
         messageId: crypto.randomUUID(),

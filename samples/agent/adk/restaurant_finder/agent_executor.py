@@ -63,6 +63,7 @@ class RestaurantAgentExecutor(AgentExecutor):
           "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
       )
 
+    use_streaming = True
     if context.message and context.message.parts:
       logger.info(
           f"--- AGENT_EXECUTOR: Processing {len(context.message.parts)} message"
@@ -70,6 +71,10 @@ class RestaurantAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
+          if "useStreaming" in part.root.data:
+            use_streaming = part.root.data["useStreaming"]
+            logger.info(f"  Part {i}: Found useStreaming={use_streaming}")
+
           if part.root.data.get("version") == "v0.9" and "action" in part.root.data:
             logger.info(f"  Part {i}: Found a2ui v0.9 action payload.")
             ui_event_part = part.root.data["action"]
@@ -124,7 +129,7 @@ class RestaurantAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in self._agent.stream(query, task.context_id, active_ui_version):
+    async for item in self._agent.stream(query, task.context_id, active_ui_version, use_streaming=use_streaming):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         message = None
