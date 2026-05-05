@@ -12,12 +12,12 @@ The core architecture of the A2UI evaluation framework is built upon the princip
 
 The framework adopts the three-pillar architecture of Inspect AI—Tasks, Solvers, and Scorers—to create a unified evaluation pipeline. In this context, a Task defines the high-level evaluation objective, such as "Validating Form Generation" or "Testing Adaptive Layouts".
 
-| Inspect Component | A2UI Implementation Detail                                                     | Primary Responsibility                                            |
-| :---------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| Dataset           | Encrypted archives resolved into EvalSet JSON.                                 | Providing structured prompts and ground-truth UI targets.         |
-| Solver            | Uses `A2uiSchemaManager` to inject system prompt, then generates response.     | Orchestrating the model's attempt to generate a valid UI payload. |
-| Scorer            | A hybrid of SDK-based validation and LLM-as-a-judge.                           | Determining the accuracy and usability of the generated JSON.     |
-| Model Provider    | Support for Gemini, OpenAI, Anthropic, and local vLLM.                         | Standardizing API interactions across diverse model families.     |
+| Inspect Component | A2UI Implementation Detail                                                 | Primary Responsibility                                            |
+| :---------------- | :------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| Dataset           | Encrypted archives resolved into EvalSet JSON.                             | Providing structured prompts and ground-truth UI targets.         |
+| Solver            | Uses `A2uiSchemaManager` to inject system prompt, then generates response. | Orchestrating the model's attempt to generate a valid UI payload. |
+| Scorer            | A hybrid of SDK-based validation and LLM-as-a-judge.                       | Determining the accuracy and usability of the generated JSON.     |
+| Model Provider    | Support for Gemini, OpenAI, Anthropic, and local vLLM.                     | Standardizing API interactions across diverse model families.     |
 
 The interaction flow begins with the resolution of a dataset sample. A solver then prepares the environment, using `A2uiSchemaManager` to provide the model with the correct protocol schemas and a "catalog" of available A2UI components—a critical constraint of the A2UI security model. The model generates a response, which is then parsed and corrected using the SDK's parser tools, and finally passed through a series of Scorers to assess its technical validity and semantic alignment with the user's intent.
 
@@ -25,13 +25,12 @@ The interaction flow begins with the resolution of a dataset sample. A solver th
 
 To ensure consistency between the evaluation framework and the actual agent implementation, the framework integrates the A2UI Python SDK. This reduces duplication of logic and leverages the SDK's robust parsing and validation capabilities.
 
-| SDK Component | Role in Evaluation | Benefit |
-| :--- | :--- | :--- |
-| `A2uiSchemaManager` | Generates the system prompt for the Solver. | Ensures the model receives the correct schema and catalog definitions without manual hardcoding in eval scripts. |
-| `A2uiValidator` | Used in Stage 1 Scorer for schema validation. | Centralizes validation logic, ensuring evals match runtime validation. |
-| `parse_response` | Used to parse the model's completion. | Handles extraction of JSON payloads from markdown and handles common LLM formatting artifacts. |
-| `payload_fixer` | Applied before validation to correct common errors. | Allows focusing evaluation on intent rather than minor formatting issues that are easily fixed in production. |
-
+| SDK Component       | Role in Evaluation                                  | Benefit                                                                                                          |
+| :------------------ | :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `A2uiSchemaManager` | Generates the system prompt for the Solver.         | Ensures the model receives the correct schema and catalog definitions without manual hardcoding in eval scripts. |
+| `A2uiValidator`     | Used in Stage 1 Scorer for schema validation.       | Centralizes validation logic, ensuring evals match runtime validation.                                           |
+| `parse_response`    | Used to parse the model's completion.               | Handles extraction of JSON payloads from markdown and handles common LLM formatting artifacts.                   |
+| `payload_fixer`     | Applied before validation to correct common errors. | Allows focusing evaluation on intent rather than minor formatting issues that are easily fixed in production.    |
 
 ### **Replicating and Enhancing the Eval Lifecycle**
 
@@ -65,9 +64,9 @@ Transcrypt is a Bash script that uses OpenSSL to provide transparent encryption 
 
 **Why Transcrypt for A2UI:**
 
-*   **String-Based Secrets**: Unlike `git-crypt`, which requires a binary key file, Transcrypt can be unlocked using a simple password string. This is highly ergonomic for CI/CD pipelines where the secret is stored as a string environment variable.
-*   **Zero-Install Contribution**: Transcrypt is a standalone script that can be committed to the `evals/bin/` directory. Contributors do not need to install system-level packages; they simply run the local script to unlock the repo.
-*   **Transparency**: Once a developer runs the unlock command, they can use standard Git commands (`add`, `commit`, `push`). The encryption and decryption happen automatically in the background via `.gitattributes`.
+- **String-Based Secrets**: Unlike `git-crypt`, which requires a binary key file, Transcrypt can be unlocked using a simple password string. This is highly ergonomic for CI/CD pipelines where the secret is stored as a string environment variable.
+- **Zero-Install Contribution**: Transcrypt is a standalone script that can be committed to the `evals/bin/` directory. Contributors do not need to install system-level packages; they simply run the local script to unlock the repo.
+- **Transparency**: Once a developer runs the unlock command, they can use standard Git commands (`add`, `commit`, `push`). The encryption and decryption happen automatically in the background via `.gitattributes`.
 
 **Configuration Strategy:**
 

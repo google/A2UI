@@ -14,6 +14,7 @@ To run the evaluations, you need to use the Inspect AI CLI via `uv`. Make sure y
 ### Prerequisites
 
 1. **Set your Gemini API key**:
+
    ```bash
    export GEMINI_API_KEY="your_api_key"
    ```
@@ -59,7 +60,6 @@ uv run inspect eval tasks.py -T list_models=True --model google/gemini-3-flash-p
 
 (the `--model` flag is required even though it is ignored)
 
-
 ## Running Unit Tests
 
 To run the unit tests for the evaluation framework (dataset loader, solvers, scorers):
@@ -67,4 +67,3 @@ To run the unit tests for the evaluation framework (dataset loader, solvers, sco
 ```bash
 uv run python -m pytest
 ```
-
