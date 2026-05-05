@@ -62,6 +62,7 @@ import {FunctionImplementation} from '@a2ui/web_core/v0_9';
  * The set of default Angular implementations for each component in the basic catalog.
  * Using string literals as keys, to survive property renaming, as these names need to match the JSON payload.
  */
+// prettier-ignore
 const DEFAULT_COMPONENT_IMPLEMENTATIONS: Record<string, AngularComponentImplementation> = {
   'text': { ...TextApi, component: TextComponent },
   'row': { ...RowApi, component: RowComponent },
