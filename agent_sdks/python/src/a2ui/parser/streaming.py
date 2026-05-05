@@ -1046,7 +1046,10 @@ class A2uiStreamParser:
                   if not any(ec["id"] == placeholder_id for ec in extra_components):
                     extra_components.append(placeholder_comp)
 
-              if not valid_children and field in ("children", "explicitList"):
+              if not valid_children and field in (
+                  "children",
+                  "explicitList",
+              ):
                 # If list is empty, check if it was partial in the buffer
                 # (meaning it's a sequence that started but hasn't yielded items yet)
                 term = f'"{field}"'

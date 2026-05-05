@@ -33,9 +33,9 @@ class A2uiStreamParserV08(A2uiStreamParser):
   def _placeholder_component(self) -> Dict[str, Any]:
     """Returns the placeholder component."""
     return {
-        'component': {
-            'Row': {
-                'children': {'explicitList': []},
+        "component": {
+            "Row": {
+                "children": {"explicitList": []},
             }
         }
     }
@@ -75,9 +75,9 @@ class A2uiStreamParserV08(A2uiStreamParser):
         if match:
           return match.group(1)
 
-    self.surface_id = get_latest_value('surfaceId')
+    self.surface_id = get_latest_value("surfaceId")
 
-    parsed_root = get_latest_value('root')
+    parsed_root = get_latest_value("root")
     if parsed_root is not None:
       self.root_id = parsed_root
 
@@ -121,7 +121,7 @@ class A2uiStreamParserV08(A2uiStreamParser):
         surface_id = val.get(SURFACE_ID_KEY) or surface_id
 
     self.surface_id = surface_id
-    sid = self.surface_id or 'unknown'
+    sid = self.surface_id or "unknown"
 
     if MSG_TYPE_DELETE_SURFACE in obj:
       if sid in self._yielded_surfaces_set or self._buffered_start_message:
@@ -144,7 +144,7 @@ class A2uiStreamParserV08(A2uiStreamParser):
       br_val = obj[MSG_TYPE_BEGIN_RENDERING]
       if isinstance(br_val, dict):
         self.surface_id = br_val.get(SURFACE_ID_KEY, self.surface_id)
-      self.root_id = br_val.get('root', self.root_id or DEFAULT_ROOT_ID)
+      self.root_id = br_val.get("root", self.root_id or DEFAULT_ROOT_ID)
       self._buffered_start_message = obj
 
       # Yield beginRendering immediately when it completes
@@ -164,10 +164,10 @@ class A2uiStreamParserV08(A2uiStreamParser):
 
     if MSG_TYPE_SURFACE_UPDATE in obj:
       self.add_msg_type(MSG_TYPE_SURFACE_UPDATE)
-      components = obj[MSG_TYPE_SURFACE_UPDATE].get('components', [])
+      components = obj[MSG_TYPE_SURFACE_UPDATE].get("components", [])
       for comp in components:
-        if isinstance(comp, dict) and 'id' in comp:
-          self._seen_components[comp['id']] = comp
+        if isinstance(comp, dict) and "id" in comp:
+          self._seen_components[comp["id"]] = comp
       self.yield_reachable(messages, check_root=True, raise_on_orphans=False)
       return True
 
@@ -209,17 +209,17 @@ class A2uiStreamParserV08(A2uiStreamParser):
   def _deduplicate_data_model(self, m: Dict[str, Any], strict_integrity: bool) -> bool:
     if MSG_TYPE_DATA_MODEL_UPDATE in m:
       dm = m[MSG_TYPE_DATA_MODEL_UPDATE]
-      raw_contents = dm.get('contents', {})
+      raw_contents = dm.get("contents", {})
       contents_dict = {}
       if isinstance(raw_contents, list):
         for entry in raw_contents:
-          if isinstance(entry, dict) and 'key' in entry:
-            key = entry['key']
+          if isinstance(entry, dict) and "key" in entry:
+            key = entry["key"]
             val = (
-                entry.get('valueString')
-                or entry.get('valueNumber')
-                or entry.get('valueBoolean')
-                or entry.get('valueMap')
+                entry.get("valueString")
+                or entry.get("valueNumber")
+                or entry.get("valueBoolean")
+                or entry.get("valueMap")
             )
             if key and val is not None:
               contents_dict[key] = val
