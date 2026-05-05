@@ -21,7 +21,7 @@ import {useBasicCatalogStyles} from '../utils';
 
 export const Divider = createComponentImplementation(DividerApi, ({props}) => {
   useBasicCatalogStyles();
-  const isVertical = props.axis === 'vertical';
+  const isVertical = (props.axis as any) === 'vertical';
   const style: React.CSSProperties = {
     border: 'none',
     backgroundColor: 'var(--a2ui-color-border, #ccc)',

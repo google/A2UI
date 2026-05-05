@@ -98,7 +98,7 @@ export type DynamicValue = z.infer<typeof DynamicValueSchema>;
 export const ComponentIdSchema = z
   .string()
   .describe(
-    'REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.',
+    'A2UI_TYPE:ComponentId|REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.',
   );
 /** The unique identifier for a component. */
 export type ComponentId = z.infer<typeof ComponentIdSchema>;
@@ -119,7 +119,7 @@ export const ChildListSchema = z
       })
       .describe('A template for generating a dynamic list of children.'),
   ])
-  .describe('REF:common_types.json#/$defs/ChildList');
+  .describe('A2UI_TYPE:ChildList|REF:common_types.json#/$defs/ChildList');
 /** A static list of child component IDs or a dynamic list template. */
 export type ChildList = z.infer<typeof ChildListSchema>;
 

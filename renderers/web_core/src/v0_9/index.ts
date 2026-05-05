@@ -31,6 +31,8 @@ export * from './rendering/generic-binder.js';
 export * from './schema/index.js';
 export * from './state/component-model.js';
 export * from './state/data-model.js';
+export * from './state/node-types.js';
+export * from './state/node.js';
 export * from './state/surface-components-model.js';
 export * from './state/surface-group-model.js';
 export * from './state/surface-model.js';

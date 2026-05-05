@@ -25,7 +25,7 @@ import styles from './ChoicePicker.module.css';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type _Option = any;
 
-export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({props, context}) => {
+export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({props, node}) => {
   useBasicCatalogStyles();
   const [filter, setFilter] = useState('');
 
@@ -85,7 +85,7 @@ export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({pro
                 type={isMutuallyExclusive ? 'radio' : 'checkbox'}
                 checked={isSelected}
                 onChange={() => onToggle(opt.value)}
-                name={isMutuallyExclusive ? `choice-${context.componentModel.id}` : undefined}
+                name={isMutuallyExclusive ? `choice-${node.componentId}` : undefined}
               />
               <span className={styles.optionText}>{opt.label}</span>
             </label>

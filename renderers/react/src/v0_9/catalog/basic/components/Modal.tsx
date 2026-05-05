@@ -26,7 +26,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
   return (
     <>
       <div onClick={() => setIsOpen(true)} style={{display: 'inline-block'}}>
-        {props.trigger ? buildChild(props.trigger) : null}
+        {props.trigger ? buildChild(props.trigger as any) : null}
       </div>
       {isOpen && (
         <div
@@ -73,7 +73,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
                 &times;
               </button>
             </div>
-            <div style={{flex: 1}}>{props.content ? buildChild(props.content) : null}</div>
+            <div style={{flex: 1}}>{props.content ? buildChild(props.content as any) : null}</div>
           </div>
         </div>
       )}

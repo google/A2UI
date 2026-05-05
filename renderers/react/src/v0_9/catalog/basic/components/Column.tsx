@@ -19,7 +19,7 @@ import {ColumnApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ChildList} from './ChildList';
 import {mapJustify, mapAlign, getWeightStyle, useBasicCatalogStyles} from '../utils';
 
-export const Column = createComponentImplementation(ColumnApi, ({props, buildChild, context}) => {
+export const Column = createComponentImplementation(ColumnApi, ({props, buildChild}) => {
   useBasicCatalogStyles();
   return (
     <div
@@ -27,12 +27,12 @@ export const Column = createComponentImplementation(ColumnApi, ({props, buildChi
         ...getWeightStyle(props.weight),
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: mapJustify(props.justify),
-        alignItems: mapAlign(props.align),
+        justifyContent: mapJustify(props.justify as any),
+        alignItems: mapAlign(props.align as any),
         gap: 'var(--a2ui-column-gap, var(--a2ui-spacing-m))',
       }}
     >
-      <ChildList childList={props.children} buildChild={buildChild} context={context} />
+      <ChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });

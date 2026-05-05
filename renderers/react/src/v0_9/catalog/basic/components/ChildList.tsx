@@ -15,29 +15,24 @@
  */
 
 import React from 'react';
-import {type ComponentContext} from '@a2ui/web_core/v0_9';
+import {type A2uiNode} from '@a2ui/web_core/v0_9';
+import {NodeRenderer} from '../../../A2uiSurface';
 
 export const ChildList: React.FC<{
   childList: unknown;
-  context: ComponentContext;
-  buildChild: (id: string, basePath?: string) => React.ReactNode;
+  buildChild?: (nodeOrId: any) => React.ReactNode;
 }> = ({childList, buildChild}) => {
   if (Array.isArray(childList)) {
     return (
       <>
-        {childList.map((item: unknown, i: number) => {
-          // The new binder outputs objects like { id: string, basePath: string } for arrays of structural nodes
-          if (item && typeof item === 'object' && 'id' in item) {
-            const node = item as {id: string; basePath?: string};
-            return (
-              <React.Fragment key={`${node.id}-${i}`}>
-                {buildChild(node.id, node.basePath)}
-              </React.Fragment>
-            );
+        {childList.map((item: unknown) => {
+          if (buildChild) {
+            return buildChild(item);
           }
-          // Fallback for static string lists
-          if (typeof item === 'string') {
-            return <React.Fragment key={`${item}-${i}`}>{buildChild(item)}</React.Fragment>;
+          // Fallback if buildChild isn't provided for some reason
+          if (item && typeof item === 'object' && 'instanceId' in item) {
+            const node = item as A2uiNode;
+            return <NodeRenderer key={node.instanceId} node={node} />;
           }
           return null;
         })}
