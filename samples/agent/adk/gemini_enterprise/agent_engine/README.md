@@ -175,7 +175,7 @@ register it on Gemini Enterprise without running "main.py" script.
       ],
       "version": "1.0.0",
       "capabilities": {
-        "streaming": true,
+        "streaming": false,
         "extensions": [
           {
             "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
@@ -197,7 +197,7 @@ register it on Gemini Enterprise without running "main.py" script.
         "text/plain"
       ],
       "supportsAuthenticatedExtendedCard": true,
-      "preferredTransport": "HTTP+JSON"
+      "preferredTransport": "JSONRPC"
     }
     ```
 

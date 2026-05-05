@@ -4,80 +4,139 @@
   "title": "A2UI Message Schema",
   "type": "object",
   "oneOf": [
-    { "$ref": "#/$defs/CreateSurfaceMessage" },
-    { "$ref": "#/$defs/UpdateComponentsMessage" },
-    { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" }
+    {
+      "$ref": "#/$defs/CreateSurfaceMessage"
+    },
+    {
+      "$ref": "#/$defs/UpdateComponentsMessage"
+    },
+    {
+      "$ref": "#/$defs/UpdateDataModelMessage"
+    },
+    {
+      "$ref": "#/$defs/DeleteSurfaceMessage"
+    }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
       "type": "object",
       "properties": {
-        "version": { "const": "v0.9" },
+        "version": {
+          "const": "v0.9"
+        },
         "createSurface": {
           "type": "object",
           "properties": {
-            "surfaceId": { "type": "string" },
-            "catalogId": { "type": "string" },
-            "theme": { "type": "object", "additionalProperties": true }
+            "surfaceId": {
+              "type": "string"
+            },
+            "catalogId": {
+              "type": "string"
+            },
+            "theme": {
+              "type": "object",
+              "additionalProperties": true
+            }
           },
-          "required": ["surfaceId", "catalogId"],
+          "required": [
+            "surfaceId",
+            "catalogId"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["version", "createSurface"],
+      "required": [
+        "version",
+        "createSurface"
+      ],
       "additionalProperties": false
     },
     "UpdateComponentsMessage": {
       "type": "object",
       "properties": {
-        "version": { "const": "v0.9" },
+        "version": {
+          "const": "v0.9"
+        },
         "updateComponents": {
           "type": "object",
           "properties": {
-            "surfaceId": { "type": "string" },
-            "root": { "type": "string" },
+            "surfaceId": {
+              "type": "string"
+            },
+            "root": {
+              "type": "string"
+            },
             "components": {
               "type": "array",
               "minItems": 1,
-              "items": { "$ref": "simplified_catalog_v09.json#/$defs/anyComponent" }
+              "items": {
+                "$ref": "catalog.json#/$defs/anyComponent"
+              }
             }
           },
-          "required": ["surfaceId", "components"],
+          "required": [
+            "surfaceId",
+            "components"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["version", "updateComponents"],
+      "required": [
+        "version",
+        "updateComponents"
+      ],
       "additionalProperties": false
     },
     "UpdateDataModelMessage": {
       "type": "object",
       "properties": {
-        "version": { "const": "v0.9" },
+        "version": {
+          "const": "v0.9"
+        },
         "updateDataModel": {
           "type": "object",
           "properties": {
-            "surfaceId": { "type": "string" },
-            "value": { "additionalProperties": true }
+            "surfaceId": {
+              "type": "string"
+            },
+            "value": {
+              "additionalProperties": true
+            }
           },
-          "required": ["surfaceId"],
+          "required": [
+            "surfaceId"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["version", "updateDataModel"],
+      "required": [
+        "version",
+        "updateDataModel"
+      ],
       "additionalProperties": false
     },
     "DeleteSurfaceMessage": {
       "type": "object",
       "properties": {
-        "version": { "const": "v0.9" },
+        "version": {
+          "const": "v0.9"
+        },
         "deleteSurface": {
           "type": "object",
-          "properties": { "surfaceId": { "type": "string" } },
-          "required": ["surfaceId"]
+          "properties": {
+            "surfaceId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "surfaceId"
+          ]
         }
       },
-      "required": ["version", "deleteSurface"]
+      "required": [
+        "version",
+        "deleteSurface"
+      ]
     }
   }
 }

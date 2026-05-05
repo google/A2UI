@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "a2ui/schema/catalog.h"
+#include "a2ui/schema/validator.h"
 #include "a2ui/schema/constants.h"
 #include <filesystem>
 #include <fstream>
@@ -20,6 +21,10 @@
 #include <stdexcept>
 #include <algorithm>
 #include <regex>
+#include "a2ui/schema/utils.h"
+#include <jsoncons/json.hpp>
+#include <jsoncons_ext/jsonschema/jsonschema.hpp>
+
 #include <queue>
 #include <set>
 
@@ -91,14 +96,14 @@ std::string A2uiCatalog::render_as_llm_instructions() const {
     ss << A2UI_SCHEMA_BLOCK_START << "\n";
 
     if (!s2c_schema_.empty()) {
-        ss << "### Server To Client Schema:\n" << s2c_schema_.dump(2) << "\n\n";
+        ss << "### Server To Client Schema:\n" << s2c_schema_.dump() << "\n\n";
     }
 
     if (common_types_schema_.contains("$defs") && !common_types_schema_["$defs"].empty()) {
-        ss << "### Common Types Schema:\n" << common_types_schema_.dump(2) << "\n\n";
+        ss << "### Common Types Schema:\n" << common_types_schema_.dump() << "\n\n";
     }
 
-    ss << "### Catalog Schema:\n" << catalog_schema_.dump(2) << "\n\n";
+    ss << "### Catalog Schema:\n" << catalog_schema_.dump() << "\n\n";
     ss << A2UI_SCHEMA_BLOCK_END;
 
     return ss.str();
@@ -212,10 +217,11 @@ std::string A2uiCatalog::load_examples(const std::string& path, bool validate) c
 
 void A2uiCatalog::validate_example(const std::string& full_path, const std::string& content) const {
     try {
-        auto parsed = nlohmann::json::parse(content);
-        (void)parsed;
+        nlohmann::json example_json = nlohmann::json::parse(content);
+        A2uiValidator validator(*this);
+        validator.validate(example_json);
     } catch (const std::exception& e) {
-        throw std::runtime_error("Failed to parse example " + full_path + ": " + e.what());
+        throw std::runtime_error("Failed to validate example " + full_path + ": " + e.what());
     }
 }
 

@@ -19,9 +19,13 @@
 #include "a2ui/schema/catalog.h"
 #include <nlohmann/json.hpp>
 #include <string>
-#include <vector>
+#include <memory>
+#include <jsoncons/json.hpp>
+#include <jsoncons_ext/jsonschema/jsonschema.hpp>
 #include <optional>
 #include <set>
+#include <map>
+
 
 namespace a2ui {
 
@@ -37,6 +41,7 @@ private:
     A2uiCatalog catalog_;
     std::string version_;
     std::map<std::string, std::set<std::string>> required_fields_map_;
+    std::unique_ptr<jsoncons::jsonschema::json_schema<jsoncons::json>> compiled_schema_;
 
     void validate_0_9_custom(const nlohmann::json& messages, const std::optional<std::string>& root_id, bool strict_integrity);
     void validate_0_8_custom(const nlohmann::json& messages, const std::optional<std::string>& root_id, bool strict_integrity);

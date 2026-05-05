@@ -121,3 +121,9 @@
   action: has_parts
   input: "Hello <a2ui-json> World"
   expect: false
+
+- name: test_fix_payload_commas_in_strings
+  description: "Tests that commas in strings are not removed."
+  action: fix_payload
+  input: '{"text": "Hello, world", "array": ["a,b", "c"]}'
+  expect: [{"text": "Hello, world", "array": ["a,b", "c"]}]
