@@ -23,27 +23,17 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header-row",
-              "divider",
-              "actions"
-            ]
+            "children": ["header-row", "divider", "actions"]
           },
           {
             "id": "header-row",
             "component": "Row",
-            "children": [
-              "date-col",
-              "events-col"
-            ]
+            "children": ["date-col", "events-col"]
           },
           {
             "id": "date-col",
             "component": "Column",
-            "children": [
-              "day-name",
-              "day-number"
-            ],
+            "children": ["day-name", "day-number"],
             "align": "start"
           },
           {
@@ -87,10 +77,7 @@
           {
             "id": "event-template",
             "component": "Column",
-            "children": [
-              "event-title",
-              "event-time"
-            ]
+            "children": ["event-title", "event-time"]
           },
           {
             "id": "event-title",
@@ -115,10 +102,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "add-btn",
-              "discard-btn"
-            ]
+            "children": ["add-btn", "discard-btn"]
           },
           {
             "id": "add-btn-text",

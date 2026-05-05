@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, signal as angularSignal, input } from '@angular/core';
-import { CheckBoxComponent } from './check-box.component';
-import { ChoicePickerComponent } from './choice-picker.component';
-import { SliderComponent } from './slider.component';
-import { DateTimeInputComponent } from './date-time-input.component';
-import { ListComponent } from './list.component';
-import { TabsComponent } from './tabs.component';
-import { ComponentModel } from '@a2ui/web_core/v0_9';
-import { ModalComponent } from './modal.component';
-import { BoundProperty } from '../../core/types';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentBinder } from '../../core/component-binder.service';
-import { By } from '@angular/platform-browser';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, signal as angularSignal, input} from '@angular/core';
+import {CheckBoxComponent} from './check-box.component';
+import {ChoicePickerComponent} from './choice-picker.component';
+import {SliderComponent} from './slider.component';
+import {DateTimeInputComponent} from './date-time-input.component';
+import {ListComponent} from './list.component';
+import {TabsComponent} from './tabs.component';
+import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {ModalComponent} from './modal.component';
+import {BoundProperty} from '../../core/types';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentBinder} from '../../core/component-binder.service';
+import {By} from '@angular/platform-browser';
 
 describe('Complex Components', () => {
   let mockRendererService: any;
@@ -38,25 +38,19 @@ describe('Complex Components', () => {
       surfaceGroup: {
         getSurface: jasmine.createSpy('getSurface').and.returnValue({
           componentsModel: new Map([
-            ['child-1', new ComponentModel('child-1', 'Text', { text: { value: 'Child 1' } })],
-            ['child-2', new ComponentModel('child-2', 'Text', { text: { value: 'Child 2' } })],
-            [
-              'content-1',
-              new ComponentModel('content-1', 'Text', { text: { value: 'Content 1' } }),
-            ],
-            [
-              'content-2',
-              new ComponentModel('content-2', 'Text', { text: { value: 'Content 2' } }),
-            ],
-            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', { text: { value: 'Open' } })],
+            ['child-1', new ComponentModel('child-1', 'Text', {text: {value: 'Child 1'}})],
+            ['child-2', new ComponentModel('child-2', 'Text', {text: {value: 'Child 2'}})],
+            ['content-1', new ComponentModel('content-1', 'Text', {text: {value: 'Content 1'}})],
+            ['content-2', new ComponentModel('content-2', 'Text', {text: {value: 'Content 2'}})],
+            ['trigger-btn', new ComponentModel('trigger-btn', 'Text', {text: {value: 'Open'}})],
             [
               'modal-content',
-              new ComponentModel('modal-content', 'Text', { text: { value: 'Modal' } }),
+              new ComponentModel('modal-content', 'Text', {text: {value: 'Modal'}}),
             ],
           ]),
           catalog: {
             id: 'mock-catalog',
-            components: new Map([['Text', { type: 'Text', component: DummyTextComponent }]]),
+            components: new Map([['Text', {type: 'Text', component: DummyTextComponent}]]),
           },
         }),
       },
@@ -93,8 +87,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [CheckBoxComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -124,7 +118,7 @@ describe('Complex Components', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
       fixture.componentRef.setInput('props', {
         label: createBoundProperty('Check me'),
-        value: { value: angularSignal(false), raw: false, onUpdate: onUpdateSpy },
+        value: {value: angularSignal(false), raw: false, onUpdate: onUpdateSpy},
       });
       fixture.detectChanges();
       const input = fixture.nativeElement.querySelector('input');
@@ -138,9 +132,9 @@ describe('Complex Components', () => {
         value: createBoundProperty(true),
       });
       mockRendererService.surfaceGroup.getSurface.and.returnValue({
-        theme: { primaryColor: 'rgb(255, 0, 0)' },
+        theme: {primaryColor: 'rgb(255, 0, 0)'},
         componentsModel: new Map(),
-        catalog: { components: new Map() },
+        catalog: {components: new Map()},
       });
       fixture.detectChanges();
 
@@ -159,8 +153,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [ChoicePickerComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -180,8 +174,8 @@ describe('Complex Components', () => {
       fixture.componentRef.setInput('props', {
         label: createBoundProperty('Pick one'),
         options: createBoundProperty([
-          { label: 'Opt 1', value: '1' },
-          { label: 'Opt 2', value: '2' },
+          {label: 'Opt 1', value: '1'},
+          {label: 'Opt 2', value: '2'},
         ]),
         value: createBoundProperty('1'),
         variant: createBoundProperty('mutuallyExclusive'),
@@ -198,10 +192,10 @@ describe('Complex Components', () => {
       fixture.componentRef.setInput('props', {
         label: createBoundProperty('Pick one'),
         options: createBoundProperty([
-          { label: 'Opt 1', value: '1' },
-          { label: 'Opt 2', value: '2' },
+          {label: 'Opt 1', value: '1'},
+          {label: 'Opt 2', value: '2'},
         ]),
-        value: { value: angularSignal('1'), raw: '1', onUpdate: onUpdateSpy },
+        value: {value: angularSignal('1'), raw: '1', onUpdate: onUpdateSpy},
         variant: createBoundProperty('mutuallyExclusive'),
         displayStyle: createBoundProperty('checkbox'),
       });
@@ -215,10 +209,10 @@ describe('Complex Components', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
       fixture.componentRef.setInput('props', {
         options: createBoundProperty([
-          { label: 'Chip 1', value: 'c1' },
-          { label: 'Chip 2', value: 'c2' },
+          {label: 'Chip 1', value: 'c1'},
+          {label: 'Chip 2', value: 'c2'},
         ]),
-        value: { value: angularSignal(['c1']), raw: ['c1'], onUpdate: onUpdateSpy },
+        value: {value: angularSignal(['c1']), raw: ['c1'], onUpdate: onUpdateSpy},
         variant: createBoundProperty('multipleSelection'),
         displayStyle: createBoundProperty('chips'),
       });
@@ -244,8 +238,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [SliderComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -276,7 +270,7 @@ describe('Complex Components', () => {
     it('should call onUpdate when slider value changes', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
       fixture.componentRef.setInput('props', {
-        value: { value: angularSignal(50), raw: 50, onUpdate: onUpdateSpy },
+        value: {value: angularSignal(50), raw: 50, onUpdate: onUpdateSpy},
       });
       fixture.detectChanges();
       const input = fixture.nativeElement.querySelector('input');
@@ -294,8 +288,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [DateTimeInputComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -372,8 +366,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [ListComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -459,8 +453,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [TabsComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -478,8 +472,8 @@ describe('Complex Components', () => {
     it('should render tabs and switch content', () => {
       fixture.componentRef.setInput('props', {
         tabs: createBoundProperty([
-          { title: 'Tab 1', child: 'content-1' },
-          { title: 'Tab 2', child: 'content-2' },
+          {title: 'Tab 1', child: 'content-1'},
+          {title: 'Tab 2', child: 'content-2'},
         ]),
       });
       fixture.detectChanges();
@@ -488,12 +482,12 @@ describe('Complex Components', () => {
       expect(tabs[0].textContent).toContain('Tab 1');
 
       let host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
-      expect(host.componentInstance.componentKey()).toEqual({ id: 'content-1', basePath: '/' });
+      expect(host.componentInstance.componentKey()).toEqual({id: 'content-1', basePath: '/'});
 
       tabs[1].click();
       fixture.detectChanges();
       host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
-      expect(host.componentInstance.componentKey()).toEqual({ id: 'content-2', basePath: '/' });
+      expect(host.componentInstance.componentKey()).toEqual({id: 'content-2', basePath: '/'});
     });
 
     it('should handle missing tabs property', () => {
@@ -521,8 +515,8 @@ describe('Complex Components', () => {
       await TestBed.configureTestingModule({
         imports: [ModalComponent],
         providers: [
-          { provide: A2uiRendererService, useValue: mockRendererService },
-          { provide: ComponentBinder, useValue: mockBinder },
+          {provide: A2uiRendererService, useValue: mockRendererService},
+          {provide: ComponentBinder, useValue: mockBinder},
         ],
       }).compileComponents();
 
@@ -539,8 +533,8 @@ describe('Complex Components', () => {
 
     it('should render trigger and open modal on click', () => {
       fixture.componentRef.setInput('props', {
-        trigger: createBoundProperty({ id: 'trigger-btn', basePath: '/' }),
-        content: createBoundProperty({ id: 'modal-content', basePath: '/' }),
+        trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
+        content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
       fixture.detectChanges();
       const triggerHost = fixture.debugElement.query(
@@ -569,8 +563,8 @@ describe('Complex Components', () => {
 
     it('should close modal when close button clicked', () => {
       fixture.componentRef.setInput('props', {
-        trigger: createBoundProperty({ id: 'trigger-btn', basePath: '/' }),
-        content: createBoundProperty({ id: 'modal-content', basePath: '/' }),
+        trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
+        content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
       fixture.detectChanges();
 
@@ -585,8 +579,8 @@ describe('Complex Components', () => {
 
     it('should close modal when overlay clicked', () => {
       fixture.componentRef.setInput('props', {
-        trigger: createBoundProperty({ id: 'trigger-btn', basePath: '/' }),
-        content: createBoundProperty({ id: 'modal-content', basePath: '/' }),
+        trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
+        content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
       fixture.detectChanges();
 

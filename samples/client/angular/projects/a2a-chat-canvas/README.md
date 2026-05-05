@@ -24,7 +24,7 @@ All functionality to communicate with an agent service goes through the UI
 Create a new class which implements the `A2aService` interface.
 
 ```ts
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class MyA2aService implements A2aService {
   sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
     // ...
@@ -51,8 +51,8 @@ function to get providers to pass into ApplicationConfig.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingA2aService } from 'src/lib/config';
-import { A2aServiceImpl } from 'path/to/code';
+import {configureChatCanvasFeatures, usingA2aService} from 'src/lib/config';
+import {A2aServiceImpl} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -75,8 +75,8 @@ Use the `usingA2aService` function to bind the custom service implementation.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingA2aService } from 'src/lib/config';
-import { A2aServiceImpl } from 'path/to/code';
+import {configureChatCanvasFeatures, usingA2aService} from 'src/lib/config';
+import {A2aServiceImpl} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -97,8 +97,8 @@ The `usingA2uiRenderers` function configures the A2UI library. It accepts an opt
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingA2uiRenderers } from 'src/lib/config';
-import { MY_CUSTOM_CATALOG, MY_CUSTOM_THEME } from 'path/to/code';
+import {configureChatCanvasFeatures, usingA2uiRenderers} from 'src/lib/config';
+import {MY_CUSTOM_CATALOG, MY_CUSTOM_THEME} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -124,7 +124,7 @@ A custom implementation of `MarkdownRenderer` can be provided to allow full
 control over how Markdown is converted to HTML.
 
 ```ts
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class MyMarkdownRendererService implements MarkdownRendererService {
   // ...
 }
@@ -132,8 +132,8 @@ export class MyMarkdownRendererService implements MarkdownRendererService {
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingMarkdownRenderer } from 'src/lib/config';
-import { MyMarkdownRendererService } from 'path/to/code';
+import {configureChatCanvasFeatures, usingMarkdownRenderer} from 'src/lib/config';
+import {MyMarkdownRendererService} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -155,7 +155,7 @@ markdown renderer is supplied.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingDefaultSanitizerMarkdownRenderer } from 'src/lib/config';
+import {configureChatCanvasFeatures, usingDefaultSanitizerMarkdownRenderer} from 'src/lib/config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -186,8 +186,8 @@ artifacts in agent responses to an ID for rendering.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingArtifactResolvers } from 'src/lib/config';
-import { ARTIFACT_RESOLVER_1, ARTIFACT_RESOLVER_2 } from 'path/to/code';
+import {configureChatCanvasFeatures, usingArtifactResolvers} from 'src/lib/config';
+import {ARTIFACT_RESOLVER_1, ARTIFACT_RESOLVER_2} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -218,8 +218,8 @@ artifacts in agent responses to an ID for rendering.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingPartResolvers } from 'src/lib/config';
-import { PART_RESOLVER_1, PART_RESOLVER_2 } from 'path/to/code';
+import {configureChatCanvasFeatures, usingPartResolvers} from 'src/lib/config';
+import {PART_RESOLVER_1, PART_RESOLVER_2} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -252,8 +252,8 @@ used.
 
 ```ts
 // app.config.ts
-import { configureChatCanvasFeatures, usingRenderers } from 'src/lib/config';
-import { RENDERER_ENTRY_1, RENDERER_ENTRY_2 } from 'path/to/code';
+import {configureChatCanvasFeatures, usingRenderers} from 'src/lib/config';
+import {RENDERER_ENTRY_1, RENDERER_ENTRY_2} from 'path/to/code';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -281,9 +281,9 @@ Promise of the Component class.
 1.  Create a Component implementing `RendererComponent`:
 
     ```ts
-    import { Component, input, output, Type } from '@angular/core';
-    import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-    import { Part } from '@a2a-js/sdk';
+    import {Component, input, output, Type} from '@angular/core';
+    import {UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+    import {Part} from '@a2a-js/sdk';
 
     @Component({
       /* ... */
@@ -298,7 +298,7 @@ Promise of the Component class.
     [`RendererEntry`](src/lib/a2a-renderer/types.ts)
 
     ```ts
-    import { RendererEntry } from '@a2a_chat_canvas/a2a-renderer/types';
+    import {RendererEntry} from '@a2a_chat_canvas/a2a-renderer/types';
 
     export const MY_RENDERER_ENTRY: RendererEntry = [
       'my_variant_name',
@@ -308,7 +308,7 @@ Promise of the Component class.
       // a legacy surface that does not use MSS) then import the component class
       // above and return it from this async function directly.
       async () => {
-        const { MyRendererComponent } = await import('./path/to/code');
+        const {MyRendererComponent} = await import('./path/to/code');
         return MyRendererComponent;
       },
     ];
@@ -366,9 +366,9 @@ Include the `a2a-chat-canvas` in the template passing inputs as desired
   [`NgTemplateOutlet`](https://angular.dev/api/common/NgTemplateOutlet)
 
   ```ts
-  import { Component, input, TemplateRef } from '@angular/core';
-  import { UiMessage } from '@a2a_chat_canvas/types/ui_message';
-  import { MessageDecoratorComponent } from '@a2a_chat_canvas/components/chat/chat_history/message_decorator/types';
+  import {Component, input, TemplateRef} from '@angular/core';
+  import {UiMessage} from '@a2a_chat_canvas/types/ui_message';
+  import {MessageDecoratorComponent} from '@a2a_chat_canvas/components/chat/chat_history/message_decorator/types';
 
   @Component({
     /* ... */

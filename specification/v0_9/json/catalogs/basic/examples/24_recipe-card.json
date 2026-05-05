@@ -41,10 +41,7 @@
           {
             "id": "overview-col",
             "component": "Column",
-            "children": [
-              "recipe-image",
-              "overview-content"
-            ]
+            "children": ["recipe-image", "overview-content"]
           },
           {
             "id": "recipe-image",
@@ -57,12 +54,7 @@
           {
             "id": "overview-content",
             "component": "Column",
-            "children": [
-              "title",
-              "rating-row",
-              "times-row",
-              "servings"
-            ]
+            "children": ["title", "rating-row", "times-row", "servings"]
           },
           {
             "id": "title",
@@ -75,11 +67,7 @@
           {
             "id": "rating-row",
             "component": "Row",
-            "children": [
-              "star-icon",
-              "rating",
-              "review-count"
-            ],
+            "children": ["star-icon", "rating", "review-count"],
             "align": "center"
           },
           {
@@ -110,18 +98,12 @@
           {
             "id": "times-row",
             "component": "Row",
-            "children": [
-              "prep-time",
-              "cook-time"
-            ]
+            "children": ["prep-time", "cook-time"]
           },
           {
             "id": "prep-time",
             "component": "Row",
-            "children": [
-              "prep-icon",
-              "prep-text"
-            ],
+            "children": ["prep-icon", "prep-text"],
             "align": "center"
           },
           {
@@ -140,10 +122,7 @@
           {
             "id": "cook-time",
             "component": "Row",
-            "children": [
-              "cook-icon",
-              "cook-text"
-            ],
+            "children": ["cook-icon", "cook-text"],
             "align": "center"
           },
           {
@@ -207,16 +186,16 @@
           "cookTime": "20 min cook",
           "servings": "Serves 4",
           "ingredients": [
-            { "text": "1 cup quinoa" },
-            { "text": "2 cups water" },
-            { "text": "1 cucumber, diced" },
-            { "text": "1 cup cherry tomatoes, halved" }
+            {"text": "1 cup quinoa"},
+            {"text": "2 cups water"},
+            {"text": "1 cucumber, diced"},
+            {"text": "1 cup cherry tomatoes, halved"}
           ],
           "instructions": [
-            { "text": "1. Rinse quinoa and bring to a boil in water." },
-            { "text": "2. Reduce heat and simmer for 15 minutes." },
-            { "text": "3. Fluff with a fork and let cool." },
-            { "text": "4. Mix with diced vegetables." }
+            {"text": "1. Rinse quinoa and bring to a boil in water."},
+            {"text": "2. Reduce heat and simmer for 15 minutes."},
+            {"text": "3. Fluff with a fork and let cool."},
+            {"text": "4. Mix with diced vegetables."}
           ]
         }
       }

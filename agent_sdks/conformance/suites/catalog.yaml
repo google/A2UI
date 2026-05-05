@@ -41,9 +41,9 @@
       $defs:
         anyComponent:
           oneOf:
-          - $ref: "#/components/Text"
-          - $ref: "#/components/Button"
-          - $ref: "#/components/Image"
+            - $ref: "#/components/Text"
+            - $ref: "#/components/Button"
+            - $ref: "#/components/Image"
       components:
         Text: {}
         Button: {}
@@ -57,7 +57,7 @@
       $defs:
         anyComponent:
           oneOf:
-          - $ref: "#/components/Text"
+            - $ref: "#/components/Text"
       components:
         Text: {}
 
@@ -67,9 +67,9 @@
     version: "0.9"
     s2c_schema:
       oneOf:
-      - $ref: "#/$defs/MessageA"
-      - $ref: "#/$defs/MessageB"
-      - $ref: "#/$defs/MessageC"
+        - $ref: "#/$defs/MessageA"
+        - $ref: "#/$defs/MessageB"
+        - $ref: "#/$defs/MessageC"
       $defs:
         MessageA: {type: object, properties: {a: {type: string}}}
         MessageB: {type: object, properties: {b: {type: string}}}
@@ -81,8 +81,8 @@
   expect:
     s2c_schema:
       oneOf:
-      - $ref: "#/$defs/MessageA"
-      - $ref: "#/$defs/MessageC"
+        - $ref: "#/$defs/MessageA"
+        - $ref: "#/$defs/MessageC"
       $defs:
         MessageA: {type: object, properties: {a: {type: string}}}
         MessageC: {type: object, properties: {c: {type: string}}}
@@ -93,7 +93,7 @@
     version: "0.9"
     s2c_schema:
       oneOf:
-      - $ref: "#/$defs/MessageA"
+        - $ref: "#/$defs/MessageA"
       $defs:
         MessageA:
           type: object
@@ -108,7 +108,7 @@
   expect:
     s2c_schema:
       oneOf:
-      - $ref: "#/$defs/MessageA"
+        - $ref: "#/$defs/MessageA"
       $defs:
         MessageA:
           type: object
@@ -147,8 +147,8 @@
         TypeForB: {type: number}
     s2c_schema:
       oneOf:
-      - $ref: "#/$defs/MessageA"
-      - $ref: "#/$defs/MessageB"
+        - $ref: "#/$defs/MessageA"
+        - $ref: "#/$defs/MessageB"
       $defs:
         MessageA: {$ref: "common_types.json#/$defs/TypeForA"}
         MessageB: {$ref: "common_types.json#/$defs/TypeForB"}
@@ -390,4 +390,3 @@
     schema: {type: object, additionalProperties: true}
   expect:
     schema: {type: object, additionalProperties: true}
-

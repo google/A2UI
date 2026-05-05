@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ComponentHostComponent } from '@a2ui/angular/v0_9';
-import { BoundProperty } from '@a2ui/angular/v0_9';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ComponentHostComponent} from '@a2ui/angular/v0_9';
+import {BoundProperty} from '@a2ui/angular/v0_9';
 
 /**
  * A simple card component for the demo.

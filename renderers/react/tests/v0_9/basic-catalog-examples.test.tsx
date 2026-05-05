@@ -27,14 +27,14 @@ import path from 'path';
 describe('v0.9 Basic Catalog Examples Rendering', () => {
   const examplesDir = path.resolve(
     process.cwd(),
-    '../../specification/v0_9/json/catalogs/basic/examples'
+    '../../specification/v0_9/json/catalogs/basic/examples',
   );
 
   if (!fs.existsSync(examplesDir)) {
     throw new Error(`Examples directory not found: ${examplesDir}`);
   }
 
-  const files = fs.readdirSync(examplesDir).filter((f) => f.endsWith('.json'));
+  const files = fs.readdirSync(examplesDir).filter(f => f.endsWith('.json'));
 
   for (const file of files) {
     it(`should successfully render ${file}`, async () => {
@@ -65,7 +65,7 @@ describe('v0.9 Basic Catalog Examples Rendering', () => {
       const {container} = render(
         <React.StrictMode>
           <A2uiSurface surface={surface as any} />
-        </React.StrictMode>
+        </React.StrictMode>,
       );
 
       // Assert that it rendered something and didn't throw

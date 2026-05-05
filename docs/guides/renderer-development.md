@@ -12,14 +12,14 @@ If you're building a renderer for the web (React, Vue, Svelte, etc.), you don't 
 
 ### What `web_core` provides
 
-| Module | What it does |
-|--------|-------------|
-| **`MessageProcessor`** | Processes the A2UI JSONL stream, dispatches messages, manages surface lifecycle |
-| **`SurfaceModel` / `SurfaceGroupModel`** | State management for surfaces, components, and data models |
-| **`DataModel` / `DataContext`** | Data binding resolution, path-based lookups, template list rendering |
-| **`ComponentModel`** | Component tree state, adjacency list → tree resolution |
-| **Types & Schemas** | TypeScript types for all A2UI components, primitives, colors, styles, and JSON schema validation |
-| **Expression parser** | Client-side function evaluation (v0.9) |
+| Module                                   | What it does                                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **`MessageProcessor`**                   | Processes the A2UI JSONL stream, dispatches messages, manages surface lifecycle                  |
+| **`SurfaceModel` / `SurfaceGroupModel`** | State management for surfaces, components, and data models                                       |
+| **`DataModel` / `DataContext`**          | Data binding resolution, path-based lookups, template list rendering                             |
+| **`ComponentModel`**                     | Component tree state, adjacency list → tree resolution                                           |
+| **Types & Schemas**                      | TypeScript types for all A2UI components, primitives, colors, styles, and JSON schema validation |
+| **Expression parser**                    | Client-side function evaluation (v0.9)                                                           |
 
 ### How the maintained renderers use it
 
@@ -31,11 +31,11 @@ import type * as Types from '@a2ui/web_core/types/types';
 import type * as Primitives from '@a2ui/web_core/types/primitives';
 
 // v0.8: Message processing and state
-import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
+import {A2uiMessageProcessor} from '@a2ui/web_core/data/model-processor';
 
 // v0.9: Message processing, surfaces, catalogs
-import { MessageProcessor } from '@a2ui/web_core/v0_9';
-import { SurfaceModel } from '@a2ui/web_core/v0_9';
+import {MessageProcessor} from '@a2ui/web_core/v0_9';
+import {SurfaceModel} from '@a2ui/web_core/v0_9';
 
 // Styles and layout helpers
 import * as Styles from '@a2ui/web_core/styles/index';

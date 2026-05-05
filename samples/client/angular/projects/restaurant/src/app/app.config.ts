@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import {A2uiRendererService, A2UI_RENDERER_CONFIG, BasicCatalog, provideMarkdownRenderer} from '@a2ui/angular/v0_9';
+import {
+  A2uiRendererService,
+  A2UI_RENDERER_CONFIG,
+  BasicCatalog,
+  provideMarkdownRenderer,
+} from '@a2ui/angular/v0_9';
 import {Client} from './client';
 import {inject, Injector} from '@angular/core';
 import {IMAGE_CONFIG} from '@angular/common';

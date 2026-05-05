@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
 import {
@@ -36,7 +36,7 @@ import {
   Signal,
   viewChild,
 } from '@angular/core';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'a2ui-mcp-app',
@@ -69,10 +69,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
     }
   `,
 })
-export class McpApp
-  extends DynamicComponent<Types.CustomNode>
-  implements OnDestroy, OnInit
-{
+export class McpApp extends DynamicComponent<Types.CustomNode> implements OnDestroy, OnInit {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly content = input.required<Primitives.StringValue | null>();
@@ -88,10 +85,12 @@ export class McpApp
     const rawContent = this.resolvedContent();
     const bridge = this.appBridge();
     if (bridge && rawContent) {
-      bridge.sendSandboxResourceReady({
-        html: rawContent,
-        sandbox: 'allow-scripts',
-      }).catch(err => console.error('Failed to update sandbox content:', err));
+      bridge
+        .sendSandboxResourceReady({
+          html: rawContent,
+          sandbox: 'allow-scripts',
+        })
+        .catch(err => console.error('Failed to update sandbox content:', err));
     }
   });
 
@@ -102,7 +101,7 @@ export class McpApp
   );
 
   protected readonly iframeSrc = signal<SafeResourceUrl | null>(
-    this.sanitizer.bypassSecurityTrustResourceUrl('about:blank')
+    this.sanitizer.bypassSecurityTrustResourceUrl('about:blank'),
   );
 
   private iframe = viewChild.required<ElementRef<HTMLIFrameElement>>('iframe');
@@ -142,7 +141,6 @@ export class McpApp
 
     window.addEventListener('message', this.messageHandler);
 
-    
     // Check for query param to opt-out of origin toggle (for testing)
     const urlParams = new URLSearchParams(window.location.search);
     const disableSecuritySelfTest = urlParams.get('disable_security_self_test') === 'true';
@@ -152,9 +150,7 @@ export class McpApp
     if (disableSecuritySelfTest) {
       sandboxUrl += '?disable_security_self_test=true';
     }
-    this.iframeSrc.set(
-      this.sanitizer.bypassSecurityTrustResourceUrl(sandboxUrl),
-    );
+    this.iframeSrc.set(this.sanitizer.bypassSecurityTrustResourceUrl(sandboxUrl));
   }
 
   private async initializeBridge() {
@@ -169,7 +165,7 @@ export class McpApp
     const emptyMcpClient = null;
     const bridge = new AppBridge(
       emptyMcpClient,
-      { name: 'MCP Calculator', version: '1.0.0' },
+      {name: 'MCP Calculator', version: '1.0.0'},
       {
         openLinks: {},
         logging: {},
@@ -177,7 +173,7 @@ export class McpApp
       },
     );
 
-    bridge.onloggingmessage = (params) => {
+    bridge.onloggingmessage = params => {
       console.log(`[MCP App Log] ${params.level}:`, params.data);
     };
 
@@ -185,7 +181,7 @@ export class McpApp
       console.log('MCP App Initialized');
     };
 
-    bridge.onsizechange = ({ width, height }) => {
+    bridge.onsizechange = ({width, height}) => {
       // TODO: Implement dynamic resizing
       // Reference implementation in mcp-apps-custom-component.ts:
       // - Listen for size changes from the embedded app
@@ -199,7 +195,7 @@ export class McpApp
       console.log(`[MCP App] Resize requested: ${width}x${height}`);
     };
 
-    bridge.oncalltool = async (params) => {
+    bridge.oncalltool = async params => {
       console.log(`[MCP App] Tool call requested: ${params.name}`, params);
 
       if (!this.allowedTools().includes(params.name)) {
@@ -208,16 +204,16 @@ export class McpApp
       }
 
       const args = params.arguments || {};
-      
+
       // Map arguments to A2UI Action context
       const context: any[] = [];
       for (const [key, value] of Object.entries(args)) {
         if (typeof value === 'number') {
-          context.push({ key, value: { literalNumber: value } });
+          context.push({key, value: {literalNumber: value}});
         } else if (typeof value === 'string') {
-          context.push({ key, value: { literalString: value } });
+          context.push({key, value: {literalString: value}});
         } else if (typeof value === 'boolean') {
-          context.push({ key, value: { literalBoolean: value } });
+          context.push({key, value: {literalBoolean: value}});
         }
       }
 
@@ -229,12 +225,10 @@ export class McpApp
       console.log('Sending action:', action);
 
       // Dispatch action asynchronously to the host/agent
-      super.sendAction(action).catch((err) =>
-        console.error('Failed to send action:', err),
-      );
+      super.sendAction(action).catch(err => console.error('Failed to send action:', err));
 
       // Return empty result immediately (calculator UI can forget about it)
-      return { content: [] };
+      return {content: []};
     };
 
     // Connect the bridge

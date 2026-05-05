@@ -15,10 +15,10 @@
  */
 
 /* CopilotKit CSS must load BEFORE Tailwind so our @layer base overrides theirs */
-@import "@copilotkit/react-core/v2/styles.css";
+@import '@copilotkit/react-core/v2/styles.css';
 
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 

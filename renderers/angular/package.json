@@ -75,18 +75,6 @@
     "vitest": "^4.0.15"
   },
   "sideEffects": false,
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
   "overrides": {
     "@preact/signals-core": "^1.13.0"
   }

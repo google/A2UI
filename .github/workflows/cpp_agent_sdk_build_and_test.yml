@@ -17,16 +17,16 @@ name: A2UI-agent C++ SDK
 on:
   push:
     branches:
-      - '*'
+      - "*"
     paths:
-      - 'agent_sdks/cpp/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/cpp/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
   pull_request:
     paths:
-      - 'agent_sdks/cpp/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/cpp/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
 
 jobs:
   build-and-test:

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, input, signal } from '@angular/core';
-import { ColumnComponent } from './column.component';
-import { ComponentModel } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentBinder } from '../../core/component-binder.service';
-import { By } from '@angular/platform-browser';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, input, signal} from '@angular/core';
+import {ColumnComponent} from './column.component';
+import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentBinder} from '../../core/component-binder.service';
+import {By} from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -51,7 +51,7 @@ describe('ColumnComponent', () => {
       ]),
       catalog: {
         id: 'test-catalog',
-        components: new Map([['Child', { component: DummyChild }]]),
+        components: new Map([['Child', {component: DummyChild}]]),
       },
     };
 
@@ -64,13 +64,13 @@ describe('ColumnComponent', () => {
     };
 
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
-    mockBinder.bind.and.returnValue({ text: { value: () => 'bound' } });
+    mockBinder.bind.and.returnValue({text: {value: () => 'bound'}});
 
     await TestBed.configureTestingModule({
       imports: [ColumnComponent],
       providers: [
-        { provide: A2uiRendererService, useValue: mockRendererService },
-        { provide: ComponentBinder, useValue: mockBinder },
+        {provide: A2uiRendererService, useValue: mockRendererService},
+        {provide: ComponentBinder, useValue: mockBinder},
       ],
     }).compileComponents();
 
@@ -78,8 +78,8 @@ describe('ColumnComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('start'), raw: 'start', onUpdate: () => {} },
-      align: { value: signal('stretch'), raw: 'stretch', onUpdate: () => {} },
+      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
+      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
       children: {
         value: signal(['child1', 'child2']),
         raw: ['child1', 'child2'],
@@ -103,7 +103,7 @@ describe('ColumnComponent', () => {
   it('should apply flex style from weight prop', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      weight: { value: signal(2), raw: 2, onUpdate: () => {} },
+      weight: {value: signal(2), raw: 2, onUpdate: () => {}},
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -113,7 +113,7 @@ describe('ColumnComponent', () => {
   it('should apply flex style from weight prop when value is 0', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      weight: { value: signal(0), raw: 0, onUpdate: () => {} },
+      weight: {value: signal(0), raw: 0, onUpdate: () => {}},
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -123,7 +123,7 @@ describe('ColumnComponent', () => {
   it('should not apply flex style when weight prop is null', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      weight: { value: signal(null), raw: null, onUpdate: () => {} },
+      weight: {value: signal(null), raw: null, onUpdate: () => {}},
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -135,8 +135,8 @@ describe('ColumnComponent', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
-    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'child2', basePath: '/' });
+    expect(hosts[0].componentInstance.componentKey()).toEqual({id: 'child1', basePath: '/'});
+    expect(hosts[1].componentInstance.componentKey()).toEqual({id: 'child2', basePath: '/'});
   });
 
   it('should render repeating children', () => {
@@ -181,8 +181,8 @@ describe('ColumnComponent', () => {
 
   it('should handle missing children property', () => {
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('start'), raw: 'start', onUpdate: () => {} },
-      align: { value: signal('stretch'), raw: 'stretch', onUpdate: () => {} },
+      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
+      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
     });
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));

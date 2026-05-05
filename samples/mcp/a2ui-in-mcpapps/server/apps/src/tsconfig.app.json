@@ -15,12 +15,8 @@
     "outDir": "./out-tsc/app",
     "types": [],
     "paths": {
-      "@a2ui/angular": [
-        "../../../../../../renderers/angular/src/public-api.ts"
-      ],
-      "@angular/*": [
-        "./node_modules/@angular/*"
-      ]
+      "@a2ui/angular": ["../../../../../../renderers/angular/src/public-api.ts"],
+      "@angular/*": ["./node_modules/@angular/*"]
     }
   },
   "angularCompilerOptions": {
@@ -29,10 +25,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": [
-    "src/main.ts"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.ts"]
 }

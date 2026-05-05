@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { A2aRenderer } from '@a2a_chat_canvas/a2a-renderer/a2a-renderer';
-import { Avatar } from '@a2a_chat_canvas/components/chat/avatar/avatar';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { SafeUrl } from '@angular/platform-browser';
+import {A2aRenderer} from '@a2a_chat_canvas/a2a-renderer/a2a-renderer';
+import {Avatar} from '@a2a_chat_canvas/components/chat/avatar/avatar';
+import {UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+import {ChangeDetectionStrategy, Component, computed, input, signal} from '@angular/core';
+import {MatButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {SafeUrl} from '@angular/platform-browser';
 
 /** Header for the agent. */
 @Component({

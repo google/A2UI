@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { DEFAULT_CATALOG } from '@a2ui/angular';
+import {DEFAULT_CATALOG} from '@a2ui/angular';
 
 export const DEFAULT_A2UI_CATALOG = {
   ...DEFAULT_CATALOG,
-  Canvas: () => import('./canvas/canvas').then((r) => r.Canvas),
+  Canvas: () => import('./canvas/canvas').then(r => r.Canvas),
 };

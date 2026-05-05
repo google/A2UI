@@ -4,19 +4,19 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Renderers
 
-| Renderer                 | Platform           | v0.8 | v0.9 | Status            |
-| ------------------------ | ------------------ | ---- | ---- | ----------------- |
-| **[React](https://github.com/google/A2UI/tree/main/renderers/react)** | Web | ✅ | ✅ | ✅ Stable |
-| **[Lit (Web Components)](https://github.com/google/A2UI/tree/main/renderers/lit)** | Web | ✅ | ✅ | ✅ Stable |
-| **[Angular](https://github.com/google/A2UI/tree/main/renderers/angular)** | Web | ✅ | ✅ | ✅ Stable |
-| **[Flutter (GenUI SDK)](https://docs.flutter.dev/ai/genui)** | Mobile/Desktop/Web | ✅ | ✅ | ✅ Stable |
-| **Jetpack Compose**      | Android            | —    | —    | 🚧 Planned Q2 2026 |
+| Renderer                                                                           | Platform           | v0.8 | v0.9 | Status             |
+| ---------------------------------------------------------------------------------- | ------------------ | ---- | ---- | ------------------ |
+| **[React](https://github.com/google/A2UI/tree/main/renderers/react)**              | Web                | ✅   | ✅   | ✅ Stable          |
+| **[Lit (Web Components)](https://github.com/google/A2UI/tree/main/renderers/lit)** | Web                | ✅   | ✅   | ✅ Stable          |
+| **[Angular](https://github.com/google/A2UI/tree/main/renderers/angular)**          | Web                | ✅   | ✅   | ✅ Stable          |
+| **[Flutter (GenUI SDK)](https://docs.flutter.dev/ai/genui)**                       | Mobile/Desktop/Web | ✅   | ✅   | ✅ Stable          |
+| **Jetpack Compose**                                                                | Android            | —    | —    | 🚧 Planned Q2 2026 |
 
 For more see all [A2UI Renderers](../reference/renderers.md) and [Community A2UI Renderers](../ecosystem/renderers.md).
 
 ## Component Catalogs
 
-A component catalog is any collection of components.  A2UI provides a "Basic Catalog" but we expect you will add your own components, or shared libraries or fully replace the basic components with your own. 
+A component catalog is any collection of components. A2UI provides a "Basic Catalog" but we expect you will add your own components, or shared libraries or fully replace the basic components with your own.
 
 **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
 
@@ -31,7 +31,6 @@ This means core protocol handling is consistent across web platforms — only th
 The shared `web_core` library provides:
 
 - **Message Processor**: Manages A2UI state and processes incoming messages.
-
 
 ## Web Components (Lit)
 
@@ -64,12 +63,8 @@ Once installed, you can use the renderer in your app. The Angular renderer provi
 A2UI uses versioned imports for its protocol-specific implementations. For v0.9, configure your application providers as follows:
 
 ```typescript
-import { ApplicationConfig } from '@angular/core';
-import { 
-  A2UI_RENDERER_CONFIG, 
-  A2uiRendererService, 
-  minimalCatalog 
-} from '@a2ui/angular/v0_9';
+import {ApplicationConfig} from '@angular/core';
+import {A2UI_RENDERER_CONFIG, A2uiRendererService, minimalCatalog} from '@a2ui/angular/v0_9';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -77,13 +72,13 @@ export const appConfig: ApplicationConfig = {
       provide: A2UI_RENDERER_CONFIG,
       useValue: {
         catalogs: [minimalCatalog],
-        actionHandler: (action) => {
+        actionHandler: action => {
           console.log('Action dispatched:', action);
-        }
-      }
+        },
+      },
     },
-    A2uiRendererService
-  ]
+    A2uiRendererService,
+  ],
 };
 ```
 

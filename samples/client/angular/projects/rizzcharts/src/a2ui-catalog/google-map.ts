@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {GoogleMapsModule} from '@angular/google-maps';
+import {MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
 
 // --- Location Definitions ---
 interface Pin {
@@ -117,7 +117,7 @@ export interface CustomProperties {
             [zoom]="resolvedZoom"
             height="500px"
             width="100%"
-            [options]="{ mapId: mapId }"
+            [options]="{mapId: mapId}"
           >
             @for (pin of resolvedPins(); track pin) {
               <map-advanced-marker
@@ -179,13 +179,13 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
       return null;
     }
 
-    const latValue: Primitives.NumberValue = { path: `${value}.lat` };
-    const lngValue: Primitives.NumberValue = { path: `${value}.lng` };
-    const nameValue: Primitives.StringValue = { path: `${value}.name` };
-    const descriptionValue: Primitives.StringValue = { path: `${value}.description` };
-    const backgroundValue: Primitives.StringValue = { path: `${value}.background` };
-    const borderColorValue: Primitives.StringValue = { path: `${value}.borderColor` };
-    const glyphColorValue: Primitives.StringValue = { path: `${value}.glyphColor` };
+    const latValue: Primitives.NumberValue = {path: `${value}.lat`};
+    const lngValue: Primitives.NumberValue = {path: `${value}.lng`};
+    const nameValue: Primitives.StringValue = {path: `${value}.name`};
+    const descriptionValue: Primitives.StringValue = {path: `${value}.description`};
+    const backgroundValue: Primitives.StringValue = {path: `${value}.background`};
+    const borderColorValue: Primitives.StringValue = {path: `${value}.borderColor`};
+    const glyphColorValue: Primitives.StringValue = {path: `${value}.glyphColor`};
 
     const lat = this.resolvePrimitive(latValue);
     const lng = this.resolvePrimitive(lngValue);
@@ -217,8 +217,8 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
 
   private resolveLatLng(value: CustomProperties | null): google.maps.LatLngLiteral {
     if (value?.path) {
-      const latValue: Primitives.NumberValue = { path: `${value.path}.lat` };
-      const lngValue: Primitives.NumberValue = { path: `${value.path}.lng` };
+      const latValue: Primitives.NumberValue = {path: `${value.path}.lat`};
+      const lngValue: Primitives.NumberValue = {path: `${value.path}.lng`};
       const lat = this.resolvePrimitive(latValue)!;
       const lng = this.resolvePrimitive(lngValue)!;
       return {

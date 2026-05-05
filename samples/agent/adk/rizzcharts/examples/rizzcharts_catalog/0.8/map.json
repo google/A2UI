@@ -14,9 +14,7 @@
           "component": {
             "Canvas": {
               "children": {
-                "explicitList": [
-                  "map-layout-container"
-                ]
+                "explicitList": ["map-layout-container"]
               }
             }
           }
@@ -26,10 +24,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "map-header",
-                  "location-map"
-                ]
+                "explicitList": ["map-header", "location-map"]
               },
               "alignment": "stretch"
             }
@@ -124,7 +119,7 @@
         },
         {
           "key": "mapConfig.locations[2].lat",
-          "valueNumber": 34.1340
+          "valueNumber": 34.134
         },
         {
           "key": "mapConfig.locations[2].lng",
@@ -160,7 +155,7 @@
         },
         {
           "key": "mapConfig.locations[5].lat",
-          "valueNumber": 33.9850
+          "valueNumber": 33.985
         },
         {
           "key": "mapConfig.locations[5].lng",

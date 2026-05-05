@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, input, signal } from '@angular/core';
-import { RowComponent } from './row.component';
-import { ComponentModel } from '@a2ui/web_core/v0_9';
-import { A2uiRendererService } from '../../core/a2ui-renderer.service';
-import { ComponentBinder } from '../../core/component-binder.service';
-import { By } from '@angular/platform-browser';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Component, input, signal} from '@angular/core';
+import {RowComponent} from './row.component';
+import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {A2uiRendererService} from '../../core/a2ui-renderer.service';
+import {ComponentBinder} from '../../core/component-binder.service';
+import {By} from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -51,7 +51,7 @@ describe('RowComponent', () => {
       ]),
       catalog: {
         id: 'test-catalog',
-        components: new Map([['Child', { component: DummyChild }]]),
+        components: new Map([['Child', {component: DummyChild}]]),
       },
     };
 
@@ -64,13 +64,13 @@ describe('RowComponent', () => {
     };
 
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
-    mockBinder.bind.and.returnValue({ text: { value: () => 'bound' } });
+    mockBinder.bind.and.returnValue({text: {value: () => 'bound'}});
 
     await TestBed.configureTestingModule({
       imports: [RowComponent],
       providers: [
-        { provide: A2uiRendererService, useValue: mockRendererService },
-        { provide: ComponentBinder, useValue: mockBinder },
+        {provide: A2uiRendererService, useValue: mockRendererService},
+        {provide: ComponentBinder, useValue: mockBinder},
       ],
     }).compileComponents();
 
@@ -78,8 +78,8 @@ describe('RowComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('center'), raw: 'center', onUpdate: () => {} },
-      align: { value: signal('baseline'), raw: 'baseline', onUpdate: () => {} },
+      justify: {value: signal('center'), raw: 'center', onUpdate: () => {}},
+      align: {value: signal('baseline'), raw: 'baseline', onUpdate: () => {}},
       children: {
         value: signal(['child1', 'child2']),
         raw: ['child1', 'child2'],
@@ -104,8 +104,8 @@ describe('RowComponent', () => {
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
     expect(hosts.length).toBe(2);
-    expect(hosts[0].componentInstance.componentKey()).toEqual({ id: 'child1', basePath: '/' });
-    expect(hosts[1].componentInstance.componentKey()).toEqual({ id: 'child2', basePath: '/' });
+    expect(hosts[0].componentInstance.componentKey()).toEqual({id: 'child1', basePath: '/'});
+    expect(hosts[1].componentInstance.componentKey()).toEqual({id: 'child2', basePath: '/'});
   });
 
   it('should render repeating children', () => {
@@ -150,8 +150,8 @@ describe('RowComponent', () => {
 
   it('should handle missing children property', () => {
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('center'), raw: 'center', onUpdate: () => {} },
-      align: { value: signal('baseline'), raw: 'baseline', onUpdate: () => {} },
+      justify: {value: signal('center'), raw: 'center', onUpdate: () => {}},
+      align: {value: signal('baseline'), raw: 'baseline', onUpdate: () => {}},
     });
     fixture.detectChanges();
     const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
