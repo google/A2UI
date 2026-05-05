@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { AngularCatalog, AngularComponentImplementation } from '../types';
-import { TextComponent } from './text.component';
-import { RowComponent } from './row.component';
-import { ColumnComponent } from './column.component';
-import { ButtonComponent } from './button.component';
-import { TextFieldComponent } from './text-field.component';
-import { ImageComponent } from './image.component';
-import { IconComponent } from './icon.component';
-import { VideoComponent } from './video.component';
-import { AudioPlayerComponent } from './audio-player.component';
-import { ListComponent } from './list.component';
-import { CardComponent } from './card.component';
-import { TabsComponent } from './tabs.component';
-import { ModalComponent } from './modal.component';
-import { DividerComponent } from './divider.component';
-import { CheckBoxComponent } from './check-box.component';
-import { ChoicePickerComponent } from './choice-picker.component';
-import { SliderComponent } from './slider.component';
-import { DateTimeInputComponent } from './date-time-input.component';
+import {Injectable} from '@angular/core';
+import {AngularCatalog, AngularComponentImplementation} from '../types';
+import {TextComponent} from './text.component';
+import {RowComponent} from './row.component';
+import {ColumnComponent} from './column.component';
+import {ButtonComponent} from './button.component';
+import {TextFieldComponent} from './text-field.component';
+import {ImageComponent} from './image.component';
+import {IconComponent} from './icon.component';
+import {VideoComponent} from './video.component';
+import {AudioPlayerComponent} from './audio-player.component';
+import {ListComponent} from './list.component';
+import {CardComponent} from './card.component';
+import {TabsComponent} from './tabs.component';
+import {ModalComponent} from './modal.component';
+import {DividerComponent} from './divider.component';
+import {CheckBoxComponent} from './check-box.component';
+import {ChoicePickerComponent} from './choice-picker.component';
+import {SliderComponent} from './slider.component';
+import {DateTimeInputComponent} from './date-time-input.component';
 
 import {
   BASIC_FUNCTIONS,
@@ -56,7 +56,7 @@ import {
   SliderApi,
   DateTimeInputApi,
 } from '@a2ui/web_core/v0_9/basic_catalog';
-import { FunctionImplementation } from '@a2ui/web_core/v0_9';
+import {FunctionImplementation} from '@a2ui/web_core/v0_9';
 
 /**
  * The set of default Angular implementations for each component in the basic catalog.
@@ -121,7 +121,7 @@ export const BASIC_COMPONENTS: AngularComponentImplementation[] = Object.values(
 /**
  * The set of client-side functions provided by the basic catalog.
  */
-export { BASIC_FUNCTIONS };
+export {BASIC_FUNCTIONS};
 
 /**
  * A base class for basic catalogs, providing extensibility for non-DI use cases.
@@ -135,7 +135,7 @@ export class BasicCatalogBase extends AngularCatalog {
     const components: AngularComponentImplementation[] = [
       ...Object.entries(DEFAULT_COMPONENT_IMPLEMENTATIONS).map(([key, defaultValue]) => {
         const impl = (overrides as any)[key] ?? defaultValue;
-        return { ...impl, name: impl.name || key };
+        return {...impl, name: impl.name || key};
       }),
       ...(options.extraComponents ?? []),
     ];

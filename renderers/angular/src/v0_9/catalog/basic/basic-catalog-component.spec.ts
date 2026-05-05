@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '../../core/a2ui-renderer.service';
-import { BasicCatalog } from './basic-catalog';
-import { ComponentApi } from '@a2ui/web_core/v0_9';
+import {Component} from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '../../core/a2ui-renderer.service';
+import {BasicCatalog} from './basic-catalog';
+import {ComponentApi} from '@a2ui/web_core/v0_9';
 import z from 'zod';
 
 export const TestComponentApi = {
@@ -36,8 +36,7 @@ export const TestComponentApi = {
   template: '<div>Test</div>',
   standalone: true,
 })
-class TestBasicComp extends BasicCatalogComponent<typeof TestComponentApi> {
-}
+class TestBasicComp extends BasicCatalogComponent<typeof TestComponentApi> {}
 
 describe('BasicCatalogComponent', () => {
   let fixture: ComponentFixture<TestBasicComp>;

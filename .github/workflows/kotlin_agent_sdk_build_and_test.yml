@@ -17,16 +17,16 @@ name: A2UI-agent Kotlin SDK
 on:
   push:
     branches:
-      - '*'
+      - "*"
     paths:
-      - 'agent_sdks/kotlin/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/kotlin/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
   pull_request:
     paths:
-      - 'agent_sdks/kotlin/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/kotlin/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
 
 jobs:
   build-and-test:
@@ -39,9 +39,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'gradle'
+          java-version: "21"
+          distribution: "temurin"
+          cache: "gradle"
 
       - name: Make gradlew executable
         working-directory: agent_sdks/kotlin

@@ -21,17 +21,17 @@
  * This client talks to the remote agent (locally or on Agent Engine).
  */
 
-import { getIdToken } from "./firebase-auth";
+import {getIdToken} from './firebase-auth';
 
 // Helper to get auth headers for API requests
 async function getAuthHeaders(): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
 
   const token = await getIdToken();
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   return headers;
@@ -54,36 +54,33 @@ export interface A2UIResponse {
 export class A2AClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = "/a2ui-agent") {
+  constructor(baseUrl: string = '/a2ui-agent') {
     this.baseUrl = baseUrl;
   }
 
   /**
    * Generate A2UI content from the agent.
    */
-  async generateContent(
-    format: string,
-    context: string = ""
-  ): Promise<A2UIResponse> {
+  async generateContent(format: string, context: string = ''): Promise<A2UIResponse> {
     console.log(`[A2AClient] Requesting ${format} content`);
 
     // For audio/video, always use local fallback content.
     // The deployed agent returns GCS URLs which won't work locally,
     // and we only have one pre-built podcast/video anyway.
     const lowerFormat = format.toLowerCase();
-    if (lowerFormat === "podcast" || lowerFormat === "audio" || lowerFormat === "video") {
+    if (lowerFormat === 'podcast' || lowerFormat === 'audio' || lowerFormat === 'video') {
       console.log(`[A2AClient] Using local fallback for ${format} (pre-built content)`);
       return this.getFallbackContent(format);
     }
 
     try {
       const response = await fetch(`${this.baseUrl}/a2a/query`, {
-        method: "POST",
+        method: 'POST',
         headers: await getAuthHeaders(),
         body: JSON.stringify({
           message: context ? `${format}:${context}` : format,
           session_id: this.getSessionId(),
-          extensions: ["https://a2ui.org/a2a-extension/a2ui/v0.8"],
+          extensions: ['https://a2ui.org/a2a-extension/a2ui/v0.8'],
         }),
       });
 
@@ -100,8 +97,8 @@ export class A2AClient {
         !data.a2ui ||
         data.a2ui.length === 0 ||
         data.error ||
-        data.rawText?.includes("cannot fulfill") ||
-        data.rawText?.includes("do not have the functionality")
+        data.rawText?.includes('cannot fulfill') ||
+        data.rawText?.includes('do not have the functionality')
       ) {
         console.log(`[A2AClient] Agent returned empty/error, using fallback for ${format}`);
         return this.getFallbackContent(format);
@@ -109,17 +106,19 @@ export class A2AClient {
 
       // Special case: if we requested a quiz but agent returned flashcards,
       // use our quiz fallback instead (agent doesn't know about QuizCard)
-      if (format.toLowerCase() === "quiz") {
+      if (format.toLowerCase() === 'quiz') {
         const a2uiStr = JSON.stringify(data.a2ui);
-        if (a2uiStr.includes("Flashcard") && !a2uiStr.includes("QuizCard")) {
-          console.log(`[A2AClient] Agent returned Flashcards for quiz request, using QuizCard fallback`);
+        if (a2uiStr.includes('Flashcard') && !a2uiStr.includes('QuizCard')) {
+          console.log(
+            `[A2AClient] Agent returned Flashcards for quiz request, using QuizCard fallback`,
+          );
           return this.getFallbackContent(format);
         }
       }
 
       return data as A2UIResponse;
     } catch (error) {
-      console.error("[A2AClient] Error calling agent:", error);
+      console.error('[A2AClient] Error calling agent:', error);
 
       // Return fallback content for demo purposes
       return this.getFallbackContent(format);
@@ -131,18 +130,18 @@ export class A2AClient {
    */
   async *streamContent(
     format: string,
-    context: string = ""
-  ): AsyncGenerator<{ status: string; data?: A2UIResponse }> {
+    context: string = '',
+  ): AsyncGenerator<{status: string; data?: A2UIResponse}> {
     console.log(`[A2AClient] Streaming ${format} content`);
 
     try {
       const response = await fetch(`${this.baseUrl}/a2a/stream`, {
-        method: "POST",
+        method: 'POST',
         headers: await getAuthHeaders(),
         body: JSON.stringify({
           message: context ? `${format}:${context}` : format,
           session_id: this.getSessionId(),
-          extensions: ["https://a2ui.org/a2a-extension/a2ui/v0.8"],
+          extensions: ['https://a2ui.org/a2a-extension/a2ui/v0.8'],
         }),
       });
 
@@ -152,36 +151,36 @@ export class A2AClient {
 
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error("No response body");
+        throw new Error('No response body');
       }
 
       const decoder = new TextDecoder();
-      let buffer = "";
+      let buffer = '';
 
       while (true) {
-        const { done, value } = await reader.read();
+        const {done, value} = await reader.read();
         if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, {stream: true});
 
         // Parse SSE events
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
-          if (line.startsWith("data: ")) {
+          if (line.startsWith('data: ')) {
             const data = JSON.parse(line.slice(6));
             if (data.is_task_complete) {
-              yield { status: "complete", data: data.content };
+              yield {status: 'complete', data: data.content};
             } else {
-              yield { status: "processing" };
+              yield {status: 'processing'};
             }
           }
         }
       }
     } catch (error) {
-      console.error("[A2AClient] Stream error:", error);
-      yield { status: "complete", data: this.getFallbackContent(format) };
+      console.error('[A2AClient] Stream error:', error);
+      yield {status: 'complete', data: this.getFallbackContent(format)};
     }
   }
 
@@ -189,10 +188,10 @@ export class A2AClient {
    * Get or create a session ID.
    */
   private getSessionId(): string {
-    let sessionId = sessionStorage.getItem("a2ui_session_id");
+    let sessionId = sessionStorage.getItem('a2ui_session_id');
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-      sessionStorage.setItem("a2ui_session_id", sessionId);
+      sessionStorage.setItem('a2ui_session_id', sessionId);
     }
     return sessionId;
   }
@@ -201,76 +200,76 @@ export class A2AClient {
    * Get fallback content for demo purposes when agent is unavailable.
    */
   private getFallbackContent(format: string): A2UIResponse {
-    const surfaceId = "learningContent";
+    const surfaceId = 'learningContent';
 
     switch (format.toLowerCase()) {
-      case "flashcards":
+      case 'flashcards':
         return {
-          format: "flashcards",
+          format: 'flashcards',
           surfaceId,
           a2ui: [
-            { beginRendering: { surfaceId, root: "mainColumn" } },
+            {beginRendering: {surfaceId, root: 'mainColumn'}},
             {
               surfaceUpdate: {
                 surfaceId,
                 components: [
                   {
-                    id: "mainColumn",
+                    id: 'mainColumn',
                     component: {
                       Column: {
-                        children: { explicitList: ["headerText", "flashcardRow"] },
-                        distribution: "start",
-                        alignment: "stretch",
+                        children: {explicitList: ['headerText', 'flashcardRow']},
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "headerText",
+                    id: 'headerText',
                     component: {
                       Text: {
-                        text: { literalString: "Study Flashcards: ATP & Bond Energy" },
-                        usageHint: "h3",
+                        text: {literalString: 'Study Flashcards: ATP & Bond Energy'},
+                        usageHint: 'h3',
                       },
                     },
                   },
                   {
-                    id: "flashcardRow",
+                    id: 'flashcardRow',
                     component: {
                       Row: {
-                        children: { explicitList: ["card1", "card2", "card3"] },
-                        distribution: "start",
-                        alignment: "stretch",
+                        children: {explicitList: ['card1', 'card2', 'card3']},
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "card1",
+                    id: 'card1',
                     component: {
                       Flashcard: {
-                        front: { literalString: "Why does ATP hydrolysis release energy?" },
+                        front: {literalString: 'Why does ATP hydrolysis release energy?'},
                         back: {
                           literalString:
                             "ATP hydrolysis releases energy because the products (ADP + Pi) are MORE STABLE than ATP. The phosphate groups in ATP repel each other due to negative charges. When the terminal phosphate is removed, this electrostatic strain is relieved, and the products achieve better resonance stabilization. It's like releasing a compressed spring - the energy comes from moving to a lower-energy state.",
                         },
-                        category: { literalString: "Biochemistry" },
+                        category: {literalString: 'Biochemistry'},
                       },
                     },
                   },
                   {
-                    id: "card2",
+                    id: 'card2',
                     component: {
                       Flashcard: {
-                        front: { literalString: "Does breaking a chemical bond release energy?" },
+                        front: {literalString: 'Does breaking a chemical bond release energy?'},
                         back: {
                           literalString:
                             "NO - this is a common MCAT trap! Breaking ANY bond REQUIRES energy input (it's endothermic). Energy is only released when NEW bonds FORM. In ATP hydrolysis, the energy released comes from forming more stable bonds in the products, not from 'breaking' the phosphate bond.",
                         },
-                        category: { literalString: "Common Trap" },
+                        category: {literalString: 'Common Trap'},
                       },
                     },
                   },
                   {
-                    id: "card3",
+                    id: 'card3',
                     component: {
                       Flashcard: {
                         front: {
@@ -281,7 +280,7 @@ export class A2AClient {
                           literalString:
                             "Bonds don't 'store' energy like batteries. Think of it like holding a plank position at the gym - you're not storing energy in your muscles, you're in a high-energy unstable state. When you release to rest (like ATP → ADP + Pi), you move to a more stable, lower-energy state. The 'energy release' is really about the stability difference between reactants and products.",
                         },
-                        category: { literalString: "MCAT Concept" },
+                        category: {literalString: 'MCAT Concept'},
                       },
                     },
                   },
@@ -291,79 +290,81 @@ export class A2AClient {
           ],
         };
 
-      case "podcast":
-      case "audio":
+      case 'podcast':
+      case 'audio':
         return {
-          format: "audio",
+          format: 'audio',
           surfaceId,
           a2ui: [
-            { beginRendering: { surfaceId, root: "audioCard" } },
+            {beginRendering: {surfaceId, root: 'audioCard'}},
             {
               surfaceUpdate: {
                 surfaceId,
                 components: [
                   {
-                    id: "audioCard",
-                    component: { Card: { child: "audioContent" } },
+                    id: 'audioCard',
+                    component: {Card: {child: 'audioContent'}},
                   },
                   {
-                    id: "audioContent",
+                    id: 'audioContent',
                     component: {
                       Column: {
                         children: {
-                          explicitList: ["audioHeader", "audioPlayer", "audioDescription"],
+                          explicitList: ['audioHeader', 'audioPlayer', 'audioDescription'],
                         },
-                        distribution: "start",
-                        alignment: "stretch",
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "audioHeader",
+                    id: 'audioHeader',
                     component: {
                       Row: {
-                        children: { explicitList: ["audioIcon", "audioTitle"] },
-                        distribution: "start",
-                        alignment: "center",
+                        children: {explicitList: ['audioIcon', 'audioTitle']},
+                        distribution: 'start',
+                        alignment: 'center',
                       },
                     },
                   },
                   {
-                    id: "audioIcon",
+                    id: 'audioIcon',
                     component: {
-                      Icon: { name: { literalString: "podcasts" } },
+                      Icon: {name: {literalString: 'podcasts'}},
                     },
                   },
                   {
-                    id: "audioTitle",
+                    id: 'audioTitle',
                     component: {
                       Text: {
                         text: {
-                          literalString: "ATP & Chemical Stability: Correcting the Misconception",
+                          literalString: 'ATP & Chemical Stability: Correcting the Misconception',
                         },
-                        usageHint: "h3",
+                        usageHint: 'h3',
                       },
                     },
                   },
                   {
-                    id: "audioPlayer",
+                    id: 'audioPlayer',
                     component: {
                       AudioPlayer: {
-                        url: { literalString: "/assets/podcast.m4a" },
-                        audioTitle: { literalString: "Understanding ATP Energy Release" },
-                        audioDescription: { literalString: "A personalized podcast about ATP and chemical stability" },
+                        url: {literalString: '/assets/podcast.m4a'},
+                        audioTitle: {literalString: 'Understanding ATP Energy Release'},
+                        audioDescription: {
+                          literalString: 'A personalized podcast about ATP and chemical stability',
+                        },
                       },
                     },
                   },
                   {
-                    id: "audioDescription",
+                    id: 'audioDescription',
                     component: {
                       Text: {
                         text: {
                           literalString:
                             "This personalized podcast uses gym analogies to explain why 'energy stored in bonds' is a misconception. Perfect for your MCAT prep!",
                         },
-                        usageHint: "body",
+                        usageHint: 'body',
                       },
                     },
                   },
@@ -373,58 +374,58 @@ export class A2AClient {
           ],
         };
 
-      case "video":
+      case 'video':
         return {
-          format: "video",
+          format: 'video',
           surfaceId,
           a2ui: [
-            { beginRendering: { surfaceId, root: "videoCard" } },
+            {beginRendering: {surfaceId, root: 'videoCard'}},
             {
               surfaceUpdate: {
                 surfaceId,
                 components: [
                   {
-                    id: "videoCard",
-                    component: { Card: { child: "videoContent" } },
+                    id: 'videoCard',
+                    component: {Card: {child: 'videoContent'}},
                   },
                   {
-                    id: "videoContent",
+                    id: 'videoContent',
                     component: {
                       Column: {
                         children: {
-                          explicitList: ["videoTitle", "videoPlayer", "videoDescription"],
+                          explicitList: ['videoTitle', 'videoPlayer', 'videoDescription'],
                         },
-                        distribution: "start",
-                        alignment: "stretch",
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "videoTitle",
+                    id: 'videoTitle',
                     component: {
                       Text: {
-                        text: { literalString: "Visual Guide: ATP Energy & Stability" },
-                        usageHint: "h3",
+                        text: {literalString: 'Visual Guide: ATP Energy & Stability'},
+                        usageHint: 'h3',
                       },
                     },
                   },
                   {
-                    id: "videoPlayer",
+                    id: 'videoPlayer',
                     component: {
                       Video: {
-                        url: { literalString: "/assets/video.mp4" },
+                        url: {literalString: '/assets/video.mp4'},
                       },
                     },
                   },
                   {
-                    id: "videoDescription",
+                    id: 'videoDescription',
                     component: {
                       Text: {
                         text: {
                           literalString:
-                            "Watch the compressed spring analogy in action to understand why ATP releases energy through stability differences.",
+                            'Watch the compressed spring analogy in action to understand why ATP releases energy through stability differences.',
                         },
-                        usageHint: "body",
+                        usageHint: 'body',
                       },
                     },
                   },
@@ -434,123 +435,119 @@ export class A2AClient {
           ],
         };
 
-      case "quiz":
+      case 'quiz':
         return {
-          format: "quiz",
+          format: 'quiz',
           surfaceId,
           a2ui: [
-            { beginRendering: { surfaceId, root: "mainColumn" } },
+            {beginRendering: {surfaceId, root: 'mainColumn'}},
             {
               surfaceUpdate: {
                 surfaceId,
                 components: [
                   {
-                    id: "mainColumn",
+                    id: 'mainColumn',
                     component: {
                       Column: {
-                        children: { explicitList: ["headerText", "quizRow"] },
-                        distribution: "start",
-                        alignment: "stretch",
+                        children: {explicitList: ['headerText', 'quizRow']},
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "headerText",
+                    id: 'headerText',
                     component: {
                       Text: {
-                        text: { literalString: "Quick Quiz: ATP & Bond Energy" },
-                        usageHint: "h3",
+                        text: {literalString: 'Quick Quiz: ATP & Bond Energy'},
+                        usageHint: 'h3',
                       },
                     },
                   },
                   {
-                    id: "quizRow",
+                    id: 'quizRow',
                     component: {
                       Row: {
-                        children: { explicitList: ["quiz1", "quiz2"] },
-                        distribution: "start",
-                        alignment: "stretch",
+                        children: {explicitList: ['quiz1', 'quiz2']},
+                        distribution: 'start',
+                        alignment: 'stretch',
                       },
                     },
                   },
                   {
-                    id: "quiz1",
+                    id: 'quiz1',
                     component: {
                       QuizCard: {
                         question: {
                           literalString:
-                            "What happens to the energy in bonds when ATP is hydrolyzed?",
+                            'What happens to the energy in bonds when ATP is hydrolyzed?',
                         },
                         options: [
                           {
                             label: {
-                              literalString:
-                                "Energy stored in the phosphate bond is released",
+                              literalString: 'Energy stored in the phosphate bond is released',
                             },
-                            value: "a",
+                            value: 'a',
                             isCorrect: false,
                           },
                           {
                             label: {
-                              literalString:
-                                "Energy is released because products are more stable",
+                              literalString: 'Energy is released because products are more stable',
                             },
-                            value: "b",
+                            value: 'b',
                             isCorrect: true,
                           },
                           {
                             label: {
-                              literalString:
-                                "The bond breaking itself releases energy",
+                              literalString: 'The bond breaking itself releases energy',
                             },
-                            value: "c",
+                            value: 'c',
                             isCorrect: false,
                           },
                           {
                             label: {
                               literalString: "ATP's special bonds contain more electrons",
                             },
-                            value: "d",
+                            value: 'd',
                             isCorrect: false,
                           },
                         ],
                         explanation: {
                           literalString:
-                            "ATP hydrolysis releases energy because the products (ADP + Pi) are MORE STABLE than ATP. The phosphate groups in ATP repel each other, creating strain. When this bond is broken, the products achieve better resonance stabilization - like releasing a compressed spring.",
+                            'ATP hydrolysis releases energy because the products (ADP + Pi) are MORE STABLE than ATP. The phosphate groups in ATP repel each other, creating strain. When this bond is broken, the products achieve better resonance stabilization - like releasing a compressed spring.',
                         },
-                        category: { literalString: "Thermodynamics" },
+                        category: {literalString: 'Thermodynamics'},
                       },
                     },
                   },
                   {
-                    id: "quiz2",
+                    id: 'quiz2',
                     component: {
                       QuizCard: {
                         question: {
-                          literalString:
-                            "Breaking a chemical bond requires or releases energy?",
+                          literalString: 'Breaking a chemical bond requires or releases energy?',
                         },
                         options: [
                           {
-                            label: { literalString: "Always releases energy" },
-                            value: "a",
+                            label: {literalString: 'Always releases energy'},
+                            value: 'a',
                             isCorrect: false,
                           },
                           {
-                            label: { literalString: "Always requires energy input" },
-                            value: "b",
+                            label: {literalString: 'Always requires energy input'},
+                            value: 'b',
                             isCorrect: true,
                           },
                           {
                             label: {
                               literalString: "Depends on whether it's a high-energy bond",
                             },
-                            value: "c",
+                            value: 'c',
                             isCorrect: false,
                           },
                           {
-                            label: { literalString: "Neither - bonds are energy neutral" },
-                            value: "d",
+                            label: {literalString: 'Neither - bonds are energy neutral'},
+                            value: 'd',
                             isCorrect: false,
                           },
                         ],
@@ -558,7 +555,7 @@ export class A2AClient {
                           literalString:
                             "Breaking ANY bond REQUIRES energy (it's endothermic). This is a common MCAT trap! Energy is only released when NEW bonds FORM. Think of it like pulling apart magnets - you have to put in effort to separate them.",
                         },
-                        category: { literalString: "Bond Energy" },
+                        category: {literalString: 'Bond Energy'},
                       },
                     },
                   },
@@ -572,7 +569,7 @@ export class A2AClient {
 
       default:
         return {
-          format: "error",
+          format: 'error',
           surfaceId,
           a2ui: [],
           error: `Unknown format: ${format}`,

@@ -19,7 +19,7 @@ import {type A2uiMessage} from '@a2ui/web_core/v0_9';
 // Dynamically import all examples from the specification folder
 const exampleModules = import.meta.glob(
   '../../../../specification/v0_9/json/catalogs/basic/examples/*.json',
-  {eager: true}
+  {eager: true},
 );
 
 export interface ExampleFile {
@@ -31,7 +31,9 @@ export interface ExampleFile {
 export function processExampleModules(modules: Record<string, unknown>): ExampleFile[] {
   return Object.entries(modules)
     .map(([path, data]) => {
-      const match = path.match(/catalogs\/(?<catalogFolderName>[^/]+)\/examples\/(?<filename>[^/]+)$/);
+      const match = path.match(
+        /catalogs\/(?<catalogFolderName>[^/]+)\/examples\/(?<filename>[^/]+)$/,
+      );
       // The glob pattern ensures this match will succeed, so non-null assertions are safe here.
       if (!match?.groups) {
         throw new Error(`Failed to parse path: ${path}`);

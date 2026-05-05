@@ -423,8 +423,8 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 {
   "company": "Acme Corp",
   "employees": [
-    { "name": "Alice", "role": "Engineer" },
-    { "name": "Bob", "role": "Designer" }
+    {"name": "Alice", "role": "Engineer"},
+    {"name": "Bob", "role": "Designer"}
   ]
 }
 ```
@@ -568,8 +568,8 @@ _Replace the entire data model:_
   "updateDataModel": {
     "surfaceId": "surface_123",
     "value": {
-      "user": { "firstName": "Alice", "lastName": "Smith" },
-      "preferences": { "theme": "dark" }
+      "user": {"firstName": "Alice", "lastName": "Smith"},
+      "preferences": {"theme": "dark"}
     }
   }
 }
@@ -628,7 +628,7 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
           "values": [
             {
               "call": "required",
-              "args": { "value": { "path": "/formData/terms" } }
+              "args": {"value": {"path": "/formData/terms"}}
             },
             {
               "call": "or",
@@ -636,11 +636,11 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
                 "values": [
                   {
                     "call": "required",
-                    "args": { "value": { "path": "/formData/email" } }
+                    "args": {"value": {"path": "/formData/email"}}
                   },
                   {
                     "call": "required",
-                    "args": { "value": { "path": "/formData/phone" } }
+                    "args": {"value": {"path": "/formData/phone"}}
                   }
                 ]
               }

@@ -35,7 +35,7 @@ describe('Gallery Integration Tests', () => {
     render(
       <React.StrictMode>
         <A2uiSurface surface={surface as any} />
-      </React.StrictMode>
+      </React.StrictMode>,
     );
 
     expect(screen.getByText('### Markdown Rendering')).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('Gallery Integration Tests', () => {
     render(
       <React.StrictMode>
         <A2uiSurface surface={surface as any} />
-      </React.StrictMode>
+      </React.StrictMode>,
     );
 
     expect(screen.getByText('### Review pull request')).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe('Gallery Integration Tests', () => {
     render(
       <React.StrictMode>
         <A2uiSurface surface={surface as any} />
-      </React.StrictMode>
+      </React.StrictMode>,
     );
 
     const emailInput = screen.getByLabelText('Email') as HTMLInputElement;

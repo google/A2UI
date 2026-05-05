@@ -17,16 +17,16 @@ name: A2UI-agent Python SDK
 on:
   push:
     branches:
-      - '*'
+      - "*"
     paths:
-      - 'agent_sdks/python/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/python/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
   pull_request:
     paths:
-      - 'agent_sdks/python/**'
-      - 'specification/**/json/**'
-      - 'agent_sdks/conformance/**'
+      - "agent_sdks/python/**"
+      - "specification/**/json/**"
+      - "agent_sdks/conformance/**"
 
 jobs:
   build-and-test:
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install `uv` globally
         run: |

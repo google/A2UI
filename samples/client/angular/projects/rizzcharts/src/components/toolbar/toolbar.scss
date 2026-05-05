@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 .example-spacer {
   flex: 1 1 auto;
 }
 
 .logo {
-    
 }
 
 .profile-photo {
-    width: 40px;
-    height: 40px;
-    font-size: 40px;
-    border-radius: var(--mat-sys-corner-extra-large);
-    vertical-align: top;
-    margin-right: 0.5rem;
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  border-radius: var(--mat-sys-corner-extra-large);
+  vertical-align: top;
+  margin-right: 0.5rem;
 }
 
 .logo-dark {

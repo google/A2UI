@@ -50,7 +50,8 @@
           parts: []
           metadata:
             a2uiClientCapabilities:
-              supportedCatalogIds: ["https://a2ui.org/specification/v0_8/standard_catalog_definition.json"]
+              supportedCatalogIds:
+                ["https://a2ui.org/specification/v0_8/standard_catalog_definition.json"]
     runner_output: "Here is your chart:\n<a2ui-json>\n[\n  {\n    “beginRendering”: {\n      “surfaceId”: “sales-dashboard”\n    }\n  }\n]\n</a2ui-json>\nEnjoy!"
   expect:
     parts:

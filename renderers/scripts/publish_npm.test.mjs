@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import { describe, it } from 'node:test';
+import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import { runPublish } from './publish_npm.mjs';
+import {runPublish} from './publish_npm.mjs';
 
 describe('publish_npm script integration test', () => {
   it('should correctly topologically sort and execute dry-run publishing logic', async () => {
@@ -25,7 +25,9 @@ describe('publish_npm script integration test', () => {
 
     // Mock command runner
     function mockRunCommand(cmd, args, options) {
-      executedCommands.push(`${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`);
+      executedCommands.push(
+        `${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`,
+      );
     }
 
     // Mock execSync for npm view
@@ -45,24 +47,39 @@ describe('publish_npm script integration test', () => {
       ['--packages=lit,web_core,markdown-it', '--yes', '--skip-tests'],
       mockRunCommand,
       mockExecSync,
-      null // readline not needed with --yes
+      null, // readline not needed with --yes
     );
 
     // Verify topological order in preparation phase
-    const webCoreInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('web_core'));
-    const markdownItInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('markdown-it'));
-    const litInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('lit'));
+    const webCoreInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('web_core'),
+    );
+    const markdownItInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('markdown-it'),
+    );
+    const litInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('lit'),
+    );
 
     assert.ok(webCoreInstallIndex > -1, 'Should install web_core');
     assert.ok(markdownItInstallIndex > -1, 'Should install markdown-it');
     assert.ok(litInstallIndex > -1, 'Should install lit');
-    assert.ok(webCoreInstallIndex < litInstallIndex, 'web_core must be prepared before lit (topological sort)');
+    assert.ok(
+      webCoreInstallIndex < litInstallIndex,
+      'web_core must be prepared before lit (topological sort)',
+    );
     assert.ok(markdownItInstallIndex < litInstallIndex, 'markdown-it must be prepared before lit');
 
     // Verify topological order in publish phase
-    const webCorePublishIndex = executedCommands.findIndex(cmd => cmd.includes('publish:package') && cmd.includes('web_core'));
-    const markdownItPublishIndex = executedCommands.findIndex(cmd => cmd.includes('publish:package') && cmd.includes('markdown-it'));
-    const litPublishIndex = executedCommands.findIndex(cmd => cmd.includes('publish:package') && cmd.includes('lit'));
+    const webCorePublishIndex = executedCommands.findIndex(
+      cmd => cmd.includes('publish:package') && cmd.includes('web_core'),
+    );
+    const markdownItPublishIndex = executedCommands.findIndex(
+      cmd => cmd.includes('publish:package') && cmd.includes('markdown-it'),
+    );
+    const litPublishIndex = executedCommands.findIndex(
+      cmd => cmd.includes('publish:package') && cmd.includes('lit'),
+    );
 
     assert.ok(webCorePublishIndex > -1, 'Should publish web_core');
     assert.ok(markdownItPublishIndex > -1, 'Should publish markdown-it');
@@ -87,7 +104,7 @@ describe('publish_npm script integration test', () => {
       ['--packages=web_core', '--yes', '--test-only'],
       mockRunCommand,
       mockExecSync,
-      null
+      null,
     );
 
     const hasInstall = executedCommands.some(cmd => cmd.includes('npm install'));

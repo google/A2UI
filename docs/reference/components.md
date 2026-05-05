@@ -612,18 +612,18 @@ All components share:
 
 The component names and properties are largely the same across versions. The structural differences are:
 
-| Aspect | v0.8 | v0.9 |
-|--------|------|------|
-| Component wrapper | `"component": { "Text": { ... } }` | `"component": "Text", ...props` |
-| String values | `{ "literalString": "Hello" }` | `"Hello"` |
-| Children | `{ "explicitList": ["a", "b"] }` | `["a", "b"]` |
-| Data binding | `{ "path": "/data" }` | `{ "path": "/data" }` (same) |
-| Text/Image styling | `usageHint` | `variant` |
-| Button styling | `primary: true` | `variant: "primary"` |
-| Action format | `{ "name": "..." }` | `{ "event": { "name": "..." } }` |
-| Choice component | `MultipleChoice` | `ChoicePicker` |
-| Layout alignment | `distribution`, `alignment` | `justify`, `align` |
-| TextField value | `text` | `value` |
+| Aspect             | v0.8                               | v0.9                             |
+| ------------------ | ---------------------------------- | -------------------------------- |
+| Component wrapper  | `"component": { "Text": { ... } }` | `"component": "Text", ...props`  |
+| String values      | `{ "literalString": "Hello" }`     | `"Hello"`                        |
+| Children           | `{ "explicitList": ["a", "b"] }`   | `["a", "b"]`                     |
+| Data binding       | `{ "path": "/data" }`              | `{ "path": "/data" }` (same)     |
+| Text/Image styling | `usageHint`                        | `variant`                        |
+| Button styling     | `primary: true`                    | `variant: "primary"`             |
+| Action format      | `{ "name": "..." }`                | `{ "event": { "name": "..." } }` |
+| Choice component   | `MultipleChoice`                   | `ChoicePicker`                   |
+| Layout alignment   | `distribution`, `alignment`        | `justify`, `align`               |
+| TextField value    | `text`                             | `value`                          |
 
 ## Live Examples
 

@@ -45,7 +45,7 @@ import {BoundProperty} from './types';
   selector: 'a2ui-v09-component-host',
   imports: [NgComponentOutlet],
   host: {
-    'style': 'display: contents;'
+    style: 'display: contents;',
   },
   template: `
     @if (componentType) {
@@ -127,7 +127,7 @@ export class ComponentHostComponent {
     if (!componentModel) {
       console.warn(`Component ${id} not found in surface ${surfaceId}. Waiting for it...`);
 
-      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+      const sub = surface.componentsModel.onCreated.subscribe(comp => {
         if (comp.id === id) {
           this.initializeComponent(surface, comp, id, basePath);
           sub.unsubscribe();

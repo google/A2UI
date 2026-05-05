@@ -34,7 +34,7 @@
  * and the app runs without requiring sign-in.
  */
 
-import { initializeApp } from "firebase/app";
+import {initializeApp} from 'firebase/app';
 import {
   getAuth,
   signInWithPopup,
@@ -43,17 +43,17 @@ import {
   signOut,
   User,
   Auth,
-} from "firebase/auth";
+} from 'firebase/auth';
 
 // Firebase configuration - reads from environment variables set in .env
 // These are populated by the Quickstart notebook or can be set manually
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
 };
 
 // Check if Firebase is configured (API key present)
@@ -67,7 +67,7 @@ if (isFirebaseConfigured) {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
 } else {
-  console.log("[Auth] Firebase not configured - running in local dev mode (no auth required)");
+  console.log('[Auth] Firebase not configured - running in local dev mode (no auth required)');
 }
 
 // Google provider
@@ -76,7 +76,7 @@ if (isFirebaseConfigured) {
 const provider = new GoogleAuthProvider();
 const hintDomain = import.meta.env.VITE_ALLOWED_DOMAIN;
 if (hintDomain) {
-  provider.setCustomParameters({ hd: hintDomain });
+  provider.setCustomParameters({hd: hintDomain});
 }
 
 // ============================================================================
@@ -103,7 +103,7 @@ export async function getIdToken(): Promise<string | null> {
   try {
     return await user.getIdToken();
   } catch (error) {
-    console.error("[Auth] Failed to get ID token:", error);
+    console.error('[Auth] Failed to get ID token:', error);
     return null;
   }
 }
@@ -118,13 +118,13 @@ export async function checkServerAuthorization(): Promise<boolean> {
   if (!token) return false;
 
   try {
-    const response = await fetch("/api/check-access", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
+    const response = await fetch('/api/check-access', {
+      method: 'GET',
+      headers: {Authorization: `Bearer ${token}`},
     });
     return response.ok;
   } catch (error) {
-    console.error("[Auth] Server authorization check failed:", error);
+    console.error('[Auth] Server authorization check failed:', error);
     return false;
   }
 }
@@ -136,7 +136,7 @@ export async function checkServerAuthorization(): Promise<boolean> {
  */
 export async function signInWithGoogle(): Promise<User | null> {
   if (!auth) {
-    console.warn("[Auth] signInWithGoogle called but Firebase not configured");
+    console.warn('[Auth] signInWithGoogle called but Firebase not configured');
     return null;
   }
   try {
@@ -144,8 +144,8 @@ export async function signInWithGoogle(): Promise<User | null> {
     console.log(`[Auth] Firebase sign-in successful: ${result.user.email}`);
     return result.user;
   } catch (error: any) {
-    if (error.code === "auth/popup-closed-by-user") {
-      console.log("[Auth] Sign-in cancelled by user");
+    if (error.code === 'auth/popup-closed-by-user') {
+      console.log('[Auth] Sign-in cancelled by user');
       return null;
     }
     throw error;
@@ -158,7 +158,7 @@ export async function signInWithGoogle(): Promise<User | null> {
 export async function signOutUser(): Promise<void> {
   if (!auth) return;
   await signOut(auth);
-  console.log("[Auth] Signed out");
+  console.log('[Auth] Signed out');
 }
 
 /**
@@ -166,9 +166,7 @@ export async function signOutUser(): Promise<void> {
  * Callback receives user if authenticated, null otherwise
  * Note: This only tracks Firebase auth state, not server authorization
  */
-export function onAuthChange(
-  callback: (user: User | null) => void
-): () => void {
+export function onAuthChange(callback: (user: User | null) => void): () => void {
   // Local dev mode: no Firebase, skip auth entirely
   if (!auth) {
     setTimeout(() => callback(null), 0);

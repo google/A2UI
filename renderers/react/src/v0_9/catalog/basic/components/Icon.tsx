@@ -31,7 +31,7 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
  * e.g., "shoppingCart" -> "shopping_cart", "skipPrevious" -> "skip_previous"
  */
 function toMaterialSymbol(str: string): string {
-  return ICON_NAME_OVERRIDES[str] ?? str.replace(/[A-Z]/g, (letter) => '_' + letter.toLowerCase());
+  return ICON_NAME_OVERRIDES[str] ?? str.replace(/[A-Z]/g, letter => '_' + letter.toLowerCase());
 }
 
 export const Icon = createComponentImplementation(IconApi, ({props}) => {

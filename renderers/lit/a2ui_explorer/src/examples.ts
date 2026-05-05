@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { basicCatalog } from "@a2ui/lit/v0_9";
-import { A2uiMessage, CreateSurfaceMessage } from "@a2ui/web_core/v0_9";
+import {basicCatalog} from '@a2ui/lit/v0_9';
+import {A2uiMessage, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
 
 /**
  * Represents a demo item loaded from an example JSON file.
@@ -47,14 +47,10 @@ export function getDemoItems(): DemoItem[] {
 
   for (const [path, data] of sortedEntries) {
     try {
-      const filename = path.substring(path.lastIndexOf("/") + 1);
+      const filename = path.substring(path.lastIndexOf('/') + 1);
       const jsonData = data.default;
 
-      const [messages, description] = extractMessagesAndDescription(
-        jsonData,
-        filename,
-        path,
-      );
+      const [messages, description] = extractMessagesAndDescription(jsonData, filename, path);
 
       const surfaceId = ensureCreateSurfaceMessage(filename, messages);
 
@@ -71,7 +67,7 @@ export function getDemoItems(): DemoItem[] {
   }
 
   if (items.length === 0) {
-    console.warn("No demo items were found.");
+    console.warn('No demo items were found.');
   }
 
   return items;
@@ -89,16 +85,16 @@ export function getDemoItems(): DemoItem[] {
  * @returns The surfaceId for the createSurface message of this set of messages.
  */
 function ensureCreateSurfaceMessage(filename: string, messages: A2uiMessage[]): string {
-  let surfaceId = filename.replace(".json", "");
+  let surfaceId = filename.replace('.json', '');
   const createMsg = messages.find(
-    (message): message is CreateSurfaceMessage => "createSurface" in message,
+    (message): message is CreateSurfaceMessage => 'createSurface' in message,
   );
 
   if (createMsg) {
     surfaceId = createMsg.createSurface.surfaceId;
   } else {
     messages.unshift({
-      version: "v0.9",
+      version: 'v0.9',
       createSurface: {
         surfaceId,
         catalogId: basicCatalog.id,
@@ -141,13 +137,11 @@ function getSortedExampleEntries(): [string, ExampleModule][] {
   // pass it as a parameter because Vite needs to statically analyze it at build
   // time.
   const exampleModules = import.meta.glob<ExampleModule>(
-    "../../../../specification/v0_9/json/catalogs/basic/examples/*.json",
-    { eager: true },
+    '../../../../specification/v0_9/json/catalogs/basic/examples/*.json',
+    {eager: true},
   );
 
-  return Object.entries(exampleModules).sort((a, b) =>
-    a[0].localeCompare(b[0]),
-  );
+  return Object.entries(exampleModules).sort((a, b) => a[0].localeCompare(b[0]));
 }
 
 /**
@@ -195,8 +189,8 @@ function extractMessagesAndDescription(
  */
 function filenameToTitle(filename: string): string {
   return filename
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
-    .replace(".json", "");
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+    .replace('.json', '');
 }

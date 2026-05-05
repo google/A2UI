@@ -17,10 +17,7 @@
           {
             "id": "root",
             "component": "Column",
-            "children": [
-              "title",
-              "action_button"
-            ],
+            "children": ["title", "action_button"],
             "justify": "center",
             "align": "center"
           },

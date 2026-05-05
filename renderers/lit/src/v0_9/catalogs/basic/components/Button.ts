@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { html, nothing, css } from "lit";
-import { customElement } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
-import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
 /**
  * A button component that can be used to trigger an action.
  */
-@customElement("a2ui-basic-button")
+@customElement('a2ui-basic-button')
 export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof ButtonApi> {
   /**
    * The styles of the button can be customized by redefining the following
@@ -48,10 +48,7 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof Bu
     }
     :where(:host) {
       --_color-primary: var(--a2ui-color-primary, #17e);
-      --_button-border-radius: var(
-        --a2ui-button-border-radius,
-        var(--a2ui-spacing-s, 0.25rem)
-      );
+      --_button-border-radius: var(--a2ui-button-border-radius, var(--a2ui-spacing-s, 0.25rem));
       --_button-padding: var(
         --a2ui-button-padding,
         var(--a2ui-spacing-m, 0.5rem) var(--a2ui-spacing-l, 1rem)
@@ -105,8 +102,8 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof Bu
     const isDisabled = props.isValid === false;
 
     const classes = {
-      "a2ui-button": true,
-      ["a2ui-button-" + (props.variant || "default")]: true,
+      'a2ui-button': true,
+      ['a2ui-button-' + (props.variant || 'default')]: true,
     };
 
     return html`
@@ -123,5 +120,5 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<typeof Bu
 
 export const A2uiButton = {
   ...ButtonApi,
-  tagName: "a2ui-basic-button",
+  tagName: 'a2ui-basic-button',
 };

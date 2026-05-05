@@ -23,19 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "divider",
-              "tracks-list"
-            ]
+            "children": ["header", "divider", "tracks-list"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "playlist-icon",
-              "playlist-name"
-            ],
+            "children": ["playlist-icon", "playlist-name"],
             "align": "center"
           },
           {
@@ -66,12 +59,7 @@
           {
             "id": "track-item-template",
             "component": "Row",
-            "children": [
-              "track-num",
-              "track-art",
-              "track-info",
-              "track-duration"
-            ],
+            "children": ["track-num", "track-art", "track-info", "track-duration"],
             "align": "center"
           },
           {
@@ -99,10 +87,7 @@
           {
             "id": "track-info",
             "component": "Column",
-            "children": [
-              "track-title",
-              "track-artist"
-            ]
+            "children": ["track-title", "track-artist"]
           },
           {
             "id": "track-title",
