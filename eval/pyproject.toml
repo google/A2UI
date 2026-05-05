@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "a2ui-agent-sdk",
     "inspect-ai>=0.3.217",
     "jsonschema>=4.26.0",
     "pydantic>=2.13.3",
@@ -16,3 +17,6 @@ dependencies = [
 [[tool.uv.index]]
 url = "https://pypi.org/simple"
 default = true
+
+[tool.uv.sources]
+a2ui-agent-sdk = { path = "../agent_sdks/python", editable = true }

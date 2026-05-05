@@ -7,7 +7,15 @@ from a2ui.schema.catalog import CatalogConfig
 
 @solver
 def a2ui_system_prompt(schema_path: str, catalog_path: str) -> Solver:
-    """Solver to inject A2UI schema and catalog into the system prompt using SDK."""
+    """Solver to inject A2UI schema and catalog into the system prompt using SDK.
+
+    Args:
+        schema_path: Path to the schema file (ignored, loaded from SDK).
+        catalog_path: Path to the component catalog file.
+
+    Returns:
+        An Inspect Solver that injects the system prompt.
+    """
     
     catalog_config = CatalogConfig.from_path("basic_catalog", catalog_path)
     manager = A2uiSchemaManager(version="0.9", catalogs=[catalog_config])

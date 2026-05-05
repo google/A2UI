@@ -10,7 +10,14 @@ from a2ui.parser.parser import parse_response
 
 @scorer(metrics=[accuracy()])
 def a2ui_scorer(catalog_path: str):
-    """Scorer for A2UI evaluation using the Python SDK."""
+    """Scorer for A2UI evaluation using the Python SDK.
+
+    Args:
+        catalog_path: Path to the component catalog file used for validation.
+
+    Returns:
+        An Inspect Scorer that validates the response against the schema and integrity rules.
+    """
     
     catalog_config = CatalogConfig.from_path("basic_catalog", catalog_path)
     manager = A2uiSchemaManager(version="0.9", catalogs=[catalog_config])

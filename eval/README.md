@@ -24,9 +24,10 @@ export GEMINI_API_KEY="your_api_key"
 To run the evaluations with a specific model (e.g., Gemini 2.0 Flash):
 
 ```bash
-uv run env PYTHONPATH=. inspect eval tasks.py --model google/gemini-3-flash-preview --display plain
+uv run inspect eval tasks.py --model google/gemini-3-flash-preview --display plain
 ```
-*Note: Setting `PYTHONPATH=.` is required for Inspect to find the `a2ui_eval` package.*
+
+
 
 ## Viewing Evaluation Results
 
@@ -45,10 +46,11 @@ This will start a local web server (usually at `http://localhost:7575`) and open
 To list the available Gemini models supported by your API key:
 
 ```bash
-uv run env PYTHONPATH=. inspect eval tasks.py -T list_models=True --model google/gemini-3-flash-preview
+uv run inspect eval tasks.py -T list_models=True --model google/gemini-3-flash-preview
 ```
 
 (the `--model` flag is required even though it is ignored)
+
 
 ## Running Unit Tests
 
@@ -57,3 +59,4 @@ To run the unit tests for the evaluation framework (dataset loader, solvers, sco
 ```bash
 uv run python -m pytest
 ```
+

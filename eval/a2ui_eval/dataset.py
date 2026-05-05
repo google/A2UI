@@ -5,7 +5,17 @@ import yaml
 from inspect_ai.dataset import MemoryDataset, Sample
 
 def load_a2ui_dataset(file_path: str) -> MemoryDataset:
-    """Loads A2UI evaluation samples from a YAML file."""
+    """Loads A2UI evaluation samples from a YAML file.
+
+    Args:
+        file_path: The path to the YAML dataset file.
+
+    Returns:
+        A MemoryDataset containing the resolved samples.
+
+    Raises:
+        FileNotFoundError: If the dataset file does not exist.
+    """
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Dataset file not found: {file_path}")
         

@@ -21,7 +21,14 @@ CATALOG_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../specification/v0_9/
 
 @task
 def a2ui_v0_9_eval(list_models: bool = False) -> Task:
-    """Evaluation task for A2UI v0.9 protocol generation."""
+    """Evaluation task for A2UI v0.9 protocol generation.
+
+    Args:
+        list_models: Whether to list available Gemini models and exit.
+
+    Returns:
+        An Inspect Task object configured for A2UI v0.9 evaluation.
+    """
     
     if list_models:
         client = genai.Client()
