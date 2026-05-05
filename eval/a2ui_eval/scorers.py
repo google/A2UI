@@ -1,5 +1,8 @@
+"""Scorers for A2UI evaluation."""
+
 import json
 import os
+import re
 from inspect_ai.scorer import scorer, Score, Target, accuracy
 from inspect_ai.solver import TaskState
 from jsonschema import ValidationError, Draft202012Validator
@@ -12,15 +15,23 @@ S2C_SCHEMA_PATH = os.path.join(SCHEMA_DIR, "server_to_client.json")
 CATALOG_SCHEMA_PATH = os.path.join(SCHEMA_DIR, "basic_catalog.json")
 COMMON_TYPES_PATH = os.path.join(SCHEMA_DIR, "common_types.json")
 
+def _strip_markdown_fences(text: str) -> str:
+    """Strips leading and trailing markdown code blocks (e.g., ```json ... ```)."""
+    text = text.strip()
+    match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return text
+
 def get_validator():
     if not os.path.exists(S2C_SCHEMA_PATH):
         raise FileNotFoundError(f"Schema file not found: {S2C_SCHEMA_PATH}")
         
-    with open(S2C_SCHEMA_PATH, 'r') as f:
+    with open(S2C_SCHEMA_PATH, 'r', encoding='utf-8') as f:
         s2c_schema = json.load(f)
-    with open(CATALOG_SCHEMA_PATH, 'r') as f:
+    with open(CATALOG_SCHEMA_PATH, 'r', encoding='utf-8') as f:
         catalog_schema = json.load(f)
-    with open(COMMON_TYPES_PATH, 'r') as f:
+    with open(COMMON_TYPES_PATH, 'r', encoding='utf-8') as f:
         common_types_schema = json.load(f)
         
     resources = [
@@ -52,7 +63,7 @@ def a2ui_schema_scorer():
     validator = get_validator()
     
     async def score(state: TaskState, target: Target) -> Score:
-        output = state.output.completion
+        output = _strip_markdown_fences(state.output.completion)
         try:
             data = json.loads(output)
             validator.validate(instance=data)
@@ -68,7 +79,7 @@ def a2ui_schema_scorer():
 def a2ui_semantic_scorer():
     """Stage 2: Programmatic Semantic Checks."""
     async def score(state: TaskState, target: Target) -> Score:
-        output = state.output.completion
+        output = _strip_markdown_fences(state.output.completion)
         try:
             data = json.loads(output)
         except json.JSONDecodeError:

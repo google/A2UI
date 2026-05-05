@@ -29,3 +29,7 @@ async def test_a2ui_system_prompt(tmp_path):
     assert state.messages[0].role == "system"
     assert "schema content" in state.messages[0].content
     assert "catalog content" in state.messages[0].content
+
+def test_a2ui_system_prompt_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        a2ui_system_prompt("non_existent_schema.json", "non_existent_catalog.json")

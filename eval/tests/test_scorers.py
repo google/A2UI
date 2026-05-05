@@ -30,6 +30,33 @@ async def test_schema_scorer_valid_json():
     assert "Valid schema" in score.explanation
 
 @pytest.mark.asyncio
+async def test_schema_scorer_valid_json_with_fences():
+    scorer = a2ui_schema_scorer()
+    valid_json = """
+    ```json
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "main",
+        "catalogId": "mycompany.com:somecatalog"
+      }
+    }
+    ```
+    """
+    state = TaskState(
+        model=ModelName("mock/model"),
+        sample_id=1,
+        epoch=1,
+        input="test",
+        messages=[],
+        output=ModelOutput(model="mock/model", completion=valid_json)
+    )
+    
+    score = await scorer(state, Target(""))
+    assert score.value == 1.0
+    assert "Valid schema" in score.explanation
+
+@pytest.mark.asyncio
 async def test_schema_scorer_invalid_json():
     scorer = a2ui_schema_scorer()
     state = TaskState(

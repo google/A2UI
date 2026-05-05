@@ -140,3 +140,27 @@ async def test_semantic_scorer_valid():
     score = await scorer(state, Target(""))
     assert score.value == 1.0
     assert "Semantic checks passed" in score.explanation
+
+@pytest.mark.asyncio
+async def test_semantic_scorer_skips_other_messages():
+    scorer = a2ui_semantic_scorer()
+    payload = """
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "main",
+        "catalogId": "mycompany.com:somecatalog"
+      }
+    }
+    """
+    state = TaskState(
+        model=ModelName("mock/model"),
+        sample_id=1,
+        epoch=1,
+        input="test",
+        messages=[],
+        output=ModelOutput(model="mock/model", completion=payload)
+    )
+    score = await scorer(state, Target(""))
+    assert score.value == 1.0
+    assert "Semantic checks passed" in score.explanation

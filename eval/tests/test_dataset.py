@@ -19,3 +19,7 @@ def test_load_a2ui_dataset(tmp_path):
     assert dataset[0].input == "Test input"
     assert dataset[0].target == "A test prompt."
     assert dataset[0].metadata['name'] == "testPrompt"
+
+def test_load_a2ui_dataset_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        load_a2ui_dataset("non_existent_file.yaml")
