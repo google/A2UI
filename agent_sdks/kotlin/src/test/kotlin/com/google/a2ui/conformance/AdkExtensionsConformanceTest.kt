@@ -64,9 +64,9 @@ class AdkExtensionsConformanceTest {
 
     return rawList.map { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-      val action = case["action"] as String
-      val args = case["args"] as? Map<*, *> ?: emptyMap<Any, Any>()
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as String
+      val args = case[ConformanceTestHelper.KEY_ARGS] as? Map<*, *> ?: emptyMap<Any, Any>()
 
       DynamicTest.dynamicTest(name) {
         when (action) {
@@ -130,7 +130,7 @@ class AdkExtensionsConformanceTest {
               val result = results[0]
               assertIs<TaskStatusUpdateEvent>(result)
 
-              val expect = case["expect"] as Map<*, *>
+              val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
               val expectState = expect["state"] as String
               val expectMessage = expect["message"] as String
 
@@ -171,7 +171,7 @@ class AdkExtensionsConformanceTest {
 
             val result = tool.runAsync(toolArgs, mockToolContext).blockingGet()
 
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             val expectSuccess = expect["success"] as Boolean
 
             if (expectSuccess) {

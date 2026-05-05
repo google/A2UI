@@ -82,14 +82,14 @@ class ConformanceTest {
 
     return rawList.map { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-
-      val catalogMap = case["catalog"] as Map<*, *>
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+ 
+      val catalogMap = case[ConformanceTestHelper.KEY_CATALOG] as Map<*, *>
       val (catalog, schemaMappings) = buildCatalog(catalogMap, conformanceDir, baseSchemaMappings)
 
-      val stepsList = case["steps"] as? List<*> 
-        ?: case["validate"] as? List<*>
-        ?: if (case.containsKey("payload")) listOf(case) else null
+      val stepsList = case[ConformanceTestHelper.KEY_STEPS] as? List<*> 
+        ?: case[ConformanceTestHelper.KEY_VALIDATE] as? List<*>
+        ?: if (case.containsKey(ConformanceTestHelper.KEY_PAYLOAD)) listOf(case) else null
         
       if (stepsList == null) {
         throw IllegalArgumentException("No steps or payload found in test case: $name")
@@ -97,7 +97,7 @@ class ConformanceTest {
 
       val validate = stepsList.map { stepObj ->
         val step = stepObj as Map<*, *>
-        val payloadObj = step["payload"]
+        val payloadObj = step[ConformanceTestHelper.KEY_PAYLOAD]
         val jsonStr = jsonMapper.writeValueAsString(payloadObj)
         val payload = Json.parseToJsonElement(jsonStr)
 
@@ -219,15 +219,15 @@ class ConformanceTest {
 
     return rawList.mapNotNull { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-      val action = case["action"] as String
-      val args = case["args"] as? Map<*, *> ?: emptyMap<Any, Any>()
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as String
+      val args = case[ConformanceTestHelper.KEY_ARGS] as? Map<*, *> ?: emptyMap<Any, Any>()
 
       // Filter out non-conformant tests for Kotlin
       if (action == "prune" && (args.containsKey("allowed_messages") || name.contains("common_types"))) {
         return@mapNotNull null
       }
-      if (action == "load" && (args["path"] as? String)?.let { it.contains("*") || it.contains("[") || it.contains("?") } == true) {
+      if (action == "load" && (args[KEY_PATH] as? String)?.let { it.contains("*") || it.contains("[") || it.contains("?") } == true) {
         return@mapNotNull null
       }
       if (action == "load" && case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
@@ -235,25 +235,25 @@ class ConformanceTest {
         return@mapNotNull null
       }
       DynamicTest.dynamicTest(name) {
-        val catalog = (case["catalog"] as? Map<*, *>)?.let {
+        val catalog = (case[ConformanceTestHelper.KEY_CATALOG] as? Map<*, *>)?.let {
             val (cat, _) = buildCatalog(it, conformanceDir, emptyMap())
             cat
         }
 
         when (action) {
           "prune" -> {
-            val allowedComponents = args["allowed_components"] as? List<String> ?: emptyList()
+            val allowedComponents = args[KEY_ALLOWED_COMPONENTS] as? List<String> ?: emptyList()
             val pruned = catalog!!.withPrunedComponents(allowedComponents)
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
-            if (expect.containsKey("catalog_schema")) {
-              val expectSchema = jsonMapper.writeValueAsString(expect["catalog_schema"])
+            if (expect.containsKey(KEY_CATALOG_SCHEMA)) {
+              val expectSchema = jsonMapper.writeValueAsString(expect[KEY_CATALOG_SCHEMA])
               assertEquals(Json.parseToJsonElement(expectSchema), pruned.catalogSchema)
             }
           }
           "load" -> {
-            val path = args["path"] as? String
+            val path = args[KEY_PATH] as? String
             val fullPath = path?.let { File(conformanceDir, it).absolutePath }
-            val validate = args["validate"] as? Boolean ?: false
+            val validate = args[ConformanceTestHelper.KEY_VALIDATE] as? Boolean ?: false
             
             if (case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
                val expectError = case[ConformanceTestHelper.KEY_EXPECT_ERROR] as String
@@ -291,9 +291,9 @@ class ConformanceTest {
 
     return rawList.mapNotNull { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-      val action = case["action"] as String
-      val args = case["args"] as? Map<*, *> ?: emptyMap<Any, Any>()
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as String
+      val args = case[ConformanceTestHelper.KEY_ARGS] as? Map<*, *> ?: emptyMap<Any, Any>()
 
       DynamicTest.dynamicTest(name) {
         when (action) {
@@ -414,8 +414,8 @@ class ConformanceTest {
 
             val outputNormalized = output.replace(Regex("\\s+"), "").trim()
 
-            if (case.containsKey("expect_contains")) {
-              val expectContains = case["expect_contains"] as List<String>
+            if (case.containsKey(KEY_EXPECT_CONTAINS)) {
+              val expectContains = case[KEY_EXPECT_CONTAINS] as List<String>
               for (expected in expectContains) {
                 val expectedNormalized = expected.replace(Regex("\\s+"), "").trim()
                 assertTrue(
@@ -437,9 +437,9 @@ class ConformanceTest {
 
     return rawList.mapNotNull { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-      val action = case["action"] as String
-      val input = case["input"] as String
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as String
+      val input = case[KEY_INPUT] as String
 
       DynamicTest.dynamicTest(name) {
         when (action) {
@@ -460,8 +460,8 @@ class ConformanceTest {
               for (i in expect.indices) {
                 val exp = expect[i] as Map<*, *>
                 val part = parts[i]
-                assertEquals(exp["text"] as? String ?: "", part.text)
-                val expA2ui = exp["a2ui"]
+                assertEquals(exp[KEY_TEXT] as? String ?: "", part.text)
+                val expA2ui = exp[KEY_A2UI]
                 if (expA2ui != null) {
                   val expJsonStr = jsonMapper.writeValueAsString(expA2ui)
                   val expJson = Json.parseToJsonElement(expJsonStr) as JsonArray
@@ -499,6 +499,14 @@ class ConformanceTest {
     private const val CATALOG_YAML_FILE = "suites/catalog.yaml"
     private const val SCHEMA_MANAGER_YAML_FILE = "suites/schema_manager.yaml"
     private const val PARSER_YAML_FILE = "suites/parser.yaml"
+
+    private const val KEY_EXPECT_CONTAINS = "expect_contains"
+    private const val KEY_INPUT = "input"
+    private const val KEY_TEXT = "text"
+    private const val KEY_A2UI = "a2ui"
+    private const val KEY_PATH = "path"
+    private const val KEY_ALLOWED_COMPONENTS = "allowed_components"
+    private const val KEY_CATALOG_SCHEMA = "catalog_schema"
   }
 }
 

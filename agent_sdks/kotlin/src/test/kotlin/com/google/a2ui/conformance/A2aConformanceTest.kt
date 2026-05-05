@@ -78,9 +78,9 @@ class A2aConformanceTest {
 
     return rawList.map { caseObj ->
       val case = caseObj as Map<*, *>
-      val name = case["name"] as String
-      val action = case["action"] as String
-      val args = case["args"] as? Map<*, *> ?: emptyMap<Any, Any>()
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as String
+      val args = case[ConformanceTestHelper.KEY_ARGS] as? Map<*, *> ?: emptyMap<Any, Any>()
 
       DynamicTest.dynamicTest(name) {
         when (action) {
@@ -90,7 +90,7 @@ class A2aConformanceTest {
             
             val part = A2uiA2a.createA2uiPart(jsonElement)
             assertTrue(part is DataPart)
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             assertEquals(expect["mime_type"] as String, (part as DataPart).metadata?.get(A2uiA2a.MIME_TYPE_KEY))
           }
           "is_a2ui_part" -> {
@@ -99,7 +99,7 @@ class A2aConformanceTest {
             every { part.metadata } returns mapOf(A2uiA2a.MIME_TYPE_KEY to mimeType)
             
             val result = A2uiA2a.isA2uiPart(part)
-            val expect = case["expect"] as Boolean
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
             assertEquals(expect, result)
           }
           "try_activate_extension" -> {
@@ -107,7 +107,7 @@ class A2aConformanceTest {
             val activated = mutableListOf<String>()
             val result = A2uiA2a.tryActivateA2uiExtension(uris) { activated.add(it) }
             
-            val expect = case["expect"] as Boolean
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
             assertEquals(expect, result)
             if (expect) {
               assertTrue(activated.contains(A2uiA2a.A2UI_EXTENSION_URI))
@@ -151,7 +151,7 @@ class A2aConformanceTest {
 
             val response = handler.handleA2aPost(request as Map<String, Any>)
 
-            val expect = case["expect"] as Map<*, *>
+            val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             val expectParts = expect["parts"] as List<*>
 
             val result = response["result"] as Map<String, Any>

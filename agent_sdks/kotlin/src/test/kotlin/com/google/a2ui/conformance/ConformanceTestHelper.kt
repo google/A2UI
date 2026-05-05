@@ -23,6 +23,7 @@ object ConformanceTestHelper {
 
   private const val SPECIFICATION_DIR = "specification"
   const val CONFORMANCE_DIR_PATH = "agent_sdks/conformance/"
+  private const val PROP_USER_DIR = "user.dir"
 
   const val KEY_NAME = "name"
   const val KEY_ACTION = "action"
@@ -35,7 +36,7 @@ object ConformanceTestHelper {
   const val KEY_EXPECT = "expect"
 
   private fun findRepoRoot(): File {
-    var currentDir: File? = File(System.getProperty("user.dir"))
+    var currentDir: File? = File(System.getProperty(PROP_USER_DIR))
     while (currentDir != null) {
       if (File(currentDir, SPECIFICATION_DIR).isDirectory) {
         return currentDir
