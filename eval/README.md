@@ -13,11 +13,21 @@ To run the evaluations, you need to use the Inspect AI CLI via `uv`. Make sure y
 
 ### Prerequisites
 
-Set your Gemini API key:
+1. **Set your Gemini API key**:
+   ```bash
+   export GEMINI_API_KEY="your_api_key"
+   ```
 
-```bash
-export GEMINI_API_KEY="your_api_key"
-```
+2. **Decrypt Datasets (First Time Setup)**:
+   The evaluation datasets are encrypted at rest in the repository to prevent base model contamination. To decrypt them in your repo for evaluation, you need to initialize Transcrypt with the shared password. From the `evals/eval` directory, run:
+
+   ```bash
+   bin/transcrypt -p <PASSWORD>
+   ```
+
+You can request the password from any member of the A2UI team (it's not really a secret, but it's also not going on Github in plaintext).
+
+After this one time setup, you will have local plaintext access to the decrypted datasets in the `datasets/` directory, and they will be encrypted and decrypted transparently by git.
 
 ### Run Evals
 
@@ -26,8 +36,6 @@ To run the evaluations with a specific model (e.g., Gemini 2.0 Flash):
 ```bash
 uv run inspect eval tasks.py --model google/gemini-3-flash-preview --display plain
 ```
-
-
 
 ## Viewing Evaluation Results
 
