@@ -35,10 +35,10 @@
     "zod": "^3.25.76"
   },
   "peerDependencies": {
+    "@a2ui/markdown-it": "file:../markdown/markdown-it",
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0",
-    "@angular/platform-browser": "^21.2.0",
-    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+    "@angular/platform-browser": "^21.2.0"
   },
   "peerDependenciesMeta": {
     "@a2ui/markdown-it": {
@@ -59,6 +59,8 @@
     "@vitest/browser": "^4.0.15",
     "cypress": "^15.6.0",
     "google-artifactregistry-auth": "^3.5.0",
+    "google-closure-compiler": "^20260429.0.0",
+    "google-closure-compiler-js": "^20200719.0.0",
     "jasmine-core": "~5.9.0",
     "jsdom": "^27.2.0",
     "karma": "^6.4.4",
@@ -70,6 +72,7 @@
     "playwright": "^1.56.1",
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
+    "tsickle": "^0.46.3",
     "tslib": "^2.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.15"
