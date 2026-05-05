@@ -1,0 +1,440 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#
+# transcrypt - https://github.com/elasticdog/transcrypt
+#
+# A script to configure transparent encryption of sensitive files stored in
+# a Git repository. It utilizes OpenSSL's symmetric cipher routines and follows
+# the gitattributes(5) man page regarding the use of filters.
+#
+# Copyright (c) 2019-2025 James Murty <james@murty.co>
+# Copyright (c) 2014-2020 Aaron Bull Schaefer <aaron@elasticdog.com>
+# This source code is provided under the terms of the MIT License
+# that can be be found in the LICENSE file.
+#
+
+##### OVERRIDES
+
+# Disable any global grep options, to avoid problems like '--colors=always'
+# shellcheck disable=SC2034
+GREP_OPTIONS=""
+
+##### CONSTANTS
+
+# the release version of this script
+readonly VERSION='2.3.2-pre'
+
+# the default cipher to utilize
+readonly DEFAULT_CIPHER='aes-256-cbc'
+
+# context name must match this regexp to ensure it is safe for git config and attrs
+readonly CONTEXT_REGEX='[a-z](-?[a-z0-9])*'
+
+##### FUNCTIONS
+
+# load encryption password
+# by default is stored in git config, modify this function to move elsewhere
+load_password() {
+	local context_config_group=${1:-}
+	local password
+	password=$(git config --get --local "transcrypt${context_config_group}.password")
+	echo "$password"
+}
+
+# save encryption password
+# by default is stored in git config, modify this function to move elsewhere
+save_password() {
+	local password=$1
+	local context_config_group=${2:-}
+	git config "transcrypt${context_config_group}.password" "$password"
+}
+
+# print a canonicalized absolute pathname
+realpath() {
+	local path=$1
+
+	# make path absolute
+	local abspath=$path
+	if [[ -n ${abspath##/*} ]]; then
+		abspath=$(pwd -P)/$abspath
+	fi
+
+	# canonicalize path
+	local dirname=
+	if [[ -d $abspath ]]; then
+		dirname=$(cd "$abspath" >/dev/null && pwd -P)
+		abspath=$dirname
+	elif [[ -e $abspath ]]; then
+		dirname=$(cd "${abspath%/*}/" >/dev/null 2>/dev/null && pwd -P)
+		abspath=$dirname/${abspath##*/}
+	fi
+
+	if [[ -d $dirname && -e $abspath ]]; then
+		printf '%s\n' "$abspath"
+	else
+		printf 'invalid path: %s\n' "$path" >&2
+		exit 1
+	fi
+}
+
+# establish repository metadata and directory handling
+# shellcheck disable=SC2155
+gather_repo_metadata() {
+	# whether or not transcrypt is already configured
+	readonly INSTALLED_VERSION=$(git config --get --local transcrypt.version 2>/dev/null)
+
+	# the current git repository's top-level directory
+	readonly REPO=$(git rev-parse --show-toplevel 2>/dev/null)
+
+	# whether or not a HEAD revision exists
+	readonly HEAD_EXISTS=$(git rev-parse --verify --quiet HEAD 2>/dev/null)
+
+	# https://github.com/RichiH/vcsh
+	# whether or not the git repository is running under vcsh
+	readonly IS_VCSH=$(git config --get --local --bool vcsh.vcsh 2>/dev/null)
+
+	# whether or not the git repository is bare
+	readonly IS_BARE=$(git rev-parse --is-bare-repository 2>/dev/null || printf 'false')
+
+	# the current git repository's .git directory
+	readonly RELATIVE_GIT_DIR=$(git rev-parse --git-common-dir 2>/dev/null || printf '')
+	readonly GIT_DIR=$(realpath "$RELATIVE_GIT_DIR" 2>/dev/null)
+
+	# Respect transcrypt.crypt-dir if present. Default to crypt/ in Git dir
+	readonly CRYPT_DIR=$(git config transcrypt.crypt-dir 2>/dev/null || printf '%s/crypt' "${RELATIVE_GIT_DIR}")
+
+	# respect core.hooksPath setting, without trailing slash. Fall back to default hooks dir
+	readonly GIT_HOOKS=$(git config core.hooksPath | sed 's:/*$::' 2>/dev/null || printf "%s/hooks" "${RELATIVE_GIT_DIR}")
+
+	# the current git repository's gitattributes file
+	local CORE_ATTRIBUTES
+	CORE_ATTRIBUTES=$(git config --get --local --path core.attributesFile 2>/dev/null || git config --get --path core.attributesFile 2>/dev/null || printf '')
+	if [[ $CORE_ATTRIBUTES ]]; then
+		readonly GIT_ATTRIBUTES=$CORE_ATTRIBUTES
+	elif [[ $IS_BARE == 'true' ]] || [[ $IS_VCSH == 'true' ]]; then
+		readonly GIT_ATTRIBUTES="${GIT_DIR}/info/attributes"
+	else
+		readonly GIT_ATTRIBUTES="${REPO}/.gitattributes"
+	fi
+
+	# fetch list of context names already configured or in .gitattributes
+	readonly CONFIGURED_CONTEXTS=$(get_contexts_from_git_config)
+	readonly GITATTRIBUTES_CONTEXTS=$(get_contexts_from_git_attributes)
+}
+
+# print a message to stderr
+warn() {
+	local fmt="$1"
+	shift
+	# shellcheck disable=SC2059
+	printf "transcrypt: $fmt\n" "$@" >&2
+}
+
+# print a message to stderr and exit with either
+# the given status or that of the most recent command
+die() {
+	local st="$?"
+	if [[ "$1" != *[^0-9]* ]]; then
+		st="$1"
+		shift
+		fi
+	warn "$@"
+	exit "$st"
+}
+
+# return context name if $1 has format 'context=name-of-context' else empty string
+extract_context_name_from_name_value_arg() {
+	local before_last_equals=${1%=*}
+	local after_first_equals=${1#*=}
+	if [[ "$before_last_equals" == "context" ]]; then
+		echo "$after_first_equals"
+	fi
+	echo ''
+}
+
+derive_context_config_group() {
+	local context=${1:-}
+	if [[ ! $context ]] || [[ $context == 'default' ]]; then
+		echo ''
+	else
+		echo ".$context" # Note leading period
+	fi
+}
+
+# Internal function that returns a list of filenames for encrypted files in the
+# repo, where the filenames are verbatim and not quoted in any way even if they
+# contain unusual characters like double-quotes, backslash and control
+# characters. We must avoid quoting of filenames to support names containing
+# double quotes. #173
+_list_encrypted_files() {
+	local strict_context=${1:-}
+
+	IFS=$'\n'
+	# List files with -z option to disable quoting of filenames, then filter
+	# for files marked for encryption (git check-attr + grep), then only keep
+	# filenames (sed) then evaluate escaped characters like double-quotes,
+	# backslash and control characters (eval) which are part of the output
+	# regardless of core.quotePath=false as per
+	# https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath
+	git -c core.quotePath=false ls-files -z |
+		git -c core.quotePath=false check-attr filter -z --stdin 2>/dev/null |
+		# Split null-delimited list of filename + filter entries to be one line
+		# per file with space delimiters in that line by replacing every third
+		# null character with newline and the rest with a space
+		awk -v RS='\x00' 'NR % 3 == 0 {printf "%s\n", $0} NR % 3 != 0 {printf "%s ", $0}' |
+		{
+			# Only output names of encrypted files matching the context, either
+			# strictly (if $1 = "true") or loosely (if $1 is false or unset)
+			if [[ "$strict_context" == "true" ]]; then
+				grep " filter crypt${CONTEXT_CRYPT_SUFFIX:-}$" || true
+			else
+				grep " filter crypt${CONTEXT_CRYPT_SUFFIX:-}.*$" || true
+			fi
+		} |
+		sed "s| filter crypt${CONTEXT_CRYPT_SUFFIX:-}.*||" |
+		while read -r filename; do eval 'echo $filename'; done
+}
+
+# Detect OpenSSL major version 3 or later which requires a compatibility
+# work-around to include the prefix 'Salted__' and salt value when encrypting.
+#
+# Note that the LibreSSL project's version of the openssl command does NOT
+# require this work-around for major version 3.
+#
+# See #133 #147
+is_salt_prefix_workaround_required() {
+	openssl_path=$(git config --get --local transcrypt.openssl-path 2>/dev/null || printf '%s' "$openssl_path")
+
+	openssl_project=$($openssl_path version | cut -d' ' -f1)
+	openssl_major_version=$($openssl_path version | cut -d' ' -f2 | cut -d'.' -f1)
+
+	if [ "$openssl_project" == "OpenSSL" ] && [ "$openssl_major_version" -ge "3" ]; then
+		echo 'true'
+	else
+		echo ''
+	fi
+}
+
+# The `decryption -> encryption` process on an unchanged file must be
+# deterministic for everything to work transparently. To do that, the same
+# salt must be used each time we encrypt the same file. An HMAC has been
+# proven to be a PRF, so we generate an HMAC-SHA256 for each decrypted file
+# (keyed with a combination of the filename and transcrypt password), and
+# then use the last 16 bytes of that HMAC for the file's unique salt.
+
+# shellcheck disable=SC2155
+readonly IS_PRINTF_BIN_SUPPORTED=$([[ "$(echo -n "41" | sed "s/../\\\\x&/g" | xargs -0 printf "%b")" == "A" ]] && echo 'true' || echo 'false')
+
+# Apply one of three methods to convert a hex string to binary data, or
+hex_to_bin() {
+	# alternative 1 but xxd often only comes with a vim install
+	if command -v "xxd" >/dev/null; then
+		xxd -r -p
+	# alternative 2, but requires printf that supports "%b"
+	# (macOS /usr/bin/printf doesn't)
+	elif $IS_PRINTF_BIN_SUPPORTED; then
+		sed "s/../\\\\x&/g" | xargs -0 printf "%b"
+	# alternative 3 as perl is fairly common
+	elif command -v "perl" >/dev/null; then
+		perl -pe "s/([0-9A-Fa-f]{2})/chr(hex(\$1))/eg"
+	else
+		die 'required command not found: xxd, or printf that supports "%%b", or perl'
+	fi
+}
+
+git_clean() {
+	context=$(extract_context_name_from_name_value_arg "$1")
+	[[ "$context" ]] && shift
+
+	filename=$1
+	# ignore empty files
+	if [[ ! -s $filename ]]; then
+		return
+	fi
+	# cache STDIN to test if it's already encrypted
+	tempfile=$(mktemp 2>/dev/null || mktemp -t tmp)
+	trap 'rm -f "$tempfile"' EXIT
+	tee "$tempfile" &>/dev/null
+	# the first bytes of an encrypted file are always "Salted" in Base64
+	# The `head + LC_ALL=C tr` command handles binary data in old and new Bash (#116)
+	firstbytes=$(head -c8 "$tempfile" | LC_ALL=C tr -d '\0')
+	if [[ $firstbytes == "U2FsdGVk" ]]; then
+		cat "$tempfile"
+	else
+		context_config_group=$(derive_context_config_group "$context")
+		cipher=$(git config --get --local "transcrypt${context_config_group}.cipher")
+		password=$(load_password "$context_config_group")
+		openssl_path=$(git config --get --local transcrypt.openssl-path)
+		salt=$("${openssl_path}" dgst -hmac "${filename}:${password}" -sha256 "$tempfile" | tr -d '\r\n' | tail -c16)
+
+		if [ "$(is_salt_prefix_workaround_required)" == "true" ]; then
+			# Encrypt the file to base64, ensuring it includes the prefix 'Salted__' with the salt. #133
+			(
+				echo -n "Salted__" && echo -n "$salt" | hex_to_bin &&
+					# Encrypt file to binary ciphertext
+					ENC_PASS=$password "$openssl_path" enc -e "-${cipher}" -md MD5 -pass env:ENC_PASS -S "$salt" -in "$tempfile"
+			) |
+				openssl base64
+		else
+			# Encrypt file to base64 ciphertext
+			ENC_PASS=$password "$openssl_path" enc -e -a "-${cipher}" -md MD5 -pass env:ENC_PASS -S "$salt" -in "$tempfile"
+		fi
+	fi
+}
+
+git_smudge() {
+	tempfile=$(mktemp 2>/dev/null || mktemp -t tmp)
+	trap 'rm -f "$tempfile"' EXIT
+	context=$(extract_context_name_from_name_value_arg "$1")
+	context_config_group=$(derive_context_config_group "$context")
+	cipher=$(git config --get --local "transcrypt${context_config_group}.cipher")
+	password=$(load_password "$context_config_group")
+	openssl_path=$(git config --get --local transcrypt.openssl-path)
+	tee "$tempfile" | ENC_PASS=$password "$openssl_path" enc -d "-${cipher}" -md MD5 -pass env:ENC_PASS -a 2>/dev/null || cat "$tempfile"
+}
+
+git_textconv() {
+	context=$(extract_context_name_from_name_value_arg "$1")
+	[[ "$context" ]] && shift
+
+	filename=$1
+	# ignore empty files
+	if [[ ! -s $filename ]]; then
+		return
+	fi
+
+	context_config_group=$(derive_context_config_group "$context")
+	cipher=$(git config --get --local "transcrypt${context_config_group}.cipher")
+	password=$(load_password "$context_config_group")
+	openssl_path=$(git config --get --local transcrypt.openssl-path)
+	ENC_PASS=$password "$openssl_path" enc -d "-${cipher}" -md MD5 -pass env:ENC_PASS -a -in "$filename" 2>/dev/null || cat "$filename"
+}
+
+# shellcheck disable=SC2005,SC2002,SC2181
+git_merge() {
+	context=$(extract_context_name_from_name_value_arg "$1")
+	[[ "$context" ]] && shift
+
+	# Get path to transcrypt in this script's directory
+	TRANSCRYPT_PATH="$(dirname "$0")/transcrypt"
+	# Look up name of local branch/ref to which changes are being merged
+	OURS_LABEL=$(git rev-parse --abbrev-ref HEAD)
+	# Look up name of the incoming "theirs" branch/ref being merged in.
+	# TODO There must be a better way of doing this than relying on this reflog
+	#      action environment variable, but I don't know what it is
+	if [[ "${GIT_REFLOG_ACTION:-}" = "merge "* ]]; then
+		THEIRS_LABEL=$(echo "$GIT_REFLOG_ACTION" | awk '{print $2}')
+	fi
+	if [[ ! "${THEIRS_LABEL:-}" ]]; then
+		THEIRS_LABEL="theirs"
+	fi
+	# Decrypt BASE $1, LOCAL $2, and REMOTE $3 versions of file being merged
+	echo "$(cat "$1" | "${TRANSCRYPT_PATH}" smudge context="$context")" >"$1"
+	echo "$(cat "$2" | "${TRANSCRYPT_PATH}" smudge context="$context")" >"$2"
+	echo "$(cat "$3" | "${TRANSCRYPT_PATH}" smudge context="$context")" >"$3"
+	# Merge the decrypted files to the temp file named by $2
+	git merge-file --marker-size="$4" -L "$OURS_LABEL" -L base -L "$THEIRS_LABEL" "$2" "$1" "$3"
+	# If the merge was not successful (has conflicts) exit with an error code to
+	# leave the partially-merged file in place for a manual merge.
+	if [[ "$?" != "0" ]]; then
+		exit 1
+	fi
+	# If the merge was successful (no conflicts) re-encrypt the merged temp file $2
+	# which git will then update in the index in a following "Auto-merging" step.
+	# We must explicitly encrypt/clean the file, rather than leave Git to do it,
+	# because we can otherwise trigger safety check failure errors like:
+	#     error: add_cacheinfo failed to refresh for path 'FILE'; merge aborting.
+	# To re-encrypt we must first copy the merged file to $5 (the name of the
+	# working-copy file) so the crypt `clean` script can generate the correct hash
+	# salt based on the file's real name, instead of the $2 temp file name.
+	cp "$2" "$5"
+	# Now we use the `clean` script to encrypt the merged file contents back to the
+	# temp file $2 where Git expects to find the merge result content.
+	cat "$5" | "${TRANSCRYPT_PATH}" clean context="$context" "$5" >"$2"
+}
+
+# shellcheck disable=SC2155
+git_pre_commit() {
+	# Transcrypt pre-commit hook: fail if secret file in staging lacks the magic prefix "Salted" in B64
+	tmp=$(mktemp)
+	IFS=$'\n'
+	slow_mode_if_failed() {
+		for secret_file in $(_list_encrypted_files); do
+			# Skip symlinks, they contain the linked target file path not plaintext
+			if [[ -L $secret_file ]]; then
+				continue
+			fi
+
+			# Get prefix of raw file in Git's index using the :FILENAME revision syntax
+			local firstbytes=$(git show :"${secret_file}" | head -c8)
+			# An empty file does not need to be, and is not, encrypted
+			if [[ $firstbytes == "" ]]; then
+				: # Do nothing
+			# The first bytes of an encrypted file must be "Salted" in Base64
+			elif [[ $firstbytes != "U2FsdGVk" ]]; then
+				printf 'Transcrypt managed file is not encrypted in the Git index: %s\n' "$secret_file" >&2
+				printf '\n' >&2
+				printf 'You probably staged this file using a tool that does not apply' >&2
+				printf ' .gitattribute filters as required by Transcrypt.\n' >&2
+				printf '\n' >&2
+				printf 'Fix this by re-staging the file with a compatible tool or with'
+				printf ' Git on the command line:\n' >&2
+				printf '\n' >&2
+				printf '    git rm --cached -- %s\n' "$secret_file" >&2
+				printf '    git add %s\n' "$secret_file" >&2
+				printf '\n' >&2
+				exit 1
+			fi
+		done
+	}
+
+	# validate file to see if it failed or not, We don't care about the filename currently for speed, we only care about pass/fail, slow_mode_if_failed() is for what failed.
+	validate_file() {
+		secret_file=${1}
+		# Skip symlinks, they contain the linked target file path not plaintext
+		if [[ -L $secret_file ]]; then
+			return
+		fi
+		# Get prefix of raw file in Git's index using the :FILENAME revision syntax
+		# The first bytes of an encrypted file are always "Salted" in Base64
+		local firstbytes=$(git show :"${secret_file}" | head -c8)
+		if [[ $firstbytes == "" ]]; then
+			: # Do nothing
+		elif [[ $firstbytes != "U2FsdGVk" ]]; then
+			echo "true" >>"${tmp}"
+		fi
+	}
+
+	# if bash version is greater than or equal to 4.4, fork to number of threads otherwise run normally
+	if [[ "${BASH_VERSINFO[0]}" -gt 4 ]] || { [[ "${BASH_VERSINFO[0]}" == 4 ]] && [[ "${BASH_VERSINFO[1]}" -ge 4 ]]; }; then
+		num_procs=$(nproc)
+		num_jobs="\j"
+		for secret_file in $(_list_encrypted_files); do
+			while ((${num_jobs@P} >= num_procs)); do
+				wait -n
+			done
+			validate_file "${secret_file}" &
+		done
+		wait
+		if [[ -s ${tmp} ]]; then
+			slow_mode_if_failed
+			rm -f "${tmp}"
+			exit 1
+		fi
+	else
+		slow_mode_if_failed
+	fi
+
+	rm -f "${tmp}"
+	unset IFS
+}
+
+# Add file patterns to .gitattributes
+add_pattern() {
+	for var in "$@"; do
+		line="$var  filter=crypt${CONTEXT_CRYPT_SUFFIX} diff=crypt${CONTEXT_CRYPT_SUFFIX} merge=crypt${CONTEXT_CRYPT_SUFFIX}"
+		grep -qxF "$line" "${GIT_ATTRIBUTES}" || echo "$line" >>"${GIT_ATTRIBUTES}"
+		sync
+	done
+}
