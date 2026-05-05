@@ -23,11 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "event-name",
-              "countdown-row",
-              "target-date"
-            ],
+            "children": ["event-name", "countdown-row", "target-date"],
             "align": "center"
           },
           {
@@ -41,20 +37,13 @@
           {
             "id": "countdown-row",
             "component": "Row",
-            "children": [
-              "days-col",
-              "hours-col",
-              "minutes-col"
-            ],
+            "children": ["days-col", "hours-col", "minutes-col"],
             "justify": "spaceAround"
           },
           {
             "id": "days-col",
             "component": "Column",
-            "children": [
-              "days-value",
-              "days-label"
-            ],
+            "children": ["days-value", "days-label"],
             "align": "center"
           },
           {
@@ -74,10 +63,7 @@
           {
             "id": "hours-col",
             "component": "Column",
-            "children": [
-              "hours-value",
-              "hours-label"
-            ],
+            "children": ["hours-value", "hours-label"],
             "align": "center"
           },
           {
@@ -97,10 +83,7 @@
           {
             "id": "minutes-col",
             "component": "Column",
-            "children": [
-              "minutes-value",
-              "minutes-label"
-            ],
+            "children": ["minutes-value", "minutes-label"],
             "align": "center"
           },
           {

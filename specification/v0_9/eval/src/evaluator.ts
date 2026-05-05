@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { evaluationFlow } from "./evaluation_flow";
-import { ValidatedResult, EvaluatedResult } from "./types";
-import { logger } from "./logger";
-import { rateLimiter } from "./rateLimiter";
-import * as fs from "fs";
-import * as path from "path";
-import * as yaml from "js-yaml";
-import { IssueSeverity } from "./types";
+import {evaluationFlow} from './evaluation_flow';
+import {ValidatedResult, EvaluatedResult} from './types';
+import {logger} from './logger';
+import {rateLimiter} from './rateLimiter';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
+import {IssueSeverity} from './types';
 
 export class Evaluator {
   constructor(
@@ -31,9 +31,7 @@ export class Evaluator {
   ) {}
 
   async run(results: ValidatedResult[]): Promise<EvaluatedResult[]> {
-    const passedResults = results.filter(
-      (r) => r.validationErrors.length === 0 && r.components,
-    );
+    const passedResults = results.filter(r => r.validationErrors.length === 0 && r.components);
     const skippedCount = results.length - passedResults.length;
 
     logger.info(
@@ -52,40 +50,37 @@ export class Evaluator {
           ...result,
           evaluationResult: {
             pass: false,
-            reason: "Schema validation failure",
+            reason: 'Schema validation failure',
             issues: [
               {
-                issue: result.validationErrors.join("\n"),
-                severity: "criticalSchema",
+                issue: result.validationErrors.join('\n'),
+                severity: 'criticalSchema',
               },
             ],
-            overallSeverity: "criticalSchema",
+            overallSeverity: 'criticalSchema',
           },
         });
       } else if (!result.components) {
-        evaluatedResults.push({ ...result });
+        evaluatedResults.push({...result});
       }
     }
 
     if (totalJobs === 0) {
-      logger.info("Phase 3: Evaluation Complete (No items to evaluate)");
+      logger.info('Phase 3: Evaluation Complete (No items to evaluate)');
       return evaluatedResults;
     }
 
     const progressInterval = setInterval(() => {
       const queuedCount = rateLimiter.waitingCount;
-      const inProgressCount =
-        totalJobs - completedCount - failedCount - queuedCount;
-      const pct = Math.round(
-        ((completedCount + failedCount) / totalJobs) * 100,
-      );
+      const inProgressCount = totalJobs - completedCount - failedCount - queuedCount;
+      const pct = Math.round(((completedCount + failedCount) / totalJobs) * 100);
       process.stderr.write(
         `\r[Phase 3] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `,
       );
     }, 1000);
 
-    const promises = passedResults.map((result) =>
-      this.runJob(result).then((evalResult) => {
+    const promises = passedResults.map(result =>
+      this.runJob(result).then(evalResult => {
         if (evalResult.evaluationResult) {
           completedCount++;
         } else {
@@ -98,8 +93,8 @@ export class Evaluator {
 
     await Promise.all(promises);
     clearInterval(progressInterval);
-    process.stderr.write("\n");
-    logger.info("Phase 3: Evaluation Complete");
+    process.stderr.write('\n');
+    logger.info('Phase 3: Evaluation Complete');
 
     return evaluatedResults;
   }
@@ -110,7 +105,7 @@ export class Evaluator {
       | {
           pass: boolean;
           reason: string;
-          issues?: { issue: string; severity: IssueSeverity }[];
+          issues?: {issue: string; severity: IssueSeverity}[];
         }
       | undefined;
 
@@ -118,7 +113,7 @@ export class Evaluator {
       try {
         evaluationResult = await evaluationFlow({
           originalPrompt: result.prompt.promptText,
-          generatedOutput: result.rawText || "",
+          generatedOutput: result.rawText || '',
           evalModel: this.evalModel,
           schemas: this.schemas,
         });
@@ -133,22 +128,20 @@ export class Evaluator {
             reason: `Evaluation flow failed: ${e.message}`,
           };
         } else {
-          await new Promise((resolve) =>
-            setTimeout(resolve, 1000 * Math.pow(2, evalRetry)),
-          );
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, evalRetry)));
         }
       }
     }
 
     let overallSeverity: IssueSeverity | undefined;
     if (evaluationResult && !evaluationResult.pass && evaluationResult.issues) {
-      const severities = evaluationResult.issues.map((i) => i.severity);
-      if (severities.includes("critical")) {
-        overallSeverity = "critical";
-      } else if (severities.includes("significant")) {
-        overallSeverity = "significant";
-      } else if (severities.includes("minor")) {
-        overallSeverity = "minor";
+      const severities = evaluationResult.issues.map(i => i.severity);
+      if (severities.includes('critical')) {
+        overallSeverity = 'critical';
+      } else if (severities.includes('significant')) {
+        overallSeverity = 'significant';
+      } else if (severities.includes('minor')) {
+        overallSeverity = 'minor';
       }
     }
 
@@ -158,9 +151,7 @@ export class Evaluator {
 
     return {
       ...result,
-      evaluationResult: evaluationResult
-        ? { ...evaluationResult, overallSeverity }
-        : undefined,
+      evaluationResult: evaluationResult ? {...evaluationResult, overallSeverity} : undefined,
     };
   }
 
@@ -169,7 +160,7 @@ export class Evaluator {
     evaluationResult: {
       pass: boolean;
       reason: string;
-      issues?: { issue: string; severity: IssueSeverity }[];
+      issues?: {issue: string; severity: IssueSeverity}[];
       evalPrompt?: string;
     },
     overallSeverity?: IssueSeverity,
@@ -179,25 +170,16 @@ export class Evaluator {
     // Only save if the evaluation failed
     if (evaluationResult.pass) return;
 
-    const modelDir = path.join(
-      this.outputDir,
-      `output-${result.modelName.replace(/[\/:]/g, "_")}`,
-    );
-    const detailsDir = path.join(modelDir, "details");
+    const modelDir = path.join(this.outputDir, `output-${result.modelName.replace(/[\/:]/g, '_')}`);
+    const detailsDir = path.join(modelDir, 'details');
     fs.writeFileSync(
-      path.join(
-        detailsDir,
-        `${result.prompt.name}.${result.runNumber}.failed.yaml`,
-      ),
-      yaml.dump({ ...evaluationResult, overallSeverity }),
+      path.join(detailsDir, `${result.prompt.name}.${result.runNumber}.failed.yaml`),
+      yaml.dump({...evaluationResult, overallSeverity}),
     );
 
     if (evaluationResult.evalPrompt) {
       fs.writeFileSync(
-        path.join(
-          detailsDir,
-          `${result.prompt.name}.${result.runNumber}.eval_prompt.txt`,
-        ),
+        path.join(detailsDir, `${result.prompt.name}.${result.runNumber}.eval_prompt.txt`),
         evaluationResult.evalPrompt,
       );
     }

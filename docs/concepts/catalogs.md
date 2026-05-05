@@ -43,9 +43,7 @@ A catalog schema is a [JSON Schema file](../../specification/v0_9/json/client_ca
         }
       }
     },
-    "required": [
-      "catalogId"
-    ],
+    "required": ["catalogId"],
     "additionalProperties": false
   }
 }
@@ -61,7 +59,7 @@ Whether you are building a simple prototype or a complex production application,
 
 To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
 
-This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for. 
+This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.
 
 The basic catalog allows you to bootstrap an application or validate A2UI concepts without needing to write your own schema from scratch. It is intentionally sparse to remain easily implementable by different renderers.
 
@@ -111,9 +109,7 @@ Here is a simple catalog defining a single component.
           "default": "#f0f0f0"
         }
       },
-      "required": [
-        "message"
-      ]
+      "required": ["message"]
     }
   }
 }
@@ -149,9 +145,9 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 
 ### Freestanding Catalogs
 
-A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management. 
+A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management.
 
-While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `tools/build_catalog/assemble_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
+While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run `tools/build_catalog/assemble_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
 
 ```bash
 uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--catalog-id <ID>] [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
@@ -159,18 +155,18 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPU
 
 where:
 
-* `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
-* `--output-name`: (Required) The desired name of the combined catalog (e.g.
+- `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
+- `--output-name`: (Required) The desired name of the combined catalog (e.g.
   `my_merged_catalog`). The `.json` extension is appended automatically if
   omitted.
-* `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
-* `--version`: The A2UI specification version to use for official catalog
+- `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
+- `--version`: The A2UI specification version to use for official catalog
   fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
-* `--extend-basic-catalog`: If passed, automatically includes the entirety of
+- `--extend-basic-catalog`: If passed, automatically includes the entirety of
   `basic_catalog.json` in the root output regardless of whether the input
   catalogs explicitly reference it.
-* `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
-* `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
+- `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
+- `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
 
 ### Composition & Imports
 
@@ -185,7 +181,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
   "$id": "https://github.com/.../hello_world_with_all_basic/v1/catalog.json",
   "components": {
     "allOf": [
-      { "$ref": "basic_catalog_definition.json#/components" },
+      {"$ref": "basic_catalog_definition.json#/components"},
       {
         "SuggestionChips": {
           "type": "object",
@@ -196,7 +192,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
               "description": "The suggested prompts."
             }
           },
-          "required": [ "suggestions" ]
+          "required": ["suggestions"]
         }
       }
     ]
@@ -215,15 +211,15 @@ This catalog imports only `Text` from the Basic Catalog to build a simple Popup 
   "$id": "https://github.com/.../hello_world_with_some_basic/v1/catalog.json",
   "components": {
     "allOf": [
-      { "$ref": "basic_catalog.json#/components/Text" },
+      {"$ref": "basic_catalog.json#/components/Text"},
       {
-        "Popup": { 
+        "Popup": {
           "type": "object",
           "description": "A modal overlay that displays an icon and text.",
           "properties": {
-            "text": { "$ref": "common_types.json#/$defs/ComponentId" }
+            "text": {"$ref": "common_types.json#/$defs/ComponentId"}
           },
-          "required": [ "text" ]
+          "required": ["text"]
         }
       }
     ]
@@ -240,29 +236,32 @@ Client renderers implement the catalog by mapping the schema definition to actua
 Example typescript renderer for the hello world catalog
 
 ```typescript
-import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular'; 
-import { inputBinding } from '@angular/core'; 
+import {Catalog, DEFAULT_CATALOG} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
-export const RIZZ_CHARTS_CATALOG = {   
-  ...DEFAULT_CATALOG, // Include the basic catalog   
-  HelloWorldBanner: {     
-    type: () => import('./hello_world_banner').then((r) => r.HelloWorldBanner),     
-    bindings: ({ properties }) => [       
-      inputBinding('message', () => ('message' in properties && properties['message']) || undefined)
-    ],   
-  }, 
+export const RIZZ_CHARTS_CATALOG = {
+  ...DEFAULT_CATALOG, // Include the basic catalog
+  HelloWorldBanner: {
+    type: () => import('./hello_world_banner').then(r => r.HelloWorldBanner),
+    bindings: ({properties}) => [
+      inputBinding(
+        'message',
+        () => ('message' in properties && properties['message']) || undefined,
+      ),
+    ],
+  },
 } as Catalog;
 ```
 
 and the hello_world_banner implementation
 
 ```typescript
-import { DynamicComponent } from '@a2ui/angular';
-import { Component, Input } from '@angular/core';
+import {DynamicComponent} from '@a2ui/angular';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'hello-world-banner',
-  imports: [], 
+  imports: [],
   template: `
     <div>
       <h2>Hello World Banner</h2>
@@ -281,7 +280,7 @@ You can see a working example of a client renderer in the [Rizzcharts demo](../.
 
 Because clients and agents can support multiple catalogs, they must agree on which catalog to use through a catalog negotiation handshake.
 
-### Step 1: Agent advertises its support catalogs (optional) 
+### Step 1: Agent advertises its support catalogs (optional)
 
 The agent may optionally advertise which catalogs it is capable of speaking (e.g., in the A2A Agent Card). This is informational; it helps the client know if the agent supports their specific features, but the client doesn’t have to use it.
 
@@ -355,9 +354,9 @@ A2UI component catalogs require versioning because catalog definitions are often
 
 The `catalogId` is a unique text identifier used for negotiation between the client and the agent.
 
-* **Format:** While the `catalogId` is technically a string, the A2UI convention is to use a **URI** (e.g., `https://example.com/catalogs/mysurface/v1/catalog.json`).  
-* **Purpose:** We use URIs to make the ID globally unique and easy for human developers to inspect in a browser.  
-* **No Runtime Fetching:** This URI does not imply that the agent or client downloads the catalog at runtime. **The catalog definition must be known to the agent and client beforehand (at compile/deploy time)**. The URI serves only as a stable identifier.
+- **Format:** While the `catalogId` is technically a string, the A2UI convention is to use a **URI** (e.g., `https://example.com/catalogs/mysurface/v1/catalog.json`).
+- **Purpose:** We use URIs to make the ID globally unique and easy for human developers to inspect in a browser.
+- **No Runtime Fetching:** This URI does not imply that the agent or client downloads the catalog at runtime. **The catalog definition must be known to the agent and client beforehand (at compile/deploy time)**. The URI serves only as a stable identifier.
 
 ### Versioning Guidelines
 
@@ -365,20 +364,20 @@ To support continuous evolution without breaking older clients or agents, A2UI c
 
 While standard JSON parsers ignore unknown fields, dropping a component in a Server-Driven UI can drop its entire view tree. To balance safety and flexibility, updates are split into **Breaking** and **Non-Breaking** categories, relying on **Graceful Degradation** to absorb version lags.
 
-*   **Breaking Changes (Major Version Bump Required)**  
-    Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
-    *   **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
-    *   **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
-    *   **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
-    *   **Adding a required property:** without a default value, as older agents won't know to send it.
+- **Breaking Changes (Major Version Bump Required)**  
+  Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
+  - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
+  - **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
+  - **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
+  - **Adding a required property:** without a default value, as older agents won't know to send it.
 
-*   **Non-Breaking Changes (Allowable under Major Version)**  
-    Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
-    *   **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
-    *   **Adding an optional property:** e.g., adding `subtitle` to a Card.
-    *   **Removing a property:** Safe for the client to ignore if the agent stops sending it.
-    *   **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
-    *   **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
+- **Non-Breaking Changes (Allowable under Major Version)**  
+  Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
+  - **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
+  - **Adding an optional property:** e.g., adding `subtitle` to a Card.
+  - **Removing a property:** Safe for the client to ignore if the agent stops sending it.
+  - **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
+  - **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
 
 ### Graceful Degradation
 
@@ -388,15 +387,15 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 
 Here is how catalog version mismatches are handled in practice:
 
-*   **An old iOS client is using an older catalog than the agent**
-    *   The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
-    *   The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
-    *   The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
+- **An old iOS client is using an older catalog than the agent**
+  - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
+  - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
+  - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
 
-*   **A web client rolls out a new catalog version ahead of the agent**
-    *   The web client supports the new `Badge` component, but the agent doesn't know about it yet.
-    *   The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
-    *   The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
+- **A web client rolls out a new catalog version ahead of the agent**
+  - The web client supports the new `Badge` component, but the agent doesn't know about it yet.
+  - The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
+  - The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
 
 ### Versioning with CatalogId
 
@@ -413,22 +412,22 @@ We recommend including the version in the catalogId. This allows using A2UI cata
 
 To upgrade a catalog without breaking active agents, use A2UI Catalog Negotiation:
 
-1. **Client Update:** The client updates its list of supportedCatalogIds to include *both* the old and new versions (e.g., [".../v2/...", ".../v1/..."]).  
-2. **Agent Update:** Agents are rebuilt with the v2 schema. When they see the client supports v2, they prefer it.  
+1. **Client Update:** The client updates its list of supportedCatalogIds to include _both_ the old and new versions (e.g., [".../v2/...", ".../v1/..."]).
+2. **Agent Update:** Agents are rebuilt with the v2 schema. When they see the client supports v2, they prefer it.
 3. **Legacy Support:** Older agents that have not yet been rebuilt will continue to match against v1 in the client's list, ensuring they remain functional.
 
-## A2UI Schema Validation & Fallback 
+## A2UI Schema Validation & Fallback
 
 To ensure a stable user experience, A2UI employs a two-phase validation strategy. This "defense in depth" approach catches errors as early as possible while ensuring clients remain robust when facing unexpected payloads.
 
 ### Two-Phase Validation
 
-1. **Agent-Side (Pre-Send):** Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.  
-   * Purpose: To catch hallucinated properties or malformed structures at the source.  
-   * Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.  
-2. **Client-Side:** Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.  
-   * Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.  
-   * Outcome: Failures here are reported back to the agent using the “error” client message
+1. **Agent-Side (Pre-Send):** Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.
+   - Purpose: To catch hallucinated properties or malformed structures at the source.
+   - Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.
+2. **Client-Side:** Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.
+   - Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.
+   - Outcome: Failures here are reported back to the agent using the “error” client message
 
 ### Graceful Degradation
 
@@ -436,8 +435,8 @@ Even if a payload passes schema validation, the renderer may encounter runtime i
 
 Clients should not crash when encountering these errors. Instead, they should employ Graceful Degradation:
 
-* **Unknown Components:** If a component is recognized in the schema but not implemented in the renderer, render a "safe" fallback (e.g., a generic card with the component's debug name) or skip rendering that specific node entirely.  
-* **Text Fallback:** If the entire surface fails to render, display the raw text description (if available) or a generic error message: *"This interface could not be displayed."*
+- **Unknown Components:** If a component is recognized in the schema but not implemented in the renderer, render a "safe" fallback (e.g., a generic card with the component's debug name) or skip rendering that specific node entirely.
+- **Text Fallback:** If the entire surface fails to render, display the raw text description (if available) or a generic error message: _"This interface could not be displayed."_
 
 ### Client-to-Server Error Reporting
 

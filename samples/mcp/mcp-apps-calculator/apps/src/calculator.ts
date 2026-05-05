@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { App } from "@modelcontextprotocol/ext-apps";
+import {App} from '@modelcontextprotocol/ext-apps';
 
 let currentInput = '';
 let previousInput = '';
 let operator: string | null = null;
 let displayElement: HTMLElement | null = null;
 
-const app = new App({ name: "MCP Calculator", version: "1.0.0" });
+const app = new App({name: 'MCP Calculator', version: '1.0.0'});
 
 function updateDisplay() {
   if (displayElement) {
@@ -94,11 +94,11 @@ function calculateJavascript() {
   }
   currentInput = result.toString();
   updateDisplay();
-  
+
   // Log calculation to host
   app.sendLog({
     level: 'info',
-    data: `Calculated: ${prevVal} ${operator} ${currentVal} = ${result}`
+    data: `Calculated: ${prevVal} ${operator} ${currentVal} = ${result}`,
   });
 
   operator = null;
@@ -113,26 +113,35 @@ async function calculateToolCall() {
 
   let opName = '';
   switch (operator) {
-    case '+': opName = 'add'; break;
-    case '-': opName = 'subtract'; break;
-    case '*': opName = 'multiply'; break;
-    case '/': opName = 'divide'; break;
-    default: return;
+    case '+':
+      opName = 'add';
+      break;
+    case '-':
+      opName = 'subtract';
+      break;
+    case '*':
+      opName = 'multiply';
+      break;
+    case '/':
+      opName = 'divide';
+      break;
+    default:
+      return;
   }
 
   try {
-    console.log("Calling tool calculate...");
+    console.log('Calling tool calculate...');
     const result = await app.callServerTool({
       name: 'calculate',
       arguments: {
         operation: opName,
         a: prevVal,
-        b: currentVal
-      }
+        b: currentVal,
+      },
     });
-    console.log("Tool call result:", result);
+    console.log('Tool call result:', result);
   } catch (err) {
-    console.error("Tool call failed:", err);
+    console.error('Tool call failed:', err);
   }
 
   // Reset state locally as per user requirement (UI can forget about it)
@@ -145,7 +154,7 @@ async function calculateToolCall() {
 function init() {
   displayElement = document.getElementById('display');
   updateDisplay();
-  
+
   // Attach to window for HTML onclick handlers
   (window as any).appendNumber = appendNumber;
   (window as any).appendPoint = appendPoint;
@@ -162,8 +171,11 @@ if (document.readyState === 'loading') {
 }
 
 // Connect to host
-app.connect().then(() => {
-  console.log("MCP App Connected");
-}).catch(err => {
-  console.error("Failed to connect to host:", err);
-});
+app
+  .connect()
+  .then(() => {
+    console.log('MCP App Connected');
+  })
+  .catch(err => {
+    console.error('Failed to connect to host:', err);
+  });

@@ -32,19 +32,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // `__dirname` will be `dist/src/v0_9/schema` when run via `node --test dist/**/*.test.js`
-const SPEC_DIR_V0_9 = resolve(
-  __dirname,
-  '../../../../../../specification/v0_9/json',
-);
+const SPEC_DIR_V0_9 = resolve(__dirname, '../../../../../../specification/v0_9/json');
 
 // Parse both so we can do structural comparison rather than formatting
 // Compare definitions specifically, ignoring descriptions
 function compareDefinitions(zodDefs: any, jsonDefs: any): Record<string, any> {
   const diff: Record<string, any> = {};
-  const keys = new Set([
-    ...Object.keys(zodDefs || {}),
-    ...Object.keys(jsonDefs || {}),
-  ]);
+  const keys = new Set([...Object.keys(zodDefs || {}), ...Object.keys(jsonDefs || {})]);
 
   for (const key of keys) {
     if (key === 'A2uiMessage') continue; // Zod wrapper artifact
@@ -67,10 +61,7 @@ function getObjectDiff(obj1: any, obj2: any, path = ''): Record<string, any> {
   // Ignore descriptions in strict structural comparison
   const ignoreKeys = new Set(['description', 'title', '$id', '$schema']);
 
-  const keys = new Set([
-    ...Object.keys(obj1 || {}),
-    ...Object.keys(obj2 || {}),
-  ]);
+  const keys = new Set([...Object.keys(obj1 || {}), ...Object.keys(obj2 || {})]);
 
   for (const key of keys) {
     if (ignoreKeys.has(key)) continue;
@@ -80,20 +71,13 @@ function getObjectDiff(obj1: any, obj2: any, path = ''): Record<string, any> {
     const val2 = obj2 ? obj2[key] : undefined;
 
     // Zod emits `type: "string"` for consts, whereas JSON Schema infers it.
-    if (
-      path.endsWith('version') &&
-      key === 'type' &&
-      val1 === 'string' &&
-      val2 === undefined
-    ) {
+    if (path.endsWith('version') && key === 'type' && val1 === 'string' && val2 === undefined) {
       continue;
     }
 
     // Zod doesn't emit additionalProperties: true by default, but it's the default
     if (
-      currentPath.endsWith(
-        'updateDataModel.properties.value.additionalProperties',
-      ) &&
+      currentPath.endsWith('updateDataModel.properties.value.additionalProperties') &&
       val1 === undefined &&
       val2 === true
     ) {
@@ -115,12 +99,7 @@ function getObjectDiff(obj1: any, obj2: any, path = ''): Record<string, any> {
       continue;
     }
 
-    if (
-      typeof val1 === 'object' &&
-      val1 !== null &&
-      typeof val2 === 'object' &&
-      val2 !== null
-    ) {
+    if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
       if (Array.isArray(val1) && Array.isArray(val2)) {
         // Sort arrays to ignore order differences (like `required`)
         const sortedVal1 = [...val1].sort();
@@ -183,9 +162,7 @@ function verifySchema(
   }
 
   const rootZodSchema =
-    (generatedSchema.definitions || generatedSchema.$defs || {})[
-      'A2uiMessage'
-    ] || {};
+    (generatedSchema.definitions || generatedSchema.$defs || {})['A2uiMessage'] || {};
 
   if (officialSchema.oneOf || officialSchema.anyOf) {
     const zodOneOf = rootZodSchema.anyOf || rootZodSchema.oneOf || [];
@@ -208,10 +185,7 @@ function verifySchema(
       );
     }
   } else if (officialSchema.properties) {
-    const topLevelDiff = getObjectDiff(
-      rootZodSchema.properties,
-      officialSchema.properties,
-    );
+    const topLevelDiff = getObjectDiff(rootZodSchema.properties, officialSchema.properties);
     if (Object.keys(topLevelDiff).length > 0) {
       assert.deepStrictEqual(
         topLevelDiff,
@@ -226,17 +200,12 @@ function verifySchema(
 
 describe('A2UI Schema Verification v0.9', () => {
   it('verifies v0.9 schema', () => {
-    verifySchema(
-      'v0.9',
-      A2uiMessageSchema,
-      join(SPEC_DIR_V0_9, 'server_to_client.json'),
-      {
-        CreateSurfaceMessage: CreateSurfaceMessageSchema,
-        UpdateComponentsMessage: UpdateComponentsMessageSchema,
-        UpdateDataModelMessage: UpdateDataModelMessageSchema,
-        DeleteSurfaceMessage: DeleteSurfaceMessageSchema,
-      },
-    );
+    verifySchema('v0.9', A2uiMessageSchema, join(SPEC_DIR_V0_9, 'server_to_client.json'), {
+      CreateSurfaceMessage: CreateSurfaceMessageSchema,
+      UpdateComponentsMessage: UpdateComponentsMessageSchema,
+      UpdateDataModelMessage: UpdateDataModelMessageSchema,
+      DeleteSurfaceMessage: DeleteSurfaceMessageSchema,
+    });
   });
 
   it('validates A2uiMessage wrapper', () => {

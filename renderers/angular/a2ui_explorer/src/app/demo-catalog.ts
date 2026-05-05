@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { z } from 'zod';
-import { BasicCatalogBase, BASIC_FUNCTIONS } from '@a2ui/angular/v0_9';
-import { customSliderComponentDeclaration } from './custom-slider.component';
-import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_core/v0_9';
+import {Injectable} from '@angular/core';
+import {z} from 'zod';
+import {BasicCatalogBase, BASIC_FUNCTIONS} from '@a2ui/angular/v0_9';
+import {customSliderComponentDeclaration} from './custom-slider.component';
+import {createFunctionImplementation, FunctionImplementation} from '@a2ui/web_core/v0_9';
 
 /**
  * A catalog specific to the demo, extending the basic catalog with custom components.
@@ -28,14 +28,13 @@ import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_
 })
 export class DemoCatalog extends BasicCatalogBase {
   constructor() {
-
     const capitalizeImplementation: FunctionImplementation = createFunctionImplementation(
       {
         name: 'capitalize',
         returnType: 'string',
-        schema: z.object({ value: z.string().optional() }) as any,
+        schema: z.object({value: z.string().optional()}) as any,
       },
-      (args) => {
+      args => {
         const value = String(args.value || '');
         return value.charAt(0).toUpperCase() + value.slice(1);
       },

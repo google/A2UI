@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { inject } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { MarkdownRendererService } from '../interfaces/markdown-renderer-service';
+import {inject} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {MarkdownRendererService} from '../interfaces/markdown-renderer-service';
 
 /**
  * A markdown renderer that uses a default sanitizer to convert the markdown

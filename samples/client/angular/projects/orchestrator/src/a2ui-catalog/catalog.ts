@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Catalog } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import {Catalog} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
 export const DEMO_CATALOG = {
   Chart: {
-    type: () => import('./chart').then((r) => r.Chart),
-    bindings: ({ properties }) => [
+    type: () => import('./chart').then(r => r.Chart),
+    bindings: ({properties}) => [
       inputBinding('type', () => ('type' in properties && properties['type']) || undefined),
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
       inputBinding(
@@ -30,8 +30,8 @@ export const DEMO_CATALOG = {
     ],
   },
   GoogleMap: {
-    type: () => import('./google-map').then((r) => r.GoogleMap),
-    bindings: ({ properties }) => [
+    type: () => import('./google-map').then(r => r.GoogleMap),
+    bindings: ({properties}) => [
       inputBinding('zoom', () => ('zoom' in properties && properties['zoom']) || 8),
       inputBinding('center', () => ('center' in properties && properties['center']) || undefined),
       inputBinding('pins', () => ('pins' in properties && properties['pins']) || undefined),

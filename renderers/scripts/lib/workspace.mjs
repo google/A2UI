@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, resolve, relative, dirname } from 'node:path';
-import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import {readFileSync, readdirSync, statSync, existsSync} from 'node:fs';
+import {join, resolve, relative, dirname} from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = resolve(__dirname, '../../../');
@@ -54,18 +54,20 @@ export function getPackageGraph() {
   for (const path of packagePaths) {
     const pkg = JSON.parse(readFileSync(path, 'utf8'));
     const dir = dirname(path);
-    
-    // If we have a duplicate name, prioritize packages in 'renderers/' 
+
+    // If we have a duplicate name, prioritize packages in 'renderers/'
     // or those that are not private (if one is private and other isn't)
     if (packages[pkg.name]) {
       const existing = packages[pkg.name];
       const isNewInRenderers = dir.includes('/renderers/');
       const isExistingInRenderers = existing.dir.includes('/renderers/');
-      
+
       if (isExistingInRenderers && !isNewInRenderers) continue;
       if (isExistingInRenderers === isNewInRenderers) {
         const newScriptsCount = Object.keys(pkg.scripts || {}).length;
-        const existingScriptsCount = Object.keys(JSON.parse(readFileSync(existing.path, 'utf8')).scripts || {}).length;
+        const existingScriptsCount = Object.keys(
+          JSON.parse(readFileSync(existing.path, 'utf8')).scripts || {},
+        ).length;
         if (newScriptsCount <= existingScriptsCount) continue;
       }
     }
@@ -78,7 +80,7 @@ export function getPackageGraph() {
       dependencies: pkg.dependencies || {},
       devDependencies: pkg.devDependencies || {},
       peerDependencies: pkg.peerDependencies || {},
-      private: !!pkg.private
+      private: !!pkg.private,
     };
   }
 
@@ -86,8 +88,8 @@ export function getPackageGraph() {
   for (const name in packages) {
     const pkg = packages[name];
     pkg.internalDependencies = [];
-    
-    const allDeps = { ...pkg.dependencies, ...pkg.devDependencies, ...pkg.peerDependencies };
+
+    const allDeps = {...pkg.dependencies, ...pkg.devDependencies, ...pkg.peerDependencies};
     for (const depName in allDeps) {
       if (packages[depName] && allDeps[depName].startsWith('file:')) {
         pkg.internalDependencies.push(depName);
@@ -105,7 +107,7 @@ export function getPackageGraph() {
 export function incrementVersion(version) {
   const parts = version.split('.');
   const lastPart = parts[parts.length - 1];
-  
+
   // Check if last part is numeric or ends with a number
   const match = lastPart.match(/^(.*?)(\d+)$/);
   if (match) {
@@ -114,7 +116,7 @@ export function incrementVersion(version) {
     parts[parts.length - 1] = `${prefix}${num + 1}`;
     return parts.join('.');
   }
-  
+
   return version + '.1'; // Fallback
 }
 
@@ -126,12 +128,12 @@ export function runCommand(command, args, options = {}) {
   const result = spawnSync(command, args, {
     stdio: 'inherit',
     shell: true,
-    ...options
+    ...options,
   });
-  
+
   if (result.status !== 0) {
     throw new Error(`Command failed: ${command} ${args.join(' ')}`);
   }
-  
+
   return result;
 }

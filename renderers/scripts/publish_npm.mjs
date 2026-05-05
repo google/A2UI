@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import { getPackageGraph, runCommand as defaultRunCommand } from './lib/workspace.mjs';
-import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import {getPackageGraph, runCommand as defaultRunCommand} from './lib/workspace.mjs';
+import {execSync} from 'node:child_process';
+import {readFileSync} from 'node:fs';
+import {join} from 'node:path';
 import * as readline from 'node:readline';
-import { fileURLToPath } from 'node:url';
+import {fileURLToPath} from 'node:url';
 
 export async function runPublish(args, customRunCommand, customExecSync, customReadline) {
   const runCmd = customRunCommand || defaultRunCommand;
@@ -50,7 +50,9 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   }
 
   if (packagesToPublish.length === 0) {
-    throw new Error('Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests] [--test-only]');
+    throw new Error(
+      'Usage: publish_npm --packages=pkg1,pkg2 [--force] [--yes] [--dry-run] [--skip-tests] [--test-only]',
+    );
   }
 
   const graph = getPackageGraph();
@@ -80,7 +82,9 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
       console.warn(`WARNING: You are publishing renderers but NOT ${missingCores.join(' and ')}.`);
       console.warn('This can lead to broken versions if shared dependencies have changed.');
       console.warn('Use --force to override this check.');
-      throw new Error(`Safety check failed: ${missingCores.join(' and ')} missing from publish list.`);
+      throw new Error(
+        `Safety check failed: ${missingCores.join(' and ')} missing from publish list.`,
+      );
     }
   }
 
@@ -130,9 +134,9 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     if (nMaj === oMaj && nMin > oMin) return nPre ? 'PREMINOR' : 'MINOR';
     if (nMaj === oMaj && nMin === oMin && nPat > oPat) return nPre ? 'PREPATCH' : 'PATCH';
     if (oCore === nCore) {
-       if (oPre && !nPre) return 'GRADUATION (RELEASE)';
-       if (!oPre && nPre) return 'OLDER_OR_UNKNOWN';
-       return 'PRERELEASE';
+      if (oPre && !nPre) return 'GRADUATION (RELEASE)';
+      if (!oPre && nPre) return 'OLDER_OR_UNKNOWN';
+      return 'PRERELEASE';
     }
 
     return 'OLDER_OR_UNKNOWN';
@@ -145,26 +149,35 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     let remoteVersion;
 
     try {
-      remoteVersion = exec(`npm view ${pkgName} version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+      remoteVersion = exec(`npm view ${pkgName} version`, {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim();
     } catch (e) {
       remoteVersion = null;
     }
 
     if (!remoteVersion) {
-      console.log(`✅ [NEW PACKAGE] ${pkgName}: Will be published for the first time as ${localVersion}`);
+      console.log(
+        `✅ [NEW PACKAGE] ${pkgName}: Will be published for the first time as ${localVersion}`,
+      );
       continue;
     }
 
     if (remoteVersion === localVersion) {
       console.error(`\n❌ ERROR: ${pkgName} version ${localVersion} is already published on npm!`);
-      console.error(`Please increment the version (e.g., using increment_version.mjs) before publishing.`);
+      console.error(
+        `Please increment the version (e.g., using increment_version.mjs) before publishing.`,
+      );
       throw new Error(`Version ${localVersion} already published.`);
     }
 
     const diff = getVersionDiff(remoteVersion, localVersion);
     if (diff === 'OLDER_OR_UNKNOWN') {
-       console.error(`\n❌ ERROR: ${pkgName} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`);
-       throw new Error(`Invalid version progression for ${pkgName}.`);
+      console.error(
+        `\n❌ ERROR: ${pkgName} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`,
+      );
+      throw new Error(`Invalid version progression for ${pkgName}.`);
     }
 
     console.log(`✅ [${diff}] ${pkgName}: ${remoteVersion} -> ${localVersion}`);
@@ -177,9 +190,9 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
   let isDirty = false;
 
   try {
-    currentBranch = exec('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-    commitHash = exec('git rev-parse HEAD', { encoding: 'utf8' }).trim();
-    const status = exec('git status --porcelain', { encoding: 'utf8' }).trim();
+    currentBranch = exec('git rev-parse --abbrev-ref HEAD', {encoding: 'utf8'}).trim();
+    commitHash = exec('git rev-parse HEAD', {encoding: 'utf8'}).trim();
+    const status = exec('git status --porcelain', {encoding: 'utf8'}).trim();
     isDirty = status.length > 0;
   } catch (e) {
     console.warn('⚠️ Could not verify Git status. Ensure you are in a valid Git repository.');
@@ -187,7 +200,9 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
 
   if (isDirty) {
     console.warn(`\n⚠️  WARNING: Your Git working tree is DIRTY (you have uncommitted changes).`);
-    console.warn(`Publishing from a dirty tree means the published code will NOT exactly match the commit history.`);
+    console.warn(
+      `Publishing from a dirty tree means the published code will NOT exactly match the commit history.`,
+    );
     console.warn(`It is highly recommended to commit or stash your changes before publishing.`);
   }
 
@@ -198,12 +213,15 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     const askUser = async () => {
       if (customReadline) return await customReadline();
 
-      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+      const rl = readline.createInterface({input: process.stdin, output: process.stdout});
       return await new Promise(resolve => {
-        rl.question(`\nDo you want to proceed with publishing these versions from commit ${commitHash.substring(0, 7)}? (yes/no): `, (ans) => {
-          rl.close();
-          resolve(ans);
-        });
+        rl.question(
+          `\nDo you want to proceed with publishing these versions from commit ${commitHash.substring(0, 7)}? (yes/no): `,
+          ans => {
+            rl.close();
+            resolve(ans);
+          },
+        );
       });
     };
 
@@ -224,8 +242,14 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
     console.log(`\n=== Preparing ${pkg.name} (${pkg.version}) ===`);
 
     console.log(`- Running npm install in ${pkg.dir}`);
-    if (dryRun) console.log(`[DRY RUN] Would execute: npm install --no-save --ignore-scripts --no-audit --no-fund in ${pkg.dir}`);
-    else runCmd('npm', ['install', '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'], { cwd: pkg.dir });
+    if (dryRun)
+      console.log(
+        `[DRY RUN] Would execute: npm install --no-save --ignore-scripts --no-audit --no-fund in ${pkg.dir}`,
+      );
+    else
+      runCmd('npm', ['install', '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'], {
+        cwd: pkg.dir,
+      });
 
     if (skipTests) {
       console.log(`- Skipping npm test for ${pkg.name}`);
@@ -235,7 +259,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
 
       console.log(`- Running npm run ${testScript} in ${pkg.dir}`);
       if (dryRun) console.log(`[DRY RUN] Would execute: npm run ${testScript} in ${pkg.dir}`);
-      else runCmd('npm', ['run', testScript], { cwd: pkg.dir });
+      else runCmd('npm', ['run', testScript], {cwd: pkg.dir});
     }
   }
 
@@ -252,7 +276,7 @@ export async function runPublish(args, customRunCommand, customExecSync, customR
 
     console.log(`- Running publish:package in ${pkg.dir}`);
     if (dryRun) console.log(`[DRY RUN] Would execute: npm run publish:package in ${pkg.dir}`);
-    else runCmd('npm', ['run', 'publish:package'], { cwd: pkg.dir });
+    else runCmd('npm', ['run', 'publish:package'], {cwd: pkg.dir});
   }
 
   console.log('\nAll packages published successfully.');

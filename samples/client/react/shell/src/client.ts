@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { A2uiMessage, A2uiClientMessage } from '@a2ui/web_core/v0_9';
+import type {A2uiMessage, A2uiClientMessage} from '@a2ui/web_core/v0_9';
 
 interface Part {
   kind: 'data' | 'text' | 'error';
@@ -30,7 +30,7 @@ export class A2UIClient {
 
   async send(
     message: A2uiClientMessage | string,
-    onChunk?: (messages: A2uiMessage[]) => void
+    onChunk?: (messages: A2uiMessage[]) => void,
   ): Promise<A2uiMessage[]> {
     const body = typeof message === 'string' ? message : JSON.stringify(message);
 
@@ -58,9 +58,9 @@ export class A2UIClient {
 
       if (reader) {
         while (true) {
-          const { done, value } = await reader.read();
+          const {done, value} = await reader.read();
           if (done) break;
-          buffer += decoder.decode(value, { stream: true });
+          buffer += decoder.decode(value, {stream: true});
 
           const lines = buffer.split(/\r?\n\r?\n/);
           // Keep the last incomplete line in the buffer
@@ -78,7 +78,8 @@ export class A2UIClient {
                   }
                   if (part.kind === 'data' && part.data) {
                     const uiMessage = part.data as unknown as A2uiMessage;
-                    const createSurface = (uiMessage as { createSurface?: { surfaceId: string } }).createSurface;
+                    const createSurface = (uiMessage as {createSurface?: {surfaceId: string}})
+                      .createSurface;
                     if (createSurface) {
                       if (seenSurfaceIds.has(createSurface.surfaceId)) continue;
                       seenSurfaceIds.add(createSurface.surfaceId);

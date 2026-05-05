@@ -10,7 +10,7 @@ The A2UI Agent SDK architecture has a well-defined data flow that bridges langua
 
 1.  **Define Capabilities**: The SDK loads component schemas (usually from bundled package resources) and organizes them into **Catalogs**.
 2.  **Generate Prompts**: The SDK uses these catalogs to generate system instructions, automatically injecting the relevant JSON Schema and few-shot examples into the LLM's prompt.
-3.  **Streaming Parsing**: Support parsing the LLM's output *as it streams*, yielding partial or complete UI messages progressively.
+3.  **Streaming Parsing**: Support parsing the LLM's output _as it streams_, yielding partial or complete UI messages progressively.
 4.  **Validate Output**: When the LLM generates a response, the SDK parses it, extracts the A2UI JSON, and validates it against the schema.
 5.  **Serialize & Send**: The validated JSON is wrapped in a standard transport envelope (e.g., Agent-to-Agent/A2A DataPart) and streamed to the client.
 
@@ -39,10 +39,10 @@ Represents a processed catalog. It provides methods for validation and LLM instr
 class A2uiCatalog:
     name: str
     validator: A2uiValidator
-    
+
     def render_as_llm_instructions(self, options: InstructionOptions) -> str:
         """
-        Generates a string representation of the catalog (schemas and examples) 
+        Generates a string representation of the catalog (schemas and examples)
         suitable for inclusion in an LLM system prompt.
         """
         ...
@@ -75,15 +75,15 @@ class InferenceStrategy(ABC):
 
 #### Standard Implementations
 
-*   **`A2uiSchemaManager`**: Generates prompts by dynamically loading and organizing Component Schemas and examples from catalogs.
-*   **`A2uiTemplateManager`**: Generates prompts using predefined UI templates or static structures.
+- **`A2uiSchemaManager`**: Generates prompts by dynamically loading and organizing Component Schemas and examples from catalogs.
+- **`A2uiTemplateManager`**: Generates prompts using predefined UI templates or static structures.
 
 ### `A2uiValidator` & `PayloadFixer`
 
 The safety net of the SDK.
 
-*   **`PayloadFixer`**: Attempts to fix common LLM formatting errors (like trailing commas, missing quotes, or unterminated brackets) before structural parsing.
-*   **`A2uiValidator`**: Performs deep semantic and integrity validation beyond standard JSON Schema checks.
+- **`PayloadFixer`**: Attempts to fix common LLM formatting errors (like trailing commas, missing quotes, or unterminated brackets) before structural parsing.
+- **`A2uiValidator`**: Performs deep semantic and integrity validation beyond standard JSON Schema checks.
 
 #### Standard Validator Checks:
 
@@ -97,7 +97,7 @@ The safety net of the SDK.
 
 ## 3. Schema Management & Loading
 
-The SDK does not define component schemas programmatically in code. Instead, it **loads basic catalog JSON Schema definitions packed into the SDK resources** at runtime. Porting the SDK to a new language requires implementing a resource loader and a schema parser for that language's ecosystem (e.g., using `Pydantic` in Python or `kotlinx.serialization` in Kotlin). 
+The SDK does not define component schemas programmatically in code. Instead, it **loads basic catalog JSON Schema definitions packed into the SDK resources** at runtime. Porting the SDK to a new language requires implementing a resource loader and a schema parser for that language's ecosystem (e.g., using `Pydantic` in Python or `kotlinx.serialization` in Kotlin).
 
 Loading from the workspace's `specification/` directory is supported but should be treated as a **fallback for local development**.
 
@@ -105,7 +105,7 @@ Loading from the workspace's `specification/` directory is supported but should 
 
 1.  **Freestanding Catalogs**: Catalogs should be freestanding. They should define their own types or reference relative paths within the same directory tree.
 2.  **Version Awareness**: The schema manager must respect the A2UI protocol version (e.g., `v0.9`). If an agent requests `v0.8` schema, it should serve the `v0.8` definitions.
-3.  **Resource Bundling**: Standard schemas should be bundled with the SDK artifact. Use language-standard utilities to read from package resources (e.g., Python's `importlib.resources`). Fall back to scanning the local `/specification` filesystem path *only* if resource loading fails or if explicitly configured for development.
+3.  **Resource Bundling**: Standard schemas should be bundled with the SDK artifact. Use language-standard utilities to read from package resources (e.g., Python's `importlib.resources`). Fall back to scanning the local `/specification` filesystem path _only_ if resource loading fails or if explicitly configured for development.
 
 ---
 
@@ -122,6 +122,7 @@ When generating prompts, the SDK should allow developers to:
 3.  **Standard Envelopes**: The prompt must instruct the LLM to wrap its A2UI output in standard tags to enable deterministic parsing.
 
 **Standard Prompt Tags:**
+
 ```
 CONVERSATIONAL TEXT RESPONSE
 <a2ui-json>
@@ -160,17 +161,22 @@ for chunk in llm_stream:
 The parser buffers text and uses regex to extract content between tags.
 
 #### Chunk Buffering
+
 Incoming text chunks are appended to an internal buffer. The parser passes through conversational text until it detects the `<a2ui-json>` opening tag.
 
 #### Regex Block Extraction
+
 Once both the opening and closing tags are found in the buffer, the parser uses a regex pattern (e.g., `<a2ui-json>(.*?)</a2ui-json>` with `re.DOTALL`) to extract the raw JSON string.
-*   It yields any text preceding the tag as standard conversational text.
-*   It yields the JSON content as an A2UI JSON part.
+
+- It yields any text preceding the tag as standard conversational text.
+- It yields the JSON content as an A2UI JSON part.
 
 #### Sanitization & Cleanup
+
 Before parsing the JSON, it sanitizes the string to remove any unexpected markdown code block delimiters (e.g., ` ```json `) that the LLM might have inadvertently wrapped around the JSON inside the A2UI tags.
 
 #### Multi-Block Support
+
 The parser searches for all occurrences of the tags in the buffer and splits the content into alternating text parts and A2UI JSON parts, clearing processed blocks from the buffer.
 
 ---
@@ -205,8 +211,8 @@ Once validated, the A2UI payload must be transmitted over the network. In typica
 
 The SDK should provide an out-of-the-box configuration for the **A2UI Basic Catalog** (Button, Text, Row, Column, etc.). This ensures that "Hello, World" agents can be built without defining custom schemas.
 
-*   In Python, this is provided by `BasicCatalog.get_config()`.
-*   Your language SDK should provide a similar singleton or preset that points to the standard basic catalog files in the `specification` folder.
+- In Python, this is provided by `BasicCatalog.get_config()`.
+- Your language SDK should provide a similar singleton or preset that points to the standard basic catalog files in the `specification` folder.
 
 ---
 
@@ -218,15 +224,15 @@ While an SDK can be standalone, it is most useful when it integrates with popula
 
 Provide a standard toolset (often called `SendA2uiToClientToolset`) that exposes tools to the LLM for sending rich UI.
 
-*   **Dynamic Providers**: The toolset should accept providers (callables or futures) to let the tool determine at runtime if A2UI is enabled, and which catalog/examples to use for the current session.
-*   **The UI Tool**: The actual tool exposed to the LLM (e.g., `send_a2ui_json_to_client`). It should validate the LLM's JSON arguments against the schema *before* returning success to the framework.
+- **Dynamic Providers**: The toolset should accept providers (callables or futures) to let the tool determine at runtime if A2UI is enabled, and which catalog/examples to use for the current session.
+- **The UI Tool**: The actual tool exposed to the LLM (e.g., `send_a2ui_json_to_client`). It should validate the LLM's JSON arguments against the schema _before_ returning success to the framework.
 
 ### 2. Part Converters
 
 A Part Converter translates the LLM's output (either tool calls or text tags) into standard transport Parts (like A2A DataParts).
 
-*   **Tool-to-Part**: When the LLM calls the UI tool, the converter intercepts the success response (which contains the validated JSON) and wraps it into an A2UI Part.
-*   **Text-to-Part**: When the LLM outputs text with standard delimiters (e.g., `<a2ui-json>`), the converter runs the text through the parser and emits A2UI Parts.
+- **Tool-to-Part**: When the LLM calls the UI tool, the converter intercepts the success response (which contains the validated JSON) and wraps it into an A2UI Part.
+- **Text-to-Part**: When the LLM outputs text with standard delimiters (e.g., `<a2ui-json>`), the converter runs the text through the parser and emits A2UI Parts.
 
 ### 3. Event Converters
 
@@ -239,18 +245,23 @@ An Event Converter intercepts the agent framework's event stream and applies the
 If you are tasked with porting the `agent_sdk` to a new language (e.g., C++ or Kotlin), follow this strict, phased sequence:
 
 ### Step 1: Core Foundation (Non-UI)
+
 Implement `CatalogConfig` (and its `Provider`), `A2uiCatalog`, and an `InferenceStrategy` (like `A2uiSchemaManager`). Ensure you can load a JSON file via a provider and print its schema.
 
 ### Step 2: Prompt Generation
+
 Implement `generateSystemPrompt`. Verify that it outputs valid Markdown with embedded JSON schemas and examples.
 
 ### Step 3: Parsing & Validation
+
 Implement `parseResponse` and validation. Hook up a standard JSON Schema validator for your language. Use the centralized YAML conformance suite in `agent_sdks/conformance/` to verify that your implementation handles streaming and validation edge cases identically to the reference implementation.
 
 ### Step 4: Transport (A2A)
+
 Create the helper utilities to wrap JSON in transport Parts (if needed for your ecosystem).
 
 ### Step 5: Sample Applications
+
 Create a simple sample (like a command-line agent or local server) to verify that the SDK works end-to-end. Refer to the reference Python samples (e.g., `samples/agent/adk/contact_lookup`) for inspiration.
 
 > [!IMPORTANT]

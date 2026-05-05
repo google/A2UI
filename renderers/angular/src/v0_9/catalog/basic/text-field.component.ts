@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { TextFieldApi } from '@a2ui/web_core/v0_9/basic_catalog';
-import { AnyDuringSchemaAlignment } from '../types';
-
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {TextFieldApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {AnyDuringSchemaAlignment} from '../types';
 
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
@@ -99,7 +98,9 @@ import { AnyDuringSchemaAlignment } from '../types';
 export class TextFieldComponent extends BasicCatalogComponent<typeof TextFieldApi> {
   readonly label = computed(() => this.props()['label']?.value());
   readonly value = computed(() => this.props()['value']?.value() || '');
-  readonly placeholder = computed(() => (this.props() as AnyDuringSchemaAlignment)['placeholder']?.value() || '');
+  readonly placeholder = computed(
+    () => (this.props() as AnyDuringSchemaAlignment)['placeholder']?.value() || '',
+  );
   readonly variant = computed(() => this.props()['variant']?.value());
 
   readonly inputType = computed(() => {

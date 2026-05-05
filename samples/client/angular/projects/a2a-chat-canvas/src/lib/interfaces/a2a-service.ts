@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
-import { InjectionToken } from '@angular/core';
+import {AgentCard, Part, SendMessageSuccessResponse} from '@a2a-js/sdk';
+import {InjectionToken} from '@angular/core';
 
 /**
  * Interface for the A2A (Agent-to-Agent) service.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { UiMessage } from '@a2a_chat_canvas/types/ui-message';
-import { InputSignal, TemplateRef, Type } from '@angular/core';
+import {UiMessage} from '@a2a_chat_canvas/types/ui-message';
+import {InputSignal, TemplateRef, Type} from '@angular/core';
 
 /** Interface for a component that decorates a message. */
 export interface MessageDecoratorComponent {

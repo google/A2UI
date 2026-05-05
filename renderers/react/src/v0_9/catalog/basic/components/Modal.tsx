@@ -56,7 +56,7 @@ export const Modal = createComponentImplementation(ModalApi, ({props, buildChild
               flexDirection: 'column',
               color: 'var(--a2ui-color-on-surface, inherit)',
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div style={{display: 'flex', justifyContent: 'flex-end'}}>
               <button

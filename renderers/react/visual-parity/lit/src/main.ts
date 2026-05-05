@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { v0_8 } from '@a2ui/lit';
+import {v0_8} from '@a2ui/lit';
 import * as UI from '@a2ui/lit/ui';
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { provide } from '@lit/context';
-import { renderMarkdown } from '@a2ui/markdown-it';
-import { allFixtures, type FixtureName, type ComponentFixture } from '../../fixtures';
-import { getTheme, themeNames, type ThemeName } from '../../fixtures/themes';
+import {LitElement, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {provide} from '@lit/context';
+import {renderMarkdown} from '@a2ui/markdown-it';
+import {allFixtures, type FixtureName, type ComponentFixture} from '../../fixtures';
+import {getTheme, themeNames, type ThemeName} from '../../fixtures/themes';
 
 // Themed surface component that provides theme context directly
 // This matches the pattern from @copilotkit/a2ui-renderer's themed-a2ui-surface
@@ -29,20 +29,20 @@ import { getTheme, themeNames, type ThemeName } from '../../fixtures/themes';
 // provide the theme directly on a component that renders a2ui-surface as a child
 @customElement('themed-a2ui-surface')
 class ThemedA2UISurface extends LitElement {
-  @provide({ context: UI.Context.themeContext })
-  @property({ attribute: false })
+  @provide({context: UI.Context.themeContext})
+  @property({attribute: false})
   accessor theme: v0_8.Types.Theme | undefined = undefined;
 
-  @provide({ context: UI.Context.markdown })
+  @provide({context: UI.Context.markdown})
   accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   accessor surfaceId: string = '';
 
-  @property({ attribute: false })
+  @property({attribute: false})
   accessor surface: any = undefined;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   accessor processor: any = undefined;
 
   render() {
@@ -60,18 +60,18 @@ class ThemedA2UISurface extends LitElement {
  */
 function toValueMap(key: string, value: unknown): v0_8.Types.ValueMap {
   if (typeof value === 'boolean') {
-    return { key, valueBoolean: value };
+    return {key, valueBoolean: value};
   } else if (typeof value === 'string') {
-    return { key, valueString: value };
+    return {key, valueString: value};
   } else if (typeof value === 'number') {
-    return { key, valueNumber: value };
+    return {key, valueNumber: value};
   } else if (typeof value === 'object' && value !== null) {
     return {
       key,
       valueMap: Object.entries(value).map(([k, v]) => toValueMap(k, v)),
     };
   }
-  return { key, valueString: String(value) };
+  return {key, valueString: String(value)};
 }
 
 /**
@@ -82,7 +82,7 @@ function toValueMap(key: string, value: unknown): v0_8.Types.ValueMap {
  */
 function dataToMessages(
   data: Record<string, unknown>,
-  surfaceId: string
+  surfaceId: string,
 ): v0_8.Types.ServerToClientMessage[] {
   // Group values by parent path to avoid overwriting
   const byParentPath = new Map<string, v0_8.Types.ValueMap[]>();
@@ -119,7 +119,7 @@ function dataToMessages(
  */
 function fixtureToMessages(
   fixture: ComponentFixture,
-  surfaceId: string
+  surfaceId: string,
 ): v0_8.Types.ServerToClientMessage[] {
   const messages: v0_8.Types.ServerToClientMessage[] = [];
 
@@ -132,7 +132,7 @@ function fixtureToMessages(
   messages.push({
     surfaceUpdate: {
       surfaceId,
-      components: fixture.components.map((c) => ({
+      components: fixture.components.map(c => ({
         id: c.id,
         component: c.component,
       })),
@@ -181,14 +181,17 @@ function init() {
       <p>Available fixtures:</p>
       <ul>
         ${Object.keys(allFixtures)
-          .map((name) => `<li><a href="?fixture=${name}&theme=${effectiveTheme}">${name}</a></li>`)
+          .map(name => `<li><a href="?fixture=${name}&theme=${effectiveTheme}">${name}</a></li>`)
           .join('')}
       </ul>
       <h2>Available themes:</h2>
       <ul>
         ${themeNames
-          .filter((t) => t !== 'default')
-          .map((theme) => `<li><a href="?theme=${theme}">${theme}</a> ${theme === effectiveTheme ? '(current)' : ''}</li>`)
+          .filter(t => t !== 'default')
+          .map(
+            theme =>
+              `<li><a href="?theme=${theme}">${theme}</a> ${theme === effectiveTheme ? '(current)' : ''}</li>`,
+          )
           .join('')}
       </ul>
       <p>Current theme: <strong>${effectiveTheme}</strong></p>

@@ -16,18 +16,18 @@ name: React renderer
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - 'renderers/angular/**'
-      - 'renderers/flutter/**'
-      - 'renderers/lit/**'
-      - 'samples/agent/adk/**'
+      - "renderers/angular/**"
+      - "renderers/flutter/**"
+      - "renderers/lit/**"
+      - "samples/agent/adk/**"
   pull_request:
     paths-ignore:
-      - 'renderers/angular/**'
-      - 'renderers/flutter/**'
-      - 'renderers/lit/**'
-      - 'samples/agent/adk/**'
+      - "renderers/angular/**"
+      - "renderers/flutter/**"
+      - "renderers/lit/**"
+      - "samples/agent/adk/**"
 
 jobs:
   build-and-test:
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
@@ -74,7 +74,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
@@ -109,7 +109,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
@@ -130,4 +130,3 @@ jobs:
       - name: Build React renderer and its dependencies
         working-directory: ./renderers/react
         run: npm run lint
-

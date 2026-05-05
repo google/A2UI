@@ -8,8 +8,8 @@ A2UI utilizes a **double-iframe isolation pattern** to run untrusted third-party
 
 ## Files
 
--   `sandbox.ts`: Logic for origin validation and message relaying between the Host and the inner iframe.
--   `sandbox.html`: The container for the outer proxy iframe.
+- `sandbox.ts`: Logic for origin validation and message relaying between the Host and the inner iframe.
+- `sandbox.html`: The container for the outer proxy iframe.
 
 ## Testing guidelines
 
