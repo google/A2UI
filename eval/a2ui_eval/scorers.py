@@ -15,13 +15,41 @@ S2C_SCHEMA_PATH = os.path.join(SCHEMA_DIR, "server_to_client.json")
 CATALOG_SCHEMA_PATH = os.path.join(SCHEMA_DIR, "basic_catalog.json")
 COMMON_TYPES_PATH = os.path.join(SCHEMA_DIR, "common_types.json")
 
-def _strip_markdown_fences(text: str) -> str:
-    """Strips leading and trailing markdown code blocks (e.g., ```json ... ```)."""
+def extract_json_from_markdown(text: str) -> list:
+    """Extracts JSON objects from markdown code blocks, supporting JSONL."""
     text = text.strip()
-    match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-    return text
+    # Find all ```json ... ``` blocks
+    matches = re.findall(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+    
+    results = []
+    for content in matches:
+        content = content.strip()
+        try:
+            results.append(json.loads(content))
+        except json.JSONDecodeError:
+            lines = content.split('\n')
+            for line in lines:
+                line = line.strip()
+                if line:
+                    try:
+                        results.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+                        
+    if not results:
+        try:
+            results.append(json.loads(text))
+        except json.JSONDecodeError:
+            lines = text.split('\n')
+            for line in lines:
+                line = line.strip()
+                if line:
+                    try:
+                        results.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+                        
+    return results
 
 def get_validator():
     if not os.path.exists(S2C_SCHEMA_PATH):
@@ -50,6 +78,10 @@ def get_validator():
         (
             "https://a2ui.org/specification/v0_9/common_types.json",
             Resource.from_contents(common_types_schema, default_specification=DRAFT202012)
+        ),
+        (
+            "https://a2ui.org/specification/v0_9/server_to_client.json",
+            Resource.from_contents(s2c_schema, default_specification=DRAFT202012)
         )
     ]
     
@@ -63,15 +95,54 @@ def a2ui_schema_scorer():
     validator = get_validator()
     
     async def score(state: TaskState, target: Target) -> Score:
-        output = _strip_markdown_fences(state.output.completion)
-        try:
-            data = json.loads(output)
-            validator.validate(instance=data)
-            return Score(value=1.0, explanation="Valid schema")
-        except json.JSONDecodeError:
-            return Score(value=0.0, explanation="Invalid JSON")
-        except ValidationError as e:
-            return Score(value=0.0, explanation=f"Schema validation failed: {e.message}")
+        messages = extract_json_from_markdown(state.output.completion)
+        if not messages:
+            return Score(value=0.0, explanation="Invalid JSON or no JSON found")
+            
+        errors = []
+        schema_uri = "https://a2ui.org/specification/v0_9/server_to_client.json"
+        
+        for idx, message in enumerate(messages):
+            sub_schema_name = None
+            if "createSurface" in message:
+                sub_schema_name = "CreateSurfaceMessage"
+            elif "updateComponents" in message:
+                sub_schema_name = "UpdateComponentsMessage"
+            elif "updateDataModel" in message:
+                sub_schema_name = "UpdateDataModelMessage"
+            elif "deleteSurface" in message:
+                sub_schema_name = "DeleteSurfaceMessage"
+            else:
+                errors.append(f"messages[{idx}]: Unknown message type")
+                continue
+                
+            ref_schema = {"$ref": f"{schema_uri}#/$defs/{sub_schema_name}"}
+            sub_validator = Draft202012Validator(ref_schema, registry=validator._registry)
+            
+            try:
+                sub_validator.validate(message)
+            except ValidationError as e:
+                errors.append(f"messages[{idx}]: {e.message}")
+                
+            # Targeted Component Validation
+            if sub_schema_name == "UpdateComponentsMessage":
+                components = message.get("updateComponents", {}).get("components", [])
+                for c_idx, comp in enumerate(components):
+                    comp_type = comp.get("component")
+                    if comp_type:
+                        comp_ref_schema = {"$ref": f"catalog.json#/components/{comp_type}"}
+                        comp_validator = Draft202012Validator(comp_ref_schema, registry=validator._registry)
+                        try:
+                            comp_validator.validate(comp)
+                        except ValidationError as e:
+                            comp_id = comp.get('id', f"index {c_idx}")
+                            errors.append(f"messages[{idx}].updateComponents.components[{comp_id}]: {e.message}")
+                            
+        if errors:
+            explanation = "Schema validation failed:\n" + "\n".join(errors)
+            return Score(value=0.0, explanation=explanation)
+            
+        return Score(value=1.0, explanation="Valid schema")
             
     return score
 
@@ -79,17 +150,9 @@ def a2ui_schema_scorer():
 def a2ui_semantic_scorer():
     """Stage 2: Programmatic Semantic Checks."""
     async def score(state: TaskState, target: Target) -> Score:
-        output = _strip_markdown_fences(state.output.completion)
-        try:
-            data = json.loads(output)
-        except json.JSONDecodeError:
-            return Score(value=0.0, explanation="Invalid JSON (cannot perform semantic checks)")
-
-        messages = []
-        if isinstance(data, list):
-            messages = data
-        elif isinstance(data, dict):
-            messages = [data]
+        messages = extract_json_from_markdown(state.output.completion)
+        if not messages:
+            return Score(value=0.0, explanation="Invalid JSON or no JSON found (cannot perform semantic checks)")
             
         for msg in messages:
             if 'updateComponents' in msg:
