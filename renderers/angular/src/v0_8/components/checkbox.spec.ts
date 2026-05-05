@@ -89,6 +89,6 @@ describe('Checkbox Component', () => {
     expect(mockProcessor.dispatch).toHaveBeenCalled();
     const message = mockProcessor.dispatch.calls.mostRecent().args[0] as A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('toggle');
-    expect(message.userAction!.context!['value']).toBeTrue();
+    expect(message.userAction!.context!['checked']).toBeTrue();
   });
 });

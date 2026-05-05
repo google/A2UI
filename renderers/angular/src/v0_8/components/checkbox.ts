@@ -50,7 +50,7 @@ export class Checkbox extends DynamicComponent<CheckboxNode> {
 
   onToggle(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    const checkedNode = this.checked();
+    const checkedNode = this.value();
     if (
       checkedNode &&
       typeof checkedNode === 'object' &&
