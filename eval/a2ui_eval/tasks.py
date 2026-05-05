@@ -15,7 +15,7 @@ from a2ui_eval.scorers import a2ui_scorer
 
 # Resolve paths relative to this file's location
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATASET_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../../datasets/v0_9_prompts.yaml"))
+DATASET_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../datasets/v0_9_prompts.yaml"))
 SCHEMA_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../../specification/v0_9/json/server_to_client.json"))
 CATALOG_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../../specification/v0_9/json/basic_catalog.json"))
 
