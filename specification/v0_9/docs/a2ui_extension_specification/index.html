@@ -2068,9 +2068,11 @@
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="parameter-definitions">Parameter definitions<a class="headerlink" href="#parameter-definitions" title="Permanent link">&para;</a></h3>
-<p>The <code>params</code> object corresponds to the <code>v0.9</code> object in the <code>server_capabilities.json</code> schema:
-- <code>params.supportedCatalogIds</code>: (OPTIONAL) An array of strings, where each string is an ID identifying a Catalog Definition Schema that the agent can generate. This is not necessarily a resolvable URI.
-- <code>params.acceptsInlineCatalogs</code>: (OPTIONAL) A boolean indicating if the agent can accept an <code>inlineCatalogs</code> array in the client's <code>a2uiClientCapabilities</code>. If omitted, this defaults to <code>false</code>.</p>
+<p>The <code>params</code> object corresponds to the <code>v0.9</code> object in the <code>server_capabilities.json</code> schema:</p>
+<ul>
+<li><code>params.supportedCatalogIds</code>: (OPTIONAL) An array of strings, where each string is an ID identifying a Catalog Definition Schema that the agent can generate. This is not necessarily a resolvable URI.</li>
+<li><code>params.acceptsInlineCatalogs</code>: (OPTIONAL) A boolean indicating if the agent can accept an <code>inlineCatalogs</code> array in the client's <code>a2uiClientCapabilities</code>. If omitted, this defaults to <code>false</code>.</li>
+</ul>
 <h2 id="extension-activation">Extension activation<a class="headerlink" href="#extension-activation" title="Permanent link">&para;</a></h2>
 <p>Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.</p>
 <p>For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.</p>

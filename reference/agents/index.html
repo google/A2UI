@@ -2164,35 +2164,29 @@ The agent is only responsible for generating the A2UI messages.</p>
 <h2 id="sample-agents">Sample Agents<a class="headerlink" href="#sample-agents" title="Permanent link">&para;</a></h2>
 <p>The A2UI repository includes sample agents you can learn from:</p>
 <ul>
-<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder">Restaurant Finder</a> <ul>
+<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder">Restaurant Finder</a></li>
 <li>Table reservations with forms.</li>
 <li>Written with the ADK.</li>
-</ul>
-</li>
-<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup">Contact Lookup</a> <ul>
+<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup">Contact Lookup</a></li>
 <li>Search with result lists.</li>
 <li>Written with the ADK.</li>
-</ul>
-</li>
-<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts/python">Rizzcharts</a> <ul>
+<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts/python">Rizzcharts</a></li>
 <li>A2UI Custom components demo.</li>
 <li>Written with the ADK.</li>
-</ul>
-</li>
-<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator">Orchestrator</a> <ul>
+<li><a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator">Orchestrator</a></li>
 <li>Passes A2UI messages from remote subagents.</li>
 <li>Written with the ADK.</li>
 </ul>
-</li>
-</ul>
 <h2 id="agent-types-in-a2a">Agent Types in A2A<a class="headerlink" href="#agent-types-in-a2a" title="Permanent link">&para;</a></h2>
 <h3 id="1-user-facing-agent-standalone">1. User Facing Agent (standalone)<a class="headerlink" href="#1-user-facing-agent-standalone" title="Permanent link">&para;</a></h3>
-<p>A user facing agent is one that is directly interacted with by the user. </p>
+<p>A user facing agent is one that is directly interacted with by the user.</p>
 <h3 id="2-user-facing-agent-as-a-host-for-a-remote-agent">2. User Facing Agent as a host for a Remote Agent<a class="headerlink" href="#2-user-facing-agent-as-a-host-for-a-remote-agent" title="Permanent link">&para;</a></h3>
 <p>This is a pattern where the user facing agent is a host for one or more remote agents. The user facing agent will call the remote agent and the remote agent will generate the A2UI messages. This is a common pattern in <a href="https://a2a-protocol.org">A2A</a> with the client agent calling the server agent.</p>
-<p>In this pattern, the user-facing agent can handle messages in two ways:
-- The user facing agent may "passthrough" the A2UI message without altering them.
-- The user facing agent may alter the A2UI message before sending it to the client.</p>
+<p>In this pattern, the user-facing agent can handle messages in two ways:</p>
+<ul>
+<li>The user facing agent may "passthrough" the A2UI message without altering them.</li>
+<li>The user facing agent may alter the A2UI message before sending it to the client.</li>
+</ul>
 <h3 id="3-remote-agent">3. Remote Agent<a class="headerlink" href="#3-remote-agent" title="Permanent link">&para;</a></h3>
 <p>A remote agent is not directly a part of the user facing UI. Instead it is registered in as a remote agent and can be called by the user facing agent. This is a common pattern in <a href="https://a2a-protocol.org">A2A</a> with the client agent calling the server agent.</p>
 

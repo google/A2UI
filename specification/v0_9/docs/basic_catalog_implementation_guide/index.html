@@ -2354,21 +2354,25 @@
 <h3 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h3>
 <p>Displays text content.</p>
 <p><strong>Rendering Guidelines:</strong> Text should be rendered using a Markdown parser when possible. If markdown rendering is unavailable or fails, gracefully fallback to rendering the raw text. In such cases, renderers should ideally attempt to strip common Markdown markers (like <code>**</code> or <code>#</code>) to ensure the text remains legible and aesthetically consistent with the intended presentation.
-<strong>Property Mapping:</strong>
-- <code>variant="h1"</code> through <code>h5"</code>: Apply heading styling. Suggested relative font sizes: <code>h1</code> (2.5x base), <code>h2</code> (2x base), <code>h3</code> (1.75x base), <code>h4</code> (1.5x base), <code>h5</code> (1.25x base).
-- <code>variant="caption"</code>: Render as smaller text, typically italicized or in a lighter/muted color. Suggested font size: 0.8x base.
-- <code>variant="body"</code> (default): Standard body text. Uses the base font size (e.g., 16dp/16px).</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>variant="h1"</code> through <code>h5"</code>: Apply heading styling. Suggested relative font sizes: <code>h1</code> (2.5x base), <code>h2</code> (2x base), <code>h3</code> (1.75x base), <code>h4</code> (1.5x base), <code>h5</code> (1.25x base).</li>
+<li><code>variant="caption"</code>: Render as smaller text, typically italicized or in a lighter/muted color. Suggested font size: 0.8x base.</li>
+<li><code>variant="body"</code> (default): Standard body text. Uses the base font size (e.g., 16dp/16px).</li>
+</ul>
 <h3 id="image">Image<a class="headerlink" href="#image" title="Permanent link">&para;</a></h3>
 <p>Displays an image from a URL.</p>
 <p><strong>Rendering Guidelines:</strong> Ensure the component defaults to a flexible width so it fills its container.
-<strong>Property Mapping:</strong>
-- <code>fit</code>: Map the property to the platform's equivalent content scaling mode (e.g., CSS <code>object-fit</code>, iOS <code>contentMode</code>, Android <code>ScaleType</code>).
-- <code>variant="icon"</code>: Render very small and square (e.g., 24x24dp).
-- <code>variant="avatar"</code>: Render small and rounded/circular (e.g., 40x40dp, fully rounded corners).
-- <code>variant="smallFeature"</code>: Render as a small rectangle (e.g., 100x100dp).
-- <code>variant="mediumFeature"</code> (default): Render as a medium rectangle (e.g., 100% width up to 300dp, or 200x200dp).
-- <code>variant="largeFeature"</code>: Render as a large prominent image (e.g., 100% width, max height 400dp).
-- <code>variant="header"</code>: Render as a full-width banner image, usually at the top of a surface (e.g., 100% width, height 200dp, scaling mode set to cover/crop).</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>fit</code>: Map the property to the platform's equivalent content scaling mode (e.g., CSS <code>object-fit</code>, iOS <code>contentMode</code>, Android <code>ScaleType</code>).</li>
+<li><code>variant="icon"</code>: Render very small and square (e.g., 24x24dp).</li>
+<li><code>variant="avatar"</code>: Render small and rounded/circular (e.g., 40x40dp, fully rounded corners).</li>
+<li><code>variant="smallFeature"</code>: Render as a small rectangle (e.g., 100x100dp).</li>
+<li><code>variant="mediumFeature"</code> (default): Render as a medium rectangle (e.g., 100% width up to 300dp, or 200x200dp).</li>
+<li><code>variant="largeFeature"</code>: Render as a large prominent image (e.g., 100% width, max height 400dp).</li>
+<li><code>variant="header"</code>: Render as a full-width banner image, usually at the top of a surface (e.g., 100% width, height 200dp, scaling mode set to cover/crop).</li>
+</ul>
 <h3 id="icon">Icon<a class="headerlink" href="#icon" title="Permanent link">&para;</a></h3>
 <p>Displays a standard system icon.</p>
 <p><strong>Rendering Guidelines:</strong> Map the icon <code>name</code> to a system or bundled icon set (e.g., Material Symbols, SF Symbols). The string <code>name</code> from the data model (e.g., <code>accountCircle</code>) should be converted to the required format (like snake_case <code>account_circle</code>) if required by the icon engine. Suggested styling: 24dp size and inherit the current text color.</p>
@@ -2381,21 +2385,27 @@
 <h3 id="row">Row<a class="headerlink" href="#row" title="Permanent link">&para;</a></h3>
 <p>A horizontal layout container.</p>
 <p><strong>Rendering Guidelines:</strong> Implemented using a horizontal layout container (e.g., CSS Flexbox row, Compose <code>Row</code>, SwiftUI <code>HStack</code>). Ensure it fills the available width.
-<strong>Property Mapping:</strong>
-- <code>justify</code>: Maps to main-axis alignment (e.g., <code>justify-content</code> in CSS, <code>horizontalArrangement</code> in Compose). Use equivalents for pushing items to edges (<code>spaceBetween</code>) or packing them together (<code>start</code>, <code>center</code>, <code>end</code>).
-- <code>align</code>: Maps to cross-axis alignment (e.g., <code>align-items</code> in CSS, <code>verticalAlignment</code> in Compose). Use equivalents for top (<code>start</code>), center, or bottom (<code>end</code>).</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>justify</code>: Maps to main-axis alignment (e.g., <code>justify-content</code> in CSS, <code>horizontalArrangement</code> in Compose). Use equivalents for pushing items to edges (<code>spaceBetween</code>) or packing them together (<code>start</code>, <code>center</code>, <code>end</code>).</li>
+<li><code>align</code>: Maps to cross-axis alignment (e.g., <code>align-items</code> in CSS, <code>verticalAlignment</code> in Compose). Use equivalents for top (<code>start</code>), center, or bottom (<code>end</code>).</li>
+</ul>
 <h3 id="column">Column<a class="headerlink" href="#column" title="Permanent link">&para;</a></h3>
 <p>A vertical layout container.</p>
 <p><strong>Rendering Guidelines:</strong> Implemented using a vertical layout container (e.g., CSS Flexbox column, Compose <code>Column</code>, SwiftUI <code>VStack</code>).
-<strong>Property Mapping:</strong>
-- <code>justify</code>: Maps to main-axis alignment on the vertical axis.
-- <code>align</code>: Maps to cross-axis alignment on the horizontal axis.</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>justify</code>: Maps to main-axis alignment on the vertical axis.</li>
+<li><code>align</code>: Maps to cross-axis alignment on the horizontal axis.</li>
+</ul>
 <h3 id="list">List<a class="headerlink" href="#list" title="Permanent link">&para;</a></h3>
 <p>A scrollable list of components.</p>
 <p><strong>Rendering Guidelines:</strong> Children of a horizontal list should typically have a constrained max-width so they do not stretch indefinitely.
-<strong>Property Mapping:</strong>
-- <code>direction="vertical"</code> (default): Implement as a vertically scrollable view (e.g., CSS <code>overflow-y: auto</code>, Compose <code>LazyColumn</code>, SwiftUI <code>ScrollView</code> vertical).
-- <code>direction="horizontal"</code>: Implement as a horizontally scrollable view. Hide the scrollbar for a cleaner look if supported by the platform.</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>direction="vertical"</code> (default): Implement as a vertically scrollable view (e.g., CSS <code>overflow-y: auto</code>, Compose <code>LazyColumn</code>, SwiftUI <code>ScrollView</code> vertical).</li>
+<li><code>direction="horizontal"</code>: Implement as a horizontally scrollable view. Hide the scrollbar for a cleaner look if supported by the platform.</li>
+</ul>
 <h3 id="card">Card<a class="headerlink" href="#card" title="Permanent link">&para;</a></h3>
 <p>A container with card-like styling that visually groups its child.</p>
 <p><strong>Rendering Guidelines:</strong> Applies a background color distinct from the main surface, rounded corners (e.g., 8dp or 12dp), a subtle shadow or elevation, and inner padding (e.g., 16dp). Note that the card accepts exactly <strong>one</strong> child. If the user wants multiple elements inside a card, they must provide a container (like <code>Column</code>) as the single child.</p>
@@ -2405,43 +2415,53 @@
 <strong>Behavior &amp; State:</strong> Maintain a local <code>selectedIndex</code> state (defaulting to 0). When a tab header is tapped, update <code>selectedIndex</code> and render <em>only</em> the <code>child</code> component that corresponds to that index.</p>
 <h3 id="divider">Divider<a class="headerlink" href="#divider" title="Permanent link">&para;</a></h3>
 <p>A dividing line to separate content.</p>
-<p><strong>Property Mapping:</strong>
-- <code>axis="horizontal"</code> (default): Render a 1dp tall line spanning 100% width with a subtle border/outline color.
-- <code>axis="vertical"</code>: Render a 1dp wide line with a set height, spanning the height of the container.</p>
+<p><strong>Property Mapping:</strong></p>
+<ul>
+<li><code>axis="horizontal"</code> (default): Render a 1dp tall line spanning 100% width with a subtle border/outline color.</li>
+<li><code>axis="vertical"</code>: Render a 1dp wide line with a set height, spanning the height of the container.</li>
+</ul>
 <h3 id="modal">Modal<a class="headerlink" href="#modal" title="Permanent link">&para;</a></h3>
 <p>A dialog window.</p>
-<p><strong>Rendering Guidelines:</strong>
-- <strong>Desktop UIs</strong>: Render as a centered popup or native dialog window over the main content, typically with a dimmed backdrop.
-- <strong>Mobile UIs</strong>: Render as a bottom sheet or full-screen dialog over the main content.
-- You must provide a mechanism to close the modal (e.g., an "X" button, clicking/tapping the backdrop overlay, or a swipe-to-dismiss gesture).</p>
+<p><strong>Rendering Guidelines:</strong></p>
+<ul>
+<li><strong>Desktop UIs</strong>: Render as a centered popup or native dialog window over the main content, typically with a dimmed backdrop.</li>
+<li><strong>Mobile UIs</strong>: Render as a bottom sheet or full-screen dialog over the main content.</li>
+<li>You must provide a mechanism to close the modal (e.g., an "X" button, clicking/tapping the backdrop overlay, or a swipe-to-dismiss gesture).</li>
+</ul>
 <p><strong>Behavior &amp; State:</strong> This component behaves differently than a standard container. It acts as a <strong>Modal Entry Point</strong>. When instantiated, the user only sees the <code>trigger</code> child component on the screen (which usually acts and looks like a Button). The modal logic intercepts interactions (taps/clicks) on the <code>trigger</code>. When the <code>trigger</code> is tapped, the modal opens and displays the <code>content</code> child component.</p>
 <h3 id="button">Button<a class="headerlink" href="#button" title="Permanent link">&para;</a></h3>
 <p>An interactive button that dispatches a protocol action.</p>
 <p><strong>Rendering Guidelines:</strong> Render as a native interactive button component. It must render its <code>child</code> component inside the button (usually a <code>Text</code> or <code>Icon</code>).
 <strong>Behavior &amp; State:</strong> When tapped, it dispatches the <code>action</code> back to the server, dynamically resolving the context variables at the moment of the interaction.
-<strong>Property Mapping:</strong>
-- <code>variant="default"</code>: Standard button with a subtle background and border.
-- <code>variant="primary"</code>: Prominent call-to-action button using the theme's <code>primaryColor</code> for its background, and contrasting text.
-- <code>variant="borderless"</code>: Button with no background or border, appearing like a clickable text link.</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>variant="default"</code>: Standard button with a subtle background and border.</li>
+<li><code>variant="primary"</code>: Prominent call-to-action button using the theme's <code>primaryColor</code> for its background, and contrasting text.</li>
+<li><code>variant="borderless"</code>: Button with no background or border, appearing like a clickable text link.</li>
+</ul>
 <h3 id="textfield">TextField<a class="headerlink" href="#textfield" title="Permanent link">&para;</a></h3>
 <p>A field for user text input.</p>
 <p><strong>Rendering Guidelines:</strong> Render using the platform's native text input control.
 <strong>Behavior &amp; State:</strong> Establishes <strong>Two-Way Binding</strong>. As the user types, immediately write the new string back to the local data model path bound to <code>value</code>.
-<strong>Property Mapping:</strong>
-- <code>variant="shortText"</code> (default): Standard single-line input field.
-- <code>variant="longText"</code>: Render as a multi-line text area.
-- <code>variant="number"</code>: Render as a numeric input field, typically showing a numeric keyboard on mobile.
-- <code>variant="obscured"</code>: Render as an obscured password/secure field.</p>
+<strong>Property Mapping:</strong></p>
+<ul>
+<li><code>variant="shortText"</code> (default): Standard single-line input field.</li>
+<li><code>variant="longText"</code>: Render as a multi-line text area.</li>
+<li><code>variant="number"</code>: Render as a numeric input field, typically showing a numeric keyboard on mobile.</li>
+<li><code>variant="obscured"</code>: Render as an obscured password/secure field.</li>
+</ul>
 <h3 id="checkbox">CheckBox<a class="headerlink" href="#checkbox" title="Permanent link">&para;</a></h3>
 <p>A toggleable control with a label.</p>
 <p><strong>Rendering Guidelines:</strong> Render a native checkbox or toggle switch component alongside a text label.
 <strong>Behavior &amp; State:</strong> Triggers two-way binding on the <code>value</code> path, setting it to boolean <code>true</code> or <code>false</code> when interacted with.</p>
 <h3 id="choicepicker">ChoicePicker<a class="headerlink" href="#choicepicker" title="Permanent link">&para;</a></h3>
 <p>A component for selecting one or more options from a list.</p>
-<p><strong>Rendering Guidelines:</strong>
-- <code>displayStyle="checkbox"</code> (default): Render as a dropdown menu, picker wheel, or an expanding vertical list of selectable options. A dropdown wrapper is preferred to save space.
-- <code>displayStyle="chips"</code>: Render as a horizontal, wrapping row of selectable chips/pills. Selected chips should have a distinct background/border.
-- If <code>filterable</code> is true, render a text input above the list of options. As the user types, filter the visible options using a case-insensitive substring match on the option labels.</p>
+<p><strong>Rendering Guidelines:</strong></p>
+<ul>
+<li><code>displayStyle="checkbox"</code> (default): Render as a dropdown menu, picker wheel, or an expanding vertical list of selectable options. A dropdown wrapper is preferred to save space.</li>
+<li><code>displayStyle="chips"</code>: Render as a horizontal, wrapping row of selectable chips/pills. Selected chips should have a distinct background/border.</li>
+<li>If <code>filterable</code> is true, render a text input above the list of options. As the user types, filter the visible options using a case-insensitive substring match on the option labels.</li>
+</ul>
 <p><strong>Behavior &amp; State:</strong> Binds to an array of strings in the data model representing the active selections. Toggle selections in the data model upon user interaction.</p>
 <h3 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h3>
 <p>A control for selecting a numeric value within a range.</p>
@@ -2449,14 +2469,16 @@
 <strong>Behavior &amp; State:</strong> Set <code>min</code> and <code>max</code> limits. Perform two-way binding, updating the numeric <code>value</code> path as the user drags the slider. Note that the value is a <code>number</code> rather than an integer, allowing for decimal ranges (e.g., 0.0 to 1.0).</p>
 <h3 id="datetimeinput">DateTimeInput<a class="headerlink" href="#datetimeinput" title="Permanent link">&para;</a></h3>
 <p>An input for date and/or time.</p>
-<p><strong>Rendering Guidelines:</strong> Render using native date and time picker controls.
-- If <code>enableDate</code> and <code>enableTime</code> are both true, show both date and time selection UI.
-- If only <code>enableDate</code> is true, show only a date picker.
-- If only <code>enableTime</code> is true, show only a time picker.</p>
+<p><strong>Rendering Guidelines:</strong> Render using native date and time picker controls.</p>
+<ul>
+<li>If <code>enableDate</code> and <code>enableTime</code> are both true, show both date and time selection UI.</li>
+<li>If only <code>enableDate</code> is true, show only a date picker.</li>
+<li>If only <code>enableTime</code> is true, show only a time picker.</li>
+</ul>
 <p><strong>Behavior &amp; State:</strong> The component must convert the platform's native date/time format into a standard ISO 8601 string before writing it to the A2UI data model, and correctly parse ISO 8601 strings coming from the model into the input field.</p>
 <hr />
 <h2 id="2-client-side-functions">2. Client-Side Functions<a class="headerlink" href="#2-client-side-functions" title="Permanent link">&para;</a></h2>
-<p>Functions provide client-side logic for validation, interpolation, and operations. As defined in the Architecture Guide, the reactivity of function arguments is generally handled by the Core Data Layer (specifically the Binder/Context layer). </p>
+<p>Functions provide client-side logic for validation, interpolation, and operations. As defined in the Architecture Guide, the reactivity of function arguments is generally handled by the Core Data Layer (specifically the Binder/Context layer).</p>
 <p>Core libraries for each language (such as <code>@a2ui/web_core</code> for TypeScript) typically provide a complete, framework-agnostic implementation of all the functions in the basic catalog. Developers are encouraged to utilize these shared implementations rather than writing their own.
 When a function is called, the system resolves its arguments. If an argument is a static value, it is passed directly. If it is a dynamic binding, the Context layer handles the subscription. For most standard functions, the <code>execute</code> implementation simply receives a dictionary of static <code>args</code> and returns a static value. The Context layer wraps this execution in a reactive stream (e.g., a <code>computed</code> signal) so that the function re-runs whenever any of its dynamic arguments change.</p>
 <p>However, complex functions like <code>formatString</code> must manually interact with the Context to parse and subscribe to nested dynamic dependencies.</p>
@@ -2492,9 +2514,11 @@ Because <code>formatString</code> contains dynamic expressions embedded <em>with
 <p><strong>Logic:</strong> Test <code>args.value</code> against a standard email regex pattern (e.g., <code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code>).</p>
 <h3 id="formatnumber"><code>formatNumber</code><a class="headerlink" href="#formatnumber" title="Permanent link">&para;</a></h3>
 <p><strong>Description:</strong> Formats a numeric value.</p>
-<p><strong>Logic:</strong> Use the platform's native locale formatting (e.g., <code>Intl.NumberFormat</code> on the web or <code>NumberFormatter</code> natively) on <code>args.value</code>. 
-- If <code>args.decimals</code> is provided, force both the minimum and maximum fraction digits to that value. 
-- Enable grouping (e.g., thousands separators) unless <code>args.grouping</code> is explicitly set to <code>false</code>.</p>
+<p><strong>Logic:</strong> Use the platform's native locale formatting (e.g., <code>Intl.NumberFormat</code> on the web or <code>NumberFormatter</code> natively) on <code>args.value</code>.</p>
+<ul>
+<li>If <code>args.decimals</code> is provided, force both the minimum and maximum fraction digits to that value.</li>
+<li>Enable grouping (e.g., thousands separators) unless <code>args.grouping</code> is explicitly set to <code>false</code>.</li>
+</ul>
 <h3 id="formatcurrency"><code>formatCurrency</code><a class="headerlink" href="#formatcurrency" title="Permanent link">&para;</a></h3>
 <p><strong>Description:</strong> Formats a number as a currency string.</p>
 <p><strong>Logic:</strong> Similar to <code>formatNumber</code>, but configured for currency style formatting. Apply the ISO 4217 currency code provided in <code>args.currency</code> (e.g., 'USD', 'EUR').</p>
@@ -2518,21 +2542,23 @@ Because <code>formatString</code> contains dynamic expressions embedded <em>with
 <p><strong>Logic:</strong> Return the strict boolean negation of <code>args.value</code>.</p>
 <hr />
 <h2 id="3-layout-spacing-margins-and-padding">3. Layout Spacing: Margins and Padding<a class="headerlink" href="#3-layout-spacing-margins-and-padding" title="Permanent link">&para;</a></h2>
-<p>A common challenge in dynamic UI frameworks is preventing "spacing multiplication," where nested containers (e.g., a <code>Text</code> inside a <code>Row</code> inside a <code>Column</code>) result in accumulated empty space that throws off the design. </p>
+<p>A common challenge in dynamic UI frameworks is preventing "spacing multiplication," where nested containers (e.g., a <code>Text</code> inside a <code>Row</code> inside a <code>Column</code>) result in accumulated empty space that throws off the design.</p>
 <p>To achieve a clean, consistent default spacing where elements feel naturally separated without stacking empty space, implementers should follow a <strong>Leaf-Margin Strategy</strong>:</p>
 <ol>
 <li><strong>Invisible Containers have ZERO Spacing</strong>: Structural, invisible layout containers (<code>Row</code>, <code>Column</code>, <code>List</code>) should have <strong>no internal padding</strong> and <strong>no external margins</strong>. They act purely as structural boundaries. This guarantees that wrapping an element in a <code>Row</code> or <code>Column</code> does not alter its spacing.</li>
 <li><strong>Leaf Components carry the Margin</strong>: All non-container, visual "leaf" elements (<code>Text</code>, <code>Image</code>, <code>Icon</code>, <code>Video</code>, <code>AudioPlayer</code>, <code>Slider</code>, etc.) should have a uniform default <strong>external margin</strong> applied to them (e.g., <code>8dp</code> on all sides).</li>
-<li><strong>Visually Outlined Containers carry the Margin</strong>: Containers and inputs that have a visible boundary (<code>Card</code>, <code>Button</code>, <code>TextField</code>, <code>CheckBox</code>, <code>ChoicePicker</code>) should also apply this same uniform default <strong>external margin</strong>. </li>
+<li><strong>Visually Outlined Containers carry the Margin</strong>: Containers and inputs that have a visible boundary (<code>Card</code>, <code>Button</code>, <code>TextField</code>, <code>CheckBox</code>, <code>ChoicePicker</code>) should also apply this same uniform default <strong>external margin</strong>.</li>
 <li><em>Note:</em> These elements will naturally also need internal <em>padding</em> to keep their content away from their own visible borders, but this padding is localized and does not affect the external layout.</li>
 </ol>
 <p><strong>Why use Margins on Leaves?</strong>
 Applying margins directly to the visual elements—rather than relying on padding or gap properties on the parent containers—ensures predictable spacing. For example, if you have <code>Row(Item1, Item2)</code>, using margins on the items guarantees that there is space to the left of <code>Item1</code>, space to the right of <code>Item2</code>, and space between them. Because the invisible containers themselves contribute zero extra spacing, you can deeply nest your structural rows and columns without the spacing unexpectedly multiplying.</p>
 <hr />
 <h2 id="4-color-contrast-and-nesting">4. Color, Contrast, and Nesting<a class="headerlink" href="#4-color-contrast-and-nesting" title="Permanent link">&para;</a></h2>
-<p>A common challenge in dynamically generated UI is ensuring proper contrast and visual hierarchy when components are nested. For example:
-- A <code>Text</code> or <code>Icon</code> nested inside a <code>primary</code> <code>Button</code> must change its color to contrast with the button's background.
-- A <code>Card</code> nested inside another <code>Card</code> should remain visually distinct.</p>
+<p>A common challenge in dynamically generated UI is ensuring proper contrast and visual hierarchy when components are nested. For example:</p>
+<ul>
+<li>A <code>Text</code> or <code>Icon</code> nested inside a <code>primary</code> <code>Button</code> must change its color to contrast with the button's background.</li>
+<li>A <code>Card</code> nested inside another <code>Card</code> should remain visually distinct.</li>
+</ul>
 <p>To keep the A2UI rendering layer simple and performant, <strong>do not manually calculate or pass color properties down the A2UI component tree</strong>. Instead, rely entirely on the native context and theme inheritance mechanisms provided by your target UI framework.</p>
 <h3 id="text-and-icon-contrast">Text and Icon Contrast<a class="headerlink" href="#text-and-icon-contrast" title="Permanent link">&para;</a></h3>
 <p>When an element defines a strong background color (like a <code>primary</code> <code>Button</code> using the theme's <code>primaryColor</code>), it must also define the expected text color for its content. It should propagate this expectation implicitly.</p>
@@ -2546,10 +2572,12 @@ Applying margins directly to the visual elements—rather than relying on paddin
 <h3 id="nesting-containers-cards">Nesting Containers (Cards)<a class="headerlink" href="#nesting-containers-cards" title="Permanent link">&para;</a></h3>
 <p>When a <code>Card</code> is nested within another <code>Card</code>, or placed on different background surfaces, it needs to remain distinct. Attempting to alternate surface colors based on depth adds significant complexity to the renderer.</p>
 <p><strong>Recommended Approach: Outlines and Transparent Surfaces</strong>
-The simplest, most robust starting approach is to give <code>Card</code> components a <strong>transparent background</strong> and a <strong>visible outline/border</strong> (e.g., a 1dp outline matching the theme's outline/border color). 
-- By using borders instead of opaque surface colors, nested cards will simply draw an inner boundary within the parent card. 
-- This guarantees a clear visual hierarchy regardless of how deeply they are nested, and it requires zero context-passing or depth-tracking in your code.
-- If your design system requires opaque cards, consider using a framework-specific elevation system (e.g., standard Material elevation) which often handles shadow and surface tinting automatically, rather than building custom color-alternation logic into the A2UI adapters.</p>
+The simplest, most robust starting approach is to give <code>Card</code> components a <strong>transparent background</strong> and a <strong>visible outline/border</strong> (e.g., a 1dp outline matching the theme's outline/border color).</p>
+<ul>
+<li>By using borders instead of opaque surface colors, nested cards will simply draw an inner boundary within the parent card.</li>
+<li>This guarantees a clear visual hierarchy regardless of how deeply they are nested, and it requires zero context-passing or depth-tracking in your code.</li>
+<li>If your design system requires opaque cards, consider using a framework-specific elevation system (e.g., standard Material elevation) which often handles shadow and surface tinting automatically, rather than building custom color-alternation logic into the A2UI adapters.</li>
+</ul>
 
 
 

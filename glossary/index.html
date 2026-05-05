@@ -963,33 +963,33 @@
 <h2 id="a2ui-protocol-terms">A2UI protocol terms<a class="headerlink" href="#a2ui-protocol-terms" title="Permanent link">¶</a></h2>
 <p>Terms, required by A2UI protocol.</p>
 <h3 id="a2ui-agent-and-a2ui-renderer">A2UI agent and A2UI renderer<a class="headerlink" href="#a2ui-agent-and-a2ui-renderer" title="Permanent link">¶</a></h3>
-<p>The A2UI protocol enables conversation between <strong>agent</strong> and <strong>renderer</strong>:
-1. <strong>Renderer</strong> provides <strong>UI capabilities</strong> in the form of A2UI catalog and <strong>instructions</strong> on how to use it.
-2. <strong>Agent</strong> iterates on the loop:
-    - Provides <strong>UI</strong> and <strong>functions</strong> to call, taking into account the received catalog
-    - Receives <strong>user input</strong>, communicated by renderer
-    - Updates <strong>data</strong> to show in UI</p>
+<p>The A2UI protocol enables conversation between <strong>agent</strong> and <strong>renderer</strong>:</p>
+<ol>
+<li><strong>Renderer</strong> provides <strong>UI capabilities</strong> in the form of A2UI catalog and <strong>instructions</strong> on how to use it.</li>
+<li><strong>Agent</strong> iterates on the loop:</li>
+<li>Provides <strong>UI</strong> and <strong>functions</strong> to call, taking into account the received catalog</li>
+<li>Receives <strong>user input</strong>, communicated by renderer</li>
+<li>Updates <strong>data</strong> to show in UI</li>
+</ol>
 <p><img alt="agent and renderer" src="../assets/agent-and-renderer.png"/></p>
 <p>While the protocol is designed for <strong>AI-empowered agents</strong>, it can work with deterministic agents as well. For example, an agent may return a pre-canned A2UI UI.</p>
 <p>In case the agent is stateless or does not guarantee to preserve the catalog, the renderer should provide the catalog with every message.</p>
-<p>And, sometimes, an agent is using a predefined catalog, thus forcing the renderers to either support this catalog or use an adapter. </p>
+<p>And, sometimes, an agent is using a predefined catalog, thus forcing the renderers to either support this catalog or use an adapter.</p>
 <h3 id="genui-component">GenUI Component<a class="headerlink" href="#genui-component" title="Permanent link">¶</a></h3>
 <p>UI component, allowed for use by agent. Examples: date picker, carousel, button, hotel selector.</p>
 <h3 id="catalog">Catalog<a class="headerlink" href="#catalog" title="Permanent link">¶</a></h3>
 <ol>
-<li>Itemized renderer capabilities:<ul>
+<li>Itemized renderer capabilities:</li>
 <li>List of components that the agent can use to generate UI</li>
 <li>List of functions that can be invoked by renderer</li>
 <li>Styles and themes</li>
-</ul>
-</li>
 <li>Explanation on how the renderer capabilities should be used.</li>
 </ol>
 <p>It is observed that depending on use case, catalog components may be more or less specific to domain:</p>
 <ul>
 <li><strong>Less specific</strong>:</li>
 </ul>
-<p>Basic UI primitives like buttons, labels, rows, columns, option-selectors and so on. </p>
+<p>Basic UI primitives like buttons, labels, rows, columns, option-selectors and so on.</p>
 <ul>
 <li><strong>More specific</strong>:</li>
 </ul>
@@ -1042,20 +1042,16 @@ which consists of a number of components. Surfaces cannot nest.</p>
 <ul>
 <li><strong>Framework adapter</strong>:<a id="fw-adapter"></a></li>
 </ul>
-<p>Code that implements the execution of the agent’s instructions in a concrete framework. For example:</p>
-<ul>
-<li>JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.</li>
-<li>Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.</li>
-</ul>
+<p>Code that implements the execution of the agent’s instructions in a concrete framework. For example:
+  - JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.
+  - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.</p>
 <p>See the <a href="https://github.com/google/A2UI/blob/main/renderers/angular/README.md">Angular adapter</a>.</p>
 <ul>
 <li><strong>Catalog Implementation</strong>:</li>
 </ul>
 <p>Implementation of the catalog schema for a framework.</p>
-<p>For example:</p>
-<ul>
-<li>See the <a href="https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_9/catalog/basic">Angular implementation of the basic catalog</a></li>
-</ul>
+<p>For example:
+  - See the <a href="https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_9/catalog/basic">Angular implementation of the basic catalog</a></p>
 <pre class="mermaid"><code>flowchart TD;
 cimpl("Catalog&lt;br&gt;Implementation")--&gt;cschema("Catalog&lt;br&gt;Schema");
 cschema--&gt;core("Core&lt;br&gt;Library");
@@ -1116,9 +1112,11 @@ fadapter--&gt;core;</code></pre>
 </table>
 <p>See the <a href="https://github.com/google/A2UI/blob/main/specification/v0_9/json/common_types.json#L200">example in common types</a>.</p>
 <h3 id="action">Action<a class="headerlink" href="#action" title="Permanent link">¶</a></h3>
-<p>A container for an interaction triggered by the user in the UI. Actions come in two types:
-- <strong>Event</strong>: Dispatched to the agent for processing (e.g., clicking "Submit").
-- <strong>Function</strong>: Executed locally on the renderer (e.g., opening a URL).</p>
+<p>A container for an interaction triggered by the user in the UI. Actions come in two types:</p>
+<ul>
+<li><strong>Event</strong>: Dispatched to the agent for processing (e.g., clicking "Submit").</li>
+<li><strong>Function</strong>: Executed locally on the renderer (e.g., opening a URL).</li>
+</ul>
 <p>See the <a href="../concepts/actions/">detailed guide on actions</a>.</p>
 <h2 id="generative-ui-terms">Generative UI terms<a class="headerlink" href="#generative-ui-terms" title="Permanent link">¶</a></h2>
 <p>Terms, not required by A2UI protocol, but commonly used in the context of generative UI.</p>

@@ -23,13 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "info",
-              "bio",
-              "stats-row",
-              "follow-btn"
-            ],
+            "children": ["header", "info", "bio", "stats-row", "follow-btn"],
             "align": "center"
           },
           {
@@ -44,10 +38,7 @@
           {
             "id": "info",
             "component": "Column",
-            "children": [
-              "name",
-              "username"
-            ],
+            "children": ["name", "username"],
             "align": "center"
           },
           {
@@ -77,20 +68,13 @@
           {
             "id": "stats-row",
             "component": "Row",
-            "children": [
-              "followers-col",
-              "following-col",
-              "posts-col"
-            ],
+            "children": ["followers-col", "following-col", "posts-col"],
             "justify": "spaceAround"
           },
           {
             "id": "followers-col",
             "component": "Column",
-            "children": [
-              "followers-count",
-              "followers-label"
-            ],
+            "children": ["followers-count", "followers-label"],
             "align": "center"
           },
           {
@@ -116,10 +100,7 @@
           {
             "id": "following-col",
             "component": "Column",
-            "children": [
-              "following-count",
-              "following-label"
-            ],
+            "children": ["following-count", "following-label"],
             "align": "center"
           },
           {
@@ -145,10 +126,7 @@
           {
             "id": "posts-col",
             "component": "Column",
-            "children": [
-              "posts-count",
-              "posts-label"
-            ],
+            "children": ["posts-count", "posts-label"],
             "align": "center"
           },
           {

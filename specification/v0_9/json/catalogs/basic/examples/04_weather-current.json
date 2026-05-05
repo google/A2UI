@@ -23,21 +23,13 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "temp-row",
-              "location",
-              "description",
-              "forecast-row"
-            ],
+            "children": ["temp-row", "location", "description", "forecast-row"],
             "align": "center"
           },
           {
             "id": "temp-row",
             "component": "Row",
-            "children": [
-              "temp-high",
-              "temp-low"
-            ],
+            "children": ["temp-high", "temp-low"],
             "align": "start"
           },
           {
@@ -92,11 +84,7 @@
           {
             "id": "forecast-day-template",
             "component": "Column",
-            "children": [
-              "day-name",
-              "day-icon",
-              "day-temp"
-            ],
+            "children": ["day-name", "day-icon", "day-temp"],
             "align": "center"
           },
           {

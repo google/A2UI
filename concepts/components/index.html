@@ -2392,14 +2392,14 @@
 <p>This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.</p>
 <p>For the complete component gallery with examples, see <a href="../../reference/components/">Component Reference</a>.</p>
 <h2 id="static-vs-dynamic-children">Static vs. Dynamic Children<a class="headerlink" href="#static-vs-dynamic-children" title="Permanent link">&para;</a></h2>
-<p><strong>Static (<code>explicitList</code>)</strong> - Fixed list of child IDs:
+<p><strong>Static (<code>explicitList</code>)</strong> - Fixed list of child IDs:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;explicitList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;back-btn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;title&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;menu-btn&quot;</span><span class="p">]</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
-</span></code></pre></div></p>
-<p><strong>Dynamic (<code>template</code>)</strong> - Generate children from data array:
+</span></code></pre></div>
+<p><strong>Dynamic (<code>template</code>)</strong> - Generate children from data array:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2408,7 +2408,7 @@
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
 <p>For each item in <code>/items</code>, render the <code>item-template</code>. See <a href="../data-binding/">Data Binding</a> for details.</p>
 <h2 id="hydrating-with-values">Hydrating with Values<a class="headerlink" href="#hydrating-with-values" title="Permanent link">&para;</a></h2>
 <p>Components get their values two ways:</p>

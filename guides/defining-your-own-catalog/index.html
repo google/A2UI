@@ -2118,10 +2118,12 @@
 <p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons.</p>
 <h2 id="why-define-your-own-catalog">Why Define Your Own Catalog?<a class="headerlink" href="#why-define-your-own-catalog" title="Permanent link">&para;</a></h2>
 <p>Every A2UI surface is driven by a <strong>Catalog</strong>. A catalog is simply a JSON Schema file that tells the agent which components, functions, and themes are available for it to use.</p>
-<p>Defining your own catalog offers the following benefits:
--   <strong>Design System Alignment</strong>: Restrict the agent to using exactly the components and visual language that exist in your application.
--   <strong>Security and Type Safety</strong>: You register entire catalogs with your client application, ensuring that only trusted components are rendered.
--   <strong>No Mappers Needed</strong>: It is recommended to build catalogs that directly reflect your client's design system rather than trying to map a generic catalog (like the Basic Catalog) to it through an adapter.</p>
+<p>Defining your own catalog offers the following benefits:</p>
+<ul>
+<li><strong>Design System Alignment</strong>: Restrict the agent to using exactly the components and visual language that exist in your application.</li>
+<li><strong>Security and Type Safety</strong>: You register entire catalogs with your client application, ensuring that only trusted components are rendered.</li>
+<li><strong>No Mappers Needed</strong>: It is recommended to build catalogs that directly reflect your client's design system rather than trying to map a generic catalog (like the Basic Catalog) to it through an adapter.</li>
+</ul>
 <p>The Basic Catalog is just one example and is intentionally sparse to remain easily implementable by different renderers.</p>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <ol>
@@ -2142,14 +2144,10 @@
 </div>
 </div>
 <ul>
-<li>
-<p>Create your own <code>Component</code> objects and <code>Catalog</code> object within your chosen web renderer.</p>
-<ul>
+<li>Create your own <code>Component</code> objects and <code>Catalog</code> object within your chosen web renderer.</li>
 <li>Provide the schema or reference ID to the agent.</li>
 </ul>
 <p><em>Detailed guides for each framework coming soon.</em></p>
-</li>
-</ul>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="flutter" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="flutter">Flutter</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">

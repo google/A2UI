@@ -2163,13 +2163,13 @@
 </span><span id="__span-2-48"><a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a>    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_restaurants</span><span class="p">],</span>
 </span><span id="__span-2-49"><a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a><span class="p">)</span>
 </span></code></pre></div>
-<p>Don't forget to set the <code>GOOGLE_API_KEY</code> environment variable to run this example.  </p>
+<p>Don't forget to set the <code>GOOGLE_API_KEY</code> environment variable to run this example.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;GOOGLE_API_KEY=&quot;YOUR_API_KEY&quot;&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>.env
 </span></code></pre></div>
 <p>You can test out this agent with the ADK web interface:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>adk<span class="w"> </span>web
 </span></code></pre></div>
-<p>Select <code>my_agent</code> from the list, and ask questions about restaurants in New York.  You should see a list of restaurants in the UI as plain text.</p>
+<p>Select <code>my_agent</code> from the list, and ask questions about restaurants in New York. You should see a list of restaurants in the UI as plain text.</p>
 <h2 id="generating-a2ui-messages">Generating A2UI Messages<a class="headerlink" href="#generating-a2ui-messages" title="Permanent link">&para;</a></h2>
 <p>Getting the LLM to generate A2UI messages requires some prompt engineering. The SDK provides the <code>A2uiSchemaManager</code> to help you generate a system prompt that includes the A2UI schema and examples from your component catalog.</p>
 <p>First, make sure you have <code>a2ui-agent-sdk</code> installed (it is included in the samples).</p>
@@ -2242,7 +2242,7 @@
 </span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">)</span>
 </span></code></pre></div>
 <p>By validating the output against <code>A2UI_SCHEMA</code>, you ensure that your client never receives malformed UI instructions.</p>
-<p>TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer   without the A2A extension.</p>
+<p>TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer without the A2A extension.</p>
 
 
 

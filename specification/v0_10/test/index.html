@@ -1970,10 +1970,12 @@
 <p>Run the Python test script from the repository root or the test directory:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>specification/v0_10/test/run_tests.py
 </span></code></pre></div>
-<p>The script will:
-1. Load all schemas from <code>specification/v0_10/json</code>.
-2. Execute all test suites defined in <code>specification/v0_10/test/cases/*.json</code>.
-3. Report pass/fail status for each test case.</p>
+<p>The script will:</p>
+<ol>
+<li>Load all schemas from <code>specification/v0_10/json</code>.</li>
+<li>Execute all test suites defined in <code>specification/v0_10/test/cases/*.json</code>.</li>
+<li>Report pass/fail status for each test case.</li>
+</ol>
 <h2 id="adding-tests">Adding Tests<a class="headerlink" href="#adding-tests" title="Permanent link">&para;</a></h2>
 <p>Create a new JSON file in <code>cases/</code> (e.g., <code>cases/my_feature.json</code>):</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>

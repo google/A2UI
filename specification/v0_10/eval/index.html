@@ -2065,16 +2065,18 @@
 <li><code>--prompt=&lt;prompt_name&gt;</code>: (Default: all prompts) Run only the specified prompt.</li>
 </ul>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
-<p>Run with debug output in console:
+<p>Run with debug output in console:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pnpm<span class="w"> </span>run<span class="w"> </span><span class="nb">eval</span><span class="w"> </span>--<span class="w"> </span>--log-level<span class="o">=</span>debug
-</span></code></pre></div></p>
-<p>Run 5 times per prompt and clean previous results:
+</span></code></pre></div>
+<p>Run 5 times per prompt and clean previous results:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pnpm<span class="w"> </span>run<span class="w"> </span><span class="nb">eval</span><span class="w"> </span>--<span class="w"> </span>--runs-per-prompt<span class="o">=</span><span class="m">5</span><span class="w"> </span>--clean-results
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h2 id="rate-limiting">Rate Limiting<a class="headerlink" href="#rate-limiting" title="Permanent link">&para;</a></h2>
-<p>The framework includes a two-tiered rate limiting system:
-1. <strong>Proactive Limiting</strong>: Locally tracks token and request usage to stay within configured limits (defined in <code>src/models.ts</code>).
-2. <strong>Reactive Circuit Breaker</strong>: Automatically pauses requests to a model if a <code>RESOURCE_EXHAUSTED</code> (429) error is received, resuming only after the requested retry duration.</p>
+<p>The framework includes a two-tiered rate limiting system:</p>
+<ol>
+<li><strong>Proactive Limiting</strong>: Locally tracks token and request usage to stay within configured limits (defined in <code>src/models.ts</code>).</li>
+<li><strong>Reactive Circuit Breaker</strong>: Automatically pauses requests to a model if a <code>RESOURCE_EXHAUSTED</code> (429) error is received, resuming only after the requested retry duration.</li>
+</ol>
 
 
 
