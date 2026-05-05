@@ -29,7 +29,7 @@ The A2UI repository is organized into several key directories:
     -   `personalized_learning/`: Personalized learning sample implementation.
 -   `agent_sdks/`: Contains source code for Agent integrations.
     -   `python/`: Python implementation of the A2UI agent library.
-    -   `java/`: Java implementation of the A2UI agent library.
+    -   `kotlin/`: Kotlin implementation of the A2UI agent library.
 -   `renderers/`: Contains renderer libraries.
     -   `lit/`: The shared Lit renderer library used by the Lit clients.
     -   `angular/`: The shared Angular renderer library used by the Angular clients.
