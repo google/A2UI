@@ -18,6 +18,7 @@ import json
 import os
 from inspect_ai.scorer import scorer, Score, Target, accuracy, model_graded_qa
 from inspect_ai.solver import TaskState
+from inspect_ai.model._model import sample_model_usage
 from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.schema.catalog import CatalogConfig
 from a2ui.parser.parser import parse_response
@@ -65,12 +66,18 @@ def measured_model_graded_qa(model: str):
     base_scorer = model_graded_qa(model=model)
     
     async def score(state: TaskState, target: Target) -> Score:
-        start_tokens = state.token_usage
+        usage_before = sample_model_usage().get(model)
+        before_input = usage_before.input_tokens if usage_before else 0
+        before_output = usage_before.output_tokens if usage_before else 0
         
         result = await base_scorer(state, target)
         
-        tokens_used = state.token_usage - start_tokens
-        state.metadata["evaluation_tokens"] = tokens_used
+        usage_after = sample_model_usage().get(model)
+        after_input = usage_after.input_tokens if usage_after else 0
+        after_output = usage_after.output_tokens if usage_after else 0
+        
+        state.metadata["evaluation_input_tokens"] = after_input - before_input
+        state.metadata["evaluation_output_tokens"] = after_output - before_output
         
         return result
         
