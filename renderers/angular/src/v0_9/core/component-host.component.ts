@@ -76,7 +76,7 @@ export class ComponentHostComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  protected componentType: Type<any> | null = null;
+  protected componentType: Type<unknown> | null = null;
   protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
 
@@ -141,7 +141,7 @@ export class ComponentHostComponent {
   }
 
   private initializeComponent(
-    surface: SurfaceModel<any>,
+    surface: SurfaceModel,
     componentModel: ComponentModel,
     id: string,
     basePath: string,

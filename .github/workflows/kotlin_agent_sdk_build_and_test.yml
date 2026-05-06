@@ -47,6 +47,10 @@ jobs:
         working-directory: agent_sdks/kotlin
         run: chmod +x gradlew
 
+      - name: Check formatting
+        working-directory: agent_sdks/kotlin
+        run: ./gradlew ktfmtCheck
+
       - name: Run tests
         working-directory: agent_sdks/kotlin
         run: ./gradlew test --info

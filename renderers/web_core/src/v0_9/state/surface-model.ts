@@ -31,7 +31,7 @@ export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
  *
  * @template T The concrete type of the ComponentApi from the catalog.
  */
-export class SurfaceModel<T extends ComponentApi> {
+export class SurfaceModel<T extends ComponentApi = ComponentApi> {
   /** The data model for this surface. */
   readonly dataModel: DataModel;
   /** The collection of component models for this surface. */

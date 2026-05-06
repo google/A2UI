@@ -29,7 +29,7 @@ import {DynamicComponent} from '../rendering/dynamic-component';
         type="range"
         [class]="theme.components.Slider.element"
         [id]="inputId"
-        [attr.aria-labelledby]="labelId"
+        [attr.aria-label]="resolvedLabel() ? resolvedLabel() : 'Slider'"
         [min]="minValue()"
         [max]="maxValue()"
         [value]="resolvedValue() ?? 0"
