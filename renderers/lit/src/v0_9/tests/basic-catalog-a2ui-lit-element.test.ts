@@ -18,8 +18,15 @@ import {setupTestDom, teardownTestDom, asyncUpdate} from './dom-setup.js';
 import assert from 'node:assert';
 import {describe, it, beforeEach, after, before} from 'node:test';
 
-import {ComponentContext, MessageProcessor, Catalog} from '@a2ui/web_core/v0_9';
+import {
+  ComponentContext,
+  MessageProcessor,
+  Catalog,
+  ComponentApi,
+  SurfaceModel,
+} from '@a2ui/web_core/v0_9';
 import {LitComponentApi} from '../types.js';
+import {A2uiController} from '../a2ui-controller.js';
 
 describe('BasicCatalogA2uiLitElement', () => {
   let basicCatalog: Catalog<LitComponentApi>;
@@ -30,13 +37,15 @@ describe('BasicCatalogA2uiLitElement', () => {
     const module = await import('../catalogs/basic/basic-catalog-a2ui-lit-element.js');
     basicCatalog = (await import('../catalogs/basic/index.js')).basicCatalog;
 
-    // Create a mock subclass
-    class TestBasicElement extends module.BasicCatalogA2uiLitElement<any> {
+    // Create a mock A2uiLitElement for tests
+    class TestBasicElement extends module.BasicCatalogA2uiLitElement<ComponentApi> {
       createController() {
-        return {
+        const controllerMock = {
           props: {},
           dispose: () => {},
-        } as any;
+        } as A2uiController<ComponentApi>;
+
+        return controllerMock;
       }
 
       render() {
@@ -49,8 +58,8 @@ describe('BasicCatalogA2uiLitElement', () => {
 
   after(teardownTestDom);
 
-  let processor: MessageProcessor<any>;
-  let surface: any;
+  let processor: MessageProcessor<LitComponentApi>;
+  let surface: SurfaceModel<LitComponentApi>;
 
   beforeEach(() => {
     processor = new MessageProcessor([basicCatalog]);
@@ -123,12 +132,12 @@ describe('BasicCatalogA2uiLitElement', () => {
     assert.strictEqual(el.style.getPropertyValue('--a2ui-color-primary'), '#ff0000');
 
     // Create a new context with a surface that has no theme.
-    const surfaceNoTheme = {
+    const surfaceNoThemeMock = {
       ...surface,
       theme: {},
-    };
+    } as SurfaceModel<LitComponentApi>;
 
-    const contextNoTheme = new ComponentContext(surfaceNoTheme, 'root');
+    const contextNoTheme = new ComponentContext(surfaceNoThemeMock, 'root');
     await asyncUpdate(el, (e: any) => {
       e.context = contextNoTheme;
     });
