@@ -17,21 +17,12 @@
 import {DestroyRef, Injectable, inject, NgZone} from '@angular/core';
 import {ComponentContext, computed} from '@a2ui/web_core/v0_9';
 import {toAngularSignal} from './utils';
-import {BoundProperty} from './types';
+import {BoundProperty, ComponentTemplate} from './types';
 
 /** Represents a reference to a child component. */
 export interface Child {
   id: string;
   basePath: string;
-}
-
-/** A collection of child components. */
-export interface Children {
-  children: Child[];
-  /** Optional component ID to be used as a template when instantiating the children. */
-  templateId?: string;
-  /** Optional path to the list of children. */
-  path?: string;
 }
 
 /**
@@ -58,6 +49,7 @@ export class ComponentBinder {
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, BoundProperty<any>> = {};
+    let template: ComponentTemplate|undefined = undefined;
 
     for (const key of Object.keys(props)) {
       const value = props[key];
@@ -95,18 +87,19 @@ export class ComponentBinder {
         });
       } else if (key === 'children') {
         const originalSig = preactSig;
-        const templateId: string | undefined = value.componentId;
-        const path: string | undefined = value.path;
+        template = {
+          id: value.componentId,
+          path: value.path,
+        };
         preactSig = computed(() => {
           const val = originalSig.value;
           const arr = Array.isArray(val) ? val : [];
-          const children: Child[] = arr.map(item => {
+          return arr.map(item => {
             if (typeof item === 'object' && item !== null && 'id' in item) {
               return item;
             }
             return {id: item, basePath: context.dataContext.path};
           });
-          return {templateId, children, path};
         });
       }
 
@@ -115,6 +108,7 @@ export class ComponentBinder {
       bound[key] = {
         value: angSig,
         raw: value,
+        template,
         onUpdate: isBoundPath
           ? (newValue: any) => context.dataContext.set(value.path, newValue)
           : () => {}, // No-op for non-bound values

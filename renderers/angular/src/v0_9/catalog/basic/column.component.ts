@@ -73,14 +73,14 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
     return val ? ALIGN_MAP[val] || val : undefined;
   });
 
-  protected readonly children = computed(() => this.props()['children']?.value()?.children || []);
+  protected readonly children = computed(() => this.props()['children'].value() || []);
 
   protected readonly isRepeating = computed(() => {
-    return !!this.props()['children']?.value()?.templateId;
+    return !!this.props()['children'].template.id;
   });
 
   protected readonly templateId = computed(() => {
-    return this.props()['children']?.value()?.templateId;
+    return this.props()['children'].template.id;
   });
 
   protected readonly normalizedChildren = computed(() => {
@@ -94,10 +94,6 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   });
 
   protected getNormalizedPath(index: number) {
-    return getNormalizedPath(
-      this.props()['children']?.value()?.path,
-      this.dataContextPath(),
-      index,
-    );
+    return getNormalizedPath(this.props()['children'].template.path, this.dataContextPath(), index);
   }
 }

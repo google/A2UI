@@ -17,7 +17,13 @@
 import {Signal} from '@angular/core';
 import {z} from 'zod';
 import {ComponentApi, DataBindingSchema, FunctionCallSchema} from '@a2ui/web_core/v0_9';
-import {Child, Children} from './component-binder.service';
+import {Child} from './component-binder.service';
+
+/** Data structure that represents a template used to render a collection of children. */
+export interface ComponentTemplate {
+  id?: string;
+  path?: string;
+}
 
 /**
  * Represents a component property bound to an Angular Signal and update logic.
@@ -44,6 +50,9 @@ export interface BoundProperty<T = unknown> {
    */
   readonly raw: unknown;
 
+  /** This field is present for "children" props that define their children using a template. */
+  readonly template?: ComponentTemplate;
+
   /**
    * Callback to update the value in the A2UI DataContext.
    *
@@ -54,13 +63,18 @@ export interface BoundProperty<T = unknown> {
   readonly onUpdate: (newValue: T) => void;
 }
 
+/** A BoundProperty that contains a collection of children. */
+export interface BoundChildren extends BoundProperty<Child[]> {
+  readonly template: ComponentTemplate;
+}
+
 type DataBindingType = z.infer<typeof DataBindingSchema>;
 type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 type DynamicSchemaValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
 
 type InferredInterfaceToProps<InferredSchema> = {
   [K in keyof InferredSchema]: K extends 'children'
-    ? BoundProperty<Children>
+    ? BoundChildren
     : K extends 'child' | 'trigger' | 'content'
       ? BoundProperty<Child>
       : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>;

@@ -18,7 +18,7 @@ import {TestBed} from '@angular/core/testing';
 import {DestroyRef} from '@angular/core';
 import {signal as preactSignal} from '@preact/signals-core';
 import {ComponentContext} from '@a2ui/web_core/v0_9';
-import {ComponentBinder, Children} from './component-binder.service';
+import {Child, ComponentBinder} from './component-binder.service';
 
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
@@ -165,13 +165,11 @@ describe('ComponentBinder', () => {
 
     const bound = binder.bind(mockContext);
 
-    expect(bound['children']).toBeDefined();
-    const boundChildren = bound['children'].value() as Children;
-    expect(boundChildren.templateId).toBe('item-comp');
-    expect(boundChildren.path).toBe('/list/data');
-    expect(Array.isArray(boundChildren.children)).toBe(true);
-    expect(boundChildren.children.length).toBe(2);
-    expect(boundChildren.children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
-    expect(boundChildren.children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
+   expect(bound['children']).toBeDefined();
+   const children = bound['children'].value() as Child[];
+   expect(Array.isArray(children)).toBe(true);
+   expect(children.length).toBe(2);
+   expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
+   expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
   });
 });

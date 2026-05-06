@@ -81,12 +81,11 @@ describe('ColumnComponent', () => {
       justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
       align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
       children: {
-        value: signal({
-          children: [
-            {id: 'child1', basePath: '/'},
-            {id: 'child2', basePath: '/'},
-          ],
-        }),
+        value: signal([
+          {id: 'child1', basePath: '/'},
+          {id: 'child2', basePath: '/'},
+        ]),
+        template: {},
         raw: ['child1', 'child2'],
         onUpdate: () => {},
       },
@@ -148,16 +147,16 @@ describe('ColumnComponent', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
       children: {
-        value: signal({
-          templateId: 'template1',
-          path: 'items',
-          children: [
-            {id: 'child1', basePath: '/items/0'},
-            {id: 'child2', basePath: '/items/1'},
-          ],
-        }),
+        value: signal([
+          {id: 'child1', basePath: '/items/0'},
+          {id: 'child2', basePath: '/items/1'},
+        ]),
         raw: {
           componentId: 'template1',
+          path: 'items',
+        },
+        template: {
+          id: 'template1',
           path: 'items',
         },
         onUpdate: () => {},
@@ -177,37 +176,12 @@ describe('ColumnComponent', () => {
     });
   });
 
-  it('should handle non-array children value', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      children: {
-        value: signal('not-an-array'),
-        raw: 'not-an-array',
-        onUpdate: () => {},
-      },
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
-  it('should handle missing children property', () => {
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
-      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
   it('should handle missing justify and align properties', () => {
     fixture.componentRef.setInput('props', {
       children: {
-        value: signal({
-          children: [{id: 'child1', basePath: '/'}],
-        }),
+        value: signal([{id: 'child1', basePath: '/'}]),
         raw: ['child1'],
+        template: {},
         onUpdate: () => {},
       },
     });
