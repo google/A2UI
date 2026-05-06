@@ -18,4 +18,5 @@ export * from './expressions/expression_parser.js';
 export * from './functions/basic_functions.js';
 export * from './functions/basic_functions_api.js';
 export * from './components/basic_components.js';
-export {injectBasicCatalogStyles} from './styles/default.js';
+export {injectBasicCatalogStyles, computeColor} from './styles/default.js';
+export type {ComputeColorLightDarkOptions, ComputeColorHoverOptions} from './styles/default.js';
