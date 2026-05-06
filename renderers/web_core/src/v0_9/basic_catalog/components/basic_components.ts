@@ -152,7 +152,7 @@ export const IconApi = {
           z.enum(ICON_NAMES),
           z
             .object({
-              path: z.string(),
+              svgPath: z.string(),
             })
             .strict(),
         ])

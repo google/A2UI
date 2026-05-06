@@ -39,7 +39,7 @@ export const Icon = createComponentImplementation(IconApi, ({props}) => {
   const iconName =
     typeof props.name === 'string'
       ? toMaterialSymbol(props.name)
-      : (props.name as {path?: string})?.path;
+      : (props.name as {svgPath?: string})?.svgPath;
 
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
