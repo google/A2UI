@@ -16,7 +16,7 @@
 
 import {ComponentApi} from '@a2ui/web_core/v0_9';
 import {A2uiLitElement} from '../../a2ui-lit-element.js';
-import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
+import {injectBasicCatalogStyles, computeColor} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * A base class for A2UI basic catalog components.
@@ -40,6 +40,32 @@ export abstract class BasicCatalogA2uiLitElement<
       this.style.flex = String(props.weight);
     } else {
       this.style.removeProperty('flex');
+    }
+
+    const surface = this.context?.dataContext?.surface;
+    const primaryColor = surface?.theme?.primaryColor;
+    if (primaryColor) {
+      this.style.setProperty('--a2ui-color-primary', primaryColor);
+      this.style.setProperty(
+        '--a2ui-color-primary-light',
+        computeColor('light', {colorVar: '--a2ui-color-primary'}),
+      );
+      this.style.setProperty(
+        '--a2ui-color-primary-dark',
+        computeColor('dark', {colorVar: '--a2ui-color-primary'}),
+      );
+      this.style.setProperty(
+        '--a2ui-color-primary-hover',
+        computeColor('hover', {
+          darkVar: '--a2ui-color-primary-dark',
+          lightVar: '--a2ui-color-primary-light',
+        }),
+      );
+    } else {
+      this.style.removeProperty('--a2ui-color-primary');
+      this.style.removeProperty('--a2ui-color-primary-light');
+      this.style.removeProperty('--a2ui-color-primary-dark');
+      this.style.removeProperty('--a2ui-color-primary-hover');
     }
   }
 }
