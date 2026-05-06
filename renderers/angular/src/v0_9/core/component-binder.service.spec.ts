@@ -165,12 +165,12 @@ describe('ComponentBinder', () => {
 
     const bound = binder.bind(mockContext);
 
-   expect(bound['children']).toBeDefined();
-   const children = bound['children'].value() as Child[];
-   expect(Array.isArray(children)).toBe(true);
-   expect(children.length).toBe(2);
-   expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
-   expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
+    expect(bound['children']).toBeDefined();
+    const children = bound['children'].value() as Child[];
+    expect(Array.isArray(children)).toBe(true);
+    expect(children.length).toBe(2);
+    expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
+    expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
   });
 
   it('should handle static array of child IDs', () => {
@@ -200,7 +200,7 @@ describe('ComponentBinder', () => {
     expect(children.length).toBe(2);
     expect(children[0]).toEqual({id: 'child1', basePath: '/current/path'});
     expect(children[1]).toEqual({id: 'child2', basePath: '/current/path'});
-    
+
     expect((bound['children'] as any).template).toBeUndefined();
   });
 });
