@@ -16,6 +16,7 @@
 
 import json
 import os
+import time
 from inspect_ai.scorer import scorer, Score, Target, accuracy, model_graded_qa
 from inspect_ai.solver import TaskState
 from inspect_ai.model._model import sample_model_usage
@@ -66,6 +67,8 @@ def measured_model_graded_qa(model: str):
     base_scorer = model_graded_qa(model=model)
     
     async def score(state: TaskState, target: Target) -> Score:
+        start_time = time.time()
+        
         usage_before = sample_model_usage().get(model)
         before_input = usage_before.input_tokens if usage_before else 0
         before_cr = usage_before.input_tokens_cache_read or 0 if usage_before else 0
@@ -76,6 +79,8 @@ def measured_model_graded_qa(model: str):
         
         result = await base_scorer(state, target)
         
+        duration = time.time() - start_time
+        
         usage_after = sample_model_usage().get(model)
         after_input = usage_after.input_tokens if usage_after else 0
         after_cr = usage_after.input_tokens_cache_read or 0 if usage_after else 0
@@ -84,6 +89,7 @@ def measured_model_graded_qa(model: str):
         after_cached = after_cr + after_cw
         after_output = usage_after.output_tokens if usage_after else 0
         
+        state.metadata["evaluation_duration_seconds"] = duration
         state.metadata["evaluation_input_tokens"] = after_total_input - before_total_input
         state.metadata["evaluation_output_tokens"] = after_output - before_output
         state.metadata["evaluation_cached_tokens"] = after_cached - before_cached
