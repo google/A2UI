@@ -104,4 +104,19 @@ describe('Slider Component', () => {
     expect(message.userAction!.name).toBe('change');
     expect(message.userAction!.context).toEqual({value: 75});
   });
+
+  it('should use label as aria-label when label is set', () => {
+    const inputEl = fixture.debugElement.query(By.css('input[type="range"]'));
+    expect(inputEl).toBeTruthy();
+    expect(inputEl.nativeElement.getAttribute('aria-label')).toBe('Volume');
+  });
+
+  it('should use default aria-label when label is not set', () => {
+    fixture.componentRef.setInput('label', null);
+    fixture.detectChanges();
+
+    const inputEl = fixture.debugElement.query(By.css('input[type="range"]'));
+    expect(inputEl).toBeTruthy();
+    expect(inputEl.nativeElement.getAttribute('aria-label')).toBe('Slider');
+  });
 });
