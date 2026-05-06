@@ -1,6 +1,6 @@
 ## Unreleased
 
-- (v0_9) Add `computeColor` helper function for basic catalog components to generate CSS formulas for color variants (light, dark, hover), allowing reuse across renderers.
+- (v0_9) Add `computeColorVariant` helper function for basic catalog components to generate CSS formulas for color variants (light, dark, hover), allowing reuse across renderers.
 
 ## 0.9.1
 

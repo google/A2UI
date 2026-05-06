@@ -16,7 +16,7 @@
 
 import {ComponentApi} from '@a2ui/web_core/v0_9';
 import {A2uiLitElement} from '../../a2ui-lit-element.js';
-import {injectBasicCatalogStyles, computeColor} from '@a2ui/web_core/v0_9/basic_catalog';
+import {injectBasicCatalogStyles, computeColorVariant} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * A base class for A2UI basic catalog components.
@@ -48,15 +48,15 @@ export abstract class BasicCatalogA2uiLitElement<
       this.style.setProperty('--a2ui-color-primary', primaryColor);
       this.style.setProperty(
         '--a2ui-color-primary-light',
-        computeColor('light', {colorVar: '--a2ui-color-primary'}),
+        computeColorVariant('light', {colorVar: '--a2ui-color-primary'}),
       );
       this.style.setProperty(
         '--a2ui-color-primary-dark',
-        computeColor('dark', {colorVar: '--a2ui-color-primary'}),
+        computeColorVariant('dark', {colorVar: '--a2ui-color-primary'}),
       );
       this.style.setProperty(
         '--a2ui-color-primary-hover',
-        computeColor('hover', {
+        computeColorVariant('hover', {
           darkVar: '--a2ui-color-primary-dark',
           lightVar: '--a2ui-color-primary-light',
         }),
