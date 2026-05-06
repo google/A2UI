@@ -15,6 +15,8 @@
  */
 
 import {ComponentFixture} from '@angular/core/testing';
+import {signal} from '@angular/core';
+import {BoundProperty, ComponentTemplate} from './types';
 
 /**
  * Extracts the type of the props input from a component type.
@@ -29,4 +31,16 @@ export function setComponentProps<T extends {props: () => any}>(
   props: ComponentToProps<T>,
 ) {
   fixture.componentRef.setInput('props', props);
+}
+
+/**
+ * Creates a mock BoundProperty for testing.
+ */
+export function createBoundProperty<T>(val: T, template?: ComponentTemplate): BoundProperty<T> {
+  return {
+    value: signal(val),
+    raw: val,
+    template,
+    onUpdate: jasmine.createSpy('onUpdate'),
+  };
 }
