@@ -42,7 +42,12 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.schema.constants import (
+    VERSION_0_8,
+    VERSION_0_9,
+    A2UI_OPEN_TAG,
+    A2UI_CLOSE_TAG,
+)
 from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
@@ -167,7 +172,11 @@ class RestaurantAgent:
     )
 
   async def stream(
-      self, query, session_id, ui_version: Optional[str] = None
+      self,
+      query,
+      session_id,
+      ui_version: Optional[str] = None,
+      use_streaming: bool = True,
   ) -> AsyncIterable[dict[str, Any]]:
     session_state = {"base_url": self.base_url, "expression": "{expression}"}
 
@@ -236,13 +245,18 @@ class RestaurantAgent:
       )
 
       full_content_list = []
+      parts_streamed = False
 
       async def token_stream():
         async for event in runner.run_async(
             user_id=self._user_id,
             session_id=session.id,
             run_config=run_config.RunConfig(
-                streaming_mode=run_config.StreamingMode.SSE
+                streaming_mode=(
+                    run_config.StreamingMode.SSE
+                    if use_streaming
+                    else run_config.StreamingMode.NONE
+                )
             ),
             new_message=current_message,
         ):
@@ -266,6 +280,7 @@ class RestaurantAgent:
             self._parsers[session_id],
             token_stream(),
         ):
+          parts_streamed = True
           yield {
               "is_task_complete": False,
               "parts": [part],
@@ -339,7 +354,7 @@ class RestaurantAgent:
 
         yield {
             "is_task_complete": True,
-            "parts": final_parts,
+            "parts": [] if (use_streaming and parts_streamed) else final_parts,
         }
         return  # We're done, exit the generator
 
