@@ -30,7 +30,7 @@ export class LocalGallery extends LitElement {
   @state() accessor activeItemIndex = 0;
   @state() accessor processedMessageCount = 0;
   @state() accessor currentDataModelText = '{}';
-  @state() accessor primaryColor = '#002f6c';
+  @state() accessor primaryColor = '#1177ee';
 
   @provide({context: Context.markdown})
   private accessor markdownRenderer = renderMarkdown;
@@ -178,39 +178,34 @@ export class LocalGallery extends LitElement {
         <section class="gallery-pane">
           <div class="preview-header">
             <div>
-              <h2 style="margin:0">${activeItem?.title || 'No selection'}</h2>
-              <p style="margin:4px 0 0 0; font-size:0.9rem; color:#94a3b8">
-                ${activeItem?.description}
-              </p>
+              <h2>${activeItem?.title || 'No selection'}</h2>
+              <p class="subtitle">${activeItem?.description}</p>
             </div>
-            <div class="stepper-controls">
-              <span
-                style="font-size:0.9rem; margin-right:8px; color:#94a3b8; display: inline-flex; align-items: center; gap: 4px;"
-              >
-                Primary Color:
-                <input
-                  type="color"
-                  .value=${this.primaryColor || '#002f6c'}
-                  @input=${this.onColorInput}
-                  style="border: none; padding: 0; width: 24px; height: 24px; cursor: pointer; background: none;"
-                />
-                <button
-                  @click=${this.clearColor}
-                  style="padding: 2px 4px; font-size: 0.8rem; cursor: pointer;"
-                >
-                  Clear
+            <div class="agent-controls">
+              <fieldset class="message-controls">
+                <legend>
+                  Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
+                </legend>
+                <button @click=${() => this.resetSurface()}>Reset</button>
+                <button @click=${() => this.advanceMessages(false)} ?disabled=${!canAdvance}>
+                  +1 Message
                 </button>
-              </span>
-              <span style="font-size:0.9rem; margin-right:8px; color:#94a3b8">
-                Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
-              </span>
-              <button @click=${() => this.resetSurface()}>Reset</button>
-              <button @click=${() => this.advanceMessages(false)} ?disabled=${!canAdvance}>
-                +1 Message
-              </button>
-              <button @click=${() => this.advanceMessages(true)} ?disabled=${!canAdvance}>
-                All Messages
-              </button>
+                <button @click=${() => this.advanceMessages(true)} ?disabled=${!canAdvance}>
+                  All Messages
+                </button>
+              </fieldset>
+              <fieldset class="theme-controls">
+                <legend>Primary color</legend>
+                <div class="color-input-group">
+                  <input
+                    type="color"
+                    .value=${this.primaryColor || '#1177ee'}
+                    @input=${this.onColorInput}
+                    class="color-input"
+                  />
+                  <button @click=${this.clearColor} class="clear-btn">Clear</button>
+                </div>
+              </fieldset>
             </div>
           </div>
 
