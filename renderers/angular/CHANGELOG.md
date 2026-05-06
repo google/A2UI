@@ -7,7 +7,7 @@
 - [Breaking change] the `children` property value changed from `props().children().value() -> Child[]` to
   `props().children().value() -> Children`. This provides a type safe wrapper to access the child list, path and component template ID. [#1312](https://github.com/google/A2UI/pull/1312/changes#top)
 
-## 0.9
+## 0.9.0
 
 - Re-style the v0_9 catalog components using the default theme from
   `web_core`. [#1166](https://github.com/google/A2UI/pull/1166)
