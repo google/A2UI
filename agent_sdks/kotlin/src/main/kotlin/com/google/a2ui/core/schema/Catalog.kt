@@ -147,7 +147,9 @@ data class A2uiCatalog(
       return ""
     }
 
-    val files = dir.listFiles { _, name -> name.endsWith(".json") } ?: emptyArray()
+    // Sort files by name to ensure deterministic output order for tests.
+    val files =
+      dir.listFiles { _, name -> name.endsWith(".json") }?.sortedBy { it.name } ?: emptyList<File>()
 
     return files
       .mapNotNull { file ->
