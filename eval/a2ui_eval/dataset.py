@@ -44,6 +44,7 @@ def load_a2ui_dataset(file_path: str) -> MemoryDataset:
             metadata={
                 'name': item.get('name'),
                 'description': item.get('description'),
+                'context': item.get('context'),
                 **(item.get('metadata', {}))
             }
         ))
