@@ -16,36 +16,33 @@
 
 package com.google.a2ui.conformance
 
-import com.google.a2ui.adk.a2a_extension.A2uiEventConverter
-import com.google.a2ui.adk.a2a_extension.SendA2uiToClientToolset
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.google.a2ui.adk.a2a_extension.A2uiEventConverter
+import com.google.a2ui.adk.a2a_extension.SendA2uiToClientToolset
 import com.google.a2ui.core.schema.A2uiCatalog
 import com.google.a2ui.core.schema.A2uiVersion
 import com.google.adk.a2a.converters.EventConverter
 import com.google.adk.agents.InvocationContext
 import com.google.adk.agents.ReadonlyContext
-import com.google.adk.tools.ToolContext
 import com.google.adk.events.Event
 import com.google.adk.sessions.Session
+import com.google.adk.tools.ToolContext
 import com.google.common.collect.ImmutableList
 import com.google.genai.types.Content
-import com.google.genai.types.Part
 import com.google.genai.types.FinishReason
+import com.google.genai.types.Part
 import io.a2a.spec.TaskState
 import io.a2a.spec.TaskStatusUpdateEvent
 import io.a2a.spec.TextPart
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import java.io.File
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
-import kotlin.test.assertNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -136,12 +133,13 @@ class AdkExtensionsConformanceTest {
 
               assertEquals("task-1", result.taskId())
               assertEquals("context-1", result.contextId())
-              
-              val expectedTaskState = when (expectState) {
-                "FAILED" -> TaskState.TASK_STATE_FAILED
-                "WORKING" -> TaskState.TASK_STATE_WORKING
-                else -> throw IllegalArgumentException("Unknown state $expectState")
-              }
+
+              val expectedTaskState =
+                when (expectState) {
+                  "FAILED" -> TaskState.TASK_STATE_FAILED
+                  "WORKING" -> TaskState.TASK_STATE_WORKING
+                  else -> throw IllegalArgumentException("Unknown state $expectState")
+                }
               assertEquals(expectedTaskState, result.status().state())
 
               val msg = result.status().message()!!
@@ -151,17 +149,28 @@ class AdkExtensionsConformanceTest {
           }
           "execute_tool" -> {
             val a2uiJsonStr = args["a2ui_json"] as? String
-            val toolArgs = if (a2uiJsonStr != null) mapOf("a2ui_json" to a2uiJsonStr) else args as Map<String, Any>
+            val toolArgs =
+              if (a2uiJsonStr != null) mapOf("a2ui_json" to a2uiJsonStr)
+              else args as Map<String, Any>
 
-            val serverToClientSchema = Json.parseToJsonElement("""{"type": "object", "properties": {"beginRendering": {"type": "object"}}}""").jsonObject
-            val catalogSchema = Json.parseToJsonElement("""{"catalogId": "dummy", "components": {"TestComp": {"type": "object"}}}""").jsonObject
-            val dummyCatalog = A2uiCatalog(
-              version = A2uiVersion.VERSION_0_9,
-              name = "dummy",
-              serverToClientSchema = serverToClientSchema,
-              commonTypesSchema = JsonObject(emptyMap()),
-              catalogSchema = catalogSchema
-            )
+            val serverToClientSchema =
+              Json.parseToJsonElement(
+                  """{"type": "object", "properties": {"beginRendering": {"type": "object"}}}"""
+                )
+                .jsonObject
+            val catalogSchema =
+              Json.parseToJsonElement(
+                  """{"catalogId": "dummy", "components": {"TestComp": {"type": "object"}}}"""
+                )
+                .jsonObject
+            val dummyCatalog =
+              A2uiCatalog(
+                version = A2uiVersion.VERSION_0_9,
+                name = "dummy",
+                serverToClientSchema = serverToClientSchema,
+                commonTypesSchema = JsonObject(emptyMap()),
+                catalogSchema = catalogSchema,
+              )
 
             val mockContext = mockk<ReadonlyContext>(relaxed = true)
             val mockToolContext = mockk<ToolContext>(relaxed = true)
@@ -178,7 +187,8 @@ class AdkExtensionsConformanceTest {
               assertTrue(result.containsKey(SendA2uiToClientToolset.VALIDATED_A2UI_JSON_KEY))
               val containsValidatedJson = expect["contains_validated_json"] as? Boolean ?: false
               if (containsValidatedJson) {
-                val validatedPayload = result[SendA2uiToClientToolset.VALIDATED_A2UI_JSON_KEY].toString()
+                val validatedPayload =
+                  result[SendA2uiToClientToolset.VALIDATED_A2UI_JSON_KEY].toString()
                 assertTrue(validatedPayload.contains("beginRendering"))
               }
             } else {
