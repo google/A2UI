@@ -81,10 +81,7 @@ describe('RowComponent', () => {
       justify: {value: signal('center'), raw: 'center', onUpdate: () => {}},
       align: {value: signal('baseline'), raw: 'baseline', onUpdate: () => {}},
       children: {
-        value: signal([
-          {id: 'child1', basePath: '/'},
-          {id: 'child2', basePath: '/'},
-        ]),
+        value: signal(['child1', 'child2']),
         template: {},
         raw: ['child1', 'child2'],
         onUpdate: () => {},
@@ -116,10 +113,7 @@ describe('RowComponent', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
       children: {
-        value: signal([
-          {id: 'child1', basePath: '/items/0'},
-          {id: 'child2', basePath: '/items/1'},
-        ]),
+        value: signal(['child1', 'child2']),
         raw: {
           componentId: 'template1',
           path: 'items',
@@ -148,7 +142,7 @@ describe('RowComponent', () => {
   it('should handle missing justify and align properties', () => {
     fixture.componentRef.setInput('props', {
       children: {
-        value: signal([{id: 'child1', basePath: '/'}]),
+        value: signal(['child1']),
         raw: ['child1'],
         template: {},
         onUpdate: () => {},
