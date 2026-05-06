@@ -4,8 +4,7 @@
   components should extend the base class `CatalogComponent` from
   `import {CatalogComponent} from '@a2ui/web_core/v0_9/'` or implement the
   interface `CatalogComponentInstance`. [#1320](https://github.com/google/A2UI/pull/1320)
-- [Breaking change] the `children` property value changed from `props().children().value() -> Child[]` to
-  `props().children().value() -> Children`. This provides a type safe wrapper to access the child list, path and component template ID. [#1312](https://github.com/google/A2UI/pull/1312/changes#top)
+- `children` props now expose a typed `value` signal, and have a new `template` field. This provides a type safe structure to access the child list, path and component template ID. [#1312](https://github.com/google/A2UI/pull/1312/changes#top)
 
 ## 0.9.0
 
