@@ -16,7 +16,7 @@
 
 import json
 import os
-from inspect_ai.scorer import scorer, Score, Target, accuracy
+from inspect_ai.scorer import scorer, Score, Target, accuracy, model_graded_qa
 from inspect_ai.solver import TaskState
 from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.schema.catalog import CatalogConfig
@@ -57,4 +57,21 @@ def a2ui_scorer(catalog_path: str):
         except Exception as e:
             return Score(value=0.0, explanation=str(e))
             
+    return score
+
+@scorer(metrics=[accuracy()])
+def measured_model_graded_qa(model: str):
+    """Scorer that wraps model_graded_qa and records the token usage in metadata."""
+    base_scorer = model_graded_qa(model=model)
+    
+    async def score(state: TaskState, target: Target) -> Score:
+        start_tokens = state.token_usage
+        
+        result = await base_scorer(state, target)
+        
+        tokens_used = state.token_usage - start_tokens
+        state.metadata["evaluation_tokens"] = tokens_used
+        
+        return result
+        
     return score

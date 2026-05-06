@@ -56,13 +56,20 @@ Additional Rules:
     return solve
 
 @solver
-def timed_generate() -> Solver:
+def measured_generate() -> Solver:
     """Solver that wraps generate() and records the duration in metadata."""
     async def solve(state: TaskState, generate: Generate) -> TaskState:
         start_time = time.time()
+        start_tokens = state.token_usage
+        
         state = await generate(state)
+        
         duration = time.time() - start_time
+        tokens_used = state.token_usage - start_tokens
+        
         state.metadata["inference_duration_seconds"] = duration
+        state.metadata["inference_tokens"] = tokens_used
+        
         return state
         
     return solve
