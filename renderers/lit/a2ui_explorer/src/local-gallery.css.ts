@@ -111,8 +111,9 @@ export const appStyles = css`
     background: #1e293b;
     border-bottom: 1px solid rgba(148, 163, 184, 0.1);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .stepper-controls {

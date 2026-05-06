@@ -30,6 +30,7 @@ export class LocalGallery extends LitElement {
   @state() accessor activeItemIndex = 0;
   @state() accessor processedMessageCount = 0;
   @state() accessor currentDataModelText = '{}';
+  @state() accessor primaryColor = '#002f6c';
 
   @provide({context: Context.markdown})
   private accessor markdownRenderer = renderMarkdown;
@@ -98,7 +99,23 @@ export class LocalGallery extends LitElement {
 
     if (toProcess.length === 0) return;
 
-    this.processor.processMessages(toProcess);
+    const modifiedToProcess = toProcess.map((msg: any) => {
+      if ('createSurface' in msg && this.primaryColor) {
+        return {
+          ...msg,
+          createSurface: {
+            ...msg.createSurface,
+            theme: {
+              ...msg.createSurface.theme,
+              primaryColor: this.primaryColor,
+            },
+          },
+        };
+      }
+      return msg;
+    });
+
+    this.processor.processMessages(modifiedToProcess);
     this.processedMessageCount += toProcess.length;
 
     // Subscribe to data model on first advance if not already subscribed
@@ -110,6 +127,19 @@ export class LocalGallery extends LitElement {
         });
       }
     }
+  }
+
+  onColorInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.primaryColor = input.value;
+    this.resetSurface();
+    this.advanceMessages(true);
+  }
+
+  clearColor() {
+    this.primaryColor = '';
+    this.resetSurface();
+    this.advanceMessages(true);
   }
 
   log(msg: string, detail?: any) {
@@ -154,6 +184,23 @@ export class LocalGallery extends LitElement {
               </p>
             </div>
             <div class="stepper-controls">
+              <span
+                style="font-size:0.9rem; margin-right:8px; color:#94a3b8; display: inline-flex; align-items: center; gap: 4px;"
+              >
+                Primary Color:
+                <input
+                  type="color"
+                  .value=${this.primaryColor || '#002f6c'}
+                  @input=${this.onColorInput}
+                  style="border: none; padding: 0; width: 24px; height: 24px; cursor: pointer; background: none;"
+                />
+                <button
+                  @click=${this.clearColor}
+                  style="padding: 2px 4px; font-size: 0.8rem; cursor: pointer;"
+                >
+                  Clear
+                </button>
+              </span>
               <span style="font-size:0.9rem; margin-right:8px; color:#94a3b8">
                 Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
               </span>
