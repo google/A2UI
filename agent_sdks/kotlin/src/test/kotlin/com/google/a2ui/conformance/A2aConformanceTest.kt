@@ -16,13 +16,13 @@
 
 package com.google.a2ui.conformance
 
-// TODO: Migrate to extensions.yaml conformance tests when Kotlin SDK matches Python version's RequestContext and Card usage.
-
-import com.google.a2ui.a2a.A2uiA2a
-import com.google.a2ui.a2a.A2aHandler
+// TODO: Migrate to extensions.yaml conformance tests when Kotlin SDK matches Python version's
+// RequestContext and Card usage.
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.google.a2ui.a2a.A2aHandler
+import com.google.a2ui.a2a.A2uiA2a
 import com.google.adk.agents.RunConfig
 import com.google.adk.events.Event
 import com.google.adk.runner.Runner
@@ -36,17 +36,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
-import java.io.File
 import java.util.Optional
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 
@@ -59,9 +56,8 @@ class A2aConformanceTest {
     when (any) {
       null -> JsonNull
       is Map<*, *> -> {
-        val map: Map<String, JsonElement> = any.entries.associate { (key, value) ->
-          key.toString() to anyToJsonElement(value)
-        }
+        val map: Map<String, JsonElement> =
+          any.entries.associate { (key, value) -> key.toString() to anyToJsonElement(value) }
         JsonObject(map)
       }
       is List<*> -> JsonArray(any.map { anyToJsonElement(it) })
@@ -87,17 +83,20 @@ class A2aConformanceTest {
           "create_a2ui_part" -> {
             val data = args["data"] as Map<*, *>
             val jsonElement = anyToJsonElement(data) as JsonObject
-            
+
             val part = A2uiA2a.createA2uiPart(jsonElement)
             assertTrue(part is DataPart)
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
-            assertEquals(expect["mime_type"] as String, (part as DataPart).metadata?.get(A2uiA2a.MIME_TYPE_KEY))
+            assertEquals(
+              expect["mime_type"] as String,
+              (part as DataPart).metadata?.get(A2uiA2a.MIME_TYPE_KEY),
+            )
           }
           "is_a2ui_part" -> {
             val mimeType = args["mime_type"] as String
             val part = mockk<DataPart>()
             every { part.metadata } returns mapOf(A2uiA2a.MIME_TYPE_KEY to mimeType)
-            
+
             val result = A2uiA2a.isA2uiPart(part)
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
             assertEquals(expect, result)
@@ -106,7 +105,7 @@ class A2aConformanceTest {
             val uris = args["uris"] as List<String>
             val activated = mutableListOf<String>()
             val result = A2uiA2a.tryActivateA2uiExtension(uris) { activated.add(it) }
-            
+
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
             assertEquals(expect, result)
             if (expect) {
@@ -143,9 +142,8 @@ class A2aConformanceTest {
             every { mockEvent.id() } returns "test-event-id"
             every { mockEvent.content() } returns Optional.of(mockContent)
 
-            every {
-              mockRunner.runAsync(any<Session>(), any<Content>(), any<RunConfig>())
-            } returns Flowable.just(mockEvent)
+            every { mockRunner.runAsync(any<Session>(), any<Content>(), any<RunConfig>()) } returns
+              Flowable.just(mockEvent)
 
             val handler = A2aHandler(mockRunner)
 
@@ -162,12 +160,15 @@ class A2aConformanceTest {
               val expPart = expectParts[i] as Map<*, *>
               val part = parts[i]
               assertEquals(expPart["kind"] as String, part["kind"])
-              
+
               if (expPart.containsKey("text")) {
                 assertEquals(expPart["text"] as String, part["text"])
               }
               if (expPart.containsKey("mimeType")) {
-                assertEquals(expPart["mimeType"] as String, (part["metadata"] as Map<*, *>)["mimeType"])
+                assertEquals(
+                  expPart["mimeType"] as String,
+                  (part["metadata"] as Map<*, *>)["mimeType"],
+                )
               }
               if (expPart.containsKey("data")) {
                 val expData = expPart["data"] as Map<*, *>
