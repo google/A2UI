@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { A2aRenderer } from './a2a-renderer';
+import {A2aRenderer} from './a2a-renderer';
 
 describe('A2aRenderer', () => {
   let component: A2aRenderer;

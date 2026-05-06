@@ -18,11 +18,7 @@
         {
           "id": "root",
           "component": "Column",
-          "children": [
-            "map-header",
-            "map-image",
-            "location-list"
-          ],
+          "children": ["map-header", "map-image", "location-list"],
           "align": "stretch"
         },
         {
@@ -54,10 +50,7 @@
         {
           "id": "location-details",
           "component": "Column",
-          "children": [
-            "location-name",
-            "location-description"
-          ]
+          "children": ["location-name", "location-description"]
         },
         {
           "id": "location-name",

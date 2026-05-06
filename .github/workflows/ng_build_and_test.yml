@@ -16,12 +16,12 @@ name: Angular
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - 'samples/agent/adk/**'
+      - "samples/agent/adk/**"
   pull_request:
     paths-ignore:
-      - 'samples/agent/adk/**'
+      - "samples/agent/adk/**"
 
 jobs:
   build-and-test:
@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular

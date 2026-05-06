@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-import { LitElement, html, css, nothing } from "lit";
-import { provide } from "@lit/context";
-import { customElement, state } from "lit/decorators.js";
-import { MessageProcessor } from "@a2ui/web_core/v0_9";
-import { basicCatalog, Context } from "@a2ui/lit/v0_9";
-import { renderMarkdown } from "@a2ui/markdown-it";
-import { getDemoItems, DemoItem } from "./examples";
-import { appStyles } from "./local-gallery.css";
+import {LitElement, html, css, nothing} from 'lit';
+import {provide} from '@lit/context';
+import {customElement, state} from 'lit/decorators.js';
+import {MessageProcessor} from '@a2ui/web_core/v0_9';
+import {basicCatalog, Context} from '@a2ui/lit/v0_9';
+import {renderMarkdown} from '@a2ui/markdown-it';
+import {getDemoItems, DemoItem} from './examples';
+import {appStyles} from './local-gallery.css';
 
-@customElement("local-gallery")
+@customElement('local-gallery')
 export class LocalGallery extends LitElement {
   @state() accessor mockLogs: string[] = [];
   @state() accessor demoItems: DemoItem[] = [];
   @state() accessor activeItemIndex = 0;
   @state() accessor processedMessageCount = 0;
-  @state() accessor currentDataModelText = "{}";
+  @state() accessor currentDataModelText = '{}';
 
-  @provide({ context: Context.markdown })
+  @provide({context: Context.markdown})
   private accessor markdownRenderer = renderMarkdown;
 
-  private processor = new MessageProcessor(
-    [basicCatalog],
-    (action: any) => {
-      this.log(`Action dispatched: ${action.surfaceId}`, action);
-    },
-  );
+  private processor = new MessageProcessor([basicCatalog], (action: any) => {
+    this.log(`Action dispatched: ${action.surfaceId}`, action);
+  });
 
-  private dataModelSubscription?: { unsubscribe: () => void };
+  private dataModelSubscription?: {unsubscribe: () => void};
 
   static styles = [appStyles];
 
@@ -77,7 +74,7 @@ export class LocalGallery extends LitElement {
   resetSurface() {
     this.processedMessageCount = 0;
     this.mockLogs = [];
-    this.currentDataModelText = "{}";
+    this.currentDataModelText = '{}';
 
     // Clear old surface and subscriptions
     if (this.dataModelSubscription) {
@@ -87,9 +84,7 @@ export class LocalGallery extends LitElement {
 
     const item = this.demoItems[this.activeItemIndex];
     if (item && this.processor.model.getSurface(item.id)) {
-      this.processor.processMessages([
-        { version: "v0.9", deleteSurface: { surfaceId: item.id } },
-      ]);
+      this.processor.processMessages([{version: 'v0.9', deleteSurface: {surfaceId: item.id}}]);
     }
   }
 
@@ -110,7 +105,7 @@ export class LocalGallery extends LitElement {
     if (!this.dataModelSubscription) {
       const surface = this.processor.model.getSurface(item.id);
       if (surface) {
-        this.dataModelSubscription = surface.dataModel.subscribe("/", (val) => {
+        this.dataModelSubscription = surface.dataModel.subscribe('/', val => {
           this.currentDataModelText = JSON.stringify(val || {}, null, 2);
         });
       }
@@ -125,11 +120,8 @@ export class LocalGallery extends LitElement {
 
   render() {
     const activeItem = this.demoItems[this.activeItemIndex];
-    const surface = activeItem
-      ? this.processor.model.getSurface(activeItem.id)
-      : undefined;
-    const canAdvance =
-      activeItem && this.processedMessageCount < activeItem.messages.length;
+    const surface = activeItem ? this.processor.model.getSurface(activeItem.id) : undefined;
+    const canAdvance = activeItem && this.processedMessageCount < activeItem.messages.length;
 
     return html`
       <header>
@@ -143,7 +135,7 @@ export class LocalGallery extends LitElement {
           ${this.demoItems.map(
             (item, i) => html`
               <div
-                class="nav-item ${i === this.activeItemIndex ? "active" : ""}"
+                class="nav-item ${i === this.activeItemIndex ? 'active' : ''}"
                 @click=${() => this.selectItem(i)}
               >
                 <h3 class="nav-title">${item.title}</h3>
@@ -156,27 +148,20 @@ export class LocalGallery extends LitElement {
         <section class="gallery-pane">
           <div class="preview-header">
             <div>
-              <h2 style="margin:0">${activeItem?.title || "No selection"}</h2>
+              <h2 style="margin:0">${activeItem?.title || 'No selection'}</h2>
               <p style="margin:4px 0 0 0; font-size:0.9rem; color:#94a3b8">
                 ${activeItem?.description}
               </p>
             </div>
             <div class="stepper-controls">
               <span style="font-size:0.9rem; margin-right:8px; color:#94a3b8">
-                Messages: ${this.processedMessageCount} /
-                ${activeItem?.messages.length || 0}
+                Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
               </span>
               <button @click=${() => this.resetSurface()}>Reset</button>
-              <button
-                @click=${() => this.advanceMessages(false)}
-                ?disabled=${!canAdvance}
-              >
+              <button @click=${() => this.advanceMessages(false)} ?disabled=${!canAdvance}>
                 +1 Message
               </button>
-              <button
-                @click=${() => this.advanceMessages(true)}
-                ?disabled=${!canAdvance}
-              >
+              <button @click=${() => this.advanceMessages(true)} ?disabled=${!canAdvance}>
                 All Messages
               </button>
             </div>
@@ -204,9 +189,7 @@ export class LocalGallery extends LitElement {
               ${this.mockLogs.length === 0
                 ? html`<span style="color:#475569">No actions logged...</span>`
                 : nothing}
-              ${this.mockLogs.map(
-                (log) => html`<div class="log-entry">${log}</div>`,
-              )}
+              ${this.mockLogs.map(log => html`<div class="log-entry">${log}</div>`)}
             </div>
           </div>
         </aside>

@@ -26,15 +26,17 @@ export default tseslint.config(
   ...gts.map(config => ({
     ...config,
     // Override the project for a2ui_explorer since it has its own tsconfig
-    ...(config.languageOptions?.parserOptions?.project ? {
-      languageOptions: {
-        ...config.languageOptions,
-        parserOptions: {
-          ...config.languageOptions.parserOptions,
-          project: ['./tsconfig.app.json', './tsconfig.node.json']
+    ...(config.languageOptions?.parserOptions?.project
+      ? {
+          languageOptions: {
+            ...config.languageOptions,
+            parserOptions: {
+              ...config.languageOptions.parserOptions,
+              project: ['./tsconfig.app.json', './tsconfig.node.json'],
+            },
+          },
         }
-      }
-    } : {})
+      : {}),
   })),
 
   {
@@ -59,10 +61,7 @@ export default tseslint.config(
       ...reactHooksPlugin.configs.recommended.rules,
 
       // React Refresh rules
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', {allowConstantExport: true}],
 
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': [
@@ -82,7 +81,7 @@ export default tseslint.config(
       ],
 
       // General rules
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', {allow: ['warn', 'error']}],
       'prefer-arrow-callback': 'off',
     },
   },
@@ -101,5 +100,5 @@ export default tseslint.config(
 
   {
     ignores: ['dist/**', 'node_modules/**', '**/*.d.ts'],
-  }
+  },
 );

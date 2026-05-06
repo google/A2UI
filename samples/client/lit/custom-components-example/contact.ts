@@ -14,50 +14,38 @@
  * limitations under the License.
  */
 
-import { SignalWatcher } from "@lit-labs/signals";
-import { provide } from "@lit/context";
-import {
-  LitElement,
-  html,
-  css,
-  nothing,
-  HTMLTemplateResult,
-  unsafeCSS,
-} from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { theme as uiTheme } from "./theme/theme.js";
-import { A2UIClient } from "./client.js";
-import {
-  SnackbarAction,
-  SnackbarMessage,
-  SnackbarUUID,
-  SnackType,
-} from "./types/types.js";
-import { type Snackbar } from "./ui/snackbar.js";
-import { repeat } from "lit/directives/repeat.js";
-import { v0_8 } from "@a2ui/lit";
-import * as UI from "@a2ui/lit/ui";
+import {SignalWatcher} from '@lit-labs/signals';
+import {provide} from '@lit/context';
+import {LitElement, html, css, nothing, HTMLTemplateResult, unsafeCSS} from 'lit';
+import {customElement, state} from 'lit/decorators.js';
+import {theme as uiTheme} from './theme/theme.js';
+import {A2UIClient} from './client.js';
+import {SnackbarAction, SnackbarMessage, SnackbarUUID, SnackType} from './types/types.js';
+import {type Snackbar} from './ui/snackbar.js';
+import {repeat} from 'lit/directives/repeat.js';
+import {v0_8} from '@a2ui/lit';
+import * as UI from '@a2ui/lit/ui';
 
 // Demo elements.
-import "./ui/ui.js";
-import { registerContactComponents } from "./ui/custom-components/register-components.js";
-import { Context } from "@a2ui/lit/ui";
+import './ui/ui.js';
+import {registerContactComponents} from './ui/custom-components/register-components.js';
+import {Context} from '@a2ui/lit/ui';
 // @ts-ignore
-import { renderMarkdown } from "@a2ui/markdown-it";
+import {renderMarkdown} from '@a2ui/markdown-it';
 
 // Register custom components for the contact app
 registerContactComponents();
 
-@customElement("a2ui-contact")
+@customElement('a2ui-contact')
 export class A2UIContactFinder extends SignalWatcher(LitElement) {
   connectedCallback() {
     super.connectedCallback();
   }
 
-  @provide({ context: UI.Context.themeContext })
+  @provide({context: UI.Context.themeContext})
   accessor theme: v0_8.Types.Theme = uiTheme;
 
-  @provide({ context: UI.Context.markdown })
+  @provide({context: UI.Context.markdown})
   accessor markdownRenderer: v0_8.Types.MarkdownRenderer = async (text, options) => {
     return renderMarkdown(text, options);
   };
@@ -232,11 +220,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
   }> = [];
 
   render() {
-    return [
-      this.#maybeRenderForm(),
-      this.#maybeRenderData(),
-      this.#maybeRenderError(),
-    ];
+    return [this.#maybeRenderForm(), this.#maybeRenderData(), this.#maybeRenderError()];
   }
 
   #maybeRenderError() {
@@ -255,7 +239,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
           return;
         }
         const data = new FormData(evt.target);
-        const body = data.get("body") ?? null;
+        const body = data.get('body') ?? null;
         if (!body) {
           return;
         }
@@ -265,9 +249,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         await this.#sendAndProcessMessage(message);
       }}
     >
-      <h1 class="typography-f-sf typography-v-r typography-w-400 color-c-p30">
-        Contact Finder
-      </h1>
+      <h1 class="typography-f-sf typography-v-r typography-w-400 color-c-p30">Contact Finder</h1>
       <div>
         <input
           required
@@ -301,13 +283,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       return a.localeCompare(b);
     });
 
-
     if (surfaces.length === 0) {
       return nothing;
     }
 
-    return html`
-      ${this.#requesting
+    return html` ${this.#requesting
         ? html`<div class="rendering-indicator">
             <span class="g-icon filled-heavy rotate">progress_activity</span>
             Rendering UI...
@@ -318,68 +298,62 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
           surfaces,
           ([surfaceId]) => surfaceId,
           ([surfaceId, surface]) => {
-            return html`
-            <div style="position: relative; height: 100%; display: flex; flex-direction: column;">
+            return html` <div
+              style="position: relative; height: 100%; display: flex; flex-direction: column;"
+            >
+              <a2ui-surface
+                .surface=${{...surface}}
+                @a2uiaction=${async (evt: v0_8.Events.StateEvent<'a2ui.action'>) => {
+                  const [target] = evt.composedPath();
+                  if (!(target instanceof HTMLElement)) {
+                    return;
+                  }
 
-                <a2ui-surface
-                  .surface=${{ ...surface }}
-                  @a2uiaction=${async (
-              evt: v0_8.Events.StateEvent<"a2ui.action">
-            ) => {
-                const [target] = evt.composedPath();
-                if (!(target instanceof HTMLElement)) {
-                  return;
-                }
-
-                const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
-                  {};
-                if (evt.detail.action.context) {
-                  const srcContext = evt.detail.action.context;
-                  for (const item of srcContext) {
-                    if (item.value.literalBoolean) {
-                      context[item.key] = item.value.literalBoolean;
-                    } else if (item.value.literalNumber) {
-                      context[item.key] = item.value.literalNumber;
-                    } else if (item.value.literalString) {
-                      context[item.key] = item.value.literalString;
-                    } else if (item.value.path) {
-                      const path = this.#processor.resolvePath(
-                        item.value.path,
-                        evt.detail.dataContextPath
-                      );
-                      const value = this.#processor.getData(
-                        evt.detail.sourceComponent,
-                        path,
-                        surfaceId
-                      );
-                      context[item.key] = value;
+                  const context: v0_8.Types.A2UIClientEventMessage['userAction']['context'] = {};
+                  if (evt.detail.action.context) {
+                    const srcContext = evt.detail.action.context;
+                    for (const item of srcContext) {
+                      if (item.value.literalBoolean) {
+                        context[item.key] = item.value.literalBoolean;
+                      } else if (item.value.literalNumber) {
+                        context[item.key] = item.value.literalNumber;
+                      } else if (item.value.literalString) {
+                        context[item.key] = item.value.literalString;
+                      } else if (item.value.path) {
+                        const path = this.#processor.resolvePath(
+                          item.value.path,
+                          evt.detail.dataContextPath,
+                        );
+                        const value = this.#processor.getData(
+                          evt.detail.sourceComponent,
+                          path,
+                          surfaceId,
+                        );
+                        context[item.key] = value;
+                      }
                     }
                   }
-                }
 
-                const message: v0_8.Types.A2UIClientEventMessage = {
-                  userAction: {
-                    surfaceId: surfaceId,
-                    name: "ACTION: " + evt.detail.action.name,
-                    sourceComponentId: target.id,
-                    timestamp: new Date().toISOString(),
-                    context,
-                  },
-                };
+                  const message: v0_8.Types.A2UIClientEventMessage = {
+                    userAction: {
+                      surfaceId: surfaceId,
+                      name: 'ACTION: ' + evt.detail.action.name,
+                      sourceComponentId: target.id,
+                      timestamp: new Date().toISOString(),
+                      context,
+                    },
+                  };
 
-
-
-                await this.#sendAndProcessMessage(message);
-              }}
+                  await this.#sendAndProcessMessage(message);
+                }}
                 .surfaceId=${surfaceId}
-
                 .processor=${this.#processor}
                 .enableCustomElements=${true}
               ></a2ui-surface>
             </div>`;
-          }
+          },
         )}
-    </section>`;
+      </section>`;
   }
 
   async #sendAndProcessMessage(request: v0_8.Types.A2UIClientEventMessage) {
@@ -398,11 +372,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
   }
 
   async #sendMessage(
-    message: v0_8.Types.A2UIClientEventMessage
+    message: v0_8.Types.A2UIClientEventMessage,
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
-      const response = await this.#a2uiClient.send(message, (chunkMessages) => {
+      const response = await this.#a2uiClient.send(message, chunkMessages => {
         this.#processor.processMessages(chunkMessages);
         this.renderVersion++;
         this.requestUpdate();
@@ -426,7 +400,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
     actions: SnackbarAction[] = [],
     persistent = false,
     id = globalThis.crypto.randomUUID(),
-    replaceAll = false
+    replaceAll = false,
   ) {
     if (!this.#snackbar) {
       this.#pendingSnackbarMessages.push({
@@ -450,7 +424,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         persistent,
         actions,
       },
-      replaceAll
+      replaceAll,
     );
   }
 

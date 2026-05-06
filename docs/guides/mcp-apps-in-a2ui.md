@@ -23,11 +23,11 @@ To prevent this, A2UI strictly excludes `allow-same-origin` for the inner iframe
 ### The Architecture
 
 1.  **[Sandbox Proxy (`sandbox.html`)](https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html)**: An intermediate `iframe` served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.
-    -   Permissions: **Do not sandbox** in the host template (e.g., [`mcp-app.ts`](https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts) or [`mcp-apps-component.ts`](https://github.com/google/A2UI/blob/main/samples/client/lit/custom-components-example/ui/custom-components/mcp-apps-component.ts)).
-    -   Host origin validation: Validates that messages come from the expected host origin.
+    - Permissions: **Do not sandbox** in the host template (e.g., [`mcp-app.ts`](https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts) or [`mcp-apps-component.ts`](https://github.com/google/A2UI/blob/main/samples/client/lit/custom-components-example/ui/custom-components/mcp-apps-component.ts)).
+    - Host origin validation: Validates that messages come from the expected host origin.
 2.  **Embedded App (Inner Iframe)**: The innermost `iframe`. Injected dynamically via `srcdoc` with restricted permissions.
-    -   Permissions: `sandbox="allow-scripts allow-forms allow-popups allow-modals"` (**MUST NOT** include `allow-same-origin`).
-    -   Isolation: Removes access to `localStorage`, `sessionStorage`, `IndexedDB`, and cookies due to unique origin.
+    - Permissions: `sandbox="allow-scripts allow-forms allow-popups allow-modals"` (**MUST NOT** include `allow-same-origin`).
+    - Isolation: Removes access to `localStorage`, `sessionStorage`, `IndexedDB`, and cookies due to unique origin.
 
 ### Architecture Diagram
 
@@ -53,13 +53,13 @@ The MCP Apps component typically resolves to a `custom` node in the A2UI catalog
 You must register the component in your catalog application. For example, in Angular:
 
 ```typescript
-import { Catalog } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import {Catalog} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
 export const DEMO_CATALOG = {
   McpApp: {
-    type: () => import('./mcp-app').then((r) => r.McpApp),
-    bindings: ({ properties }) => [
+    type: () => import('./mcp-app').then(r => r.McpApp),
+    bindings: ({properties}) => [
       inputBinding(
         'content',
         () => ('content' in properties && properties['content']) || undefined,
@@ -102,24 +102,25 @@ If the content is complex or requires encoding, you can pass a URL-encoded strin
 
 Communication between the Host and the embedded inner iframe is facilitated via a structured JSON-RPC channel over `postMessage`.
 
--   **Events**: The Host Component listens for a `SANDBOX_PROXY_READY_METHOD` message from the proxy.
--   **Bridging**: An `AppBridge` handles message relaying. Developers (specifically the MCP App Developer inside the untrusted iframe) can call tools on the MCP server using `bridge.callTool()`.
--   **The Host**: Resolves callbacks (e.g., specific resizing, Tool results).
+- **Events**: The Host Component listens for a `SANDBOX_PROXY_READY_METHOD` message from the proxy.
+- **Bridging**: An `AppBridge` handles message relaying. Developers (specifically the MCP App Developer inside the untrusted iframe) can call tools on the MCP server using `bridge.callTool()`.
+- **The Host**: Resolves callbacks (e.g., specific resizing, Tool results).
 
 ### Limitations
 
 Because `allow-same-origin` is strictly omitted for the innermost iframe, the following conditions apply:
--   The MCP app **cannot** use `localStorage`, `sessionStorage`, `IndexedDB`, or cookies. Each application runs with a unique origin.
--   Direct DOM manipulation by the parent is blocked. All interactions must proceed via message passing.
+
+- The MCP app **cannot** use `localStorage`, `sessionStorage`, `IndexedDB`, or cookies. Each application runs with a unique origin.
+- Direct DOM manipulation by the parent is blocked. All interactions must proceed via message passing.
 
 ## Prerequisites
 
 To run the samples, ensure you have the following installed:
 
--   **Python 3.10+** — Required for the agent and MCP server backends
--   **[uv](https://docs.astral.sh/uv/)** — Fast Python package manager (used to run all Python samples)
--   **Node.js 18+** and **npm** — Required for building and running the client apps
--   **A `GEMINI_API_KEY`** — Required by all ADK-based agents. Get one from [Google AI Studio](https://aistudio.google.com/apikey)
+- **Python 3.10+** — Required for the agent and MCP server backends
+- **[uv](https://docs.astral.sh/uv/)** — Fast Python package manager (used to run all Python samples)
+- **Node.js 18+** and **npm** — Required for building and running the client apps
+- **A `GEMINI_API_KEY`** — Required by all ADK-based agents. Get one from [Google AI Studio](https://aistudio.google.com/apikey)
 
 > ⚠️ **Environment variable setup**: You can either export `GEMINI_API_KEY` in your shell or create a `.env` file in each agent directory. The agents use `dotenv` to load `.env` files automatically.
 >
@@ -141,13 +142,13 @@ There are two primary samples demonstrating MCP Apps integration. Each sample re
 
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
--   **A2A Agent Server**:
-    -   Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
-    -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
--   **Lit Client App**:
-    -   Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
-    -   Command: `npm install && npm run dev` (requires building the Lit renderer first)
-    -   URL: `http://localhost:5173/`
+- **A2A Agent Server**:
+  - Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
+  - Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
+- **Lit Client App**:
+  - Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
+  - Command: `npm install && npm run dev` (requires building the Lit renderer first)
+  - URL: `http://localhost:5173/`
 
 **What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
 
@@ -168,10 +169,12 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 #### Step 1: Start the MCP Server (Calculator)
 
 ```bash
-cd samples/agent/mcp/mcp-apps-calculator/
+cd samples/mcp/mcp-apps-calculator/
 uv run .
 ```
+
 =======
+
 ```bash
 cd samples/client/lit/mcp-apps-in-a2ui-sample
 npm install
@@ -206,10 +209,11 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 #### Step 1: Start the MCP Server (Calculator)
 
 ```bash
-cd samples/agent/mcp/mcp-apps-calculator/
+cd samples/mcp/mcp-apps-calculator/
 uv run .
 ```
->>>>>>> e3c17f1f (docs: add npm install step to MCP guide)
+
+> > > > > > > e3c17f1f (docs: add npm install step to MCP guide)
 
 The MCP server starts on `http://localhost:8000` using SSE transport.
 
@@ -256,8 +260,8 @@ http://localhost:4200/?disable_security_self_test=true
 
 **What to expect**: A set of smart chips to load calculator app or pong app will be rendered. Both apps run in their own sandboxed iframes.
 
-| Calculator App | Pong App |
-| :---: | :---: |
+|                                                 Calculator App                                                 |                                 Pong App                                  |
+| :------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------: |
 | ![An animated GIF of the calculator app being used to perform multiplications.](../assets/calculator_demo.gif) | ![An animated GIF of the pong app being played.](../assets/pong_demo.gif) |
 
 ---
@@ -271,19 +275,20 @@ For testing purposes, you can opt-out of the security self-test by using specifi
 This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments where the double-iframe setup may not pass strict origin checks (e.g., `localhost` development).
 
 Example usage:
+
 ```
 http://localhost:4200/?disable_security_self_test=true
 ```
 
 ## Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| `GEMINI_API_KEY environment variable not set` | Export the key or add a `.env` file in the agent directory |
-| Python version error on `contact_lookup` agent | Install Python 3.13+ (required by that sample's `pyproject.toml`) |
-| `npm run build:renderer` fails | Make sure you ran `npm install` first in `samples/client/lit/` |
-| Angular client shows blank page | Ensure you ran `npm run build:sandbox` before `npm start` |
-| MCP app iframe doesn't load | Check that both the MCP server (port 8000) and proxy agent (port 10006) are running |
-| `ng serve` not found | Run `npm install --include=dev` to install dev dependencies including `@angular/cli` |
-| "URL with hostname not allowed" | Angular 21 restricts allowed hosts. Use `localhost` (the default) — do not pass `--host 0.0.0.0` |
-| Security self-test fails in dev | Add `?disable_security_self_test=true` to the URL |
+| Problem                                        | Solution                                                                                         |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `GEMINI_API_KEY environment variable not set`  | Export the key or add a `.env` file in the agent directory                                       |
+| Python version error on `contact_lookup` agent | Install Python 3.13+ (required by that sample's `pyproject.toml`)                                |
+| `npm run build:renderer` fails                 | Make sure you ran `npm install` first in `samples/client/lit/`                                   |
+| Angular client shows blank page                | Ensure you ran `npm run build:sandbox` before `npm start`                                        |
+| MCP app iframe doesn't load                    | Check that both the MCP server (port 8000) and proxy agent (port 10006) are running              |
+| `ng serve` not found                           | Run `npm install --include=dev` to install dev dependencies including `@angular/cli`             |
+| "URL with hostname not allowed"                | Angular 21 restricts allowed hosts. Use `localhost` (the default) — do not pass `--host 0.0.0.0` |
+| Security self-test fails in dev                | Add `?disable_security_self_test=true` to the URL                                                |

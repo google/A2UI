@@ -14,16 +14,12 @@
         {
           "id": "root",
           "component": "Canvas",
-          "children": [
-            "chart-container"
-          ]
+          "children": ["chart-container"]
         },
         {
           "id": "chart-container",
           "component": "Column",
-          "children": [
-            "sales-chart"
-          ],
+          "children": ["sales-chart"],
           "align": "center"
         },
         {

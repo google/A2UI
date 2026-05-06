@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { A2uiMessage } from '@a2ui/web_core/v0_9';
+import {A2uiMessage} from '@a2ui/web_core/v0_9';
 
 /**
  * Represents a demo example configuration.

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { A2uiRendererService } from '@a2ui/angular/v0_9';
+import {Injectable} from '@angular/core';
+import {A2uiRendererService} from '@a2ui/angular/v0_9';
 
-import { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
-import { ActionDispatcher } from './action-dispatcher.service';
+import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
+import {ActionDispatcher} from './action-dispatcher.service';
 
 /**
  * Context for the 'update_property' event.
@@ -46,14 +46,14 @@ interface SubmitFormContext {
 })
 export class AgentStubService {
   /** Log of actions received from the surface. */
-  actionsLog: Array<{ timestamp: Date; action: A2uiClientAction }> = [];
+  actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
 
   constructor(
     private rendererService: A2uiRendererService,
     private dispatcher: ActionDispatcher,
   ) {
     // Subscribe to actions dispatched by the renderer
-    this.dispatcher.actions.subscribe((action) => this.handleAction(action));
+    this.dispatcher.actions.subscribe(action => this.handleAction(action));
   }
 
   /**
@@ -61,13 +61,13 @@ export class AgentStubService {
    */
   handleAction(action: A2uiClientAction) {
     console.log('[AgentStub] handleAction action:', action);
-    this.actionsLog.push({ timestamp: new Date(), action });
+    this.actionsLog.push({timestamp: new Date(), action});
 
     // Simulate server processing delay
     setTimeout(() => {
-      const { name, context } = action;
+      const {name, context} = action;
       if (name === 'update_property' && context) {
-        const { path, value, surfaceId } = context as unknown as UpdatePropertyContext;
+        const {path, value, surfaceId} = context as unknown as UpdatePropertyContext;
         console.log(
           '[AgentStub] update_property path:',
           path,
@@ -127,7 +127,7 @@ export class AgentStubService {
             this.rendererService.processMessages([
               {
                 version: 'v0.9',
-                deleteSurface: { surfaceId: createSurface.surfaceId },
+                deleteSurface: {surfaceId: createSurface.surfaceId},
               },
             ]);
           }

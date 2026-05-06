@@ -14,16 +14,11 @@
  limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'a2ui-youtube',
@@ -94,14 +89,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class YouTube extends DynamicComponent<Types.CustomNode> {
   readonly videoId = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedVideoId = computed(() =>
-    this.resolvePrimitive(this.videoId()),
-  );
+  protected readonly resolvedVideoId = computed(() => this.resolvePrimitive(this.videoId()));
 
   readonly title = input<Primitives.StringValue | null>();
-  protected readonly resolvedTitle = computed(() =>
-    this.resolvePrimitive(this.title() ?? null),
-  );
+  protected readonly resolvedTitle = computed(() => this.resolvePrimitive(this.title() ?? null));
 
   readonly autoplay = input<Primitives.BooleanValue | null>();
   protected readonly resolvedAutoplay = computed(() =>

@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { getPackageGraph, runCommand, ROOT_DIR } from './lib/workspace.mjs';
+import {writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {getPackageGraph, runCommand, ROOT_DIR} from './lib/workspace.mjs';
 
 // Configuration - adjust these as needed for your environment
-const GCS_URI = process.env.A2UI_NPM_MANIFEST_GCS_URI || 'gs://oss-exit-gate-prod-projects-bucket/a2ui/npm/manifests';
+const GCS_URI =
+  process.env.A2UI_NPM_MANIFEST_GCS_URI ||
+  'gs://oss-exit-gate-prod-projects-bucket/a2ui/npm/manifests';
 
 const graph = getPackageGraph();
 const renderers = Object.values(graph).filter(p => p.dir.includes('/renderers/'));
 
 const manifest = {
   publish_all: true,
-  packages: {}
+  packages: {},
 };
 
 for (const pkg of renderers) {
@@ -44,7 +46,9 @@ const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19); /
 // Find the version of a representative package for the manifest name
 const mainVersion = graph['@a2ui/web_core']?.version;
 if (!mainVersion) {
-  throw new Error('Could not find @a2ui/web_core in workspace. Ensure you are running from the correct directory.');
+  throw new Error(
+    'Could not find @a2ui/web_core in workspace. Ensure you are running from the correct directory.',
+  );
 }
 const manifestFileName = `manifest-${mainVersion}-${timestamp}.json`;
 
@@ -54,6 +58,8 @@ try {
   runCommand('gcloud', ['storage', 'cp', manifestPath, `${GCS_URI}/${manifestFileName}`]);
   console.log('Manifest uploaded successfully.');
 } catch (error) {
-  console.error('Failed to upload manifest. Ensure gcloud is authenticated and you have permissions.');
+  console.error(
+    'Failed to upload manifest. Ensure gcloud is authenticated and you have permissions.',
+  );
   process.exit(1);
 }

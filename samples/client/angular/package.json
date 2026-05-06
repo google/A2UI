@@ -16,18 +16,6 @@
     "postinstall": "npm run build:renderer",
     "build:sandbox": "esbuild ../shared/mcp_apps_inner_iframe/sandbox.ts --bundle --outfile=projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.js --format=esm --platform=browser --alias:@modelcontextprotocol/ext-apps/app-bridge=./node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js && cp ../shared/mcp_apps_inner_iframe/sandbox.html projects/mcp_calculator/public/mcp_apps_inner_iframe/sandbox.html"
   },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
   "private": true,
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",

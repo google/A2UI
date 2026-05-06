@@ -26,9 +26,7 @@
               }
             }
           },
-          "required": [
-            "component"
-          ],
+          "required": ["component"],
           "additionalProperties": false
         }
       ]
@@ -61,10 +59,7 @@
               }
             }
           },
-          "required": [
-            "component",
-            "content"
-          ],
+          "required": ["component", "content"],
           "additionalProperties": false
         }
       ]
@@ -90,9 +85,7 @@
               "description": "CPU score value or path."
             }
           },
-          "required": [
-            "component"
-          ],
+          "required": ["component"],
           "additionalProperties": false
         }
       ]
@@ -116,9 +109,7 @@
               "$ref": "#/$defs/PongScoreBoard"
             }
           },
-          "required": [
-            "component"
-          ],
+          "required": ["component"],
           "additionalProperties": false
         }
       ]

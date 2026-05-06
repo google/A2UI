@@ -586,11 +586,12 @@ Remove a surface and all its components and data.
 
 | Property    | Type   | Required | Description                 |
 | ----------- | ------ | -------- | --------------------------- |
-| `surfaceId` | string | ✅        | ID of the surface to delete |
+| `surfaceId` | string | ✅       | ID of the surface to delete |
 
 ### Usage Notes
 
 Keep these usage notes in mind:
+
 - Removes all components associated with the surface.
 - Clears the data model for the surface.
 - Client should remove the surface from the UI.

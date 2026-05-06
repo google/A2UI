@@ -45,7 +45,7 @@ import {BoundProperty} from './types';
   selector: 'a2ui-v09-component-host',
   imports: [NgComponentOutlet],
   host: {
-    'style': 'display: contents;'
+    style: 'display: contents;',
   },
   template: `
     @if (componentType) {
@@ -76,7 +76,7 @@ export class ComponentHostComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  protected componentType: Type<any> | null = null;
+  protected componentType: Type<unknown> | null = null;
   protected props: Record<string, BoundProperty> = {};
   private context?: ComponentContext;
 
@@ -127,7 +127,7 @@ export class ComponentHostComponent {
     if (!componentModel) {
       console.warn(`Component ${id} not found in surface ${surfaceId}. Waiting for it...`);
 
-      const sub = surface.componentsModel.onCreated.subscribe((comp) => {
+      const sub = surface.componentsModel.onCreated.subscribe(comp => {
         if (comp.id === id) {
           this.initializeComponent(surface, comp, id, basePath);
           sub.unsubscribe();
@@ -141,7 +141,7 @@ export class ComponentHostComponent {
   }
 
   private initializeComponent(
-    surface: SurfaceModel<any>,
+    surface: SurfaceModel,
     componentModel: ComponentModel,
     id: string,
     basePath: string,

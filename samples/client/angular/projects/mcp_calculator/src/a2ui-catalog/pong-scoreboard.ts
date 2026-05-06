@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
 
 @Component({
   selector: 'a2ui-pong-scoreboard',
@@ -85,12 +80,12 @@ import {
       padding: 1rem;
       border: 1px solid #e8eaed;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       width: 100%;
       box-sizing: border-box;
     }
     .score-card:hover {
-      box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
       transform: translateY(-2px);
       border-color: #d2e3fc;
     }
@@ -116,9 +111,7 @@ import {
     }
   `,
   template: `
-    <div class="a2ui-badge">
-      <span class="a2ui-icon">✦</span> A2UI Native
-    </div>
+    <div class="a2ui-badge"><span class="a2ui-icon">✦</span> A2UI Native</div>
     <div class="scores-wrapper">
       <div class="score-card player-card">
         <span class="score-label">Player</span>
@@ -131,16 +124,14 @@ import {
     </div>
   `,
 })
-export class PongScoreBoard
-  extends DynamicComponent<Types.CustomNode>
-{
+export class PongScoreBoard extends DynamicComponent<Types.CustomNode> {
   readonly playerScore = input<Primitives.NumberValue | null>();
-  protected readonly resolvedPlayerScore = computed<number>(() =>
-    super.resolvePrimitive(this.playerScore() ?? null) ?? 0
+  protected readonly resolvedPlayerScore = computed<number>(
+    () => super.resolvePrimitive(this.playerScore() ?? null) ?? 0,
   );
 
   readonly cpuScore = input<Primitives.NumberValue | null>();
-  protected readonly resolvedCpuScore = computed<number>(() =>
-    super.resolvePrimitive(this.cpuScore() ?? null) ?? 0
+  protected readonly resolvedCpuScore = computed<number>(
+    () => super.resolvePrimitive(this.cpuScore() ?? null) ?? 0,
   );
 }

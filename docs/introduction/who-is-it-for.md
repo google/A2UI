@@ -34,7 +34,7 @@ Build agents that generate forms, dashboards, and interactive workflows.
 
 ### 3. Platform Builders (SDK Creators)
 
-Build agent orchestration platforms, frameworks, or UI integrations.  
+Build agent orchestration platforms, frameworks, or UI integrations.
 
 Do you bring remote agents into your app?
 
@@ -53,6 +53,7 @@ Do you ship your agent into other apps you don't necessarily control?
 ## When to Use A2UI
 
 Use A2UI in the following scenarios:
+
 - **Agent-generated UI**: Core purpose.
 - **Multi-agent systems**: Standard protocol across trust boundaries.
 - **Cross-platform apps**: One agent, many renderers (web/mobile/desktop).
@@ -60,6 +61,7 @@ Use A2UI in the following scenarios:
 - **Brand consistency**: Client controls styling.
 
 Do not use A2UI for:
+
 - **Static websites**: Use HTML/CSS.
 - **Simple text-only chat**: Use Markdown.
 - **Remote widgets not integrated with client**: Use iframes, like [MCP Apps](../introduction/agent-ui-ecosystem.md).
