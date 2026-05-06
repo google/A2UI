@@ -29,7 +29,7 @@ export const ansi = {
   yellow: '\x1b[33m',
   red: '\x1b[31m',
   green: '\x1b[32m',
-  reset: '\x1b[0m'
+  reset: '\x1b[0m',
 };
 
 /**
@@ -176,7 +176,9 @@ export function maybeRunCommand(command, args, options = {}, settings = {}) {
   const run = settings.runCommand || runCommand;
 
   if (dryRun) {
-    console.log(`${ansi.yellow}[DRY RUN] Did NOT execute:${ansi.reset} ${commandToString(command, args, options)}`);
+    console.log(
+      `${ansi.yellow}[DRY RUN] Did NOT execute:${ansi.reset} ${commandToString(command, args, options)}`,
+    );
   } else {
     run(command, args, options);
   }

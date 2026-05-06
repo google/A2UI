@@ -58,6 +58,7 @@ This script will:
 - For each package: `npm install` -> `npm test` -> `npm run publish:package`.
 
 **Advanced Flags for publish_npm.mjs:**
+
 - `--no-dry-run`: Disables dry-run mode (enabled by default) to actually authenticate and publish.
 - `--no-check-core-dependencies`: Skips checking for core dependencies (`web_core` and `markdown-it`) being published.
 - `--skip-tests`: Skips the `npm run test` phase.

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import { ansi, getPackageGraph, maybeRunCommand, runCommand } from './lib/workspace.mjs';
-import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
+import {ansi, getPackageGraph, maybeRunCommand, runCommand} from './lib/workspace.mjs';
+import {execSync} from 'node:child_process';
+import {readFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {parseArgs} from 'node:util';
 
-const { yellow, red, green, reset } = ansi;
+const {yellow, red, green, reset} = ansi;
 
 /**
  * Topologically sorts package names based on their internal dependencies.
@@ -81,9 +81,9 @@ function getVersionDiff(oldV, newV) {
   if (nMaj === oMaj && nMin > oMin) return nPre ? 'PREMINOR' : 'MINOR';
   if (nMaj === oMaj && nMin === oMin && nPat > oPat) return nPre ? 'PREPATCH' : 'PATCH';
   if (oCore === nCore) {
-     if (oPre && !nPre) return 'GRADUATION (RELEASE)';
-     if (!oPre && nPre) return 'OLDER_OR_UNKNOWN';
-     return 'PRERELEASE';
+    if (oPre && !nPre) return 'GRADUATION (RELEASE)';
+    if (!oPre && nPre) return 'OLDER_OR_UNKNOWN';
+    return 'PRERELEASE';
   }
 
   return 'OLDER_OR_UNKNOWN';
@@ -111,13 +111,21 @@ function checkGitProvenance(exec) {
     isDirty = status.length > 0;
   } catch (e) {
     // TODO: Should this throw an Error with {cause: e}?
-    console.warn(`${yellow}⚠️ Could not verify Git status. Ensure you are in a valid Git repository.${reset}`);
+    console.warn(
+      `${yellow}⚠️ Could not verify Git status. Ensure you are in a valid Git repository.${reset}`,
+    );
   }
 
   if (isDirty) {
-    console.warn(`${yellow}\n⚠️  WARNING: Your Git working tree is DIRTY (you have uncommitted changes).${reset}`);
-    console.warn(`${yellow}Publishing from a dirty tree means the published code will NOT exactly match the commit history.${reset}`);
-    console.warn(`${yellow}It is highly recommended to commit or stash your changes before publishing.${reset}`);
+    console.warn(
+      `${yellow}\n⚠️  WARNING: Your Git working tree is DIRTY (you have uncommitted changes).${reset}`,
+    );
+    console.warn(
+      `${yellow}Publishing from a dirty tree means the published code will NOT exactly match the commit history.${reset}`,
+    );
+    console.warn(
+      `${yellow}It is highly recommended to commit or stash your changes before publishing.${reset}`,
+    );
   }
 
   console.log(`Publishing from branch: ${currentBranch}`);
@@ -143,10 +151,16 @@ function checkCoreDependencies(packageNames) {
     if (!packageNames.includes(markdownItName)) missingCores.push(markdownItName);
 
     if (missingCores.length > 0) {
-      console.warn(`${yellow}WARNING: You are publishing renderers but NOT ${missingCores.join(' and ')}.${reset}`);
-      console.warn(`${yellow}This can lead to broken versions if shared dependencies have changed.${reset}`);
+      console.warn(
+        `${yellow}WARNING: You are publishing renderers but NOT ${missingCores.join(' and ')}.${reset}`,
+      );
+      console.warn(
+        `${yellow}This can lead to broken versions if shared dependencies have changed.${reset}`,
+      );
       console.warn(`${yellow}Use --no-check-core-dependencies to override this check.${reset}`);
-      throw new Error(`Safety check failed: ${missingCores.join(' and ')} missing from publish list.`);
+      throw new Error(
+        `Safety check failed: ${missingCores.join(' and ')} missing from publish list.`,
+      );
     }
   }
 }
@@ -164,26 +178,35 @@ function checkNpmVersions(packages, exec) {
     let remoteVersion;
 
     try {
-      remoteVersion = exec(`npm view ${pkg.name} version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+      remoteVersion = exec(`npm view ${pkg.name} version`, {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim();
     } catch (e) {
       remoteVersion = null;
     }
 
     if (!remoteVersion) {
-      console.log(`✅ [NEW PACKAGE] ${pkg.name}: Will be published for the first time as ${localVersion}`);
+      console.log(
+        `✅ [NEW PACKAGE] ${pkg.name}: Will be published for the first time as ${localVersion}`,
+      );
       continue;
     }
 
     if (remoteVersion === localVersion) {
       console.error(`\n❌ ERROR: ${pkg.name} version ${localVersion} is already published on npm!`);
-      console.error(`Please increment the version (e.g., using increment_version.mjs) before publishing.`);
+      console.error(
+        `Please increment the version (e.g., using increment_version.mjs) before publishing.`,
+      );
       throw new Error(`Version ${localVersion} already published.`);
     }
 
     const diff = getVersionDiff(remoteVersion, localVersion);
     if (diff === 'OLDER_OR_UNKNOWN') {
-       console.error(`\n❌ ERROR: ${pkg.name} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`);
-       throw new Error(`Invalid version progression for ${pkg.name}.`);
+      console.error(
+        `\n❌ ERROR: ${pkg.name} local version (${localVersion}) appears older or invalid compared to npm version (${remoteVersion})!`,
+      );
+      throw new Error(`Invalid version progression for ${pkg.name}.`);
     }
 
     console.log(`✅ [${diff}] ${pkg.name}: ${remoteVersion} -> ${localVersion}`);
@@ -204,7 +227,9 @@ function buildAndTestPackages(packages, runCmd, skipTests) {
     console.log(`\n=== Preparing ${pkg.name} (${pkg.version}) ===`);
 
     console.log(`- Running npm install in ${pkg.dir}`);
-    runCmd('npm', ['install', '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'], { cwd: pkg.dir });
+    runCmd('npm', ['install', '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'], {
+      cwd: pkg.dir,
+    });
 
     if (skipTests) {
       console.log(`- Skipping npm test for ${pkg.name}`);
@@ -213,12 +238,10 @@ function buildAndTestPackages(packages, runCmd, skipTests) {
       const testScript = pkgJson.scripts && pkgJson.scripts['test:ci'] ? 'test:ci' : 'test';
 
       console.log(`- Running npm run ${testScript} in ${pkg.dir}`);
-      runCmd('npm', ['run', testScript], { cwd: pkg.dir });
+      runCmd('npm', ['run', testScript], {cwd: pkg.dir});
     }
   }
 }
-
-
 
 export async function main(args, mocks = {}) {
   const runCmd = mocks.runCommand || runCommand;
@@ -244,10 +267,9 @@ export async function main(args, mocks = {}) {
       type: 'boolean',
       default: false,
     },
-
   };
 
-  const { values } = parseArgs({ args, options, allowNegative: true });
+  const {values} = parseArgs({args, options, allowNegative: true});
   const packagesToPublish = values.package;
   const checkCoreDeps = values['check-core-dependencies'];
 
@@ -255,7 +277,9 @@ export async function main(args, mocks = {}) {
   const skipTests = values['skip-tests'];
 
   if (packagesToPublish.length === 0) {
-    throw new Error('Usage: publish_npm --package=pkg1 --package=pkg2 [--no-check-core-dependencies] [--no-dry-run] [--skip-tests]');
+    throw new Error(
+      'Usage: publish_npm --package=pkg1 --package=pkg2 [--no-check-core-dependencies] [--no-dry-run] [--skip-tests]',
+    );
   }
 
   // Checks the status of the current git branch.
@@ -287,12 +311,17 @@ export async function main(args, mocks = {}) {
 
   console.log('\n--- Proceeding to publish ---');
   console.log('\n--- Authenticating with Google Artifact Registry ---');
-  maybeRunCommand('npx', ['google-artifactregistry-auth'], {}, { dryRun, runCommand: runCmd });
+  maybeRunCommand('npx', ['google-artifactregistry-auth'], {}, {dryRun, runCommand: runCmd});
 
   for (const pkg of packageObjects) {
     console.log(`\n=== Publishing ${pkg.name} (${pkg.version}) ===`);
     console.log(`- Running publish:package in ${pkg.dir}`);
-    maybeRunCommand('npm', ['run', 'publish:package'], { cwd: pkg.dir }, { dryRun, runCommand: runCmd });
+    maybeRunCommand(
+      'npm',
+      ['run', 'publish:package'],
+      {cwd: pkg.dir},
+      {dryRun, runCommand: runCmd},
+    );
   }
 
   console.log(`\n${green}Done.${reset}`);

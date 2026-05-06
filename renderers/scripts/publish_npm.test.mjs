@@ -17,29 +17,43 @@
 
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import { main } from './publish_npm.mjs';
+import {main} from './publish_npm.mjs';
 
 describe('publish_npm script integration test', () => {
   it('should topologically sort packages based on dependencies', async () => {
     const executedCommands = [];
     const mocks = {
       runCommand: (cmd, args, options) => {
-        executedCommands.push(`${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`);
+        executedCommands.push(
+          `${cmd} ${args.join(' ')} (in ${options?.cwd ? options.cwd.split('/').pop() : 'root'})`,
+        );
       },
-      execSync: (cmd) => {
+      execSync: cmd => {
         if (cmd.includes('npm view')) return '0.0.1\n';
         return '';
-      }
+      },
     };
 
     await main(
-      ['--package=lit', '--package=web_core', '--package=markdown-it', '--skip-tests', '--no-dry-run'],
-      mocks
+      [
+        '--package=lit',
+        '--package=web_core',
+        '--package=markdown-it',
+        '--skip-tests',
+        '--no-dry-run',
+      ],
+      mocks,
     );
 
-    const webCoreInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('web_core'));
-    const markdownItInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('markdown-it'));
-    const litInstallIndex = executedCommands.findIndex(cmd => cmd.includes('install') && cmd.includes('lit'));
+    const webCoreInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('web_core'),
+    );
+    const markdownItInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('markdown-it'),
+    );
+    const litInstallIndex = executedCommands.findIndex(
+      cmd => cmd.includes('install') && cmd.includes('lit'),
+    );
 
     assert.ok(webCoreInstallIndex < litInstallIndex, 'web_core must be prepared before lit');
     assert.ok(markdownItInstallIndex < litInstallIndex, 'markdown-it must be prepared before lit');
@@ -51,10 +65,10 @@ describe('publish_npm script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      execSync: (cmd) => {
+      execSync: cmd => {
         if (cmd.includes('npm view')) return '0.0.1\n';
         return '';
-      }
+      },
     };
 
     await main(['--package=web_core'], mocks);
@@ -74,10 +88,10 @@ describe('publish_npm script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      execSync: (cmd) => {
+      execSync: cmd => {
         if (cmd.includes('npm view')) return '0.0.1\n';
         return '';
-      }
+      },
     };
 
     await main(['--package=web_core', '--no-dry-run'], mocks);
@@ -95,10 +109,10 @@ describe('publish_npm script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      execSync: (cmd) => {
+      execSync: cmd => {
         if (cmd.includes('npm view')) return '0.0.1\n';
         return '';
-      }
+      },
     };
 
     await main(['--package=web_core', '--skip-tests'], mocks);
@@ -110,7 +124,7 @@ describe('publish_npm script integration test', () => {
   it('should fail safety check if core dependencies are missing', async () => {
     const mocks = {
       runCommand: () => {},
-      execSync: () => ''
+      execSync: () => '',
     };
 
     await assert.rejects(
@@ -118,7 +132,7 @@ describe('publish_npm script integration test', () => {
         await main(['--package=lit'], mocks);
       },
       /.*/, // The script will emit an error with some details.
-      'Should fail when web_core and markdown-it are missing'
+      'Should fail when web_core and markdown-it are missing',
     );
   });
 
@@ -128,10 +142,10 @@ describe('publish_npm script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      execSync: (cmd) => {
+      execSync: cmd => {
         if (cmd.includes('npm view')) return '0.0.1\n';
         return '';
-      }
+      },
     };
 
     await main(['--package=lit', '--no-check-core-dependencies'], mocks);

@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { getPackageGraph, ROOT_DIR, ansi, maybeRunCommand } from './lib/workspace.mjs';
-import { parseArgs } from 'node:util';
-import { fileURLToPath } from 'node:url';
+import {writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {getPackageGraph, ROOT_DIR, ansi, maybeRunCommand} from './lib/workspace.mjs';
+import {parseArgs} from 'node:util';
+import {fileURLToPath} from 'node:url';
 
 // Configuration - adjust these as needed for your environment
 const GCS_URI =
   process.env.A2UI_NPM_MANIFEST_GCS_URI ||
   'gs://oss-exit-gate-prod-projects-bucket/a2ui/npm/manifests';
 
-const { yellow, red, green, reset } = ansi;
+const {yellow, red, green, reset} = ansi;
 
 /**
  * Generates and uploads the npm manifest to GCS.
@@ -52,7 +52,7 @@ export async function main(args, mocks = {}) {
     },
   };
 
-  const { values } = parseArgs({ args, options, allowNegative: true });
+  const {values} = parseArgs({args, options, allowNegative: true});
   const packagesToPublish = values.package;
   const isDryRun = values['dry-run'];
 
@@ -77,9 +77,9 @@ export async function main(args, mocks = {}) {
       publishing_groups: [
         {
           namespace: '@a2ui',
-          packages: resolvedPackages.map(name => ({ name }))
-        }
-      ]
+          packages: resolvedPackages.map(name => ({name})),
+        },
+      ],
     };
   } else {
     // A manifest to publish all packages.
@@ -99,16 +99,26 @@ export async function main(args, mocks = {}) {
   // Find the version of a representative package for the manifest name
   const mainVersion = graph['@a2ui/web_core']?.version;
   if (!mainVersion) {
-    throw new Error('Could not find @a2ui/web_core in workspace. Ensure you are running from the correct directory.');
+    throw new Error(
+      'Could not find @a2ui/web_core in workspace. Ensure you are running from the correct directory.',
+    );
   }
   const manifestFileName = `manifest-${mainVersion}-${timestamp}.json`;
 
   try {
     console.log(`--- Uploading manifest to GCS: ${GCS_URI}/${manifestFileName}`);
-    maybeRunCommand('gcloud', ['storage', 'cp', manifestPath, `${GCS_URI}/${manifestFileName}`], {}, { dryRun: isDryRun, runCommand: runCmd });
+    maybeRunCommand(
+      'gcloud',
+      ['storage', 'cp', manifestPath, `${GCS_URI}/${manifestFileName}`],
+      {},
+      {dryRun: isDryRun, runCommand: runCmd},
+    );
     console.log(`${green}Done.${reset}`);
   } catch (error) {
-    throw new Error('Failed to upload manifest. Ensure gcloud is authenticated and you have permissions.', { cause: error });
+    throw new Error(
+      'Failed to upload manifest. Ensure gcloud is authenticated and you have permissions.',
+      {cause: error},
+    );
   }
 }
 

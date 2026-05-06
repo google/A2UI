@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import { describe, it } from 'node:test';
+import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import { main } from './upload_manifest.mjs';
+import {main} from './upload_manifest.mjs';
 
 describe('upload_manifest script integration test', () => {
   it('should generate manifest with publish_all: true by default', async () => {
@@ -27,7 +27,7 @@ describe('upload_manifest script integration test', () => {
       runCommand: () => {},
       writeFileSync: (_, content) => {
         writtenFileContent = content;
-      }
+      },
     };
 
     await main([], mocks);
@@ -44,7 +44,7 @@ describe('upload_manifest script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      writeFileSync: () => {}
+      writeFileSync: () => {},
     };
 
     await main([], mocks);
@@ -59,19 +59,19 @@ describe('upload_manifest script integration test', () => {
       runCommand: () => {},
       writeFileSync: (_, content) => {
         writtenFileContent = content;
-      }
+      },
     };
 
     await main(['--package=angular', '-p', 'lit', '--package', 'react'], mocks);
 
     assert.ok(writtenFileContent, 'Should have written manifest file');
-    
+
     const manifest = JSON.parse(writtenFileContent);
     assert.strictEqual(manifest.publish_all, false, 'Should set publish_all: false');
     assert.ok(manifest.publishing_groups, 'Should have publishing_groups');
     assert.strictEqual(manifest.publishing_groups.length, 1);
     assert.strictEqual(manifest.publishing_groups[0].namespace, '@a2ui');
-    
+
     const packages = manifest.publishing_groups[0].packages;
     assert.strictEqual(packages.length, 3);
     assert.strictEqual(packages[0].name, 'angular');
@@ -86,13 +86,16 @@ describe('upload_manifest script integration test', () => {
       runCommand: (cmd, args) => {
         executedCommands.push(`${cmd} ${args.join(' ')}`);
       },
-      writeFileSync: () => {}
+      writeFileSync: () => {},
     };
 
     // --no-dry-run should trigger upload
     await main(['--no-dry-run'], mocks);
 
     assert.strictEqual(executedCommands.length, 1, 'Should execute one command');
-    assert.ok(executedCommands[0].startsWith('gcloud storage cp'), 'Should be gcloud upload command');
+    assert.ok(
+      executedCommands[0].startsWith('gcloud storage cp'),
+      'Should be gcloud upload command',
+    );
   });
 });
