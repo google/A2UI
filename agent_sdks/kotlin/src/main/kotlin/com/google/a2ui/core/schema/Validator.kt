@@ -232,9 +232,10 @@ constructor(
 
       if (MSG_BEGIN_RENDERING in message) {
         val beginRendering = message[MSG_BEGIN_RENDERING] as? JsonObject
-        val msgSurfaceId = requireNotNull(beginRendering?.get("surfaceId")?.jsonPrimitive?.content) {
-          "surfaceId is required in beginRendering"
-        }
+        val msgSurfaceId =
+          requireNotNull(beginRendering?.get("surfaceId")?.jsonPrimitive?.content) {
+            "surfaceId is required in beginRendering"
+          }
         if (!surfaceRootIds.containsKey(msgSurfaceId)) {
           val rootElem = beginRendering?.get(ROOT)
           val rootId =
@@ -249,9 +250,10 @@ constructor(
 
       if (MSG_CREATE_SURFACE in message) {
         val createSurface = message[MSG_CREATE_SURFACE] as? JsonObject
-        val msgSurfaceId = requireNotNull(createSurface?.get("surfaceId")?.jsonPrimitive?.content) {
-          "surfaceId is required in createSurface"
-        }
+        val msgSurfaceId =
+          requireNotNull(createSurface?.get("surfaceId")?.jsonPrimitive?.content) {
+            "surfaceId is required in createSurface"
+          }
         surfaceRootIds.putIfAbsent(msgSurfaceId, ROOT)
       }
     }
