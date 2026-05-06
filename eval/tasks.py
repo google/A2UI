@@ -20,11 +20,10 @@ import sys
 from google import genai
 from google.genai import errors
 from inspect_ai import task, Task
-from inspect_ai.solver import generate
 from inspect_ai.dataset import MemoryDataset, Sample
 from inspect_ai.scorer import scorer, Score, model_graded_qa
 from a2ui_eval.dataset import load_a2ui_dataset
-from a2ui_eval.solvers import a2ui_system_prompt
+from a2ui_eval.solvers import a2ui_system_prompt, timed_generate
 from a2ui_eval.scorers import a2ui_scorer
 
 # Paths relative to the eval directory where we run inspect
@@ -72,7 +71,7 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
         dataset=dataset,
         solver=[
             a2ui_system_prompt(SCHEMA_PATH, CATALOG_PATH),
-            generate()
+            timed_generate()
         ],
         scorer=[
             a2ui_scorer(CATALOG_PATH),

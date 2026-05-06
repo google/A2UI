@@ -14,6 +14,7 @@
 
 """Solvers for A2UI evaluation."""
 
+import time
 from inspect_ai.solver import Solver, solver, TaskState, Generate
 from inspect_ai.model import ChatMessageSystem
 from a2ui.schema.manager import A2uiSchemaManager
@@ -50,6 +51,18 @@ Additional Rules:
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:  # pylint: disable=unused-argument
         state.messages.insert(0, ChatMessageSystem(content=prompt))
+        return state
+        
+    return solve
+
+@solver
+def timed_generate() -> Solver:
+    """Solver that wraps generate() and records the duration in metadata."""
+    async def solve(state: TaskState, generate: Generate) -> TaskState:
+        start_time = time.time()
+        state = await generate(state)
+        duration = time.time() - start_time
+        state.metadata["inference_duration_seconds"] = duration
         return state
         
     return solve
