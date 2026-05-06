@@ -63,18 +63,13 @@ export interface BoundProperty<T = unknown> {
   readonly onUpdate: (newValue: T) => void;
 }
 
-/** A BoundProperty that contains a collection of children. */
-export interface BoundChildren extends BoundProperty<Child[]> {
-  readonly template: ComponentTemplate;
-}
-
 type DataBindingType = z.infer<typeof DataBindingSchema>;
 type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 type DynamicSchemaValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
 
 type InferredInterfaceToProps<InferredSchema> = {
   [K in keyof InferredSchema]: K extends 'children'
-    ? BoundChildren
+    ? BoundProperty<Child[]>
     : K extends 'child' | 'trigger' | 'content'
       ? BoundProperty<Child>
       : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>;
