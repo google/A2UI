@@ -18,7 +18,7 @@ import {TestBed} from '@angular/core/testing';
 import {DestroyRef} from '@angular/core';
 import {signal as preactSignal} from '@preact/signals-core';
 import {ComponentContext} from '@a2ui/web_core/v0_9';
-import {ComponentBinder} from './component-binder.service';
+import {Child, ComponentBinder} from './component-binder.service';
 
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
@@ -166,10 +166,41 @@ describe('ComponentBinder', () => {
     const bound = binder.bind(mockContext);
 
     expect(bound['children']).toBeDefined();
-    const children = bound['children'].value();
+    const children = bound['children'].value() as Child[];
     expect(Array.isArray(children)).toBe(true);
     expect(children.length).toBe(2);
     expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
     expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
+  });
+
+  it('should handle static array of child IDs', () => {
+    const mockComponentModel = {
+      properties: {
+        children: ['child1', 'child2'],
+      },
+    };
+
+    const mockpSig = preactSignal(['child1', 'child2']);
+    const mockDataContext = {
+      resolveSignal: jasmine.createSpy('resolveSignal').and.returnValue(mockpSig),
+      path: '/current/path',
+      set: jasmine.createSpy('set'),
+    };
+
+    const mockContext = {
+      componentModel: mockComponentModel,
+      dataContext: mockDataContext,
+    } as unknown as ComponentContext;
+
+    const bound = binder.bind(mockContext);
+
+    expect(bound['children']).toBeDefined();
+    const children = bound['children'].value() as Child[];
+    expect(Array.isArray(children)).toBe(true);
+    expect(children.length).toBe(2);
+    expect(children[0]).toEqual({id: 'child1', basePath: '/current/path'});
+    expect(children[1]).toEqual({id: 'child2', basePath: '/current/path'});
+
+    expect((bound['children'] as any).template).toBeUndefined();
   });
 });
