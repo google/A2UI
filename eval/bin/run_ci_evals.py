@@ -25,8 +25,8 @@ import sys
 
 def main():
     parser = argparse.ArgumentParser(description="Run A2UI evals for CI.")
-    parser.add_argument("--limit", type=int, nargs="?", default=100, help="Limit samples to evaluate.")
-    parser.add_argument("--threshold", type=float, default=0.0, help="Pass percentage threshold (0-100).")
+    parser.add_argument("--max-samples", type=int, default=100, help="Maximum number of samples to evaluate. Set to 0 for all samples. Default is 100.")
+    parser.add_argument("--threshold", type=float, default=0.0, help="Pass percentage threshold (0-100). Default is 0.0.")
     args = parser.parse_args()
 
     # Find eval root (directory above bin)
@@ -36,9 +36,8 @@ def main():
     os.chdir(eval_root)
 
     # Compute seed as YYYYMMDD
-    seed = datetime.datetime.now().strftime("%Y%m%d")
-
-    print(f"Running evals with seed: {seed} and limit {args.limit}")
+    seed = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d")
+    print(f"Running evals with seed: {seed} and max samples: {args.max_samples}")
 
     # Create a dedicated log directory for this seed
     log_dir = os.path.join(eval_root, "logs", seed)
@@ -49,11 +48,13 @@ def main():
     cmd = [
         "uv", "run", "inspect", "eval", "tasks.py",
         "--model", "google/gemini-3-flash-preview",
-        "--limit", str(args.limit),
         "--sample-shuffle", seed,
         "--display", "plain",
         "--log-dir", f"logs/{seed}"
     ]
+    if args.max_samples != 0:
+        cmd.extend(["--limit", str(args.max_samples)])
+
 
     print(f"Executing: {' '.join(cmd)}")
 
