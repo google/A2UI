@@ -33,8 +33,9 @@ export abstract class BasicCatalogA2uiLitElement<
     injectBasicCatalogStyles();
   }
 
-  updated(changedProperties: Map<PropertyKey, unknown>) {
-    super.updated(changedProperties);
+  willUpdate(changedProperties: Map<string, any>) {
+    super.willUpdate(changedProperties);
+
     const props = this.controller?.props as any;
     if (props && props.weight !== undefined) {
       this.style.flex = String(props.weight);
@@ -42,8 +43,7 @@ export abstract class BasicCatalogA2uiLitElement<
       this.style.removeProperty('flex');
     }
 
-    const surface = this.context?.dataContext?.surface;
-    const primaryColor = surface?.theme?.primaryColor;
+    const primaryColor = this.context?.theme?.primaryColor;
     if (primaryColor) {
       this.style.setProperty('--a2ui-color-primary', primaryColor);
       this.style.setProperty(
