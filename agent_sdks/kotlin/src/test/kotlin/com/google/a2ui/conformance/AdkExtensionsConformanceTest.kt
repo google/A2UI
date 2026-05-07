@@ -200,6 +200,7 @@ class AdkExtensionsConformanceTest {
               }
             }
           }
+          else -> assert(false, { "Unknown action: $action" })
         }
       }
     }
