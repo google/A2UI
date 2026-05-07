@@ -56,6 +56,10 @@ jobs:
         if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
         run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD" -y
 
+      - name: Run Unit Tests
+        working-directory: eval
+        run: uv run python -m pytest
+
       - name: Run Evals
         working-directory: eval
         if: ${{ env.TRANSCRYPT_PASSWORD != '' && env.REPO_GEMINI_API_KEY != '' }}
