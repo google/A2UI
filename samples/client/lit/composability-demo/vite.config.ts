@@ -26,7 +26,7 @@ const SANDBOX_ENTRY_NAME = `${SANDBOX_BASE_PATH}sandbox`;
 export default {
   plugins: [
     {
-      name: 'serve-sandbox-and-web',
+      name: 'serve-sandbox-web-and-catalogs',
       configureServer(server) {
         server.middlewares.use((req, _res, next) => {
           const url = req.url || '';
@@ -45,6 +45,12 @@ export default {
           if (url.startsWith('/web/')) {
             const pathname = new URL(url, `http://${req.headers.host}`).pathname;
             req.url = '/@fs' + resolve(__dirname, '../../../../' + pathname.slice(1));
+          }
+          
+          // 3. Intercept and serve catalogs
+          if (url.startsWith('/catalogs/')) {
+            const pathname = new URL(url, `http://${req.headers.host}`).pathname;
+            req.url = '/@fs' + resolve(__dirname, '../../../../renderers/lit/' + pathname.slice(1));
           }
           
           next();
