@@ -20,7 +20,7 @@ import pytest
 
 # Add bin directory to path to import run_ci_evals
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../bin')))
-from run_ci_evals import extract_accuracy, check_threshold, build_inspect_command
+from run_ci_evals import extract_accuracy, check_threshold, build_inspect_command, print_results_summary
 import argparse
 
 def test_extract_accuracy_valid():
@@ -94,7 +94,6 @@ def test_build_inspect_command_default():
         "--display", "plain",
         "--log-dir", f"logs/{seed}",
         "--max-retries", "10",
-        "--log-level", "http",
         "-T", "grading_model=google/gemini-3-flash-preview",
         "--limit", "100"
     ]
@@ -108,3 +107,38 @@ def test_build_inspect_command_no_limit():
     seed = "20260507"
     cmd = build_inspect_command(args, seed)
     assert "--limit" not in cmd
+
+def test_print_results_summary_valid(capsys):
+    log_data = {
+        "samples": [
+            {
+                "id": 1,
+                "metadata": {"name": "test_task"},
+                "scores": {
+                    "a2ui_scorer": {"value": 1.0, "explanation": "Perfect"},
+                    "measured_model_graded_qa": {"value": "C", "explanation": "Correct"}
+                }
+            }
+        ]
+    }
+    print_results_summary(log_data)
+    captured = capsys.readouterr()
+    assert "test_task: Algorithmic: PASS | Judging: C" in captured.out
+
+def test_print_results_summary_fail(capsys):
+    log_data = {
+        "samples": [
+            {
+                "id": 2,
+                "metadata": {"name": "fail_task"},
+                "scores": {
+                    "a2ui_scorer": {"value": 0.0, "explanation": "Missing component"},
+                    "measured_model_graded_qa": {"value": "I", "explanation": "Incorrect"}
+                }
+            }
+        ]
+    }
+    print_results_summary(log_data)
+    captured = capsys.readouterr()
+    assert "fail_task: Algorithmic: FAIL | Judging: I" in captured.out
+    assert "Reason: Algorithmic failed: Missing component. Judging failed (Grade I): Incorrect." in captured.out
