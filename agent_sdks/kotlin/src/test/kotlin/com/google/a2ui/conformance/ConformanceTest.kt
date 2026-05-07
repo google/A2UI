@@ -242,22 +242,6 @@ class ConformanceTest {
       val action = case[ConformanceTestHelper.KEY_ACTION] as String
       val args = case[ConformanceTestHelper.KEY_ARGS] as? Map<*, *> ?: emptyMap<Any, Any>()
 
-      // Filter out non-conformant tests for Kotlin
-      if (
-        action == "load" &&
-          (args[KEY_PATH] as? String)?.let {
-            it.contains("*") || it.contains("[") || it.contains("?")
-          } == true
-      ) {
-        println("Skipping non-conformant test (load with glob): $name")
-        return@mapNotNull null
-      }
-      if (action == "load" && case.containsKey(ConformanceTestHelper.KEY_EXPECT_ERROR)) {
-        // Kotlin loadExamples skips invalid files instead of throwing, so it's not conformant with
-        // error expectation
-        println("Skipping non-conformant test (load expecting error): $name")
-        return@mapNotNull null
-      }
       DynamicTest.dynamicTest(name) {
         val catalog =
           (case[ConformanceTestHelper.KEY_CATALOG] as? Map<*, *>)?.let {
