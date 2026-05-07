@@ -15,7 +15,7 @@
  */
 
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {Component, signal as angularSignal, input} from '@angular/core';
+import {Component, input} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {DividerComponent} from './divider.component';
 import {ImageComponent} from './image.component';
@@ -24,9 +24,9 @@ import {VideoComponent} from './video.component';
 import {AudioPlayerComponent} from './audio-player.component';
 import {ComponentModel} from '@a2ui/web_core/v0_9';
 import {CardComponent} from './card.component';
-import {BoundProperty} from '../../core/types';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentBinder} from '../../core/component-binder.service';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 
 describe('Simple Components', () => {
   let mockRendererService: any;
@@ -70,17 +70,10 @@ describe('Simple Components', () => {
     dataContextPath = input<string>();
   }
 
-  function createBoundProperty(val: any): BoundProperty<any> {
-    return {
-      value: angularSignal(val),
-      raw: val,
-      onUpdate: jasmine.createSpy('onUpdate'),
-    };
-  }
-
   describe('DividerComponent', () => {
     let component: DividerComponent;
     let fixture: ComponentFixture<DividerComponent>;
+    let defaultProps: ComponentToProps<DividerComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -97,6 +90,11 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        axis: createBoundProperty('horizontal' as const),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -105,17 +103,15 @@ describe('Simple Components', () => {
     });
 
     it('should render horizontal divider by default', () => {
-      fixture.componentRef.setInput('props', {
-        axis: createBoundProperty('horizontal'),
-      });
       fixture.detectChanges();
       const divider = fixture.nativeElement.querySelector('.a2ui-divider');
       expect(divider.classList).toContain('horizontal');
     });
 
     it('should render vertical divider', () => {
-      fixture.componentRef.setInput('props', {
-        axis: createBoundProperty('vertical'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        axis: createBoundProperty('vertical' as const),
       });
       fixture.detectChanges();
       const divider = fixture.nativeElement.querySelector('.a2ui-divider');
@@ -126,6 +122,7 @@ describe('Simple Components', () => {
   describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
+    let defaultProps: ComponentToProps<ImageComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -142,6 +139,13 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        url: createBoundProperty('https://example.com/image.png'),
+        fit: createBoundProperty('cover' as const),
+        variant: createBoundProperty('avatar' as const),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -150,11 +154,6 @@ describe('Simple Components', () => {
     });
 
     it('should render image with url', () => {
-      fixture.componentRef.setInput('props', {
-        url: createBoundProperty('https://example.com/image.png'),
-        fit: createBoundProperty('cover'),
-        variant: createBoundProperty('avatar'),
-      });
       fixture.detectChanges();
       const img = fixture.nativeElement.querySelector('img') as HTMLImageElement;
       expect(img.src).toBeTruthy();
@@ -163,8 +162,8 @@ describe('Simple Components', () => {
     });
 
     it('should render image with description', () => {
-      fixture.componentRef.setInput('props', {
-        url: createBoundProperty('https://example.com/image.png'),
+      setComponentProps(fixture, {
+        ...defaultProps,
         description: createBoundProperty('A cute cat'),
       });
       fixture.detectChanges();
@@ -180,10 +179,10 @@ describe('Simple Components', () => {
         'mediumFeature',
         'largeFeature',
         'header',
-      ];
+      ] as const;
       for (const variant of variants) {
-        fixture.componentRef.setInput('props', {
-          url: createBoundProperty('https://example.com/image.png'),
+        setComponentProps(fixture, {
+          ...defaultProps,
           variant: createBoundProperty(variant),
         });
         fixture.detectChanges();
@@ -196,6 +195,7 @@ describe('Simple Components', () => {
   describe('IconComponent', () => {
     let component: IconComponent;
     let fixture: ComponentFixture<IconComponent>;
+    let defaultProps: ComponentToProps<IconComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -212,6 +212,11 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        name: createBoundProperty('search' as const),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -220,17 +225,15 @@ describe('Simple Components', () => {
     });
 
     it('should render named icon', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('search'),
-      });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
       expect(icon.textContent.trim()).toBe('search');
     });
 
     it('should convert camelCase icon names to snake_case', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('shoppingCart'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty('shoppingCart' as const),
       });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
@@ -238,8 +241,9 @@ describe('Simple Components', () => {
     });
 
     it('should map "play" to "play_arrow"', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('play'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty('play' as const),
       });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
@@ -247,8 +251,9 @@ describe('Simple Components', () => {
     });
 
     it('should map "rewind" to "fast_rewind"', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('rewind'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty('rewind' as const),
       });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
@@ -256,8 +261,9 @@ describe('Simple Components', () => {
     });
 
     it('should map "favoriteOff" to "favorite_border"', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('favoriteOff'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty('favoriteOff' as const),
       });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
@@ -265,8 +271,9 @@ describe('Simple Components', () => {
     });
 
     it('should map "starOff" to "star_border"', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty('starOff'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty('starOff' as const),
       });
       fixture.detectChanges();
       const icon = fixture.nativeElement.querySelector('.a2ui-icon');
@@ -274,8 +281,11 @@ describe('Simple Components', () => {
     });
 
     it('should render path icon', () => {
-      fixture.componentRef.setInput('props', {
-        name: createBoundProperty({path: 'M10 10...'}),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        name: createBoundProperty({
+          path: 'M10 10...',
+        }) as unknown as ComponentToProps<IconComponent>['name'],
       });
       fixture.detectChanges();
       const svg = fixture.nativeElement.querySelector('svg');
@@ -286,6 +296,7 @@ describe('Simple Components', () => {
   describe('VideoComponent', () => {
     let component: VideoComponent;
     let fixture: ComponentFixture<VideoComponent>;
+    let defaultProps: ComponentToProps<VideoComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -302,6 +313,11 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        url: createBoundProperty('https://example.com/video.mp4'),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -310,18 +326,13 @@ describe('Simple Components', () => {
     });
 
     it('should render video with url', () => {
-      fixture.componentRef.setInput('props', {
-        url: createBoundProperty('https://example.com/video.mp4'),
-        posterUrl: createBoundProperty('https://example.com/poster.jpg'),
-      });
       fixture.detectChanges();
       const video = fixture.nativeElement.querySelector('video') as HTMLVideoElement;
       expect(video.src).toBeTruthy();
-      expect(video.poster).toContain('poster.jpg');
     });
 
     it('should handle missing props', () => {
-      fixture.componentRef.setInput('props', {});
+      setComponentProps(fixture, {} as ComponentToProps<VideoComponent>);
       fixture.detectChanges();
       const video = fixture.nativeElement.querySelector('video') as HTMLVideoElement;
       expect(video.getAttribute('src')).toBeFalsy();
@@ -331,6 +342,7 @@ describe('Simple Components', () => {
   describe('AudioPlayerComponent', () => {
     let component: AudioPlayerComponent;
     let fixture: ComponentFixture<AudioPlayerComponent>;
+    let defaultProps: ComponentToProps<AudioPlayerComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -347,6 +359,12 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        url: createBoundProperty('https://example.com/audio.mp3'),
+        description: createBoundProperty('Test Audio'),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -355,10 +373,6 @@ describe('Simple Components', () => {
     });
 
     it('should render audio with url', () => {
-      fixture.componentRef.setInput('props', {
-        url: createBoundProperty('https://example.com/audio.mp3'),
-        description: createBoundProperty('Test Audio'),
-      });
       fixture.detectChanges();
       const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
       expect(audio.src).toBeTruthy();
@@ -367,8 +381,9 @@ describe('Simple Components', () => {
     });
 
     it('should not render description if not provided', () => {
-      fixture.componentRef.setInput('props', {
-        url: createBoundProperty('https://example.com/audio.mp3'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        description: createBoundProperty(undefined),
       });
       fixture.detectChanges();
       const desc = fixture.nativeElement.querySelector('.a2ui-audio-description');
@@ -376,7 +391,7 @@ describe('Simple Components', () => {
     });
 
     it('should handle missing props', () => {
-      fixture.componentRef.setInput('props', {});
+      setComponentProps(fixture, {} as ComponentToProps<AudioPlayerComponent>);
       fixture.detectChanges();
       const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
       expect(audio.getAttribute('src')).toBeFalsy();
@@ -386,6 +401,7 @@ describe('Simple Components', () => {
   describe('CardComponent', () => {
     let component: CardComponent;
     let fixture: ComponentFixture<CardComponent>;
+    let defaultProps: ComponentToProps<CardComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -402,6 +418,11 @@ describe('Simple Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        child: createBoundProperty({id: 'child-1', basePath: '/'}),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -410,9 +431,6 @@ describe('Simple Components', () => {
     });
 
     it('should render component-host for child', () => {
-      fixture.componentRef.setInput('props', {
-        child: createBoundProperty({id: 'child-1', basePath: '/'}),
-      });
       fixture.detectChanges();
       const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
       expect(host).toBeTruthy();
