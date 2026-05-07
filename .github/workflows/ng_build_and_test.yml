@@ -34,27 +34,22 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "22"
+          cache: 'npm'
+          cache-dependency-path: ./samples/client/angular/package-lock.json
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular
         run: npm i
 
-      - name: Build Angular renderer and its dependencies
-        working-directory: ./samples/client/angular
-        run: npm run build:renderer
+      - name: Run tests and builds in parallel
+        run: |
+          pids=()
+          (cd ./renderers/angular && npm run test:ci) & pids+=($!)
+          (cd ./samples/client/angular && npm run build restaurant) & pids+=($!)
+          (cd ./samples/client/angular && npm run build rizzcharts) & pids+=($!)
+          (cd ./samples/client/angular && npm run build orchestrator) & pids+=($!)
+          
+          for pid in "${pids[@]}"; do
+              wait $pid || exit 1
+          done
 
-      - name: Test Angular renderer
-        working-directory: ./renderers/angular
-        run: npm run test:ci
-
-      - name: Build restaurant sample
-        working-directory: ./samples/client/angular
-        run: npm run build restaurant
-
-      - name: Build Rizzchart sample
-        working-directory: ./samples/client/angular
-        run: npm run build rizzcharts
-
-      - name: Build Orchestrator
-        working-directory: ./samples/client/angular
-        run: npm run build orchestrator
