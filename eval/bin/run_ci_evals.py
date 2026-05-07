@@ -27,6 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run A2UI evals for CI.")
     parser.add_argument("--max-samples", type=int, default=100, help="Maximum number of samples to evaluate. Set to 0 for all samples. Default is 100.")
     parser.add_argument("--threshold", type=float, default=0.0, help="Pass percentage threshold (0-100). Default is 0.0.")
+    parser.add_argument("--model", type=str, default="google/gemini-3-flash-preview", help="Model used to evaluate tasks. Default is google/gemini-3-flash-preview.")
     args = parser.parse_args()
 
     # Find eval root (directory above bin)
@@ -47,7 +48,7 @@ def main():
     # We use relative paths for tasks.py and log-dir to avoid NotImplementedError in inspect
     cmd = [
         "uv", "run", "inspect", "eval", "tasks.py",
-        "--model", "google/gemini-3-flash-preview",
+        "--model", args.model,
         "--sample-shuffle", seed,
         "--display", "plain",
         "--log-dir", f"logs/{seed}"
@@ -68,7 +69,7 @@ def main():
         sys.exit(result.returncode if result.returncode != 0 else 1)
 
     # Get the latest log file
-    log_file = max(log_files, key=os.path.getctime)
+    log_file = max(log_files, key=os.path.getmtime)
     print(f"Found log file: {log_file}")
 
     print(f"Determining pass percentage from log file: {log_file}")

@@ -72,9 +72,9 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.sha
             });
-            
+
             const prLink = prs.data.length > 0 ? `Associated PR: #${prs.data[0].number}` : "No associated PR found";
-            
+
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
