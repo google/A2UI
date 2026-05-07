@@ -56,6 +56,21 @@ def test_extract_accuracy_no_accuracy():
     with pytest.raises(ValueError, match="Could not find accuracy"):
         extract_accuracy(log_data)
 
+def test_extract_accuracy_null_accuracy():
+    log_data = {
+        "results": {
+            "scores": [
+                {
+                    "metrics": {
+                        "accuracy": None
+                    }
+                }
+            ]
+        }
+    }
+    with pytest.raises(ValueError, match="Could not find accuracy"):
+        extract_accuracy(log_data)
+
 def test_check_threshold_pass():
     assert check_threshold(85.0, 80.0) is True
     assert check_threshold(80.0, 80.0) is True

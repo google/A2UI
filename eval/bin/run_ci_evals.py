@@ -20,6 +20,7 @@ import datetime
 import glob
 import json
 import os
+import shutil
 import subprocess
 import sys
 
@@ -40,7 +41,8 @@ def extract_accuracy(log_data: dict) -> float:
         raise ValueError("No scores found in log file.")
         
     metrics = scores[0].get("metrics", {})
-    accuracy = metrics.get("accuracy", {}).get("value")
+    accuracy_obj = metrics.get("accuracy") or {}
+    accuracy = accuracy_obj.get("value")
     
     if accuracy is None:
         raise ValueError("Could not find accuracy metric in log file.")
@@ -76,8 +78,10 @@ def main():
     seed = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d")
     print(f"Running evals with seed: {seed} and max samples: {args.max_samples}")
 
-    # Create a dedicated log directory for this seed
+    # Create a dedicated log directory for this seed, clearing it if it exists
     log_dir = os.path.join(eval_root, "logs", seed)
+    if os.path.exists(log_dir):
+        shutil.rmtree(log_dir)
     os.makedirs(log_dir, exist_ok=True)
 
     # Run inspect eval
