@@ -83,7 +83,9 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'Evals failed on main',
+              title: prs.data.length > 0 
+                ? `Evals failed on main (PR #${prs.data[0].number})` 
+                : `Evals failed on main for commit ${context.sha.substring(0, 7)}`,
               labels: ['eval_failure'],
               body: `The evals workflow failed on main for commit ${context.sha}.
             ${prLink}
