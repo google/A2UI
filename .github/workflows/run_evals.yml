@@ -88,5 +88,8 @@ jobs:
               labels: ['eval_failure'],
               body: `The evals workflow failed on main for commit ${context.sha}.
             ${prLink}
-            See logs: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            See logs: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              }
             })
