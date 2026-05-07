@@ -61,6 +61,30 @@ def check_threshold(percentage: float, threshold: float) -> bool:
     """
     return percentage >= threshold
 
+def build_inspect_command(args: argparse.Namespace, seed: str) -> list[str]:
+    """Builds the command line arguments for inspect eval.
+
+    Args:
+        args: Parsed command line arguments.
+        seed: The random seed to use.
+
+    Returns:
+        A list of strings representing the command.
+    """
+    cmd = [
+        "uv", "run", "inspect", "eval", "tasks.py",
+        "--model", args.model,
+        "--sample-shuffle", seed,
+        "--display", "plain",
+        "--log-dir", f"logs/{seed}",
+        "--max-retries", "10",
+        "--log-level", "http",
+        "-T", f"grading_model={args.grading_model}"
+    ]
+    if args.max_samples != 0:
+        cmd.extend(["--limit", str(args.max_samples)])
+    return cmd
+
 def main():
     parser = argparse.ArgumentParser(description="Run A2UI evals for CI.")
     parser.add_argument("--max-samples", type=int, default=100, help="Maximum number of samples to evaluate. Set to 0 for all samples. Default is 100.")
@@ -87,18 +111,7 @@ def main():
 
     # Run inspect eval
     # We use relative paths for tasks.py and log-dir to avoid NotImplementedError in inspect
-    cmd = [
-        "uv", "run", "inspect", "eval", "tasks.py",
-        "--model", args.model,
-        "--sample-shuffle", seed,
-        "--display", "plain",
-        "--log-dir", f"logs/{seed}",
-        "--max-retries", "10",
-        "--log-level", "http",
-        "-T", f"grading_model={args.grading_model}"
-    ]
-    if args.max_samples != 0:
-        cmd.extend(["--limit", str(args.max_samples)])
+    cmd = build_inspect_command(args, seed)
 
     print(f"Executing: {' '.join(cmd)}")
     
