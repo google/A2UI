@@ -34,8 +34,8 @@ class A2uiStreamParserV09(A2uiStreamParser):
   def _placeholder_component(self) -> Dict[str, Any]:
     """Returns a v0.9 flat style placeholder component specification."""
     return {
-        'component': 'Row',
-        'children': [],
+        "component": "Row",
+        "children": [],
     }
 
   @property
@@ -67,9 +67,9 @@ class A2uiStreamParserV09(A2uiStreamParser):
         if match:
           return match.group(1)
 
-    self.surface_id = get_latest_value('surfaceId')
+    self.surface_id = get_latest_value("surfaceId")
 
-    parsed_root = get_latest_value('root')
+    parsed_root = get_latest_value("root")
     if parsed_root is not None:
       self.root_id = parsed_root
 
@@ -105,13 +105,13 @@ class A2uiStreamParserV09(A2uiStreamParser):
         surface_id = val.get(SURFACE_ID_KEY) or surface_id
 
     self.surface_id = surface_id
-    sid = self.surface_id or 'unknown'
+    sid = self.surface_id or "unknown"
 
     # v0.9 Specific Handling
     if MSG_TYPE_CREATE_SURFACE in obj:
       val = obj[MSG_TYPE_CREATE_SURFACE]
       if isinstance(val, dict):
-        self.root_id = val.get('root', self.root_id or DEFAULT_ROOT_ID)
+        self.root_id = val.get("root", self.root_id or DEFAULT_ROOT_ID)
       self._buffered_start_message = obj
 
       # Yield createSurface immediately when it completes
@@ -131,12 +131,12 @@ class A2uiStreamParserV09(A2uiStreamParser):
     if MSG_TYPE_UPDATE_COMPONENTS in obj:
       self.add_msg_type(MSG_TYPE_UPDATE_COMPONENTS)
       self.root_id = obj[MSG_TYPE_UPDATE_COMPONENTS].get(
-          'root', self.root_id or DEFAULT_ROOT_ID
+          "root", self.root_id or DEFAULT_ROOT_ID
       )
-      components = obj[MSG_TYPE_UPDATE_COMPONENTS].get('components', [])
+      components = obj[MSG_TYPE_UPDATE_COMPONENTS].get("components", [])
       for comp in components:
-        if isinstance(comp, dict) and 'id' in comp:
-          self._seen_components[comp['id']] = comp
+        if isinstance(comp, dict) and "id" in comp:
+          self._seen_components[comp["id"]] = comp
       self.yield_reachable(messages, check_root=True, raise_on_orphans=False)
       return True
 
@@ -161,7 +161,7 @@ class A2uiStreamParserV09(A2uiStreamParser):
       self, active_msg_type: str, delta_msg_payload: Dict[str, Any]
   ) -> Dict[str, Any]:
     """Returns the message to yield for a partial data model update for v0.9."""
-    return {'version': 'v0.9', active_msg_type: delta_msg_payload}
+    return {"version": "v0.9", active_msg_type: delta_msg_payload}
 
   def _sniff_partial_data_model(self, messages: List[ResponsePart]) -> None:
     """Sniffs for partial data model updates in v0.9 (value property)."""
@@ -170,7 +170,7 @@ class A2uiStreamParserV09(A2uiStreamParser):
       return
 
     for b_type, start_idx in reversed(self._brace_stack):
-      if b_type != '{':
+      if b_type != "{":
         continue
       raw_fragment = self._json_buffer[start_idx:]
       if not raw_fragment:
@@ -183,8 +183,8 @@ class A2uiStreamParserV09(A2uiStreamParser):
       except json.JSONDecodeError:
         # Fallback: iteratively strip from the last comma
         trimmed = raw_fragment
-        while ',' in trimmed:
-          trimmed = trimmed.rsplit(',', 1)[0]
+        while "," in trimmed:
+          trimmed = trimmed.rsplit(",", 1)[0]
           try:
             fixed_trimmed = self._fix_json(trimmed)
             if fixed_trimmed:
@@ -196,8 +196,8 @@ class A2uiStreamParserV09(A2uiStreamParser):
       if obj and isinstance(obj, dict) and msg_type in obj:
 
         dm_obj = obj[msg_type]
-        if isinstance(dm_obj, dict) and 'value' in dm_obj:
-          value_map = dm_obj['value']
+        if isinstance(dm_obj, dict) and "value" in dm_obj:
+          value_map = dm_obj["value"]
           if isinstance(value_map, dict):
             # Find delta against yielded data model
             delta = {}
@@ -206,10 +206,10 @@ class A2uiStreamParserV09(A2uiStreamParser):
                 delta[k] = v
 
             if delta:
-              sid = dm_obj.get(SURFACE_ID_KEY) or self._surface_id or 'default'
+              sid = dm_obj.get(SURFACE_ID_KEY) or self._surface_id or "default"
               delta_msg_payload = {
                   SURFACE_ID_KEY: sid,
-                  'value': delta,
+                  "value": delta,
               }
               delta_msg = self._construct_sniffed_data_model_message(
                   msg_type, delta_msg_payload
@@ -230,12 +230,12 @@ class A2uiStreamParserV09(A2uiStreamParser):
     }
     if self.surface_id:
       payload[SURFACE_ID_KEY] = self.surface_id
-    return {'version': 'v0.9', MSG_TYPE_UPDATE_COMPONENTS: payload}
+    return {"version": "v0.9", MSG_TYPE_UPDATE_COMPONENTS: payload}
 
   @property
   def _yielded_surfaces_set(self) -> Set[str]:
     """Provides access to version-specific yielded surfaces set."""
-    if not hasattr(self, '_yielded_create_surfaces'):
+    if not hasattr(self, "_yielded_create_surfaces"):
       self._yielded_create_surfaces: Set[str] = set()
     return self._yielded_create_surfaces
 
@@ -255,13 +255,13 @@ class A2uiStreamParserV09(A2uiStreamParser):
       if isinstance(udm, dict):
         is_new = False
         for k, v in udm.items():
-          if k not in (SURFACE_ID_KEY, 'root') and self._yielded_data_model.get(k) != v:
+          if k not in (SURFACE_ID_KEY, "root") and self._yielded_data_model.get(k) != v:
             is_new = True
             break
         if not is_new and strict_integrity:
           return False
         # Update yielded model
         for k, v in udm.items():
-          if k not in (SURFACE_ID_KEY, 'root'):
+          if k not in (SURFACE_ID_KEY, "root"):
             self._yielded_data_model[k] = v
     return True

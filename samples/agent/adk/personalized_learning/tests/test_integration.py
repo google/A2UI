@@ -92,7 +92,8 @@ class TestSourceCitations(unittest.TestCase):
     # Test URL generation
     url = get_openstax_url_for_chapter(test_chapter)
     self.assertTrue(
-        url.startswith("https://openstax.org/"), "URL should be a valid OpenStax URL"
+        url.startswith("https://openstax.org/"),
+        "URL should be a valid OpenStax URL",
     )
     self.assertIn(test_chapter, url, "URL should contain the chapter slug")
 
@@ -131,7 +132,9 @@ class TestFetchContentForTopic(unittest.TestCase):
 
     for topic in topics_with_keywords:
       self.assertIn(
-          topic.lower(), KEYWORD_HINTS, f"Topic '{topic}' should be in KEYWORD_HINTS"
+          topic.lower(),
+          KEYWORD_HINTS,
+          f"Topic '{topic}' should be in KEYWORD_HINTS",
       )
 
 

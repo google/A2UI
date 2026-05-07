@@ -29,6 +29,7 @@ logger = logging.getLogger("a2ui-in-mcp-apps-server")
 COUNTER = 0
 A2UI_MIME_TYPE = "application/json+a2ui"
 
+
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -43,7 +44,9 @@ def main(port: int, transport: str) -> int:
 
     # Load Ping A2UI JSON
     simple_counter_a2ui_json = json.loads(
-        (pathlib.Path(__file__).resolve().parent / "simple_counter_a2ui.json").read_text()
+        (
+            pathlib.Path(__file__).resolve().parent / "simple_counter_a2ui.json"
+        ).read_text()
     )
 
     @app.list_resources()
@@ -62,10 +65,14 @@ def main(port: int, transport: str) -> int:
         if str(uri) == "ui://basic/app":
             try:
                 # Resolve the absolute path of apps/app.html
-                app_path = pathlib.Path(__file__).parent / "apps" / "public" / "app.html"
+                app_path = (
+                    pathlib.Path(__file__).parent / "apps" / "public" / "app.html"
+                )
                 return app_path.read_text()
             except FileNotFoundError:
-                raise ValueError(f"Resource file not found for uri: {uri} at {app_path}")
+                raise ValueError(
+                    f"Resource file not found for uri: {uri} at {app_path}"
+                )
         raise ValueError(f"Unknown resource: {uri}")
 
     @app.list_tools()
@@ -75,36 +82,26 @@ def main(port: int, transport: str) -> int:
                 name="get_basic_app",
                 title="Get Basic App",
                 description="Returns a simple A2UI-compatible HTML application.",
-                inputSchema={
-                    "type": "object",
-                    "properties": {},
-                    "required": []
-                }
+                inputSchema={"type": "object", "properties": {}, "required": []},
             ),
             types.Tool(
                 name="fetch_counter_a2ui",
                 title="Fetch Counter A2UI",
                 description="Fetches the initial counter A2UI payload.",
-                inputSchema={
-                    "type": "object",
-                    "properties": {},
-                    "required": []
-                }
+                inputSchema={"type": "object", "properties": {}, "required": []},
             ),
             types.Tool(
                 name="increase_counter",
                 title="Increase Counter",
                 description="Increments the counter and returns the updated value.",
-                inputSchema={
-                    "type": "object",
-                    "properties": {},
-                    "required": []
-                }
+                inputSchema={"type": "object", "properties": {}, "required": []},
             ),
         ]
 
     @app.call_tool()
-    async def handle_call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any] | list[Any]:
+    async def handle_call_tool(
+        name: str, arguments: dict[str, Any]
+    ) -> dict[str, Any] | list[Any]:
         if name == "get_basic_app":
             # Just return a reference to the resource
             return [
@@ -113,25 +110,22 @@ def main(port: int, transport: str) -> int:
                     resource=types.TextResourceContents(
                         uri="ui://basic/app",
                         mimeType="text/html;profile=mcp-app",
-                        text=""
-                    )
+                        text="",
+                    ),
                 )
             ]
         elif name == "fetch_counter_a2ui":
             return types.CallToolResult(
                 content=[
-                    types.TextContent(
-                        type="text",
-                        text="Ping result UI"
-                    ),
+                    types.TextContent(type="text", text="Ping result UI"),
                     types.EmbeddedResource(
                         type="resource",
                         resource=types.TextResourceContents(
                             uri="a2ui://ping-result",
                             mimeType=A2UI_MIME_TYPE,
-                            text=json.dumps(simple_counter_a2ui_json)
-                        )
-                    )
+                            text=json.dumps(simple_counter_a2ui_json),
+                        ),
+                    ),
                 ]
             )
 
@@ -145,20 +139,22 @@ def main(port: int, transport: str) -> int:
                         resource=types.TextResourceContents(
                             uri="a2ui://ping-result",
                             mimeType=A2UI_MIME_TYPE,
-                            text=json.dumps([
-                                {
-                                    "dataModelUpdate": {
-                                        "surfaceId": "ping-result",
-                                        "contents": [
-                                            {
-                                                "key": "counter",
-                                                "valueNumber": COUNTER
-                                            }
-                                        ]
+                            text=json.dumps(
+                                [
+                                    {
+                                        "dataModelUpdate": {
+                                            "surfaceId": "ping-result",
+                                            "contents": [
+                                                {
+                                                    "key": "counter",
+                                                    "valueNumber": COUNTER,
+                                                }
+                                            ],
+                                        }
                                     }
-                                }
-                            ])
-                        )
+                                ]
+                            ),
+                        ),
                     )
                 ]
             )
@@ -180,7 +176,9 @@ def main(port: int, transport: str) -> int:
         async def handle_sse(request: Request):
             logger.info("New SSE Connection Request")
             async with sse.connect_sse(request.scope, request.receive, request._send) as streams:  # type: ignore[reportPrivateUsage]
-                await app.run(streams[0], streams[1], app.create_initialization_options())
+                await app.run(
+                    streams[0], streams[1], app.create_initialization_options()
+                )
             return Response()
 
         starlette_app = Starlette(
@@ -210,12 +208,15 @@ def main(port: int, transport: str) -> int:
 
         async def arun():
             async with stdio_server() as streams:
-                await app.run(streams[0], streams[1], app.create_initialization_options())
+                await app.run(
+                    streams[0], streams[1], app.create_initialization_options()
+                )
 
         click.echo("Server running using stdio", err=True)
         anyio.run(arun)
 
     return 0
+
 
 if __name__ == "__main__":
     main()

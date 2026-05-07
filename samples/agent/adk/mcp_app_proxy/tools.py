@@ -142,8 +142,14 @@ async def score_update(tool_context: ToolContext, player: str):
           "contents": [{
               "key": "pong_state",
               "valueMap": [
-                  {"key": "player_score", "valueNumber": PONG_CURRENT_SCORE["player"]},
-                  {"key": "cpu_score", "valueNumber": PONG_CURRENT_SCORE["cpu"]},
+                  {
+                      "key": "player_score",
+                      "valueNumber": PONG_CURRENT_SCORE["player"],
+                  },
+                  {
+                      "key": "cpu_score",
+                      "valueNumber": PONG_CURRENT_SCORE["cpu"],
+                  },
               ],
           }],
       }
@@ -189,7 +195,10 @@ async def get_pong_app_a2ui_json(tool_context: ToolContext):
                           "key": "player_score",
                           "valueNumber": PONG_CURRENT_SCORE["player"],
                       },
-                      {"key": "cpu_score", "valueNumber": PONG_CURRENT_SCORE["cpu"]},
+                      {
+                          "key": "cpu_score",
+                          "valueNumber": PONG_CURRENT_SCORE["cpu"],
+                      },
                   ],
               }],
           }

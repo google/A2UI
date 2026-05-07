@@ -36,6 +36,7 @@ SCHEMAS = {
     "client_to_server.json": os.path.join(SCHEMA_DIR, "client_to_server.json"),
 }
 
+
 def setup_catalog_alias(catalog_file="basic_catalog.json"):
     """
     Creates a temporary catalog.json from basic_catalog.json (or the
@@ -50,7 +51,7 @@ def setup_catalog_alias(catalog_file="basic_catalog.json"):
             print(f"Error: Catalog file not found: {catalog_file}")
             sys.exit(1)
 
-    with open(basic_catalog_path, 'r') as f:
+    with open(basic_catalog_path, "r") as f:
         try:
             catalog = json.load(f)
         except json.JSONDecodeError as e:
@@ -65,21 +66,46 @@ def setup_catalog_alias(catalog_file="basic_catalog.json"):
         base_url = catalog["$id"].rsplit("/", 1)[0]
         catalog["$id"] = f"{base_url}/catalog.json"
 
-
-    with open(TEMP_CATALOG_FILE, 'w') as f:
+    with open(TEMP_CATALOG_FILE, "w") as f:
         json.dump(catalog, f, indent=2)
+
 
 def cleanup_catalog_alias():
     if os.path.exists(TEMP_CATALOG_FILE):
         os.remove(TEMP_CATALOG_FILE)
 
+
 def validate_ajv(schema_path, data_path, all_schemas):
     """Runs ajv validate via subprocess."""
     local_ajv = os.path.join(TEST_DIR, "node_modules", ".bin", "ajv")
     if os.path.exists(local_ajv):
-        cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
+        cmd = [
+            local_ajv,
+            "validate",
+            "-s",
+            schema_path,
+            "--spec=draft2020",
+            "--strict=false",
+            "-c",
+            "ajv-formats",
+            "-d",
+            data_path,
+        ]
     else:
-        cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
+        cmd = [
+            "pnpm",
+            "dlx",
+            "ajv-cli",
+            "validate",
+            "-s",
+            schema_path,
+            "--spec=draft2020",
+            "--strict=false",
+            "-c",
+            "ajv-formats",
+            "-d",
+            data_path,
+        ]
 
     # Add all other schemas as references
     for name, path in all_schemas.items():
@@ -90,11 +116,14 @@ def validate_ajv(schema_path, data_path, all_schemas):
         result = subprocess.run(cmd, capture_output=True, text=True)
         return result.returncode == 0, result.stdout + result.stderr
     except FileNotFoundError:
-        print("Error: 'ajv' command not found. Please ensure dependencies are installed (e.g., 'pnpm install').")
+        print(
+            "Error: 'ajv' command not found. Please ensure dependencies are installed (e.g., 'pnpm install')."
+        )
         sys.exit(1)
 
+
 def run_suite(suite_path):
-    with open(suite_path, 'r') as f:
+    with open(suite_path, "r") as f:
         try:
             suite = json.load(f)
         except json.JSONDecodeError as e:
@@ -125,7 +154,7 @@ def run_suite(suite_path):
             data = test.get("data")
 
             # Write data to temp file
-            with open(TEMP_FILE, 'w') as f:
+            with open(TEMP_FILE, "w") as f:
                 json.dump(data, f)
 
             is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
@@ -138,11 +167,12 @@ def run_suite(suite_path):
                 print(f"  [FAIL] {description}")
                 print(f"         Expected Valid: {expect_valid}, Got Valid: {is_valid}")
                 if not is_valid:
-                     print(f"         Output: {output.strip()}")
+                    print(f"         Output: {output.strip()}")
 
         return passed, failed
     finally:
         cleanup_catalog_alias()
+
 
 def validate_jsonl_example(jsonl_path):
     if not os.path.exists(jsonl_path):
@@ -158,14 +188,14 @@ def validate_jsonl_example(jsonl_path):
 
     setup_catalog_alias()
     try:
-        with open(jsonl_path, 'r') as f:
+        with open(jsonl_path, "r") as f:
             for i, line in enumerate(f):
                 line = line.strip()
                 if not line:
                     continue
 
                 # Use temp file for each line
-                with open(TEMP_FILE, 'w') as tf:
+                with open(TEMP_FILE, "w") as tf:
                     tf.write(line)
 
                 is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
@@ -180,6 +210,7 @@ def validate_jsonl_example(jsonl_path):
         return passed, failed
     finally:
         cleanup_catalog_alias()
+
 
 def main():
     if not os.path.exists(CASES_DIR):
@@ -204,7 +235,7 @@ def main():
         total_passed += p
         total_failed += f
 
-        print("\n" + "="*30)
+        print("\n" + "=" * 30)
         print(f"Total Passed: {total_passed}")
         print(f"Total Failed: {total_failed}")
 
@@ -214,6 +245,7 @@ def main():
 
     if total_failed > 0:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

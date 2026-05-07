@@ -216,7 +216,14 @@ class RizzchartsAgent:
                     "Displays a map showing regional sales outliers or store-level"
                     " performance."
                 ),
-                tags=["sales", "regional", "outliers", "stores", "map", "performance"],
+                tags=[
+                    "sales",
+                    "regional",
+                    "outliers",
+                    "stores",
+                    "map",
+                    "performance",
+                ],
                 examples=[
                     "interesting. were there any outlier stores",
                     "show me a map of store performance",

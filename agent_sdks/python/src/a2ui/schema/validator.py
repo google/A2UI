@@ -305,7 +305,10 @@ class A2uiValidator:
           ref_map = extract_component_ref_fields(self._catalog)
           root_id = _find_root_id(messages, surface_id)
           _validate_component_integrity(
-              root_id, components, ref_map, skip_root_check=not strict_integrity
+              root_id,
+              components,
+              ref_map,
+              skip_root_check=not strict_integrity,
           )
           analyze_topology(
               root_id, components, ref_map, raise_on_orphans=strict_integrity
