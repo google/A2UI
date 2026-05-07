@@ -33,6 +33,9 @@ jobs:
     permissions:
       contents: read
       issues: write
+    env:
+      TRANSCRYPT_PASSWORD: ${{ secrets.TRANSCRYPT_PASSWORD }}
+      REPO_GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -50,16 +53,14 @@ jobs:
 
       - name: Decrypt dataset
         working-directory: eval
-        if: ${{ secrets.TRANSCRYPT_PASSWORD != '' }}
-        env:
-          TRANSCRYPT_PASSWORD: ${{ secrets.TRANSCRYPT_PASSWORD }}
+        if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
         run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD"
 
       - name: Run Evals
         working-directory: eval
-        if: ${{ secrets.TRANSCRYPT_PASSWORD != '' && secrets.REPO_GEMINI_API_KEY != '' }}
+        if: ${{ env.TRANSCRYPT_PASSWORD != '' && env.REPO_GEMINI_API_KEY != '' }}
         env:
-          GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ env.REPO_GEMINI_API_KEY }}
         run: ./bin/run_ci_evals.py --threshold 85
 
       - name: Create Issue if evals fail post-submit on main branch
