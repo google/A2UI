@@ -68,8 +68,7 @@ export class LocalGallery extends LitElement {
 
   selectItem(index: number) {
     this.activeItemIndex = index;
-    this.resetSurface();
-    this.advanceMessages(true);
+    this.reloadExample();
   }
 
   resetSurface() {
@@ -116,6 +115,15 @@ export class LocalGallery extends LitElement {
   }
 
   /**
+   * Reloads the current example by resetting the surface and reprocessing all messages.
+   * This is used when switching examples or when theme properties change.
+   */
+  private reloadExample() {
+    this.resetSurface();
+    this.advanceMessages(true);
+  }
+
+  /**
    * Applies the user-selected primary color to `createSurface` messages.
    *
    * This is necessary for the explorer application to allow users to live-preview
@@ -128,7 +136,7 @@ export class LocalGallery extends LitElement {
    * @returns A new list of messages with the primary color applied to `createSurface` messages.
    */
   private applyPrimaryColorToMessages(messages: A2uiMessage[]): A2uiMessage[] {
-    return messages.map((msg) => {
+    return messages.map(msg => {
       if ('createSurface' in msg && this.primaryColor) {
         return {
           ...msg,
@@ -145,17 +153,17 @@ export class LocalGallery extends LitElement {
     });
   }
 
-  onColorInput(e: Event) {
+  /** Handles color input events to update the primary color. */
+  private onColorInput(e: Event) {
     const input = e.target as HTMLInputElement;
     this.primaryColor = input.value;
-    this.resetSurface();
-    this.advanceMessages(true);
+    this.reloadExample();
   }
 
-  clearColor() {
+  /** Clears the custom primary color and reloads the example. */
+  private clearColor() {
     this.primaryColor = '';
-    this.resetSurface();
-    this.advanceMessages(true);
+    this.reloadExample();
   }
 
   log(msg: string, detail?: any) {
