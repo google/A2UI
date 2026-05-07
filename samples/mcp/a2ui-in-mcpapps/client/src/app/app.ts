@@ -32,6 +32,7 @@ export class App implements AfterViewInit {
   private messageListenerAdded = false;
   protected readonly mcpAppHtmlUrl = signal<string | null>(null);
   protected readonly isAppLoading = signal<boolean>(false);
+  protected readonly selectedApp = signal<'editor' | 'basic'>('editor');
 
   private mcpClient: Client | null = null;
 
@@ -65,72 +66,13 @@ export class App implements AfterViewInit {
           );
         }
       } else if (data?.method === 'ui/ping') {
-        if (data.id && target) {
-          target.postMessage(
-            {
-              jsonrpc: '2.0',
-              id: data.id,
-              result: {},
-            },
-            window.location.origin,
-          );
-        }
-      } else if (data?.method === 'ui/fetch_counter_a2ui') {
-        if (data.id && target && this.mcpClient) {
-          this.mcpClient
-            .callTool({
-              name: 'fetch_counter_a2ui',
-              arguments: {},
-            })
-            .then(result => {
-              target.postMessage(
-                {
-                  jsonrpc: '2.0',
-                  id: data.id,
-                  result: result.content,
-                },
-                window.location.origin,
-              );
-            })
-            .catch(error => {
-              target.postMessage(
-                {
-                  jsonrpc: '2.0',
-                  id: data.id,
-                  error: {message: error.message},
-                },
-                window.location.origin,
-              );
-            });
-        }
-      } else if (data?.method === 'ui/increase_counter') {
-        if (data.id && target && this.mcpClient) {
-          this.mcpClient
-            .callTool({
-              name: 'increase_counter',
-              arguments: {},
-            })
-            .then(result => {
-              target.postMessage(
-                {
-                  jsonrpc: '2.0',
-                  id: data.id,
-                  result: result.content,
-                },
-                window.location.origin,
-              );
-            })
-            .catch(error => {
-              target.postMessage(
-                {
-                  jsonrpc: '2.0',
-                  id: data.id,
-                  error: {message: error.message},
-                },
-                window.location.origin,
-              );
-            });
-        }
+          if (data.id && target) {
+               target.postMessage({
+                   jsonrpc: "2.0",
+                   id: data.id,
+                   result: {}
+               }, window.location.origin);
+          }
       } else if (data?.method === 'ui/initialize') {
         if (data.id && target) {
           target.postMessage(
@@ -147,12 +89,37 @@ export class App implements AfterViewInit {
           );
         }
       } else if (data?.method === 'ui/resize') {
-        const height = data.params?.height;
-        if (typeof height === 'number') {
-          iframe.style.height = `${height}px`;
-        }
+          const height = data.params?.height;
+          if (typeof height === 'number') {
+              iframe.style.height = `${height}px`;
+          }
+      } else if (data?.method?.startsWith('ui/')) {
+          // Generic tool relay for unknown verbs
+          const toolName = data.method.replace('ui/', '');
+          if (data.id && target && this.mcpClient) {
+               this.mcpClient.callTool({
+                   name: toolName,
+                   arguments: data.params || {}
+               }).then(result => {
+                   target.postMessage({
+                       jsonrpc: "2.0",
+                       id: data.id,
+                       result: result.content
+                   }, window.location.origin);
+               }).catch(error => {
+                   target.postMessage({
+                       jsonrpc: "2.0",
+                       id: data.id,
+                       error: { message: error.message }
+                   }, window.location.origin);
+               });
+          }
       }
     });
+  }
+
+  onAppChange(value: string) {
+    this.selectedApp.set(value as 'editor' | 'basic');
   }
 
   async connectAndLoadApp() {
@@ -162,25 +129,24 @@ export class App implements AfterViewInit {
     try {
       // 1. Connect to SSE
       const transport = new SSEClientTransport(new URL('http://127.0.0.1:8000/sse'));
-      const client = new Client(
-        {
-          name: 'basic-host',
-          version: '1.0.0',
-        },
-        {
-          capabilities: {},
-        },
-      );
+      const client = new Client({
+        name: "editor-host",
+        version: "1.0.0"
+      }, {
+        capabilities: {}
+      });
 
       this.status.set('Initializing MCP Client...');
       await client.connect(transport);
       this.mcpClient = client;
 
-      this.status.set('Calling get_basic_app tool...');
+      this.status.set('Calling MCP App tool...');
+      const toolName = this.selectedApp() === 'editor' ? 'get_editor_app' : 'get_basic_app';
+
       // 2. Call the tool to get the app
       const result = await client.callTool({
-        name: 'get_basic_app',
-        arguments: {},
+        name: toolName,
+        arguments: {}
       });
 
       // 3. Extract resource URI

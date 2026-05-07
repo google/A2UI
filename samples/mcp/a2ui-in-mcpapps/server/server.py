@@ -20,6 +20,7 @@ import json
 import pathlib
 import mcp.types as types
 from mcp.server.lowlevel import Server
+import smart_editor_agent
 
 # Set up logging for the server (especially useful for SSE debugging)
 logging.basicConfig(level=logging.INFO)
@@ -54,6 +55,12 @@ def main(port: int, transport: str) -> int:
                 name="Basic App",
                 mimeType="text/html;profile=mcp-app",
                 description="A simple minimal application",
+            ),
+            types.Resource(
+                uri="ui://editor/app",
+                name="Editor App",
+                mimeType="text/html;profile=mcp-app",
+                description="A rich generative document editor",
             )
         ]
 
@@ -61,8 +68,13 @@ def main(port: int, transport: str) -> int:
     async def read_resource(uri: str) -> str | bytes:
         if str(uri) == "ui://basic/app":
             try:
-                # Resolve the absolute path of apps/app.html
                 app_path = pathlib.Path(__file__).parent / "apps" / "public" / "app.html"
+                return app_path.read_text()
+            except FileNotFoundError:
+                raise ValueError(f"Resource file not found for uri: {uri} at {app_path}")
+        elif str(uri) == "ui://editor/app":
+            try:
+                app_path = pathlib.Path(__file__).parent / "apps" / "public" / "editor.html"
                 return app_path.read_text()
             except FileNotFoundError:
                 raise ValueError(f"Resource file not found for uri: {uri} at {app_path}")
@@ -99,6 +111,41 @@ def main(port: int, transport: str) -> int:
                     "type": "object",
                     "properties": {},
                     "required": []
+                }
+            ),
+            types.Tool(
+                name="get_editor_app",
+                title="Get Editor App",
+                description="Returns the Editor A2UI application resource.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            ),
+            types.Tool(
+                name="smart_editor_get_controls",
+                title="Get Editor Controls",
+                description="Generates A2UI tuning controls based on highlighted text.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "text": {"type": "string"},
+                        "full_text": {"type": "string"}
+                    },
+                    "required": ["text"]
+                }
+            ),
+            types.Tool(
+                name="smart_editor_apply",
+                title="Apply Editor Revision",
+                description="Submits user-tuned slider values to rewrite text via Gemini.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "original_text": {"type": "string"}
+                    },
+                    "required": ["original_text"]
                 }
             ),
         ]
@@ -159,6 +206,50 @@ def main(port: int, transport: str) -> int:
                                 }
                             ])
                         )
+                    )
+                ]
+            )
+
+        elif name == "get_editor_app":
+            return [
+                types.EmbeddedResource(
+                    type="resource",
+                    resource=types.TextResourceContents(
+                        uri="ui://editor/app",
+                        mimeType="text/html;profile=mcp-app",
+                        text=""
+                    )
+                )
+            ]
+
+        elif name == "smart_editor_get_controls":
+            text_in = arguments.get("text", "")
+            full_text = arguments.get("full_text", text_in)
+            a2ui_payload = smart_editor_agent.generate_controls(text_in, full_text)
+            
+            return types.CallToolResult(
+                content=[
+                    types.EmbeddedResource(
+                        type="resource",
+                        resource=types.TextResourceContents(
+                            uri="a2ui://editor-controls",
+                            mimeType=A2UI_MIME_TYPE,
+                            text=json.dumps(a2ui_payload)
+                        )
+                    )
+                ]
+            )
+
+        elif name == "smart_editor_apply":
+            # Pass all arguments as the parameter dictionary
+            orig_text = arguments.get("original_text", "")
+            revised_text = smart_editor_agent.apply_revision(orig_text, arguments)
+            
+            return types.CallToolResult(
+                content=[
+                    types.TextContent(
+                        type="text",
+                        text=revised_text
                     )
                 ]
             )
