@@ -22,6 +22,7 @@ import statistics
 import subprocess
 import sys
 
+
 def extract_accuracy(log_data: dict) -> float:
     """Extracts accuracy from parsed JSON log data.
 
@@ -67,7 +68,7 @@ def print_results_summary(log_data: dict):
 
         # Judging results (measured_model_graded_qa)
         qa_score = scores.get("measured_model_graded_qa", {})
-        qa_val = qa_score.get("value")
+        qa_val = qa_score.get("value", "N/A")
 
         inference_time = sample.get("metadata", {}).get("evaluation_duration_seconds")
         inference_time_str = f"{float(inference_time):.2f}s" if inference_time is not None else "N/A"
@@ -91,10 +92,25 @@ def print_results_summary(log_data: dict):
 
     print("==================================")
     if durations:
-        avg_duration = sum(durations) / len(durations)
+        avg_duration = statistics.mean(durations)
         med_duration = statistics.median(durations)
         print(f"Inference Time - Average: {avg_duration:.2f}s | Median: {med_duration:.2f}s")
         print("==================================")
+
+
+def load_log_data(log_path: str) -> dict:
+    """Runs inspect log dump to get JSON and parses it.
+
+    Args:
+        log_path: Path to the .eval log file.
+
+    Returns:
+        Parsed JSON data as a dictionary.
+    """
+    dump_cmd = ["uv", "run", "inspect", "log", "dump", log_path]
+    dump_output = subprocess.check_output(dump_cmd, text=True)
+    return json.loads(dump_output)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Report results from an Inspect AI eval log file.")
@@ -107,11 +123,8 @@ def main():
 
     print(f"Processing log file: {args.log}")
 
-    # Run inspect log dump to get JSON
-    dump_cmd = ["uv", "run", "inspect", "log", "dump", args.log]
     try:
-        dump_output = subprocess.check_output(dump_cmd, text=True)
-        log_data = json.loads(dump_output)
+        log_data = load_log_data(args.log)
 
         # Print summary of results per sample
         print_results_summary(log_data)

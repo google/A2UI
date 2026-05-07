@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 
-from report_evals import extract_accuracy, print_results_summary
+from report_evals import extract_accuracy, print_results_summary, load_log_data
 
 
 
@@ -110,11 +110,8 @@ def main():
 
     print(f"Determining pass percentage from log file: {log_file}")
 
-    # Run inspect log dump to get JSON
-    dump_cmd = ["uv", "run", "inspect", "log", "dump", log_file]
     try:
-        dump_output = subprocess.check_output(dump_cmd, text=True)
-        log_data = json.loads(dump_output)
+        log_data = load_log_data(log_file)
         
         # Print summary of results per sample
         print_results_summary(log_data)
