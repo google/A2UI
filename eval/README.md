@@ -20,10 +20,10 @@ To run the evaluations, you need to use the Inspect AI CLI via `uv`. Make sure y
    ```
 
 2. **Decrypt Datasets (First Time Setup)**:
-   The evaluation datasets are encrypted at rest in the repository to prevent base model contamination. To decrypt them in your repo for evaluation, you need to initialize Transcrypt with the shared password. From the repository root, run:
+   The evaluation datasets are encrypted at rest in the repository to prevent base model contamination. To decrypt them in your repo for evaluation, you need to initialize Transcrypt with the shared password. From the `evals/eval` directory, run:
 
    ```bash
-   third_party/transcrypt/transcrypt -p <PASSWORD>
+   bin/transcrypt -p <PASSWORD>
    ```
 
 You can request the password from any member of the A2UI team (it's not really a secret, but it's also not going on Github in plaintext).

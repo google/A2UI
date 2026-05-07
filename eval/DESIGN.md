@@ -65,7 +65,7 @@ Transcrypt is a Bash script that uses OpenSSL to provide transparent encryption 
 **Why Transcrypt for A2UI:**
 
 - **String-Based Secrets**: Unlike `git-crypt`, which requires a binary key file, Transcrypt can be unlocked using a simple password string. This is highly ergonomic for CI/CD pipelines where the secret is stored as a string environment variable.
-- **Zero-Install Contribution**: Transcrypt is a standalone script that can be committed to the `third_party/transcrypt/` directory. Contributors do not need to install system-level packages; they simply run the local script to unlock the repo.
+- **Zero-Install Contribution**: Transcrypt is a standalone script that can be committed to the `evals/bin/` directory. Contributors do not need to install system-level packages; they simply run the local script to unlock the repo.
 - **Transparency**: Once a developer runs the unlock command, they can use standard Git commands (`add`, `commit`, `push`). The encryption and decryption happen automatically in the background via `.gitattributes`.
 
 **Configuration Strategy:**
