@@ -1,0 +1,34 @@
+name: Run A2UI Evals
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "eval/**"
+      - "specification/v0_9/**"
+      - ".github/workflows/run_evals.yml"
+  pull_request:
+    paths:
+      - "eval/**"
+      - "specification/v0_9/**"
+      - ".github/workflows/run_evals.yml"
+
+jobs:
+  run-evals:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      TRANSCRYPT_PASSWORD: ${{ secrets.TRANSCRYPT_PASSWORD }}
+      REPO_GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Decrypt dataset
+        working-directory: eval
+        if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
+        run: |
+          echo SHA=$(echo "$TRANSCRYPT_PASSWORD" | sha1sum -) 
