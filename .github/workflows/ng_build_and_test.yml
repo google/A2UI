@@ -26,6 +26,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [test, restaurant, rizzcharts, orchestrator]
 
     steps:
       - uses: actions/checkout@v6
@@ -49,14 +52,14 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm i
 
-      - name: Run tests and builds in parallel
+      - name: Run task
         run: |
-          pids=()
-          (cd ./renderers/angular && npm run test:ci) & pids+=($!)
-          (cd ./samples/client/angular && npm run build restaurant) & pids+=($!)
-          (cd ./samples/client/angular && npm run build rizzcharts) & pids+=($!)
-          (cd ./samples/client/angular && npm run build orchestrator) & pids+=($!)
+          case "${{ matrix.task }}" in
+            test)
+              cd ./renderers/angular && npm run test:ci
+              ;;
+            restaurant|rizzcharts|orchestrator)
+              cd ./samples/client/angular && npm run build ${{ matrix.task }}
+              ;;
+          esac
 
-          for pid in "${pids[@]}"; do
-              wait $pid || exit 1
-          done
