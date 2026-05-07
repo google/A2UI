@@ -1,5 +1,5 @@
 ## Unreleased
-
+- Added license.
 - **BREAKING CHANGE**: Renamed `createReactComponent` to `createComponentImplementation`.
 - **BREAKING CHANGE**: Renamed `createBinderlessComponent` to `createBinderlessComponentImplementation`.
 - **BREAKING CHANGE**: Removed `minimalCatalog`.
