@@ -32,6 +32,23 @@ DATASET_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "datasets/v0_9_prompts.
 SCHEMA_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../specification/v0_9/json/server_to_client.json"))
 CATALOG_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../specification/v0_9/json/basic_catalog.json"))
 
+GRADER_INSTRUCTIONS = """
+After assessing the submitted answer, reply with 'GRADE: $LETTER' (without quotes) where LETTER is one of C, P or I.  Please choose ONE option for the grade: either "C" for correct answers, "P" for partial credit, or "I" for incorrect answers.
+
+For example, after reviewing a correct answer you might write 'GRADE: C' or after reviewing an incorrect answer you might write 'GRADE: I'.
+
+First, write out in a step by step manner your reasoning about the criterion to be sure that your conclusion is correct. Avoid simply stating the correct answers at the outset. Then, end with your answer formatted as 'GRADE: $LETTER' (without quotes) where LETTER is one of C, P or I.
+
+Notes for grading:
+1. Variations in capitalization, punctuation, and minor spacing differences should be considered acceptable as long as the semantic intent and required components are present.
+2. Unless a specific vertical or horizontal order is explicitly requested in the task, variations in the order of components within a container should be considered acceptable.
+3. Generated component IDs do not need to match any specific pattern or example in the target, as long as they are unique and correctly establish the requested parent-child relationships.
+4. Minor variations in label text that preserve the core semantic meaning (e.g., 'Submit' vs 'Send', or 'First Name' vs 'Given Name') are acceptable unless exact literal text was requested.
+5. The inclusion of valid optional properties defined in the schema (such as accessibility hints or default values) that were not explicitly requested should not be penalized as long as they make sense in context.
+6. If data binding paths are not explicitly specified in the prompt, accept any logically sound path structure (e.g., accepting `/user/email` or simply `/email` when the prompt asks to "bind to the user's email" without specifying a full path).
+7. Partial credit "P" can be awarded when the submitted answer is a correct answer with only minor cosmetic variations or additional valid optional properties that do not substantially change the meaning of the component.  When an answer is missing components or contains substantive errors, it should be considered incorrect and awarded an "I" grade.
+"""
+
 @task
 def a2ui_v0_9_eval(list_models: bool = False) -> Task:
     """Evaluation task for A2UI v0.9 protocol generation.
@@ -42,7 +59,7 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
     Returns:
         An Inspect Task object configured for A2UI v0.9 evaluation.
     """
-    
+
     if list_models:
         client = genai.Client()
         print("\nAvailable Gemini Models:")
@@ -52,21 +69,21 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
         except errors.APIError as e:
             print(f"Error listing models: {e}")
         # Return a dummy task to exit gracefully without errors
-        
+
         @scorer(metrics=[])
         def dummy_scorer():
             async def score(state, target):  # pylint: disable=unused-argument
                 return Score(value=1.0, explanation="Dummy pass")
             return score
-            
+
         return Task(
             dataset=MemoryDataset(samples=[Sample(input="dummy", target="dummy")]),
             solver=[],
             scorer=[dummy_scorer()]
         )
-        
+
     dataset = load_a2ui_dataset(DATASET_PATH)
-    
+
     return Task(
         dataset=dataset,
         solver=[
@@ -76,6 +93,9 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
         ],
         scorer=[
             a2ui_scorer(CATALOG_PATH),
-            measured_model_graded_qa(model="google/gemini-3-pro-preview")
+            measured_model_graded_qa(
+                model="google/gemini-3-pro-preview",
+                instructions=GRADER_INSTRUCTIONS
+            )
         ]
     )

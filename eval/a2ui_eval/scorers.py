@@ -62,9 +62,9 @@ def a2ui_scorer(catalog_path: str):
     return score
 
 @scorer(metrics=[accuracy()])
-def measured_model_graded_qa(model: str):
+def measured_model_graded_qa(model: str, instructions: str | None = None):
     """Scorer that wraps model_graded_qa and records the token usage in metadata."""
-    base_scorer = model_graded_qa(model=model)
+    base_scorer = model_graded_qa(model=model, instructions=instructions)
     
     async def score(state: TaskState, target: Target) -> Score:
         start_time = time.time()
