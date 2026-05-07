@@ -64,6 +64,11 @@ export class A2uiIconElement extends BasicCatalogA2uiLitElement<typeof IconApi> 
       color: var(--a2ui-icon-color, inherit);
       font-variation-settings: var(--a2ui-icon-font-variation-settings, 'FILL' 1);
     }
+    .svg {
+      fill: currentColor;
+      width: var(--_icon-size);
+      height: var(--_icon-size);
+    }
   `;
 
   protected createController() {
@@ -74,8 +79,15 @@ export class A2uiIconElement extends BasicCatalogA2uiLitElement<typeof IconApi> 
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const iconName =
-      typeof props.name === 'string' ? toMaterialSymbol(props.name) : (props.name as any)?.path;
+    const name = props.name;
+    const isPath = typeof name === 'object' && name !== null && 'svgPath' in name;
+
+    if (isPath) {
+      const path = (name as {svgPath: string}).svgPath;
+      return html`<svg class="svg" viewBox="0 0 24 24"><path d=${path}></path></svg>`;
+    }
+
+    const iconName = typeof name === 'string' ? toMaterialSymbol(name) : '';
     return html`<span class="material-symbol">${iconName}</span>`;
   }
 }
