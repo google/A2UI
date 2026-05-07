@@ -8,7 +8,7 @@ This guide explains how **Model Context Protocol (MCP) Applications** are integr
 
 The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.
 
-<img src="../assets/mcp-apps-calculator-demo.gif" alt="MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent" width="640">
+![MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent](../assets/mcp-apps-calculator-demo.gif)
 
 ## Double-Iframe Isolation Pattern
 
