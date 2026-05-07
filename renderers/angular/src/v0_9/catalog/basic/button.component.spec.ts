@@ -88,7 +88,7 @@ describe('ButtonComponent', () => {
     fixture.componentRef.setInput('componentId', 'comp1');
 
     defaultProps = {
-      variant: createBoundProperty<'primary' | 'default' | 'borderless' | undefined>('primary'),
+      variant: createBoundProperty('primary' as const),
       child: createBoundProperty<Child>({id: 'child1', basePath: '/'}),
       action: createBoundProperty<Action>({
         event: {name: 'test-action'},
@@ -113,7 +113,7 @@ describe('ButtonComponent', () => {
   it('should set button type to button for non-primary variant', () => {
     setComponentProps(fixture, {
       ...defaultProps,
-      variant: createBoundProperty<'primary' | 'default' | 'borderless' | undefined>('default'),
+      variant: createBoundProperty('default' as const),
     });
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
