@@ -43,8 +43,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install uv
 
+      - name: Decrypt dataset
+        working-directory: eval
+        env:
+          TRANSCRYPT_PASSWORD: ${{ secrets.TRANSCRYPT_PASSWORD }}
+        run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD"
+
       - name: Run Evals
         working-directory: eval
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.REPO_GEMINI_API_KEY }}
         run: ./bin/run_ci_evals.py --threshold 85
