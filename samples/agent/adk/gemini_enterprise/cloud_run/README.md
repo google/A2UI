@@ -14,6 +14,34 @@ Gemini-based agent that can communicate with users with A2UI components. By the
 end of this guide, you will have an agent running on Cloud Run and can display
 A2UI components on Gemini Enterprise UI.
 
+## Prerequisites
+
+Before running the deployment script, ensure you have the following:
+
+- A [Google Cloud Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) with billing enabled.
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and up to date.
+
+### Authentication
+
+Authenticate with Google Cloud by running the following commands:
+
+```bash
+gcloud auth login
+gcloud config set project <YOUR_PROJECT_ID>
+```
+
+### Enable Required APIs
+
+```bash
+gcloud services enable \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  aiplatform.googleapis.com \
+  artifactregistry.googleapis.com \
+  iam.googleapis.com \
+  --project <YOUR_PROJECT_ID>
+```
+
 ## Steps
 
 There are 2 steps:
