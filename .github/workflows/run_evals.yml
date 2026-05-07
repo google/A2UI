@@ -51,25 +51,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install uv
 
+      - name: Run Unit Tests
+        working-directory: eval
+        run: uv run python -m pytest
+
       - name: Decrypt dataset
         working-directory: eval
         if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
         run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD" -y
-
-      - name: Run Unit Tests
-        working-directory: eval
-        run: uv run python -m pytest
 
       - name: Run Evals
         working-directory: eval
         if: ${{ env.TRANSCRYPT_PASSWORD != '' && env.REPO_GEMINI_API_KEY != '' }}
         env:
           GEMINI_API_KEY: ${{ env.REPO_GEMINI_API_KEY }}
-        run: ./bin/run_ci_evals.py --threshold 101
+        run: ./bin/run_ci_evals.py --threshold 90
 
       - name: Create Issue if evals fail post-submit on main branch
-#        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        if: failure()
+        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/github-script@v7
         with:
           script: |
