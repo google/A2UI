@@ -21,11 +21,13 @@ on:
       - "eval/**"
       - "specification/v0_9/**"
       - ".github/workflows/run_evals.yml"
+      - "agent_sdks/python/**"
   pull_request:
     paths:
       - "eval/**"
       - "specification/v0_9/**"
       - ".github/workflows/run_evals.yml"
+      - "agent_sdks/python/**"
 
 jobs:
   run-evals:
@@ -83,8 +85,8 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: prs.data.length > 0 
-                ? `Evals failed on main (PR #${prs.data[0].number})` 
+              title: prs.data.length > 0
+                ? `Evals failed on main (PR #${prs.data[0].number})`
                 : `Evals failed on main for commit ${context.sha.substring(0, 7)}`,
               labels: ['eval_failure'],
               body: `The evals workflow failed on main for commit ${context.sha}.
