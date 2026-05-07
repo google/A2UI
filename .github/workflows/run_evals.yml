@@ -65,10 +65,11 @@ jobs:
         if: ${{ env.TRANSCRYPT_PASSWORD != '' && env.REPO_GEMINI_API_KEY != '' }}
         env:
           GEMINI_API_KEY: ${{ env.REPO_GEMINI_API_KEY }}
-        run: ./bin/run_ci_evals.py --threshold 85
+        run: ./bin/run_ci_evals.py --threshold 101
 
       - name: Create Issue if evals fail post-submit on main branch
-        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+#        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: failure()
         uses: actions/github-script@v7
         with:
           script: |
