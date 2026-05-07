@@ -26,6 +26,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [test, restaurant, rizzcharts, orchestrator]
 
     steps:
       - uses: actions/checkout@v6
@@ -35,26 +38,33 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Cache Node modules and Wireit
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+            **/.wireit
+          key: ${{ runner.os }}-node-and-wireit-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-and-wireit-
+
       - name: Install top-level deps
         working-directory: ./samples/client/angular
         run: npm i
 
-      - name: Build Angular renderer and its dependencies
-        working-directory: ./samples/client/angular
-        run: npm run build:renderer
-
-      - name: Test Angular renderer
-        working-directory: ./renderers/angular
-        run: npm run test:ci
-
-      - name: Build restaurant sample
-        working-directory: ./samples/client/angular
-        run: npm run build restaurant
-
-      - name: Build Rizzchart sample
-        working-directory: ./samples/client/angular
-        run: npm run build rizzcharts
-
-      - name: Build Orchestrator
-        working-directory: ./samples/client/angular
-        run: npm run build orchestrator
+      - name: Run task
+        run: |
+          case "${{ matrix.task }}" in
+            test)
+              cd ./renderers/angular && npm run test:ci
+              ;;
+            restaurant)
+              cd ./samples/client/angular && npm run build restaurant
+              ;;
+            rizzcharts)
+              cd ./samples/client/angular && npm run build rizzcharts
+              ;;
+            orchestrator)
+              cd ./samples/client/angular && npm run build orchestrator
+              ;;
+          esac
