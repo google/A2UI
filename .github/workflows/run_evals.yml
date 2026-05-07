@@ -57,7 +57,7 @@ jobs:
         working-directory: eval
         run: uv run python -m pytest
 
-      - name: Decrypt dataset test
+      - name: Decrypt dataset test2
         working-directory: eval
         if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
         run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD" -y
