@@ -1,0 +1,8 @@
+{
+  "name": "@a2ui/renderers-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.mjs"
+  }
+}
