@@ -1,3 +1,4 @@
+<!-- sup -->
 # **Technical Design for the A2UI Large Language Model Evaluation Framework**
 
 The shift toward agentic systems that interact with users through dynamic interfaces necessitates a fundamental reimagining of how large language models are evaluated. The A2UI project represents a pivotal effort to standardize the declarative generation of user interfaces, moving away from the risks of executable code toward a secure, JSON-based intent protocol. However, the efficacy of an A2UI implementation depends entirely on the model's ability to reliably translate high-level user instructions into valid, contextually aware, and renderable JSON structures. Evaluating this capability requires a framework that is simultaneously rigorous, model-agnostic, and secure within the constraints of an open-source development lifecycle.
