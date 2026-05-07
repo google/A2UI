@@ -36,11 +36,11 @@ export function setComponentProps<T extends {props: () => any}>(
 /**
  * Creates a mock BoundProperty for testing.
  */
-export function createBoundProperty<T>(val: T, template?: ComponentTemplate): BoundProperty<T> {
+export function createBoundProperty<T>(val: T, template?: ComponentTemplate) {
   return {
     value: signal(val),
     raw: val,
     template,
     onUpdate: jasmine.createSpy('onUpdate'),
-  };
+  } satisfies BoundProperty<T>;
 }
