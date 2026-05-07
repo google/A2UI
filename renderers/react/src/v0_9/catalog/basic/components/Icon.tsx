@@ -36,7 +36,7 @@ function toMaterialSymbol(str: string): string {
 
 export const Icon = createComponentImplementation(IconApi, ({props}) => {
   useBasicCatalogStyles();
-  
+
   const isPath = typeof props.name === 'object' && props.name !== null && 'svgPath' in props.name;
 
   const baseStyle: React.CSSProperties = {
