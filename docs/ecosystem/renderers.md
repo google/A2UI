@@ -46,7 +46,7 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 **BBC6BAE9/a2ui-swift** (formerly **a2ui-swiftui**) is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
 
-**TanXudong-Vivo/A2UI-Android-Renderer** is a modular Android renderer built with Jetpack Compose and Material 3, targeting A2UI v0.9. It covers 13 fully implemented components (including Image loading via Coil), streaming rendering from LLM token streams, data binding with `path` expressions, and a pluggable Custom Catalog for registering additional component types. The demo app includes a live connection to the official `restaurant_finder` ADK agent.
+**TanXudong-Vivo/A2UI-Android-Renderer** is a modular Android renderer built with Jetpack Compose and Material 3, and is the first Android implementation to support the A2UI v0.9 protocol. It covers 13 fully implemented components (including Image loading via Coil), streaming rendering from LLM token streams, data binding with `path` expressions and `formatDate`, and a pluggable Custom Catalog for registering additional component types. The demo app includes a live connection to the official `restaurant_finder` ADK agent.
 
 ## Submitting a Renderer
 
