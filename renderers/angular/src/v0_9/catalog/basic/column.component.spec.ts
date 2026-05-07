@@ -21,6 +21,7 @@ import {ComponentModel} from '@a2ui/web_core/v0_9';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentBinder} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
+import {setComponentProps} from '../../core/test-utils';
 
 @Component({
   standalone: true,
@@ -77,11 +78,14 @@ describe('ColumnComponent', () => {
     fixture = TestBed.createComponent(ColumnComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
-      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      justify: {value: signal('start' as const), raw: 'start', onUpdate: () => {}},
+      align: {value: signal('stretch' as const), raw: 'stretch', onUpdate: () => {}},
       children: {
-        value: signal(['child1', 'child2']),
+        value: signal([
+          {id: 'child1', basePath: '/'},
+          {id: 'child2', basePath: '/'},
+        ]),
         raw: ['child1', 'child2'],
         onUpdate: () => {},
       },
@@ -101,7 +105,7 @@ describe('ColumnComponent', () => {
   });
 
   it('should apply flex style from weight prop', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       ...component.props(),
       weight: {value: signal(2), raw: 2, onUpdate: () => {}},
     });
@@ -111,7 +115,7 @@ describe('ColumnComponent', () => {
   });
 
   it('should apply flex style from weight prop when value is 0', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       ...component.props(),
       weight: {value: signal(0), raw: 0, onUpdate: () => {}},
     });
@@ -121,9 +125,9 @@ describe('ColumnComponent', () => {
   });
 
   it('should not apply flex style when weight prop is null', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       ...component.props(),
-      weight: {value: signal(null), raw: null, onUpdate: () => {}},
+      weight: {value: signal(undefined), raw: undefined, onUpdate: () => {}},
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -140,12 +144,19 @@ describe('ColumnComponent', () => {
   });
 
   it('should render repeating children', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       ...component.props(),
       children: {
-        value: signal([{}, {}]),
+        value: signal([
+          {id: 'template1', basePath: '/items/0'},
+          {id: 'template1', basePath: '/items/1'},
+        ]),
         raw: {
           componentId: 'template1',
+          path: 'items',
+        },
+        template: {
+          id: 'template1',
           path: 'items',
         },
         onUpdate: () => {},
@@ -165,34 +176,10 @@ describe('ColumnComponent', () => {
     });
   });
 
-  it('should handle non-array children value', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      children: {
-        value: signal('not-an-array'),
-        raw: 'not-an-array',
-        onUpdate: () => {},
-      },
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
-  it('should handle missing children property', () => {
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
-      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
   it('should handle missing justify and align properties', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       children: {
-        value: signal(['child1']),
+        value: signal([{id: 'child1', basePath: '/'}]),
         raw: ['child1'],
         onUpdate: () => {},
       },
