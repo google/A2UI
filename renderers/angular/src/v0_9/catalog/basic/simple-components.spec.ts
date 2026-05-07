@@ -275,7 +275,7 @@ describe('Simple Components', () => {
 
     it('should render path icon', () => {
       fixture.componentRef.setInput('props', {
-        name: createBoundProperty({path: 'M10 10...'}),
+        name: createBoundProperty({svgPath: 'M10 10...'}),
       });
       fixture.detectChanges();
       const svg = fixture.nativeElement.querySelector('svg');

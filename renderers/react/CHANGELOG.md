@@ -1,5 +1,6 @@
 ## Unreleased
 
+- (v0_9) Rename Icon `path` property to `svgPath` and update component to correctly render SVG elements.
 - **BREAKING CHANGE**: Renamed `createReactComponent` to `createComponentImplementation`.
 - **BREAKING CHANGE**: Renamed `createBinderlessComponent` to `createBinderlessComponentImplementation`.
 - **BREAKING CHANGE**: Removed `minimalCatalog`.
