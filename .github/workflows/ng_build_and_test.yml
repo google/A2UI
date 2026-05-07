@@ -58,7 +58,14 @@ jobs:
             test)
               cd ./renderers/angular && npm run test:ci
               ;;
-            restaurant|rizzcharts|orchestrator)
-              cd ./samples/client/angular && npm run build ${{ matrix.task }}
+            restaurant)
+              cd ./samples/client/angular && npm run build restaurant
+              ;;
+            rizzcharts)
+              cd ./samples/client/angular && npm run build rizzcharts
+              ;;
+            orchestrator)
+              cd ./samples/client/angular && npm run build orchestrator
               ;;
           esac
+
