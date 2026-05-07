@@ -42,9 +42,47 @@ data class CatalogConfig(
     /** Create a [CatalogConfig] using a [FileSystemCatalogProvider]. */
     @JvmStatic
     @JvmOverloads
-    fun fromPath(name: String, catalogPath: String, examplesPath: String? = null): CatalogConfig =
-      CatalogConfig(name, FileSystemCatalogProvider(catalogPath), examplesPath)
+    fun fromPath(name: String, catalogPath: String, examplesPath: String? = null): CatalogConfig {
+      val uri =
+        try {
+          java.net.URI(catalogPath)
+        } catch (e: Exception) {
+          null
+        }
+      val scheme = uri?.scheme?.lowercase()
+
+      val provider =
+        when {
+          scheme == null || scheme == "file" -> {
+            val path =
+              if (scheme == "file") java.nio.file.Paths.get(uri).toString() else catalogPath
+            FileSystemCatalogProvider(path)
+          }
+          scheme == "http" || scheme == "https" ->
+            throw NotImplementedError("HTTP support is coming soon.")
+          else -> throw IllegalArgumentException("Unsupported catalog URL scheme: $catalogPath")
+        }
+
+      return CatalogConfig(name, provider, resolveExamplesPath(examplesPath))
+    }
   }
+}
+
+internal fun resolveExamplesPath(path: String?): String? {
+  if (path != null) {
+    val uri =
+      try {
+        java.net.URI(path)
+      } catch (e: Exception) {
+        null
+      }
+    val scheme = uri?.scheme?.lowercase()
+    if (scheme == null || scheme == "file") {
+      return if (scheme == "file") java.nio.file.Paths.get(uri).toString() else path
+    }
+    throw IllegalArgumentException("Unsupported examples URL scheme: $path")
+  }
+  return null
 }
 
 /** Represents a processed component catalog with its schema. */
