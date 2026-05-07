@@ -17,7 +17,7 @@
 import {LitElement, html, css, nothing} from 'lit';
 import {provide} from '@lit/context';
 import {customElement, state} from 'lit/decorators.js';
-import {MessageProcessor} from '@a2ui/web_core/v0_9';
+import {MessageProcessor, A2uiMessage} from '@a2ui/web_core/v0_9';
 import {basicCatalog, Context} from '@a2ui/lit/v0_9';
 import {renderMarkdown} from '@a2ui/markdown-it';
 import {getDemoItems, DemoItem} from './examples';
@@ -99,7 +99,36 @@ export class LocalGallery extends LitElement {
 
     if (toProcess.length === 0) return;
 
-    const modifiedToProcess = toProcess.map((msg: any) => {
+    const modifiedToProcess = this.applyPrimaryColorToMessages(toProcess);
+
+    this.processor.processMessages(modifiedToProcess);
+    this.processedMessageCount += toProcess.length;
+
+    // Subscribe to data model on first advance if not already subscribed
+    if (!this.dataModelSubscription) {
+      const surface = this.processor.model.getSurface(item.id);
+      if (surface) {
+        this.dataModelSubscription = surface.dataModel.subscribe('/', val => {
+          this.currentDataModelText = JSON.stringify(val || {}, null, 2);
+        });
+      }
+    }
+  }
+
+  /**
+   * Applies the user-selected primary color to `createSurface` messages.
+   *
+   * This is necessary for the explorer application to allow users to live-preview
+   * theme changes by injecting the selected color into the message stream.
+   * In a standard A2UI renderer deployment, this is not needed as the renderer
+   * simply processes messages as received from the agent, which is responsible
+   * for providing the correct theme.
+   *
+   * @param messages The list of messages to process.
+   * @returns A new list of messages with the primary color applied to `createSurface` messages.
+   */
+  private applyPrimaryColorToMessages(messages: A2uiMessage[]): A2uiMessage[] {
+    return messages.map((msg) => {
       if ('createSurface' in msg && this.primaryColor) {
         return {
           ...msg,
@@ -114,19 +143,6 @@ export class LocalGallery extends LitElement {
       }
       return msg;
     });
-
-    this.processor.processMessages(modifiedToProcess);
-    this.processedMessageCount += toProcess.length;
-
-    // Subscribe to data model on first advance if not already subscribed
-    if (!this.dataModelSubscription) {
-      const surface = this.processor.model.getSurface(item.id);
-      if (surface) {
-        this.dataModelSubscription = surface.dataModel.subscribe('/', val => {
-          this.currentDataModelText = JSON.stringify(val || {}, null, 2);
-        });
-      }
-    }
   }
 
   onColorInput(e: Event) {
