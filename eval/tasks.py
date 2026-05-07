@@ -50,7 +50,7 @@ Notes for grading:
 """
 
 @task
-def a2ui_v0_9_eval(list_models: bool = False) -> Task:
+def a2ui_v0_9_eval(list_models: bool = False, grading_model: str = "google/gemini-3-flash-preview") -> Task:
     """Evaluation task for A2UI v0.9 protocol generation.
 
     Args:
@@ -94,7 +94,7 @@ def a2ui_v0_9_eval(list_models: bool = False) -> Task:
         scorer=[
             a2ui_scorer(CATALOG_PATH),
             measured_model_graded_qa(
-                model="google/gemini-3-pro-preview",
+                model=grading_model,
                 instructions=GRADER_INSTRUCTIONS
             )
         ]
