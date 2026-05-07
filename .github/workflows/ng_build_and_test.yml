@@ -56,8 +56,7 @@ jobs:
           (cd ./samples/client/angular && npm run build restaurant) & pids+=($!)
           (cd ./samples/client/angular && npm run build rizzcharts) & pids+=($!)
           (cd ./samples/client/angular && npm run build orchestrator) & pids+=($!)
-          
+
           for pid in "${pids[@]}"; do
               wait $pid || exit 1
           done
-
