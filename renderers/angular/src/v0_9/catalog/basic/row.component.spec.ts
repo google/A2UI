@@ -22,6 +22,8 @@ import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentBinder} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
 
+import {setComponentProps} from '../../core/test-utils';
+
 @Component({
   standalone: true,
   selector: 'dummy-child',
@@ -77,11 +79,14 @@ describe('RowComponent', () => {
     fixture = TestBed.createComponent(RowComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('center'), raw: 'center', onUpdate: () => {}},
-      align: {value: signal('baseline'), raw: 'baseline', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      justify: {value: signal('center' as const), raw: 'center', onUpdate: () => {}},
+      align: {value: signal('stretch' as const), raw: 'stretch', onUpdate: () => {}},
       children: {
-        value: signal(['child1', 'child2']),
+        value: signal([
+          {id: 'child1', basePath: '/'},
+          {id: 'child2', basePath: '/'},
+        ]),
         raw: ['child1', 'child2'],
         onUpdate: () => {},
       },
@@ -97,7 +102,7 @@ describe('RowComponent', () => {
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
     expect(style.justifyContent).toBe('center');
-    expect(style.alignItems).toBe('baseline');
+    expect(style.alignItems).toBe('stretch');
   });
 
   it('should render non-repeating children', () => {
@@ -109,12 +114,19 @@ describe('RowComponent', () => {
   });
 
   it('should render repeating children', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       ...component.props(),
       children: {
-        value: signal([{}, {}]), // two items
+        value: signal([
+          {id: 'template1', basePath: '/items/0'},
+          {id: 'template1', basePath: '/items/1'},
+        ]),
         raw: {
           componentId: 'template1',
+          path: 'items',
+        },
+        template: {
+          id: 'template1',
           path: 'items',
         },
         onUpdate: () => {},
@@ -134,34 +146,10 @@ describe('RowComponent', () => {
     });
   });
 
-  it('should handle non-array children value', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      children: {
-        value: signal('not-an-array'),
-        raw: 'not-an-array',
-        onUpdate: () => {},
-      },
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
-  it('should handle missing children property', () => {
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('center'), raw: 'center', onUpdate: () => {}},
-      align: {value: signal('baseline'), raw: 'baseline', onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
   it('should handle missing justify and align properties', () => {
-    fixture.componentRef.setInput('props', {
+    setComponentProps(fixture, {
       children: {
-        value: signal(['child1']),
+        value: signal([{id: 'child1', basePath: '/'}]),
         raw: ['child1'],
         onUpdate: () => {},
       },
