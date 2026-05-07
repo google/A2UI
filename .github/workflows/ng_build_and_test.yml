@@ -34,8 +34,16 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "22"
-          cache: 'npm'
-          cache-dependency-path: ./samples/client/angular/package-lock.json
+
+      - name: Cache Node modules and Wireit
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+            **/.wireit
+          key: ${{ runner.os }}-node-and-wireit-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-and-wireit-
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular
