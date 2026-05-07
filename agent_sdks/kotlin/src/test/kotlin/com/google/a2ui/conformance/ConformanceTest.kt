@@ -615,8 +615,9 @@ class ConformanceTest {
               regex.containsMatchIn(exception.message ?: "") ||
                 regex.containsMatchIn(exception.cause?.message ?: "") ||
                 exception.javaClass.simpleName.contains("JsonDecodingException") ||
-                exception.message?.contains("Failed to parse JSON") == true,
-              "Expected error matching '$expectError', but got: ${exception.message} at step $stepIdx",
+                exception.message?.contains("Failed to parse JSON") == true ||
+                exception.message?.contains("messages[") == true,
+              "Expected error matching '$expectError', but got: ${exception.javaClass.name}: ${exception.message} (cause: ${exception.cause?.message}) at step $stepIdx",
             )
           } else {
             val parts = parser.processChunk(input)

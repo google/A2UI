@@ -402,13 +402,14 @@ abstract class StreamingParser(
 
         if (isSu && sid != null) {
           if (!seenSu.contains(sid)) {
-            dedupedMsgs.add(0, m)
+            dedupedMsgs.add(m)
             seenSu.add(sid)
           }
         } else {
-          dedupedMsgs.add(0, m)
+          dedupedMsgs.add(m)
         }
       }
+      dedupedMsgs.reverse()
       messages[i] = part.copy(a2uiJson = dedupedMsgs)
     }
 
@@ -480,6 +481,10 @@ abstract class StreamingParser(
             if (braceCount >= 0) {
               val objBuffer = jsonBuffer.substring(startIdx)
               if (objBuffer.startsWith("{") && objBuffer.endsWith("}")) {
+                val isTopLevel =
+                  braceStack.isEmpty() ||
+                    (inTopLevelList && braceStack.size == 1 && braceStack[0].first == "[")
+
                 try {
                   val obj = Json.parseToJsonElement(objBuffer) as? JsonObject
                   if (obj != null) {
@@ -487,9 +492,6 @@ abstract class StreamingParser(
 
                     val isProtocol = inTopLevelList && isProtocolMsg(obj)
                     val isComp = obj.containsKey("id") && obj.containsKey("component")
-                    val isTopLevel =
-                      braceStack.isEmpty() ||
-                        (inTopLevelList && braceStack.size == 1 && braceStack[0].first == "[")
 
                     if (isComp) {
                       handlePartialComponent(obj, messages)
@@ -516,11 +518,8 @@ abstract class StreamingParser(
                   }
                 } catch (e: Exception) {
                   if (
-                    (e is IllegalArgumentException &&
-                      e !is kotlinx.serialization.SerializationException) ||
-                      e.message?.contains("Circular reference") == true ||
-                      e.message?.contains("Self-reference") == true ||
-                      e.message?.contains("Validation failed") == true
+                    e is IllegalArgumentException &&
+                      e !is kotlinx.serialization.SerializationException
                   ) {
                     throw e
                   }
@@ -588,7 +587,9 @@ abstract class StreamingParser(
           "root" -> ROOT_ID_REGEX.find(jsonBuffer, idx)
           else -> {
             val fragment = jsonBuffer.substring(idx)
-            Regex("\"$key\"\\s*:\\s*\"([^\"]+)\"").find(fragment)
+            val regex =
+              LATEST_VALUE_REGEX_CACHE.getOrPut(key) { Regex("\"$key\"\\s*:\\s*\"([^\"]+)\"") }
+            regex.find(fragment)
           }
         }
       if (match != null) {
@@ -630,6 +631,7 @@ abstract class StreamingParser(
 
   protected fun sniffPartialDataModel(messages: MutableList<ResponsePart>) {
     val msgType = dataModelMsgType
+
     if (jsonBuffer.indexOf("\"$msgType\"") == -1) return
 
     for (i in braceStack.indices.reversed()) {
@@ -996,6 +998,9 @@ abstract class StreamingParser(
             if (pathElem != null) {
               val currentPath = pathElem.jsonPrimitive.content
               if (!currentPath.startsWith("/")) {
+                if (!map.containsKey("componentId")) {
+                  map.clear()
+                }
                 map["path"] = JsonPrimitive("/$currentPath")
               }
             }
@@ -1093,6 +1098,7 @@ abstract class StreamingParser(
     private val PREV_KEY_MATCHES_REGEX = Regex("\"key\"\\s*:\\s*\"([^\"]+)\"")
     private val SURFACE_ID_REGEX = Regex("\"surfaceId\"\\s*:\\s*\"([^\"]+)\"")
     private val ROOT_ID_REGEX = Regex("\"root\"\\s*:\\s*\"([^\"]+)\"")
+    private val LATEST_VALUE_REGEX_CACHE = mutableMapOf<String, Regex>()
     private const val MAX_JSON_BUFFER_SIZE = 5 * 1024 * 1024
 
     /** Factory method returning a version-specific parser instance. */
