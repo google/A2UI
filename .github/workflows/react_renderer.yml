@@ -87,4 +87,3 @@ jobs:
               npm run lint
               ;;
           esac
-
