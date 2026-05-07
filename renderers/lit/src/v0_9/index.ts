@@ -20,3 +20,4 @@ export {A2uiSurface} from './surface/a2ui-surface.js';
 export {A2uiLitElement} from './a2ui-lit-element.js';
 export {Context} from './context/context.js';
 export {basicCatalog} from './catalogs/basic/index.js';
+export {renderA2uiNode} from './surface/render-a2ui-node.js';

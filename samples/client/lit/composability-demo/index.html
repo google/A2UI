@@ -1,0 +1,426 @@
+<!--
+  Copyright 2026 Google LLC
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2UI Dynamic Composability Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0a0a0c;
+      --surface-color: rgba(18, 18, 24, 0.7);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --primary-color: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.15);
+      --success-color: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error-color: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.15);
+      --warning-color: #f59e0b;
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-family: 'Inter', sans-serif;
+      --title-font: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 40px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    }
+
+    header {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: var(--title-font);
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 32px;
+      flex-grow: 1;
+    }
+
+    .panel {
+      background: var(--surface-color);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    h2 {
+      font-family: var(--title-font);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      border: 1px solid var(--surface-border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .switch-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--surface-border);
+      padding: 16px 20px;
+      border-radius: 16px;
+    }
+
+    .switch-label-desc {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .switch-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .switch-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid var(--surface-border);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px; width: 20px;
+      left: 3px; bottom: 3px;
+      background-color: var(--text-muted);
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--success-color);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: white;
+    }
+
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--surface-border);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .badge {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+    .badge-loaded {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+
+    .render-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface-color);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+
+    .card-title {
+      font-family: var(--title-font);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .console {
+      background: #050507;
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 16px 24px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+      flex-grow: 1;
+    }
+    .log-line {
+      line-height: 1.5;
+    }
+    .log-info { color: var(--text-muted); }
+    .log-success { color: var(--success-color); }
+    .log-error { color: var(--error-color); }
+    .log-warn { color: var(--warning-color); }
+
+    .shimmer {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: loading-shimmer 1.5s infinite;
+    }
+    @keyframes loading-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>A2UI Dynamic Composability Engine</h1>
+    <p>Zero-update dynamic loading of Custom Elements with cryptographic Subresource Integrity (SRI) check, parallel preloading, and offline dev mode switches.</p>
+  </header>
+
+  <div class="container">
+    <!-- Left Column: Control & Monitoring Panel -->
+    <div class="panel">
+      <div>
+        <h2>Engine Controls</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Configure resolution behavior and security boundaries.</p>
+      </div>
+
+      <!-- Preload Toggle -->
+      <div class="control-section">
+        <div class="control-label">Preloading Showcase</div>
+        <button id="preload-btn" class="btn btn-primary">Pre-Download Catalog Components</button>
+      </div>
+
+      <!-- Security Toggle -->
+      <div class="control-section">
+        <div class="control-label">Trust Boundary Settings</div>
+        <div class="switch-group">
+          <div class="switch-label-desc">
+            <div class="switch-title">Strict Security Mode</div>
+            <div class="switch-subtitle">Enforces SHA-384 SRI & approved domain</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="security-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Components Status Tracker -->
+      <div class="control-section">
+        <div class="control-label">Component Registration Registry</div>
+        <div class="status-list">
+          <div class="status-item">
+            <span>Text (Primitive)</span>
+            <span class="badge badge-loaded">Ready</span>
+          </div>
+          <div class="status-item">
+            <span>Button (Primitive)</span>
+            <span class="badge badge-loaded">Ready</span>
+          </div>
+          <div class="status-item">
+            <span>LocalWidget (Dynamic Local)</span>
+            <span id="local-status" class="badge badge-pending">Pending</span>
+          </div>
+          <div class="status-item">
+            <span>McpApp (Dynamic Remote)</span>
+            <span id="mcp-status" class="badge badge-pending">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Console Log -->
+      <div class="control-section" style="flex-grow:1; display:flex; flex-direction:column; gap:12px;">
+        <div class="control-label">System Real-Time Console</div>
+        <div id="console" class="console">
+          <div class="log-line log-info">[System] Dynamic Composability Engine initialized.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Rendering Area -->
+    <div class="render-grid">
+      <!-- Standard Primitives Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Surface A: Standard Catalog Primitives</span>
+          <span style="font-size:12px; color:var(--success-color);">Bundled</span>
+        </div>
+        <div id="surface-a" style="min-height:60px; display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <!-- Local Pre-Registered Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Surface B: Dynamic Component (Option B: Local Loading)</span>
+          <span id="surface-b-badge" style="font-size:12px; color:var(--warning-color);">Awaiting Loading...</span>
+        </div>
+        <div id="surface-b" style="min-height:80px;">
+          <div class="a2ui-loading-shimmer shimmer" style="height:80px; border-radius:12px;"></div>
+        </div>
+      </div>
+
+      <!-- Dynamic Download Showcase Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Surface C: Dynamic Component (Option B: Remote SRI Check)</span>
+          <span id="surface-c-badge" style="font-size:12px; color:var(--warning-color);">Awaiting Loading...</span>
+        </div>
+        <div id="surface-c" style="min-height:200px;">
+          <div class="a2ui-loading-shimmer shimmer" style="height:200px; border-radius:12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.ts"></script>
+</body>
+</html>
