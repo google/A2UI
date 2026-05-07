@@ -19,6 +19,12 @@ import {z} from 'zod';
 import {ComponentApi, DataBindingSchema, FunctionCallSchema} from '@a2ui/web_core/v0_9';
 import {Child} from './component-binder.service';
 
+/** Data structure that represents a template used to render a collection of children. */
+export interface ComponentTemplate {
+  id?: string;
+  path?: string;
+}
+
 /**
  * Represents a component property bound to an Angular Signal and update logic.
  *
@@ -28,7 +34,7 @@ import {Child} from './component-binder.service';
  *
  * @template T The type of the property value.
  */
-export interface BoundProperty<T = any> {
+export interface BoundProperty<T = unknown> {
   /**
    * The reactive Angular Signal containing the current resolved value.
    *
@@ -42,7 +48,10 @@ export interface BoundProperty<T = any> {
    *
    * This may be a literal value or a data binding path object.
    */
-  readonly raw: any;
+  readonly raw: unknown;
+
+  /** This field is present for "children" props that define their children using a template. */
+  readonly template?: ComponentTemplate;
 
   /**
    * Callback to update the value in the A2UI DataContext.
@@ -59,9 +68,11 @@ type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 type DynamicSchemaValueToRaw<Input> = Exclude<Input, DataBindingType | FunctionCallType>;
 
 type InferredInterfaceToProps<InferredSchema> = {
-  [K in keyof InferredSchema]: K extends 'children' | 'child' | 'trigger' | 'content'
-    ? BoundProperty<Child>
-    : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>;
+  [K in keyof InferredSchema]: K extends 'children'
+    ? BoundProperty<Child[]>
+    : K extends 'child' | 'trigger' | 'content'
+      ? BoundProperty<Child>
+      : BoundProperty<DynamicSchemaValueToRaw<InferredSchema[K]>>;
 };
 
 interface CheckProps {
@@ -70,7 +81,7 @@ interface CheckProps {
 }
 
 /** The binder can add some properties to the Props object. This util adds them to the type. */
-export type ExtendedProps<ComponentProps extends {[key: string]: any}> =
+export type ExtendedProps<ComponentProps extends {[key: string]: unknown}> =
   'checks' extends keyof ComponentProps
     ? Omit<ComponentProps, 'checks'> & CheckProps
     : ComponentProps;
