@@ -1,3 +1,7 @@
+## Unreleased
+
+- (v0_9) Add `computeColorVariant` helper function for basic catalog components to generate CSS formulas for color variants (light, dark, hover), allowing reuse across renderers.
+
 ## 0.9.1
 
 - Add new `FrameworkSignal` concept, which represents a generic signal from a

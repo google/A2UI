@@ -122,6 +122,7 @@
             "id": "add-cart-btn",
             "component": "Button",
             "child": "add-cart-btn-text",
+            "variant": "primary",
             "action": {
               "event": {
                 "name": "addToCart",
