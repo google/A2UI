@@ -24,30 +24,9 @@ import shutil
 import subprocess
 import sys
 
-def extract_accuracy(log_data: dict) -> float:
-    """Extracts accuracy from parsed JSON log data.
+from report_evals import extract_accuracy, print_results_summary
 
-    Args:
-        log_data: Parsed JSON data from inspect log dump.
 
-    Returns:
-        The accuracy score as a float.
-
-    Raises:
-        ValueError: If scores or accuracy are not found or invalid.
-    """
-    scores = log_data.get("results", {}).get("scores", [])
-    if not scores:
-        raise ValueError("No scores found in log file.")
-
-    metrics = scores[0].get("metrics", {})
-    accuracy_obj = metrics.get("accuracy") or {}
-    accuracy = accuracy_obj.get("value")
-
-    if accuracy is None:
-        raise ValueError("Could not find accuracy metric in log file.")
-
-    return float(accuracy)
 
 def check_threshold(percentage: float, threshold: float) -> bool:
     """Compares percentage with threshold.
@@ -61,37 +40,7 @@ def check_threshold(percentage: float, threshold: float) -> bool:
     """
     return percentage >= threshold
 
-def print_results_summary(log_data: dict):
-    """Prints a summary of the results for each sample.
 
-    Args:
-        log_data: Parsed JSON data from inspect log dump.
-    """
-    samples = log_data.get("samples", [])
-    print("\n=== Evaluation Results Summary ===")
-    for sample in samples:
-        name = sample.get("metadata", {}).get("name") or f"Sample {sample.get('id')}"
-        scores = sample.get("scores", {})
-        
-        # Algorithmic validity (a2ui_scorer)
-        a2ui_score = scores.get("a2ui_scorer", {})
-        a2ui_passed = a2ui_score.get("value") == 1.0
-        a2ui_str = "PASS" if a2ui_passed else "FAIL"
-        
-        # Judging results (measured_model_graded_qa)
-        qa_score = scores.get("measured_model_graded_qa", {})
-        qa_val = qa_score.get("value")
-        
-        print(f"{name}: Algorithmic: {a2ui_str} | Judging: {qa_val}")
-        
-        if not a2ui_passed or qa_val != "C":
-            reason = ""
-            if not a2ui_passed:
-                reason += f"Algorithmic failed: {a2ui_score.get('explanation')}. "
-            if qa_val != "C":
-                reason += f"Judging failed (Grade {qa_val}): {qa_score.get('explanation')}."
-            print(f"  Reason: {reason.strip()}")
-    print("==================================")
 
 def build_inspect_command(args: argparse.Namespace, seed: str) -> list[str]:
     """Builds the command line arguments for inspect eval.

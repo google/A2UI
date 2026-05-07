@@ -20,7 +20,8 @@ import pytest
 
 # Add bin directory to path to import run_ci_evals
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../bin')))
-from run_ci_evals import extract_accuracy, check_threshold, build_inspect_command, print_results_summary
+from run_ci_evals import check_threshold, build_inspect_command
+from report_evals import extract_accuracy, print_results_summary
 import argparse
 
 def test_extract_accuracy_valid():
@@ -113,7 +114,15 @@ def test_print_results_summary_valid(capsys):
         "samples": [
             {
                 "id": 1,
-                "metadata": {"name": "test_task"},
+                "metadata": {"name": "test_task", "evaluation_duration_seconds": 5.0},
+                "scores": {
+                    "a2ui_scorer": {"value": 1.0, "explanation": "Perfect"},
+                    "measured_model_graded_qa": {"value": "C", "explanation": "Correct"}
+                }
+            },
+            {
+                "id": 2,
+                "metadata": {"name": "test_task_2", "evaluation_duration_seconds": 10.0},
                 "scores": {
                     "a2ui_scorer": {"value": 1.0, "explanation": "Perfect"},
                     "measured_model_graded_qa": {"value": "C", "explanation": "Correct"}
@@ -123,7 +132,9 @@ def test_print_results_summary_valid(capsys):
     }
     print_results_summary(log_data)
     captured = capsys.readouterr()
-    assert "test_task: Algorithmic: PASS | Judging: C" in captured.out
+    assert "test_task                 | Algorithmic: PASS | Judging: C  | Inference Time: 5.00s" in captured.out
+    assert "test_task_2               | Algorithmic: PASS | Judging: C  | Inference Time: 10.00s" in captured.out
+    assert "Inference Time - Average: 7.50s | Median: 7.50s" in captured.out
 
 def test_print_results_summary_fail(capsys):
     log_data = {
@@ -140,5 +151,8 @@ def test_print_results_summary_fail(capsys):
     }
     print_results_summary(log_data)
     captured = capsys.readouterr()
-    assert "fail_task: Algorithmic: FAIL | Judging: I" in captured.out
-    assert "Reason: Algorithmic failed: Missing component. Judging failed (Grade I): Incorrect." in captured.out
+    assert "fail_task                 | Algorithmic: FAIL | Judging: I  | Inference Time: N/A" in captured.out
+    assert "  [Algorithmic Failure Reason]:" in captured.out
+    assert "    Missing component" in captured.out
+    assert "  [Judging Failure Reason (Grade I)]:" in captured.out
+    assert "    Incorrect" in captured.out
