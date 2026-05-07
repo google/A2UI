@@ -66,6 +66,7 @@ def main():
     parser.add_argument("--max-samples", type=int, default=100, help="Maximum number of samples to evaluate. Set to 0 for all samples. Default is 100.")
     parser.add_argument("--threshold", type=float, default=0.0, help="Pass percentage threshold (0-100). Default is 0.0.")
     parser.add_argument("--model", type=str, default="google/gemini-3-flash-preview", help="Model used to evaluate tasks. Default is google/gemini-3-flash-preview.")
+    parser.add_argument("--grading-model", type=str, default="google/gemini-3-flash-preview", help="Model used for grading. Default is google/gemini-3-flash-preview.")
     args = parser.parse_args()
 
     # Find eval root (directory above bin)
@@ -91,7 +92,10 @@ def main():
         "--model", args.model,
         "--sample-shuffle", seed,
         "--display", "plain",
-        "--log-dir", f"logs/{seed}"
+        "--log-dir", f"logs/{seed}",
+        "--max-retries", "10",
+        "--log-level", "http",
+        "-T", f"grading_model={args.grading_model}"
     ]
     if args.max_samples != 0:
         cmd.extend(["--limit", str(args.max_samples)])
