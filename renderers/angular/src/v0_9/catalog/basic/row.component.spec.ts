@@ -23,6 +23,8 @@ import {ComponentBinder} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
 import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 
+import {setComponentProps} from '../../core/test-utils';
+
 @Component({
   standalone: true,
   selector: 'dummy-child',
