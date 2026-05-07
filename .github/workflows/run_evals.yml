@@ -54,7 +54,7 @@ jobs:
       - name: Decrypt dataset
         working-directory: eval
         if: ${{ env.TRANSCRYPT_PASSWORD != '' }}
-        run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD"
+        run: ./bin/transcrypt -p "$TRANSCRYPT_PASSWORD" -y
 
       - name: Run Evals
         working-directory: eval
