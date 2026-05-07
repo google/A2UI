@@ -19,6 +19,7 @@ package com.google.a2ui.core.parser
 import com.google.a2ui.core.schema.A2uiConstants
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlinx.serialization.json.JsonArray
@@ -158,5 +159,13 @@ class StreamingParserTest {
     val pathStr = (comp["text"] as? JsonObject)?.get("path")?.jsonPrimitive?.content
 
     assertEquals("/absolute/path", pathStr)
+  }
+
+  @Test
+  fun throwsExceptionWhenJsonBufferExceedsMaxSizeLimit() {
+    val parser = StreamingParser.create(null)
+    parser.processChunk(A2uiConstants.A2UI_OPEN_TAG)
+    val hugeChunk = String(CharArray(5 * 1024 * 1024 + 1) { ' ' })
+    assertFailsWith<IllegalArgumentException> { parser.processChunk(hugeChunk) }
   }
 }

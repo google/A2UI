@@ -422,6 +422,9 @@ abstract class StreamingParser(
   }
 
   protected fun processJsonChunk(chunk: String, messages: MutableList<ResponsePart>) {
+    if (jsonBuffer.length + chunk.length > MAX_JSON_BUFFER_SIZE) {
+      throw IllegalArgumentException("A2UI JSON buffer exceeded maximum size limit.")
+    }
     for (i in chunk.indices) {
       val char = chunk[i]
       var charHandled = false
@@ -544,7 +547,9 @@ abstract class StreamingParser(
         }
       }
 
-      if (braceCount > 0 && char in listOf('"', ':', ',', '}', ']')) {
+      if (
+        braceCount > 0 && (char == '"' || char == ':' || char == ',' || char == '}' || char == ']')
+      ) {
         sniffMetadata()
       }
     }
@@ -614,6 +619,7 @@ abstract class StreamingParser(
           obj != null && obj["id"]?.jsonPrimitive?.content != null && obj.containsKey("component")
         ) {
           handlePartialComponent(obj, messages)
+          break
         }
       } catch (e: Exception) {
         logger.warning { e.message }
@@ -639,9 +645,9 @@ abstract class StreamingParser(
       try {
         obj = Json.parseToJsonElement(fixedFragment) as? JsonObject
       } catch (_: Exception) {
-        var trimmed = rawFragment
-        while ("," in trimmed) {
-          trimmed = trimmed.substringBeforeLast(",")
+        var commaIdx = rawFragment.lastIndexOf(',')
+        while (commaIdx != -1) {
+          val trimmed = rawFragment.substring(0, commaIdx)
           try {
             val fixedTrimmed = fixJson(trimmed)
             if (fixedTrimmed.isNotEmpty()) {
@@ -650,8 +656,8 @@ abstract class StreamingParser(
             }
           } catch (ex: Exception) {
             logger.warning { ex.message }
-            continue
           }
+          commaIdx = rawFragment.lastIndexOf(',', commaIdx - 1)
         }
       }
 
@@ -1087,7 +1093,7 @@ abstract class StreamingParser(
     private val PREV_KEY_MATCHES_REGEX = Regex("\"key\"\\s*:\\s*\"([^\"]+)\"")
     private val SURFACE_ID_REGEX = Regex("\"surfaceId\"\\s*:\\s*\"([^\"]+)\"")
     private val ROOT_ID_REGEX = Regex("\"root\"\\s*:\\s*\"([^\"]+)\"")
-    internal val JSON_NON_PRETTY = Json { prettyPrint = false }
+    private const val MAX_JSON_BUFFER_SIZE = 5 * 1024 * 1024
 
     /** Factory method returning a version-specific parser instance. */
     fun create(

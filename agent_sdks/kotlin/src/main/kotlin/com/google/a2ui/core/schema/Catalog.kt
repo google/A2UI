@@ -72,13 +72,28 @@ data class A2uiCatalog(
     }
 
   /**
-   * Returns a new catalog with only allowed components.
+   * Returns a new catalog with pruned components and messages.
    *
    * @param allowedComponents List of component names to include.
-   * @return A copy of the catalog with only allowed components.
+   * @param allowedMessages List of message names to include in serverToClientSchema.
+   * @return A copy of the catalog with pruned components and messages.
    */
-  fun withPrunedComponents(allowedComponents: List<String>): A2uiCatalog {
-    if (allowedComponents.isEmpty()) return this.withPrunedCommonTypes()
+  fun withPruning(
+    allowedComponents: List<String>? = null,
+    allowedMessages: List<String>? = null,
+  ): A2uiCatalog {
+    var catalog = this
+    if (allowedComponents != null) {
+      catalog = catalog.withPrunedComponentsInternal(allowedComponents)
+    }
+    if (allowedMessages != null) {
+      catalog = catalog.withPrunedMessages(allowedMessages)
+    }
+    return catalog.withPrunedCommonTypes()
+  }
+
+  private fun withPrunedComponentsInternal(allowedComponents: List<String>): A2uiCatalog {
+    if (allowedComponents.isEmpty()) return this
 
     val schemaCopy = catalogSchema.toMutableMap()
 
@@ -97,7 +112,44 @@ data class A2uiCatalog(
       }
     }
 
-    return copy(catalogSchema = JsonObject(schemaCopy)).withPrunedCommonTypes()
+    return copy(catalogSchema = JsonObject(schemaCopy))
+  }
+
+  private fun withPrunedMessages(allowedMessages: List<String>): A2uiCatalog {
+    if (allowedMessages.isEmpty()) return this
+
+    val s2cCopy = serverToClientSchema.toMutableMap()
+
+    if (version == A2uiVersion.VERSION_0_8) {
+      (s2cCopy["properties"] as? JsonObject)?.let { props ->
+        s2cCopy["properties"] =
+          pruneDefsByReachability(
+            defs = props,
+            rootDefNames = allowedMessages,
+            internalRefPrefix = "#/properties/",
+          )
+      }
+    } else {
+      (s2cCopy["oneOf"] as? JsonArray)?.let { oneOf ->
+        val filteredOneOf =
+          oneOf.filter { item ->
+            val ref = (item as? JsonObject)?.get("\$ref")?.jsonPrimitive?.content
+            ref != null && ref.startsWith("#/\$defs/") && ref.split("/").last() in allowedMessages
+          }
+        s2cCopy["oneOf"] = JsonArray(filteredOneOf)
+      }
+
+      (s2cCopy["\$defs"] as? JsonObject)?.let { defs ->
+        s2cCopy["\$defs"] =
+          pruneDefsByReachability(
+            defs = defs,
+            rootDefNames = allowedMessages,
+            internalRefPrefix = "#/\$defs/",
+          )
+      }
+    }
+
+    return copy(serverToClientSchema = JsonObject(s2cCopy))
   }
 
   /** Returns a new catalog with unused common types pruned from the schema. */
@@ -105,39 +157,53 @@ data class A2uiCatalog(
     val defs = commonTypesSchema["\$defs"] as? JsonObject ?: return this
     if (defs.isEmpty()) return this
 
-    fun collectRefs(element: JsonElement, refs: MutableSet<String>) {
-      when (element) {
-        is JsonObject -> {
-          for ((k, v) in element) {
-            if (k == "\$ref" && v is JsonPrimitive && v.isString) {
-              refs.add(v.content)
-            } else {
-              collectRefs(v, refs)
-            }
-          }
-        }
-        is JsonArray -> {
-          for (item in element) {
-            collectRefs(item, refs)
-          }
-        }
-        else -> {}
-      }
-    }
-
-    val visitedDefs = mutableSetOf<String>()
-    val queue = ArrayDeque<String>()
-
     val externalRefs = mutableSetOf<String>()
     collectRefs(catalogSchema, externalRefs)
     collectRefs(serverToClientSchema, externalRefs)
 
     val prefix = "common_types.json#/\$defs/"
-    for (ref in externalRefs) {
-      if (ref.startsWith(prefix)) {
-        queue.add(ref.substring(prefix.length))
+    val rootDefs =
+      externalRefs.mapNotNull { if (it.startsWith(prefix)) it.substring(prefix.length) else null }
+
+    val newDefs = pruneDefsByReachability(defs, rootDefs)
+    val newCommonTypes =
+      JsonObject(commonTypesSchema.toMutableMap().apply { put("\$defs", newDefs) })
+
+    return copy(commonTypesSchema = newCommonTypes)
+  }
+
+  private fun collectRefs(rootElement: JsonElement, refs: MutableSet<String>) {
+    val stack = ArrayDeque<JsonElement>()
+    stack.addLast(rootElement)
+
+    while (stack.isNotEmpty()) {
+      when (val element = stack.removeLast()) {
+        is JsonObject -> {
+          for ((k, v) in element) {
+            if (k == "\$ref" && v is JsonPrimitive && v.isString) {
+              refs.add(v.content)
+            } else {
+              stack.addLast(v)
+            }
+          }
+        }
+        is JsonArray -> {
+          for (item in element) {
+            stack.addLast(item)
+          }
+        }
+        else -> {}
       }
     }
+  }
+
+  private fun pruneDefsByReachability(
+    defs: JsonObject,
+    rootDefNames: List<String>,
+    internalRefPrefix: String = "#/\$defs/",
+  ): JsonObject {
+    val visitedDefs = mutableSetOf<String>()
+    val queue = ArrayDeque(rootDefNames)
 
     while (queue.isNotEmpty()) {
       val defName = queue.removeFirst()
@@ -145,20 +211,15 @@ data class A2uiCatalog(
         val defElement = defs[defName]!!
         val internalRefs = mutableSetOf<String>()
         collectRefs(defElement, internalRefs)
-        val internalPrefix = "#/\$defs/"
         for (ref in internalRefs) {
-          if (ref.startsWith(internalPrefix)) {
-            queue.add(ref.substring(internalPrefix.length))
+          if (ref.startsWith(internalRefPrefix)) {
+            queue.add(ref.substring(internalRefPrefix.length))
           }
         }
       }
     }
 
-    val newDefs = JsonObject(defs.filterKeys { it in visitedDefs })
-    val newCommonTypes =
-      JsonObject(commonTypesSchema.toMutableMap().apply { put("\$defs", newDefs) })
-
-    return copy(commonTypesSchema = newCommonTypes)
+    return JsonObject(defs.filterKeys { it in visitedDefs })
   }
 
   private fun pruneAnyComponentOneOf(
