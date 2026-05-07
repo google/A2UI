@@ -1,3 +1,7 @@
+## 0.9.2
+
+- Rename Icon `path` property to `svgPath` to fix type collision with `DataBindingType`.
+
 ## 0.9.1
 
 - Add new `FrameworkSignal` concept, which represents a generic signal from a
