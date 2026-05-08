@@ -49,7 +49,6 @@ import {AnyDuringSchemaAlignment} from '../types';
         [type]="inputType()"
         [value]="value()"
         (input)="handleInput($event)"
-
         [class.invalid]="props()['isValid']?.value() === false"
       />
       @for (message of props()['validationErrors']?.value(); track message) {
