@@ -155,6 +155,11 @@ export const IconApi = {
               svgPath: z.string().describe('Custom SVG path data'),
             })
             .strict(),
+          z
+            .object({
+              path: z.string(),
+            })
+            .strict(),
         ])
         .describe('The name of the icon to display.'),
     })

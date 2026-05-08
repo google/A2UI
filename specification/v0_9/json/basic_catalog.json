@@ -168,6 +168,9 @@
                   },
                   "required": ["svgPath"],
                   "additionalProperties": false
+                },
+                {
+                  "$ref": "common_types.json#/$defs/DataBinding"
                 }
               ]
             }
