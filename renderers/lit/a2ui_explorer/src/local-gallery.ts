@@ -88,7 +88,12 @@ export class LocalGallery extends LitElement {
     }
   }
 
-  advanceMessages(all = false) {
+  /**
+   * Advances the message processing.
+   *
+   * @param all Whether to process all remaining messages or just the next one.
+   */
+  advanceMessages(all: boolean = false) {
     const item = this.demoItems[this.activeItemIndex];
     if (!item) return;
 
