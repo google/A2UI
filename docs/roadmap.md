@@ -8,8 +8,8 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 | Version  | Status    | Notes                                   |
 | -------- | --------- | --------------------------------------- |
-| **v0.8** | ✅ Stable | Initial public release                  |
-| **v0.9** | 🚧 Draft  | Prompt-First specification improvements |
+| **v0.9** | ✅ Stable | Prompt-First specification improvements |
+| **v0.10** | 🚧 Draft | Draft of the next release |
 
 Key features:
 
