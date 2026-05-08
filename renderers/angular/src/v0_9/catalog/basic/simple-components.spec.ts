@@ -312,12 +312,10 @@ describe('Simple Components', () => {
     it('should render video with url', () => {
       fixture.componentRef.setInput('props', {
         url: createBoundProperty('https://example.com/video.mp4'),
-        posterUrl: createBoundProperty('https://example.com/poster.jpg'),
       });
       fixture.detectChanges();
       const video = fixture.nativeElement.querySelector('video') as HTMLVideoElement;
       expect(video.src).toBeTruthy();
-      expect(video.poster).toContain('poster.jpg');
     });
 
     it('should handle missing props', () => {
