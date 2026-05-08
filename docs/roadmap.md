@@ -6,37 +6,37 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 ### Protocol
 
-| Version  | Status     | Notes                                   |
-| -------- | ---------- | --------------------------------------- |
-| **v0.8** | 🆗 Prior   | Initial public release, minimal support |
-| **v0.9** | ✅ Current | Feature complete, supported             |
-| **v0.10**| 🚧 Draft   | Minimal changes to spec, new features   |
-| **v1.0** | 🚧 Draft   | Stable and complete                     |
+| Version   | Status     | Notes                                   |
+| --------- | ---------- | --------------------------------------- |
+| **v0.8**  | 🆗 Prior   | Initial public release, minimal support |
+| **v0.9**  | ✅ Current | Feature complete, supported             |
+| **v0.10** | 🚧 Draft   | Minimal changes to spec, new features   |
+| **v1.0**  | 🚧 Draft   | Targeting stable and complete release   |
 
 ### Renderers
 
-| Client libraries                                           | Status         | Platform       | Notes                                                               |
-| ---------------------------------------------------------- | -------------- | -------------- | ------------------------------------------------------------------- |
-| **Web Core Lib**                                           | ✅ Stable      | Web            | Shared core lib for all web renderers                               |
-| **Web Components (Lit)**                                   | ✅ Stable      | Web            | Framework-agnostic, works anywhere                                  |
-| **Angular**                                                | ✅ Stable      | Web            | Full Angular integration                                            |
-| **Flutter (GenUI SDK)**                                    | ✅ Stable      | Multi-platform | Works on mobile, web, desktop                                       |
-| **React**                                                  | ✅ Stable      | Web            | Official React renderer                                             |
-| **SwiftUI**                                                | 📋 Planned     | iOS/macOS      | Planned for Q2 2026                                                 |
-| **Jetpack Compose**                                        | 📋 Planned     | Android        | Planned for Q2 2026                                                 |
-| **Vue**                                                    | 💡 Proposed    | Web            | Community interest                                                  |
-| [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed    | Web            | [Community interest](https://news.ycombinator.com/item?id=46287728) |
-| **ShadCN (React)**                                         | 💡 Proposed    | Web            | Community interest                                                  |
+| Client libraries                                           | Status      | Platform       | Notes                                                               |
+| ---------------------------------------------------------- | ----------- | -------------- | ------------------------------------------------------------------- |
+| **Web Core Lib**                                           | ✅ Stable   | Web            | Shared core lib for all web renderers                               |
+| **Web Components (Lit)**                                   | ✅ Stable   | Web            | Framework-agnostic, works anywhere                                  |
+| **Angular**                                                | ✅ Stable   | Web            | Full Angular integration                                            |
+| **Flutter (GenUI SDK)**                                    | ✅ Stable   | Multi-platform | Works on mobile, web, desktop                                       |
+| **React**                                                  | ✅ Stable   | Web            | Official React renderer                                             |
+| **SwiftUI**                                                | 📋 Planned  | iOS/macOS      | Planned for Q2 2026                                                 |
+| **Jetpack Compose**                                        | 📋 Planned  | Android        | Planned for Q2 2026                                                 |
+| **Vue**                                                    | 💡 Proposed | Web            | Community interest                                                  |
+| [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web            | [Community interest](https://news.ycombinator.com/item?id=46287728) |
+| **ShadCN (React)**                                         | 💡 Proposed | Web            | Community interest                                                  |
 
 ### Transports
 
-| Transport                        | Status      | Notes                       |
-| -------------------------------- | ----------- | --------------------------- |
-| **A2A Protocol**                 | ✅ Complete | Native A2A transport        |
-| **AG UI**                        | ✅ Complete | Day-zero compatibility      |
-| **REST API**                     | ✅ Complete | Request/response over HTTP   |
-| **WebSockets**                   | ✅ Complete | Bidirectional WS            |
-| **MCP (Model Context Protocol)** | ✅ Complete | Context sharing              |
+| Transport                        | Status      | Notes                      |
+| -------------------------------- | ----------- | -------------------------- |
+| **A2A Protocol**                 | ✅ Complete | Native A2A transport       |
+| **AG UI**                        | ✅ Complete | Day-zero compatibility     |
+| **REST API**                     | ✅ Complete | Request/response over HTTP |
+| **WebSockets**                   | ✅ Complete | Bidirectional WS           |
+| **MCP (Model Context Protocol)** | ✅ Complete | Context sharing            |
 
 ### Agent frameworks
 
