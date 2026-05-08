@@ -44,32 +44,32 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "22"
-          cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
 
-      - name: Cache Wireit
+      - name: Cache Node modules and Wireit
         uses: actions/cache@v4
         with:
-          path: "**/.wireit"
-          key: ${{ runner.os }}-wireit-${{ hashFiles('**/package-lock.json') }}
+          path: |
+            **/node_modules
+            **/.wireit
+          key: ${{ runner.os }}-node-and-wireit-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-wireit-
+            ${{ runner.os }}-node-and-wireit-
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
         run: |
-          npm ci
+          npm i
           npm run build
 
       - name: Build markdown-it dependency
         working-directory: ./renderers/markdown/markdown-it
         run: |
-          npm ci
+          npm i
           npm run build
 
       - name: Install React renderer deps
         working-directory: ./renderers/react
-        run: npm ci
+        run: npm i
 
       - name: Run task
         working-directory: ./renderers/react
