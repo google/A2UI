@@ -143,12 +143,12 @@ There are two primary samples demonstrating MCP Apps integration. Each sample re
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
 - **A2A Agent Server**:
-  - Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
-  - Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
+    - Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
+    - Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 - **Lit Client App**:
-  - Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
-  - Command: `npm install && npm run dev` (requires building the Lit renderer first)
-  - URL: `http://localhost:5173/`
+    - Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
+    - Command: `npm install && npm run dev` (requires building the Lit renderer first)
+    - URL: `http://localhost:5173/`
 
 **What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
 

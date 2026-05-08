@@ -74,47 +74,47 @@ A compliant renderer must implement the following message processing and state m
 - **JSONL Stream Parsing**: Implement a parser that can read a streaming response line by line, decoding each line as a distinct JSON object.
 - **Message Dispatcher**: Create a dispatcher to identify the message type (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`, `deleteSurface`) and route it to the correct handler.
 - **Surface Management**:
-  - Implement a data structure to manage multiple UI surfaces, each keyed by its `surfaceId`.
-  - Handle `surfaceUpdate`: Add or update components in the specified surface's component buffer.
-  - Handle `deleteSurface`: Remove the specified surface and all its associated data and components.
+    - Implement a data structure to manage multiple UI surfaces, each keyed by its `surfaceId`.
+    - Handle `surfaceUpdate`: Add or update components in the specified surface's component buffer.
+    - Handle `deleteSurface`: Remove the specified surface and all its associated data and components.
 - **Component Buffering (Adjacency List)**:
-  - For each surface, maintain a component buffer (e.g., a `Map<String, Component>`) to store all component definitions by their `id`.
-  - Be able to reconstruct the UI tree at render time by resolving `id` references in container components (`children.explicitList`, `child`, `contentChild`, etc.).
+    - For each surface, maintain a component buffer (e.g., a `Map<String, Component>`) to store all component definitions by their `id`.
+    - Be able to reconstruct the UI tree at render time by resolving `id` references in container components (`children.explicitList`, `child`, `contentChild`, etc.).
 - **Data Model Store**:
-  - For each surface, maintain a separate data model store (e.g., a JSON object or a `Map<String, any>`).
-  - Handle `dataModelUpdate`: Update the data model at the specified `path`. The `contents` will be in an adjacency list format (e.g., `[{ "key": "name", "valueString": "Bob" }]`).
+    - For each surface, maintain a separate data model store (e.g., a JSON object or a `Map<String, any>`).
+    - Handle `dataModelUpdate`: Update the data model at the specified `path`. The `contents` will be in an adjacency list format (e.g., `[{ "key": "name", "valueString": "Bob" }]`).
 
 ### Rendering Logic
 
 Implement the following rendering logic:
 
 - **Progressive Rendering Control**:
-  - Buffer all incoming `surfaceUpdate` and `dataModelUpdate` messages without rendering immediately.
-  - Handle `beginRendering`: This message acts as the explicit signal to perform the initial render of a surface and set the root component ID.
-    - Start rendering from the specified `root` component ID.
-    - If a `catalogId` is provided, ensure the corresponding component catalog is used (defaulting to the standard catalog if omitted).
-    - Apply any global `styles` (e.g., `font`, `primaryColor`) provided in this message.
+    - Buffer all incoming `surfaceUpdate` and `dataModelUpdate` messages without rendering immediately.
+    - Handle `beginRendering`: This message acts as the explicit signal to perform the initial render of a surface and set the root component ID.
+        - Start rendering from the specified `root` component ID.
+        - If a `catalogId` is provided, ensure the corresponding component catalog is used (defaulting to the standard catalog if omitted).
+        - Apply any global `styles` (e.g., `font`, `primaryColor`) provided in this message.
 - **Data Binding Resolution**:
-  - Implement a resolver for `BoundValue` objects found in component properties.
-  - If only a `literal*` value is present (`literalString`, `literalNumber`, etc.), use it directly.
-  - If only a `path` is present, resolve it against the surface's data model.
-  - If both `path` and `literal*` are present, first update the data model at `path` with the literal value, then bind the component property to that `path`.
+    - Implement a resolver for `BoundValue` objects found in component properties.
+    - If only a `literal*` value is present (`literalString`, `literalNumber`, etc.), use it directly.
+    - If only a `path` is present, resolve it against the surface's data model.
+    - If both `path` and `literal*` are present, first update the data model at `path` with the literal value, then bind the component property to that `path`.
 - **Dynamic List Rendering**:
-  - For containers with a `children.template`, iterate over the data list found at `template.dataBinding` (which resolves to a list in the data model).
-  - For each item in the data list, render the component specified by `template.componentId`, making the item's data available for relative data binding within the template.
+    - For containers with a `children.template`, iterate over the data list found at `template.dataBinding` (which resolves to a list in the data model).
+    - For each item in the data list, render the component specified by `template.componentId`, making the item's data available for relative data binding within the template.
 
 ### Client-to-Server Communication
 
 Implement the following communication features:
 
 - **Event Handling**:
-  - When a user interacts with a component that has an `action` defined, construct a `userAction` payload.
-  - Resolve all data bindings within the `action.context` against the data model.
-  - Send the complete `userAction` object to the server's event handling endpoint.
+    - When a user interacts with a component that has an `action` defined, construct a `userAction` payload.
+    - Resolve all data bindings within the `action.context` against the data model.
+    - Send the complete `userAction` object to the server's event handling endpoint.
 - **Client Capabilities Reporting**:
-  - In **every** A2A message sent to the server (as part of the metadata), include an `a2uiClientCapabilities` object.
-  - This object should declare the component catalog your client supports via `supportedCatalogIds` (e.g., including the URI for the standard 0.8 catalog).
-  - Optionally, if the server supports it, provide `inlineCatalogs` for custom, on-the-fly component definitions.
+    - In **every** A2A message sent to the server (as part of the metadata), include an `a2uiClientCapabilities` object.
+    - This object should declare the component catalog your client supports via `supportedCatalogIds` (e.g., including the URI for the standard 0.8 catalog).
+    - Optionally, if the server supports it, provide `inlineCatalogs` for custom, on-the-fly component definitions.
 - **Error Reporting**: Implement a mechanism to send an `error` message to the server to report any client-side errors (e.g., failed data binding, unknown component type).
 
 ## II. Standard Component Catalog Checklist

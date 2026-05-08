@@ -366,18 +366,18 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 
 - **Breaking Changes (Major Version Bump Required)**  
   Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
-  - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
-  - **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
-  - **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
-  - **Adding a required property:** without a default value, as older agents won't know to send it.
+    - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
+    - **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
+    - **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
+    - **Adding a required property:** without a default value, as older agents won't know to send it.
 
 - **Non-Breaking Changes (Allowable under Major Version)**  
   Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
-  - **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
-  - **Adding an optional property:** e.g., adding `subtitle` to a Card.
-  - **Removing a property:** Safe for the client to ignore if the agent stops sending it.
-  - **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
-  - **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
+    - **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
+    - **Adding an optional property:** e.g., adding `subtitle` to a Card.
+    - **Removing a property:** Safe for the client to ignore if the agent stops sending it.
+    - **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
+    - **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
 
 ### Graceful Degradation
 
@@ -388,14 +388,14 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 Here is how catalog version mismatches are handled in practice:
 
 - **An old iOS client is using an older catalog than the agent**
-  - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
-  - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
-  - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
+    - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
+    - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
+    - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
 
 - **A web client rolls out a new catalog version ahead of the agent**
-  - The web client supports the new `Badge` component, but the agent doesn't know about it yet.
-  - The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
-  - The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
+    - The web client supports the new `Badge` component, but the agent doesn't know about it yet.
+    - The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
+    - The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
 
 ### Versioning with CatalogId
 
