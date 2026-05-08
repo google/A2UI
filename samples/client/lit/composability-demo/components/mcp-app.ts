@@ -14,87 +14,70 @@
  * limitations under the License.
  */
 
-class A2uiWebMcpApp extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this._context = null;
-    this._unsubscribe = null;
-    this.iframe = null;
-    this.messageHandler = null;
-  }
+import {html, css, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+import {ComponentContext} from '@a2ui/web_core/v0_9';
 
-  set context(value) {
-    this._context = value;
-    if (this._unsubscribe) {
-      this._unsubscribe();
-      this._unsubscribe = null;
+@customElement('a2ui-mcp-app')
+export class A2uiMcpApp extends LitElement {
+  @property({type: Object}) accessor context!: ComponentContext;
+
+  @property({type: String}) accessor htmlContent = '';
+  @property({type: Number}) accessor height: number | undefined = undefined;
+  @property({type: Array}) accessor allowedTools: string[] = [];
+
+  @query('iframe') accessor iframe!: HTMLIFrameElement;
+
+  private messageHandler: any = null;
+
+  static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+      border: 1px solid var(--a2ui-color-border, #eee);
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #f5f5f5;
+      transition: height 0.3s ease-out, min-width 0.3s ease-out;
+    }
+  `;
+
+  protected updated(changedProperties: Map<PropertyKey, unknown>) {
+    super.updated(changedProperties);
+    
+    // Bind properties dynamically from A2UI context if available
+    if (this.context && this.context.componentModel) {
+      const props = this.context.componentModel.properties || {};
+      this.htmlContent = props.htmlContent || '';
+      this.height = props.height;
+      this.allowedTools = props.allowedTools || [];
     }
 
-    if (value && value.componentModel) {
-      const sub = value.componentModel.onUpdated.subscribe(() => {
-        this.render();
-      });
-      this._unsubscribe = () => sub.unsubscribe();
+    if (this.iframe && this.htmlContent && !this.messageHandler) {
+      this.initializeSandbox();
     }
-
-    this.render();
-  }
-
-  get context() {
-    return this._context;
-  }
-
-  connectedCallback() {
-    this.render();
   }
 
   disconnectedCallback() {
-    if (this._unsubscribe) {
-      this._unsubscribe();
-      this._unsubscribe = null;
-    }
     if (this.messageHandler) {
       window.removeEventListener('message', this.messageHandler);
       this.messageHandler = null;
     }
+    super.disconnectedCallback();
   }
 
   render() {
-    if (!this.context) return;
-    const props = this.context.componentModel.properties || {};
-    const htmlContent = props.htmlContent || '';
-    const height = props.height;
-    const allowedTools = props.allowedTools || [];
-
-    const iframeStyle = height ? `height: ${height}px;` : 'aspect-ratio: 4/3;';
-
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          width: 100%;
-          border: 1px solid var(--a2ui-color-border, #eee);
-          position: relative;
-          overflow: hidden;
-          border-radius: 8px;
-          background: #fff;
-          box-sizing: border-box;
-        }
-        .iframe-container {
-          position: relative;
-          width: 100%;
-          ${iframeStyle}
-        }
-        iframe {
-          width: 100%;
-          height: 100%;
-          border: none;
-          background: #f5f5f5;
-          transition: height 0.3s ease-out, min-width 0.3s ease-out;
-        }
-      </style>
-      <div class="iframe-container">
+    const style = this.height ? `height: ${this.height}px;` : 'aspect-ratio: 4/3;';
+    return html`
+      <div style="position: relative; width: 100%; ${style}">
         <iframe
           id="mcp-sandbox"
           referrerpolicy="origin"
@@ -102,26 +85,18 @@ class A2uiWebMcpApp extends HTMLElement {
         ></iframe>
       </div>
     `;
-
-    this.iframe = this.shadowRoot.querySelector('iframe');
-    if (this.iframe && htmlContent) {
-      this.initializeSandbox(this.iframe, htmlContent, allowedTools);
-    }
   }
 
-  async initializeSandbox(iframe, htmlContent, allowedTools) {
-    if (this.messageHandler) {
-      window.removeEventListener('message', this.messageHandler);
-    }
+  async initializeSandbox() {
+    const iframe = this.iframe;
+    const allowedTools = this.allowedTools;
+    const htmlContent = this.htmlContent;
 
-    // 1. Set up standard local sandbox proxy path
     const sandboxUrl = `${window.location.origin}/shared/mcp_apps_inner_iframe/sandbox.html?disable_security_self_test=true`;
-
     const readyNotification = 'ui/notifications/sandbox-proxy-ready';
 
-    // 2. Promise resolving when sandbox proxy declares readiness
     const proxyReady = new Promise(resolve => {
-      const listener = ({source, data, origin}) => {
+      const listener = ({source, data, origin}: MessageEvent) => {
         if (
           source === iframe.contentWindow &&
           origin === window.location.origin &&
@@ -137,9 +112,9 @@ class A2uiWebMcpApp extends HTMLElement {
     iframe.src = sandboxUrl;
     await proxyReady;
 
-    // 3. Connect via postMessage JSON-RPC
+    // Connect via postMessage JSON-RPC
     const msgId = 1;
-    iframe.contentWindow.postMessage({
+    iframe.contentWindow!.postMessage({
       jsonrpc: '2.0',
       method: 'initialize',
       params: {
@@ -150,8 +125,7 @@ class A2uiWebMcpApp extends HTMLElement {
       id: msgId
     }, window.location.origin);
 
-    // 4. Listen for incoming notifications and requests from outer sandbox
-    this.messageHandler = async ({source, data, origin}) => {
+    this.messageHandler = async ({source, data, origin}: MessageEvent) => {
       if (source !== iframe.contentWindow || origin !== window.location.origin) return;
 
       // Handle auto-resize size changes
@@ -171,21 +145,23 @@ class A2uiWebMcpApp extends HTMLElement {
         const requestId = data.id;
 
         if (allowedTools.includes(name)) {
-          this.context.dispatchAction({
-            event: {
-              name: name,
-              context: args || {}
-            }
-          });
+          if (this.context && this.context.dispatchAction) {
+            this.context.dispatchAction({
+              event: {
+                name: name,
+                context: args || {}
+              }
+            });
+          }
 
-          iframe.contentWindow.postMessage({
+          iframe.contentWindow!.postMessage({
             jsonrpc: '2.0',
             result: { content: [{ type: 'text', text: 'Action dispatched to A2UI Agent' }] },
             id: requestId
           }, window.location.origin);
         } else {
-          console.warn(`[McpApp] Tool '${name}' rejected as it is not listed in allowedTools.`);
-          iframe.contentWindow.postMessage({
+          console.warn(`[McpApp] Tool '${name}' rejected.`);
+          iframe.contentWindow!.postMessage({
             jsonrpc: '2.0',
             error: { code: -32601, message: 'Tool not allowed' },
             id: requestId
@@ -196,8 +172,8 @@ class A2uiWebMcpApp extends HTMLElement {
 
     window.addEventListener('message', this.messageHandler);
 
-    // 5. Trigger sandbox inner loading
-    iframe.contentWindow.postMessage({
+    // Trigger sandbox inner loading
+    iframe.contentWindow!.postMessage({
       jsonrpc: '2.0',
       method: 'ui/notifications/sandbox-resource-ready',
       params: {
@@ -208,14 +184,8 @@ class A2uiWebMcpApp extends HTMLElement {
   }
 }
 
-customElements.define('a2ui-web-mcp-app', A2uiWebMcpApp);
-
-if (window.A2UI && window.A2UI.registerComponent) {
-  window.A2UI.registerComponent('McpApp', {
-    name: 'McpApp',
-    tagName: 'a2ui-web-mcp-app',
-    schema: {
-      parse: (v) => v
-    }
-  });
-}
+export const McpApp = {
+  name: 'McpApp',
+  tagName: 'a2ui-mcp-app',
+  schema: { parse: (v: any) => v }
+};

@@ -15,14 +15,17 @@
  */
 
 import {
-  DynamicCatalog,
+  Catalog,
   ComponentContext,
   SurfaceModel,
   ComponentModel,
-  Catalog
 } from '@a2ui/web_core/v0_9';
 import {renderA2uiNode, basicCatalog} from '@a2ui/lit/v0_9';
 import {render, html} from 'lit';
+
+// Import local custom elements statically
+import {LocalWidget} from './components/local-widget.js';
+import {McpApp} from './components/mcp-app.js';
 
 // --- Logger helper ---
 const consoleEl = document.getElementById('console') as HTMLElement;
@@ -35,52 +38,37 @@ function log(msg: string, type: 'info' | 'success' | 'error' | 'warn' = 'info') 
   consoleEl.scrollTop = consoleEl.scrollHeight;
 }
 
-// --- Initialize Dynamic Catalog ---
-let catalog: DynamicCatalog<any>;
+// --- COMPILE-TIME STATIC CATALOG INGESTION ---
+log('Ingesting composed client catalog at compile-time...', 'info');
 
-function initCatalog(strict: boolean) {
-  const mode = strict ? 'Strict' : 'Development';
-  log(`Re-initializing DynamicCatalog in [${mode}] mode`, 'info');
+const clientCatalog = new Catalog(
+  'https://a2ui.org/renderers/lit/catalogs/v1/a2ui-lit-web-catalog.json',
+  [
+    ...Array.from(basicCatalog.components.values()),
+    LocalWidget as any,
+    McpApp as any
+  ],
+  [
+    ...Array.from(basicCatalog.functions.values())
+  ]
+);
 
-  // Catalog JSON file we created v1
-  catalog = new DynamicCatalog('http://localhost:8000/catalogs/v1/a2ui-lit-web-catalog.json', {
-    securityMode: mode,
-    approvedDomains: ['http://localhost:8000', 'https://cdn.a2ui.org'],
-    preRegisteredComponents: [] // No pre-registered, we show dynamic loader!
-  });
+log(`Composed catalog loaded. Pre-registered: [LocalWidget, McpApp] alongside ${basicCatalog.components.size} standard elements.`, 'success');
 
-  // Hook dynamic loading events for log output
-  const originalLoad = catalog.loadComponent.bind(catalog);
-  catalog.loadComponent = async (name: string) => {
-    log(`[Loader] Start dynamic loading for component '${name}'`, 'info');
-    try {
-      const comp = await originalLoad(name);
-      if (comp) {
-        log(`[Loader] Component '${name}' successfully downloaded and verified!`, 'success');
-        // Update badge
-        const badge = document.getElementById(`${name.toLowerCase()}-status`);
-        if (badge) {
-          badge.textContent = 'Ready';
-          badge.className = 'badge badge-loaded';
-        }
-      }
-      return comp;
-    } catch (err: any) {
-      log(`[Security/Loader] Error: ${err.message}`, 'error');
-      throw err;
-    }
-  };
-}
-
-// Initial setup
-const securityToggle = document.getElementById('security-toggle') as HTMLInputElement;
-initCatalog(securityToggle.checked);
+// Track registration badges
+['local-status', 'mcp-status'].forEach(id => {
+  const badge = document.getElementById(id);
+  if (badge) {
+    badge.textContent = 'Ready';
+    badge.className = 'badge badge-loaded';
+  }
+});
 
 // --- Setup Surfaces ---
 
 function renderSurfaceA() {
   // Surface A: Primitives (Text and Button)
-  const surfaceModel = new SurfaceModel('surface-a', basicCatalog as any);
+  const surfaceModel = new SurfaceModel('surface-a', clientCatalog as any);
   
   // Add Title component
   surfaceModel.componentsModel.addComponent(new ComponentModel('title-comp', 'Text', {
@@ -104,9 +92,9 @@ function renderSurfaceA() {
   const ctxBtn = new ComponentContext(surfaceModel, 'btn-comp');
 
   render(html`
-    ${renderA2uiNode(ctxText, basicCatalog as any)}
+    ${renderA2uiNode(ctxText, clientCatalog as any)}
     <div style="margin-top: 12px;">
-      ${renderA2uiNode(ctxBtn, basicCatalog as any)}
+      ${renderA2uiNode(ctxBtn, clientCatalog as any)}
     </div>
   `, container);
 
@@ -120,17 +108,29 @@ async function renderSurfaceB() {
   const badge = document.getElementById('surface-b-badge')!;
 
   try {
-    const surfaceModel = new SurfaceModel('surface-b', catalog as any);
+    const surfaceModel = new SurfaceModel('surface-b', clientCatalog as any);
     surfaceModel.componentsModel.addComponent(new ComponentModel('local-widget-comp', 'LocalWidget', {}));
     
     surfaceModel.onAction.subscribe((action) => {
       log(`[Action Dispatch] Local Widget click action: ${JSON.stringify(action)}`, 'success');
+      
+      if (action.name === 'local_widget_click') {
+        // Render simulated agent success panel
+        const prevResult = container.querySelector('.agent-result');
+        if (prevResult) prevResult.remove();
+
+        const resultEl = document.createElement('div');
+        resultEl.className = 'agent-result';
+        resultEl.style.cssText = 'margin-top: 16px; padding: 16px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--primary-color); border-radius: 12px; color: #a5b4fc; font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; box-shadow: 0 4px 12px rgba(99,102,241,0.15);';
+        resultEl.innerHTML = `⚡ Agent Response: local_widget_click action received successfully!`;
+        container.appendChild(resultEl);
+      }
     });
 
     const ctx = new ComponentContext(surfaceModel, 'local-widget-comp');
     
-    // Attempt rendering
-    const template = renderA2uiNode(ctx, catalog as any);
+    // Attempt rendering - immediately ready since it is pre-registered!
+    const template = renderA2uiNode(ctx, clientCatalog as any);
     render(template, container);
 
     badge.textContent = 'Active';
@@ -151,9 +151,9 @@ async function renderSurfaceC() {
   const badge = document.getElementById('surface-c-badge')!;
 
   try {
-    const surfaceModel = new SurfaceModel('surface-c', catalog as any);
+    const surfaceModel = new SurfaceModel('surface-c', clientCatalog as any);
     
-    // Dynamic remote component McpApp containing a mock calculator app HTML
+    // Statically loaded component McpApp containing a calculator app HTML
     surfaceModel.componentsModel.addComponent(new ComponentModel('mcp-app-comp', 'McpApp', {
       resourceUri: 'http://localhost:8000/components/mcp-app.js',
       allowedTools: ['calculate_sum'],
@@ -162,15 +162,19 @@ async function renderSurfaceC() {
         <html>
         <head>
           <style>
-            body { font-family: sans-serif; background: #1f2937; color: white; padding: 16px; border-radius: 8px; text-align: center; }
-            button { background: #6366f1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+            body { font-family: sans-serif; background: #111827; color: white; padding: 24px; border-radius: 12px; text-align: center; margin: 0; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05); }
+            h3 { margin-top: 0; font-size: 18px; color: #a5b4fc; }
+            p { font-size: 13px; color: #9ca3af; line-height: 1.5; margin-bottom: 16px; }
+            button { background: #6366f1; color: white; border: none; padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(99,102,241,0.3); transition: all 0.2s; }
+            button:hover { background: #4f46e5; transform: scale(1.03); }
+            button:active { transform: scale(0.97); }
           </style>
         </head>
         <body>
           <h3>Interactive Sandbox Calculator</h3>
           <p>Standard double-sandboxed iframe communicating strictly via postMessage JSON-RPC.</p>
           <button onclick="window.parent.postMessage({ jsonrpc: '2.0', method: 'ui/requests/call-tool', params: { name: 'calculate_sum', arguments: { x: 10, y: 15 } }, id: 42 }, '*')">
-            Run: calculate_sum(10, 15)
+            Run Tool: calculate_sum(10, 15)
           </button>
         </body>
         </html>
@@ -179,11 +183,28 @@ async function renderSurfaceC() {
 
     surfaceModel.onAction.subscribe((action) => {
       log(`[Action Dispatch] Sandbox tool call: ${JSON.stringify(action)}`, 'success');
+      
+      if (action.name === 'calculate_sum') {
+        const {x, y} = action.context || {};
+        const sum = (Number(x) || 0) + (Number(y) || 0);
+        log(`[Agent Simulator] Computing tool call: calculate_sum(${x}, ${y}) = ${sum}`, 'info');
+
+        // Render simulated agent success panel
+        const prevResult = container.querySelector('.agent-result');
+        if (prevResult) prevResult.remove();
+
+        const resultEl = document.createElement('div');
+        resultEl.className = 'agent-result';
+        resultEl.style.cssText = 'margin-top: 16px; padding: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success-color); border-radius: 12px; color: var(--success-color); font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; box-shadow: 0 4px 12px rgba(16,185,129,0.15);';
+        resultEl.innerHTML = `✓ Agent Simulated Tool Success: calculate_sum(${x}, ${y}) = ${sum}`;
+        container.appendChild(resultEl);
+      }
     });
 
     const ctx = new ComponentContext(surfaceModel, 'mcp-app-comp');
     
-    const template = renderA2uiNode(ctx, catalog as any);
+    // Render immediately!
+    const template = renderA2uiNode(ctx, clientCatalog as any);
     render(template, container);
 
     badge.textContent = 'Active';
@@ -199,47 +220,38 @@ async function renderSurfaceC() {
   }
 }
 
-// --- Trigger initial rendering ---
+// --- Initial boot rendering ---
+log('Running compile-time surface instantiation...', 'info');
 renderSurfaceA();
 renderSurfaceB();
 renderSurfaceC();
 
 // --- Handle Controls Events ---
 
-// Strict/Development Switch
+// Strict/Development Switch (Compile-time showcase)
+const securityToggle = document.getElementById('security-toggle') as HTMLInputElement;
 securityToggle.onchange = () => {
-  initCatalog(securityToggle.checked);
-  
-  // Reset Registry badges status
-  ['local-status', 'mcp-status'].forEach(id => {
-    const b = document.getElementById(id)!;
-    b.textContent = 'Pending';
-    b.className = 'badge badge-pending';
-  });
-
-  // Re-trigger rendering under the new catalog security constraints
-  log('Re-evaluating live surfaces...', 'info');
+  const isChecked = securityToggle.checked;
+  log(`Strict boundary check toggled ${isChecked ? 'ON' : 'OFF'}.`, 'info');
+  log('Compile-time components bypass active. All pre-registered views persist instantly.', 'success');
   renderSurfaceB();
   renderSurfaceC();
 };
 
-// Parallel Preload Button
+// Simulated Bundler Trigger
 const preloadBtn = document.getElementById('preload-btn') as HTMLButtonElement;
 preloadBtn.onclick = async () => {
-  log('Triggering parallel catalog component preload...', 'info');
+  log('[Compile-Time Bundler] Simulating compile-time dependency scan...', 'info');
   preloadBtn.disabled = true;
-  preloadBtn.textContent = 'Preloading...';
+  preloadBtn.textContent = 'Scanning...';
 
-  try {
-    await catalog.preload();
-    log('Parallel preloading of catalog components completed successfully!', 'success');
-  } catch (err: any) {
-    log(`Preloading error: ${err.message}`, 'error');
-  } finally {
+  setTimeout(() => {
+    log('[Compile-Time Bundler] Dependency scan success. 2 custom components statically pre-bundled!', 'success');
     preloadBtn.disabled = false;
-    preloadBtn.textContent = 'Pre-Download Catalog Components';
-    // Refresh surfaces
+    preloadBtn.textContent = 'Simulate Build-Time Bundling';
+    
+    // Refresh layout
     renderSurfaceB();
     renderSurfaceC();
-  }
+  }, 800);
 };
