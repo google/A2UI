@@ -38,6 +38,12 @@
       --text-muted: #9ca3af;
       --font-family: 'Inter', sans-serif;
       --title-font: 'Outfit', sans-serif;
+
+      /* A2UI Theme variables mappings */
+      --a2ui-color-on-background: var(--text-color);
+      --a2ui-text-color-text: var(--text-color);
+      --a2ui-font-family-body: var(--font-family);
+      --a2ui-font-family-title: var(--title-font);
     }
 
     * {
@@ -242,6 +248,21 @@
       padding: 10px 14px;
       border-radius: 10px;
       font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .status-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(4px);
+    }
+    .status-item.active {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
     }
     .badge {
       padding: 3px 8px;
@@ -320,6 +341,23 @@
     .log-success { color: var(--success-color); }
     .log-error { color: var(--error-color); }
     .log-warn { color: var(--warning-color); }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeOut {
+      to {
+        transform: translateY(-15px) scale(0.95);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -375,6 +413,8 @@
       <!-- This will reactively render the exact surface corresponding to the active catalog -->
     </div>
   </div>
+
+  <div id="toast-container" style="position: fixed; top: 30px; right: 30px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; pointer-events: none;"></div>
 
   <script type="module" src="./app.ts"></script>
 </body>
