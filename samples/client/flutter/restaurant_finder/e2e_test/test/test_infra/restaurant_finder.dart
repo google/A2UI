@@ -67,6 +67,7 @@ final class TestRestaurantFinderClient {
             expect(response, contains('A2UI'));
             print('\nReceived agent card:\n$response\n');
           },
+          timeout: const Duration(seconds: 30),
         ),
         ShellProbe(
           command: _restaurantFinderCurlMessage,
@@ -74,6 +75,7 @@ final class TestRestaurantFinderClient {
             expect(response, contains('"parts":[{"kind":'));
             print('\nReceived agent response:\n$response\n');
           },
+          timeout: const Duration(seconds: 30),
         ),
       ],
     );
