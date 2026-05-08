@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Rename Icon `path` property to `svgPath` to fix type collision with `DataBindingType`.
+- **BREAKING CHANGE**: Rename Icon `path` property to `svgPath` to fix type collision with `DataBindingType`.
 
 ## 0.9.1
 
