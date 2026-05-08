@@ -169,6 +169,10 @@
             "url": {
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The URL of the video to display."
+            },
+            "posterUrl": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The URL of the poster image to display before the video plays."
             }
           },
           "required": ["component", "url"]
