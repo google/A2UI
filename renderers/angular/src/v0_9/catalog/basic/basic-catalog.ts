@@ -60,26 +60,29 @@ import {FunctionImplementation} from '@a2ui/web_core/v0_9';
 
 /**
  * The set of default Angular implementations for each component in the basic catalog.
+ * Using string literals as keys, to survive property renaming, as these names need to match the JSON payload.
  */
+// Ignore Prettier to preserve quoted keys, needed to survive property renaming.
+// prettier-ignore
 const DEFAULT_COMPONENT_IMPLEMENTATIONS: Record<string, AngularComponentImplementation> = {
-  text: {...TextApi, component: TextComponent},
-  row: {...RowApi, component: RowComponent},
-  column: {...ColumnApi, component: ColumnComponent},
-  button: {...ButtonApi, component: ButtonComponent},
-  textField: {...TextFieldApi, component: TextFieldComponent},
-  image: {...ImageApi, component: ImageComponent},
-  icon: {...IconApi, component: IconComponent},
-  video: {...VideoApi, component: VideoComponent},
-  audioPlayer: {...AudioPlayerApi, component: AudioPlayerComponent},
-  list: {...ListApi, component: ListComponent},
-  card: {...CardApi, component: CardComponent},
-  tabs: {...TabsApi, component: TabsComponent},
-  modal: {...ModalApi, component: ModalComponent},
-  divider: {...DividerApi, component: DividerComponent},
-  checkBox: {...CheckBoxApi, component: CheckBoxComponent},
-  choicePicker: {...ChoicePickerApi, component: ChoicePickerComponent},
-  slider: {...SliderApi, component: SliderComponent},
-  dateTimeInput: {...DateTimeInputApi, component: DateTimeInputComponent},
+  'text': {...TextApi, component: TextComponent},
+  'row': {...RowApi, component: RowComponent},
+  'column': {...ColumnApi, component: ColumnComponent},
+  'button': {...ButtonApi, component: ButtonComponent},
+  'textField': {...TextFieldApi, component: TextFieldComponent},
+  'image': {...ImageApi, component: ImageComponent},
+  'icon': {...IconApi, component: IconComponent},
+  'video': {...VideoApi, component: VideoComponent},
+  'audioPlayer': {...AudioPlayerApi, component: AudioPlayerComponent},
+  'list': {...ListApi, component: ListComponent},
+  'card': {...CardApi, component: CardComponent},
+  'tabs': {...TabsApi, component: TabsComponent},
+  'modal': {...ModalApi, component: ModalComponent},
+  'divider': {...DividerApi, component: DividerComponent},
+  'checkBox': {...CheckBoxApi, component: CheckBoxComponent},
+  'choicePicker': {...ChoicePickerApi, component: ChoicePickerComponent},
+  'slider': {...SliderApi, component: SliderComponent},
+  'dateTimeInput': {...DateTimeInputApi, component: DateTimeInputComponent},
 } as const;
 
 /**
