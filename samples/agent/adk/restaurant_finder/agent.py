@@ -149,8 +149,12 @@ class RestaurantAgent:
       self, schema_manager: Optional[A2uiSchemaManager] = None
   ) -> LlmAgent:
     """Builds the LLM agent for the restaurant agent."""
-    model_env = os.getenv("MODEL_NAME") or os.getenv("LITELLM_MODEL") or "gemini-2.5-flash"
-    model_name = model_env.removeprefix("gemini/")
+    model_env = (
+        os.getenv("MODEL_NAME")
+        or os.getenv("LITELLM_MODEL")
+        or "gemini-3-flash-preview"
+    )
+    model_name = model_env.split("/")[-1]
 
     instruction = (
         schema_manager.generate_system_prompt(
