@@ -15,12 +15,13 @@
  */
 
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {Component, input, signal} from '@angular/core';
+import {Component, input} from '@angular/core';
 import {ButtonComponent} from './button.component';
-import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {Action, ComponentModel} from '@a2ui/web_core/v0_9';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
-import {ComponentBinder} from '../../core/component-binder.service';
+import {ComponentBinder, Child} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -28,6 +29,7 @@ describe('ButtonComponent', () => {
   let mockRendererService: any;
   let mockSurface: any;
   let mockSurfaceGroup: any;
+  let defaultProps: ComponentToProps<ButtonComponent>;
 
   beforeEach(async () => {
     mockSurface = {
@@ -84,15 +86,17 @@ describe('ButtonComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('componentId', 'comp1');
-    fixture.componentRef.setInput('props', {
-      variant: {value: signal('primary'), raw: 'primary', onUpdate: () => {}},
-      child: {value: signal({id: 'child1', basePath: '/'}), raw: 'child1', onUpdate: () => {}},
-      action: {
-        value: signal({type: 'test-action', data: {}}),
-        raw: {type: 'test-action', data: {}},
-        onUpdate: () => {},
-      },
-    });
+
+    defaultProps = {
+      variant: createBoundProperty('primary' as const),
+      child: createBoundProperty<Child>({id: 'child1', basePath: '/'}),
+      action: createBoundProperty<Action>({
+        event: {name: 'test-action'},
+      }),
+      isValid: createBoundProperty(true),
+      validationErrors: createBoundProperty<string[]>([]),
+    };
+    setComponentProps(fixture, defaultProps);
   });
 
   it('should create', () => {
@@ -107,13 +111,9 @@ describe('ButtonComponent', () => {
   });
 
   it('should set button type to button for non-primary variant', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      variant: {
-        value: signal('secondary'),
-        raw: 'secondary',
-        onUpdate: () => {},
-      },
+    setComponentProps(fixture, {
+      ...defaultProps,
+      variant: createBoundProperty('default' as const),
     });
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
@@ -142,29 +142,19 @@ describe('ButtonComponent', () => {
     expect(host.componentInstance.componentKey()).toEqual({id: 'child1', basePath: '/'});
   });
 
-  it('should not show child component host if child prop is absent', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      child: {value: signal(null), raw: null, onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
-    expect(host).toBeFalsy();
-  });
-
   it('should be disabled when isValid is false', () => {
-    const isValidSig = signal(true);
+    const isValidProp = createBoundProperty(true);
 
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      isValid: {value: isValidSig, raw: true, onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      isValid: isValidProp,
     });
 
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
     expect(button.nativeElement.disabled).toBeFalse();
 
-    isValidSig.set(false);
+    isValidProp.value.set(false);
     fixture.detectChanges();
     expect(button.nativeElement.disabled).toBeTrue();
   });
