@@ -21,7 +21,7 @@ import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
 /**
  * Angular implementation of the A2UI Video component (v0.9).
  *
- * Renders a video player with standard controls and an optional poster image.
+ * Renders a video player with standard controls.
  *
  * Supported CSS variables:
  * - `--a2ui-video-border-radius`: Controls the border radius of the video element.
