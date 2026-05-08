@@ -44,8 +44,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "22"
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
 
       - name: Cache Wireit
         uses: actions/cache@v4
@@ -54,7 +54,6 @@ jobs:
           key: ${{ runner.os }}-wireit-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-wireit-
-
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
@@ -71,7 +70,6 @@ jobs:
       - name: Install React renderer deps
         working-directory: ./renderers/react
         run: npm ci
-
 
       - name: Run task
         working-directory: ./renderers/react
