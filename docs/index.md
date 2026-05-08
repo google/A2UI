@@ -22,10 +22,10 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 ## Specification Versions
 
-| Version                                | Status     | Description                                                                                                                                               |
-| -------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **[v0.8](specification/v0.8-a2ui.md)** | **Stable** | Current production release. Surfaces, components, data binding, adjacency list model.                                                                     |
-| **[v0.9](specification/v0.9-a2ui.md)** | **Draft**  | Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. [Evolution guide →](specification/v0.9-evolution-guide.md) |
+| Version                                  | Status     | Description                                                                                                                |
+| ---------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **[v0.9](specification/v0.9-a2ui.md)**   | **Stable** | Current production release. Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. |
+| **[v0.10](specification/v0.10-a2ui.md)** | **Draft**  | Next version under development.                                                                                            |
 
 A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
@@ -37,7 +37,7 @@ Instead of text-only responses or risky code execution, A2UI lets agents send **
 
 This repository contains:
 
-- **[A2UI specifications](specification/v0.8-a2ui.md)** (v0.8 stable, v0.9 draft).
+- **[A2UI specifications](specification/v0.9-a2ui.md)** (v0.9 stable, v0.10 draft).
 - **Implementations for [renderers](reference/renderers.md)** (Angular, Flutter, Lit, Markdown, etc.) on the client side.
 - **Transports like [A2A](concepts/transports.md)** which communicate A2UI messages between agents and clients.
 
@@ -125,9 +125,9 @@ This repository contains:
 
   ***
 
-  Dive into the complete technical specs: [v0.8 (stable)](specification/v0.8-a2ui.md) · [v0.9 (draft)](specification/v0.9-a2ui.md)
+  Dive into the complete technical specs: [v0.9 (stable)](specification/v0.9-a2ui.md) · [v0.10 (draft)](specification/v0.10-a2ui.md)
 
-  [:octicons-arrow-right-24: Read the v0.8 spec](specification/v0.8-a2ui.md)
+  [:octicons-arrow-right-24: Read the v0.9 spec](specification/v0.9-a2ui.md)
 
 </div>
 

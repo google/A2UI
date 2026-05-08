@@ -65,12 +65,15 @@ nav:
       - Renderers (Clients): reference/renderers.md
       - Agents (Server-side): reference/agents.md
   - Specifications:
-      - v0.8 (Stable):
+      - v0.8 (Legacy):
           - A2UI Protocol: specification/v0.8-a2ui.md
           - A2A Extension: specification/v0.8-a2a-extension.md
-      - v0.9 (Draft):
+      - v0.9 (Stable):
           - A2UI Protocol: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
+      - v0.10 (Draft):
+          - A2UI Protocol: specification/v0.10-a2ui.md
+          - Evolution Guide: specification/v0.10-evolution-guide.md
   - Ecosystem:
       - A2UI in the World: ecosystem/a2ui-in-the-world.md
       - Community Renderers: ecosystem/renderers.md
