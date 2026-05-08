@@ -326,7 +326,6 @@ describe('Simple Components', () => {
     });
 
     it('should render video with url', () => {
-
       fixture.detectChanges();
       const video = fixture.nativeElement.querySelector('video') as HTMLVideoElement;
       expect(video.src).toBeTruthy();
