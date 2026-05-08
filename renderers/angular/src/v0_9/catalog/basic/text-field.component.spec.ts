@@ -16,13 +16,14 @@
 
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TextFieldComponent} from './text-field.component';
-import {signal} from '@angular/core';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '../../core/a2ui-renderer.service';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 import {By} from '@angular/platform-browser';
 
 describe('TextFieldComponent', () => {
   let component: TextFieldComponent;
   let fixture: ComponentFixture<TextFieldComponent>;
+  let defaultProps: ComponentToProps<TextFieldComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -33,16 +34,15 @@ describe('TextFieldComponent', () => {
     fixture = TestBed.createComponent(TextFieldComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
-    fixture.componentRef.setInput('props', {
-      label: {value: signal('Username'), raw: 'Username', onUpdate: () => {}},
-      value: {
-        value: signal('testuser'),
-        raw: 'testuser',
-        onUpdate: jasmine.createSpy('onUpdate'),
-      },
-      placeholder: {value: signal('Enter username'), raw: 'Enter username', onUpdate: () => {}},
-      variant: {value: signal('text'), raw: 'text', onUpdate: () => {}},
-    });
+
+    defaultProps = {
+      label: createBoundProperty('Username'),
+      value: createBoundProperty('testuser'),
+      variant: createBoundProperty('shortText' as const),
+      isValid: createBoundProperty(true),
+      validationErrors: createBoundProperty<string[]>([]),
+    };
+    setComponentProps(fixture, defaultProps);
   });
 
   it('should create', () => {
@@ -56,35 +56,24 @@ describe('TextFieldComponent', () => {
     expect(label.nativeElement.textContent).toBe('Username');
   });
 
-  it('should not render label if not provided', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      label: {value: signal(null), raw: null, onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const label = fixture.debugElement.query(By.css('label'));
-    expect(label).toBeFalsy();
-  });
-
-  it('should render input with correct value and placeholder', () => {
+  it('should render input with correct value', () => {
     fixture.detectChanges();
     const input = fixture.debugElement.query(By.css('input'));
     expect(input.nativeElement.value).toBe('testuser');
-    expect(input.nativeElement.placeholder).toBe('Enter username');
   });
 
   it('should return correct input type based on variant', () => {
     expect(component.inputType()).toBe('text');
 
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      variant: {value: signal('obscured'), raw: 'obscured', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      variant: createBoundProperty('obscured' as const),
     });
     expect(component.inputType()).toBe('password');
 
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      variant: {value: signal('number'), raw: 'number', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      variant: createBoundProperty('number' as const),
     });
     expect(component.inputType()).toBe('number');
   });
@@ -99,13 +88,13 @@ describe('TextFieldComponent', () => {
   });
 
   it('should show error messages when checks fail', async () => {
-    const isValidSig = signal(true);
-    const errorsSig = signal<string[]>([]);
+    const isValidProp = createBoundProperty(true);
+    const errorsProp = createBoundProperty<string[]>([]);
 
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      isValid: {value: isValidSig, raw: true, onUpdate: () => {}},
-      validationErrors: {value: errorsSig, raw: [], onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      isValid: isValidProp,
+      validationErrors: errorsProp,
     });
 
     fixture.detectChanges();
@@ -113,8 +102,8 @@ describe('TextFieldComponent', () => {
     const errorMsgBefore = fixture.debugElement.query(By.css('.a2ui-error-message'));
     expect(errorMsgBefore).toBeFalsy();
 
-    isValidSig.set(false);
-    errorsSig.set(['Value is required']);
+    isValidProp.value.set(false);
+    errorsProp.value.set(['Value is required']);
     fixture.detectChanges();
 
     const errorMsgAfter = fixture.debugElement.query(By.css('.a2ui-error-message'));
@@ -123,14 +112,10 @@ describe('TextFieldComponent', () => {
   });
 
   it('should handle multiple error messages', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      isValid: {value: signal(false), raw: false, onUpdate: () => {}},
-      validationErrors: {
-        value: signal(['Error 1', 'Error 2']),
-        raw: ['Error 1', 'Error 2'],
-        onUpdate: () => {},
-      },
+    setComponentProps(fixture, {
+      ...defaultProps,
+      isValid: createBoundProperty(false),
+      validationErrors: createBoundProperty(['Error 1', 'Error 2']),
     });
 
     fixture.detectChanges();
