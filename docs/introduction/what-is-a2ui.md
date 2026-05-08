@@ -20,11 +20,11 @@ Agent: "What time?"
 
 In multi-agent systems, agents often run remotely (different servers, organizations). They can't directly manipulate your UI—they must send messages.
 
-**Traditional approach:** Send HTML/JavaScript in iframes
+**Traditional approach:** Send HTML/JavaScript in iframes.
 
-- Heavy, visually disjointed
-- Security complexity
-- Doesn't match app styling
+- Heavy, visually disjointed.
+- Security complexity.
+- Doesn't match app styling.
 
 **Need:** Transmit UI that's safe like data, expressive like code.
 
@@ -32,9 +32,9 @@ In multi-agent systems, agents often run remotely (different servers, organizati
 
 A2UI: JSON messages describing UI that:
 
-- LLMs generate as structured output
-- Travel over any transport (A2A, AG UI, SSE, WebSockets)
-- Client renders using its own native components
+- LLMs generate as structured output.
+- Travel over any transport (A2A, AG UI, SSE, WebSockets).
+- Client renders using its own native components.
 
 **Result:** Client controls security and styling, agent-generated UI feels native.
 
@@ -184,17 +184,19 @@ Client renders these messages as native components (Angular, Flutter, React, etc
 
 ## What A2UI Is NOT
 
-- Not a framework (it's a protocol)
-- Not a replacement for HTML (for agent-generated UIs, not static sites)
-- Not a robust styling system (client controls styling with limited serverside styling support)
-- Not limited to web (works on mobile and desktop)
+- Not a framework (it is a protocol).
+- Not a replacement for HTML (for agent-generated UIs, not static sites).
+- Not a robust styling system (client controls styling with limited server-side styling support).
+- Not limited to web (works on mobile and desktop).
 
 ## Key Concepts
 
-- **Surface**: Canvas for components (dialog, sidebar, main view)
-- **Component**: UI element (Button, TextField, Card, etc.)
-- **Data Model**: Application state, components bind to it
-- **Catalog**: Available component types
-- **Message**: JSON object (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, etc.)
+A2UI relies on the following key concepts:
+
+- **Surface**: Canvas for components (dialog, sidebar, main view).
+- **Component**: UI element (Button, TextField, Card, etc.).
+- **Data Model**: Application state, components bind to it.
+- **Catalog**: Available component types.
+- **Message**: JSON object (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, etc.).
 
 For a comparison of similar projects, see [Agent UI Ecosystem](agent-ui-ecosystem.md).

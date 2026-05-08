@@ -32,8 +32,9 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui.a2a import is_a2ui_part, try_activate_a2ui_extension
-from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.a2a.extension import try_activate_a2ui_extension
+from a2ui.a2a.parts import is_a2ui_part
+from a2ui.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
 from google.adk.events.event import Event
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 class OrchestratorAgentExecutor(A2aAgentExecutor):
-  """Contact AgentExecutor Example."""
+  """Orchestrator AgentExecutor."""
 
   def __init__(self, agent: LlmAgent, agent_card: AgentCard):
     self._agent_card = agent_card

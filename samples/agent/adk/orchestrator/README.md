@@ -33,12 +33,7 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
    ```
 
    ```bash
-   cd samples/agent/adk/contact_lookup
-   uv run . --port=10004
-   ```
-
-   ```bash
-   cd samples/agent/adk/rizzcharts
+   cd samples/agent/adk/rizzcharts/python
    uv run . --port=10005
    ```
 
@@ -46,13 +41,12 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
 
    ```bash
    cd samples/agent/adk/orchestrator
-   uv run . --port=10002 --subagent_urls=http://localhost:10003 --subagent_urls=http://localhost:10004 --subagent_urls=http://localhost:10005
+   uv run . --port=10002 --subagent_urls=http://localhost:10003 --subagent_urls=http://localhost:10005
    ```
 
-4. Try commands that work with any agent: 
-   a. "Who is Alex Jordan?" (routed to contact lookup agent)
-   b. "Show me chinese food restaurants in NYC" (routed to restaurant finder agent)
-   c. "Show my sales data for Q4" (routed to rizzcharts)
+4. Try commands that work with any agent:
+   a. "Show me chinese food restaurants in NYC" (routed to restaurant finder agent)
+   b. "Show my sales data for Q4" (routed to rizzcharts)
 
 ## Disclaimer
 

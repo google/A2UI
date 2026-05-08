@@ -49,10 +49,13 @@
             "id": "email-field",
             "component": "TextField",
             "label": "Email Address",
-            "value": { "path": "/formData/email" },
+            "value": {"path": "/formData/email"},
             "checks": [
               {
-                "condition": { "call": "email", "args": { "value": { "path": "/formData/email" } } },
+                "condition": {
+                  "call": "email",
+                  "args": {"value": {"path": "/formData/email"}}
+                },
                 "message": "Invalid email format"
               }
             ]
@@ -61,10 +64,16 @@
             "id": "phone-field",
             "component": "TextField",
             "label": "Phone Number",
-            "value": { "path": "/formData/phone" },
+            "value": {"path": "/formData/phone"},
             "checks": [
               {
-                "condition": { "call": "regex", "args": { "value": { "path": "/formData/phone" }, "pattern": "^\\+?[0-9]{10,15}$" } },
+                "condition": {
+                  "call": "regex",
+                  "args": {
+                    "value": {"path": "/formData/phone"},
+                    "pattern": "^\\+?[0-9]{10,15}$"
+                  }
+                },
                 "message": "Invalid phone format"
               }
             ]
@@ -73,10 +82,13 @@
             "id": "zip-field",
             "component": "TextField",
             "label": "Zip Code",
-            "value": { "path": "/formData/zip" },
+            "value": {"path": "/formData/zip"},
             "checks": [
               {
-                "condition": { "call": "regex", "args": { "value": { "path": "/formData/zip" }, "pattern": "^[0-9]{5}$" } },
+                "condition": {
+                  "call": "regex",
+                  "args": {"value": {"path": "/formData/zip"}, "pattern": "^[0-9]{5}$"}
+                },
                 "message": "Must be exactly 5 digits"
               }
             ]
@@ -85,7 +97,7 @@
             "id": "terms-checkbox",
             "component": "CheckBox",
             "label": "I agree to the terms and conditions",
-            "value": { "path": "/formData/agree" }
+            "value": {"path": "/formData/agree"}
           },
           {
             "id": "submit-btn-text",
@@ -102,17 +114,23 @@
                   "call": "and",
                   "args": {
                     "values": [
-                      { "path": "/formData/agree" },
+                      {"path": "/formData/agree"},
                       {
                         "call": "or",
                         "args": {
                           "values": [
-                            { "call": "required", "args": { "value": { "path": "/formData/email" } } },
-                            { "call": "required", "args": { "value": { "path": "/formData/phone" } } }
+                            {
+                              "call": "required",
+                              "args": {"value": {"path": "/formData/email"}}
+                            },
+                            {
+                              "call": "required",
+                              "args": {"value": {"path": "/formData/phone"}}
+                            }
                           ]
                         }
                       },
-                      { "call": "required", "args": { "value": { "path": "/formData/zip" } } }
+                      {"call": "required", "args": {"value": {"path": "/formData/zip"}}}
                     ]
                   }
                 },
@@ -122,7 +140,7 @@
             "action": {
               "event": {
                 "name": "register",
-                "context": { "data": { "path": "/formData" } }
+                "context": {"data": {"path": "/formData"}}
               }
             }
           }

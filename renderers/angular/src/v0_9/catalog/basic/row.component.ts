@@ -14,84 +14,88 @@
  * limitations under the License.
  */
 
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ComponentHostComponent } from '../../core/component-host.component';
-import { BoundProperty } from '../../core/types';
-import { getNormalizedPath } from '../../core/utils';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {ComponentHostComponent} from '../../core/component-host.component';
+import {getNormalizedPath} from '../../core/utils';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {JUSTIFY_MAP, ALIGN_MAP} from './utils';
+import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Row component (v0.9).
  *
  * Arranges child components in a horizontal flex layout. Supports both static
  * lists of children and repeating templates bound to a data collection.
+ *
+ * Supported CSS variables:
+ * - `--a2ui-row-gap`: Controls the gap between items in the row. Defaults to `--a2ui-spacing-m` (16px).
  */
 @Component({
   selector: 'a2ui-v09-row',
   standalone: true,
   imports: [ComponentHostComponent],
+  host: {
+    '[style.display]': '"flex"',
+    '[style.flex-direction]': '"row"',
+    '[style.gap]': '"var(--a2ui-row-gap, var(--a2ui-spacing-m, 16px))"',
+    '[style.justify-content]': 'justify()',
+    '[style.align-items]': 'align()',
+  },
   template: `
-    <div
-      class="a2ui-row"
-      [style.justify-content]="justify()"
-      [style.align-items]="align()"
-      style="display: flex; flex-direction: row; width: 100%; gap: 4px;"
-    >
-      @if (!isRepeating()) {
-        @for (childId of children(); track childId) {
-          <a2ui-v09-component-host
-            [componentId]="childId"
-            [surfaceId]="surfaceId()"
-            [dataContextPath]="dataContextPath()"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (!isRepeating()) {
+      @for (child of normalizedChildren(); track child.id) {
+        <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
+        </a2ui-v09-component-host>
       }
+    }
 
-      @if (isRepeating()) {
-        @for (item of children(); track item; let i = $index) {
-          <a2ui-v09-component-host
-            [componentId]="templateId()!"
-            [surfaceId]="surfaceId()"
-            [dataContextPath]="getNormalizedPath(i)"
-          >
-          </a2ui-v09-component-host>
-        }
+    @if (isRepeating()) {
+      @for (item of children(); track item; let i = $index) {
+        <a2ui-v09-component-host
+          [componentKey]="{id: templateId()!, basePath: getNormalizedPath(i)}"
+          [surfaceId]="surfaceId()"
+        >
+        </a2ui-v09-component-host>
       }
-    </div>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RowComponent {
-  /**
-   * Reactive properties resolved from the A2UI {@link ComponentModel}.
-   *
-   * Expected properties:
-   * - `children`: A list of component IDs OR a repeating collection definition.
-   * - `justify`: Flexbox justify-content value (e.g., 'flex-start', 'center').
-   * - `align`: Flexbox align-items value (e.g., 'flex-start', 'center').
-   */
-  props = input<Record<string, BoundProperty>>({});
-  surfaceId = input.required<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>('/');
-
-  protected justify = computed(() => this.props()['justify']?.value());
-  protected align = computed(() => this.props()['align']?.value());
-
-  protected children = computed(() => {
-    const raw = this.props()['children']?.value() || [];
-    return Array.isArray(raw) ? raw : [];
+export class RowComponent extends BasicCatalogComponent<typeof RowApi> {
+  protected readonly justify = computed(() => {
+    const val = this.props()['justify']?.value();
+    return val ? JUSTIFY_MAP[val] || val : undefined;
+  });
+  protected readonly align = computed(() => {
+    const val = this.props()['align']?.value();
+    return val ? ALIGN_MAP[val] || val : undefined;
   });
 
-  protected isRepeating = computed(() => {
-    return !!this.props()['children']?.raw?.componentId;
+  protected readonly children = computed(() => this.props()['children'].value() || []);
+
+  protected readonly isRepeating = computed(() => {
+    return !!this.props()['children'].template;
   });
 
-  protected templateId = computed(() => {
-    return this.props()['children']?.raw?.componentId;
+  protected readonly templateId = computed(() => {
+    return this.props()['children'].template?.id;
+  });
+
+  protected readonly normalizedChildren = computed(() => {
+    if (this.isRepeating()) return [];
+    return this.children().map(child => {
+      if (typeof child === 'object' && child !== null && 'id' in child) {
+        return child as {id: string; basePath: string};
+      }
+      return {id: child as string, basePath: this.dataContextPath()};
+    });
   });
 
   protected getNormalizedPath(index: number) {
-    return getNormalizedPath(this.props()['children']?.raw?.path, this.dataContextPath(), index);
+    return getNormalizedPath(
+      this.props()['children'].template?.path,
+      this.dataContextPath(),
+      index,
+    );
   }
 }

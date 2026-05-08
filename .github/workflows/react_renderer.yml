@@ -16,22 +16,26 @@ name: React renderer
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - 'renderers/angular/**'
-      - 'renderers/flutter/**'
-      - 'renderers/lit/**'
-      - 'samples/agent/adk/**'
+      - "renderers/angular/**"
+      - "renderers/flutter/**"
+      - "renderers/lit/**"
+      - "samples/agent/adk/**"
   pull_request:
     paths-ignore:
-      - 'renderers/angular/**'
-      - 'renderers/flutter/**'
-      - 'renderers/lit/**'
-      - 'samples/agent/adk/**'
+      - "renderers/angular/**"
+      - "renderers/flutter/**"
+      - "renderers/lit/**"
+      - "samples/agent/adk/**"
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [test, demo, lint]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v6
@@ -39,77 +43,47 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "22"
 
-      - name: Build web_core dependency
-        working-directory: ./renderers/web_core
-        run: |
-          npm ci
-          npm run build
-
-      - name: Install React renderer deps
-        working-directory: ./renderers/react
-        run: npm ci
-
-      - name: Build React renderer
-        working-directory: ./renderers/react
-        run: npm run build
-
-      - name: Test React renderer
-        working-directory: ./renderers/react
-        run: npm test
-
-  build-and-test-demo:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - name: Cache Node modules and Wireit
+        uses: actions/cache@v4
         with:
-          node-version: '20'
+          path: |
+            **/node_modules
+            **/.wireit
+          key: ${{ runner.os }}-node-and-wireit-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-and-wireit-
 
       - name: Build web_core dependency
         working-directory: ./renderers/web_core
         run: |
-          npm ci
+          npm i
           npm run build
 
-      - name: Install React renderer deps
-        working-directory: ./renderers/react
-        run: npm ci
-
-      - name: Build React Demo
-        working-directory: ./renderers/react
-        run: npm run build:demo
-
-      - name: Test React Demo
-        working-directory: ./renderers/react
-        run: npm run test:demo
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Build web_core dependency
-        working-directory: ./renderers/web_core
+      - name: Build markdown-it dependency
+        working-directory: ./renderers/markdown/markdown-it
         run: |
-          npm ci
+          npm i
           npm run build
 
       - name: Install React renderer deps
         working-directory: ./renderers/react
-        run: npm ci
+        run: npm i
 
-      - name: Build React renderer and its dependencies
+      - name: Run task
         working-directory: ./renderers/react
-        run: npm run lint
-
+        run: |
+          case "${{ matrix.task }}" in
+            test)
+              npm run build
+              npm test
+              ;;
+            demo)
+              npm run build:demo
+              npm run test:demo
+              ;;
+            lint)
+              npm run lint
+              ;;
+          esac

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AgentHeader } from './agent-header';
+import {AgentHeader} from './agent-header';
 
 describe('AgentHeader', () => {
   let component: AgentHeader;

@@ -46,13 +46,7 @@
           "description": "Unique ID for this action call. Only needed if wantResponse is true."
         }
       },
-      "required": [
-        "name",
-        "surfaceId",
-        "sourceComponentId",
-        "timestamp",
-        "context"
-      ]
+      "required": ["name", "surfaceId", "sourceComponentId", "timestamp", "context"]
     },
     "functionResponse": {
       "properties": {
@@ -60,19 +54,16 @@
           "$ref": "common_types.json#/$defs/CallId",
           "description": "Unique ID for the instance of this function. MUST be copied verbatim from the function invocation."
         },
+        "call": {
+          "type": "string",
+          "description": "The name of the function which was called. MUST be copied verbatim from the function invocation. Useful for logging."
+        },
         "value": {
           "description": "The return value of the function invocation.",
-          "type": [
-            "string",
-            "number",
-            "boolean",
-            "array",
-            "object",
-            "null"
-          ]
+          "type": ["string", "number", "boolean", "array", "object", "null"]
         }
       },
-      "required": ["functionCallId", "value"],
+      "required": ["functionCallId", "call", "value"],
       "unevaluatedProperties": false
     },
     "error": {

@@ -7,7 +7,8 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-130" },
+          "functionCallId": "unique-call-id-130",
+          "call": "someFunction",
           "value": {
             "result": "success",
             "count": 42
@@ -33,7 +34,8 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131a" },
+          "functionCallId": "unique-call-id-131a",
+          "call": "someFunction",
           "value": "success"
         }
       }
@@ -44,7 +46,8 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131b" },
+          "functionCallId": "unique-call-id-131b",
+          "call": "someFunction",
           "value": 42
         }
       }
@@ -55,7 +58,8 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131c" },
+          "functionCallId": "unique-call-id-131c",
+          "call": "someFunction",
           "value": true
         }
       }
@@ -66,7 +70,8 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131d" },
+          "functionCallId": "unique-call-id-131d",
+          "call": "someFunction",
           "value": null
         }
       }
@@ -77,13 +82,9 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131e" },
-          "value": [
-            "one",
-            2,
-            true,
-            null
-          ]
+          "functionCallId": "unique-call-id-131e",
+          "call": "someFunction",
+          "value": ["one", 2, true, null]
         }
       }
     },
@@ -93,9 +94,10 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131" },
+          "functionCallId": "unique-call-id-131",
+          "call": "someFunction",
           "value": {
-            "result": { "nested": "object" }
+            "result": {"nested": "object"}
           }
         }
       }
@@ -106,13 +108,49 @@
       "data": {
         "version": "v0.10",
         "functionResponse": {
-          "functionCallId": { "callId": "unique-call-id-131f" },
+          "functionCallId": "unique-call-id-131f",
+          "call": "someFunction",
           "value": [
             "one",
             {
               "nested": "object"
             }
           ]
+        }
+      }
+    },
+    {
+      "description": "functionResponse: Valid (with call property)",
+      "valid": true,
+      "data": {
+        "version": "v0.10",
+        "functionResponse": {
+          "functionCallId": "unique-call-id-132",
+          "call": "myAwesomeFunction",
+          "value": "success"
+        }
+      }
+    },
+    {
+      "description": "functionResponse: Invalid (call property is not a string)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "functionResponse": {
+          "functionCallId": "unique-call-id-133",
+          "call": 123,
+          "value": "success"
+        }
+      }
+    },
+    {
+      "description": "functionResponse: Invalid (missing call)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "functionResponse": {
+          "functionCallId": "unique-call-id-134",
+          "value": "success"
         }
       }
     }

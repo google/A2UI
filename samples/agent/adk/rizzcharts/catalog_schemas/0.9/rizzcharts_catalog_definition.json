@@ -23,22 +23,11 @@
             "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
-              "enum": [
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "caption",
-                "body"
-              ],
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"],
               "default": "body"
             }
           },
-          "required": [
-            "component",
-            "text"
-          ]
+          "required": ["component", "text"]
         }
       ],
       "unevaluatedProperties": false
@@ -65,33 +54,17 @@
             "fit": {
               "type": "string",
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
-              "enum": [
-                "contain",
-                "cover",
-                "fill",
-                "none",
-                "scaleDown"
-              ],
+              "enum": ["contain", "cover", "fill", "none", "scaleDown"],
               "default": "fill"
             },
             "variant": {
               "type": "string",
               "description": "A hint for the image size and style.",
-              "enum": [
-                "icon",
-                "avatar",
-                "smallFeature",
-                "mediumFeature",
-                "largeFeature",
-                "header"
-              ],
+              "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"],
               "default": "mediumFeature"
             }
           },
-          "required": [
-            "component",
-            "url"
-          ]
+          "required": ["component", "url"]
         }
       ],
       "unevaluatedProperties": false
@@ -185,18 +158,13 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "path"
-                  ],
+                  "required": ["path"],
                   "additionalProperties": false
                 }
               ]
             }
           },
-          "required": [
-            "component",
-            "name"
-          ]
+          "required": ["component", "name"]
         }
       ],
       "unevaluatedProperties": false
@@ -221,10 +189,7 @@
               "description": "The URL of the video to display."
             }
           },
-          "required": [
-            "component",
-            "url"
-          ]
+          "required": ["component", "url"]
         }
       ],
       "unevaluatedProperties": false
@@ -253,10 +218,7 @@
               "$ref": "common_types.json#/$defs/DynamicString"
             }
           },
-          "required": [
-            "component",
-            "url"
-          ]
+          "required": ["component", "url"]
         }
       ],
       "unevaluatedProperties": false
@@ -298,19 +260,11 @@
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').",
-              "enum": [
-                "start",
-                "center",
-                "end",
-                "stretch"
-              ],
+              "enum": ["start", "center", "end", "stretch"],
               "default": "stretch"
             }
           },
-          "required": [
-            "component",
-            "children"
-          ]
+          "required": ["component", "children"]
         }
       ],
       "unevaluatedProperties": false
@@ -352,19 +306,11 @@
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.",
-              "enum": [
-                "center",
-                "end",
-                "start",
-                "stretch"
-              ],
+              "enum": ["center", "end", "start", "stretch"],
               "default": "stretch"
             }
           },
-          "required": [
-            "component",
-            "children"
-          ]
+          "required": ["component", "children"]
         }
       ],
       "unevaluatedProperties": false
@@ -391,28 +337,17 @@
             "direction": {
               "type": "string",
               "description": "The direction in which the list items are laid out.",
-              "enum": [
-                "vertical",
-                "horizontal"
-              ],
+              "enum": ["vertical", "horizontal"],
               "default": "vertical"
             },
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis.",
-              "enum": [
-                "start",
-                "center",
-                "end",
-                "stretch"
-              ],
+              "enum": ["start", "center", "end", "stretch"],
               "default": "stretch"
             }
           },
-          "required": [
-            "component",
-            "children"
-          ]
+          "required": ["component", "children"]
         }
       ],
       "unevaluatedProperties": false
@@ -437,10 +372,7 @@
               "description": "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline."
             }
           },
-          "required": [
-            "component",
-            "child"
-          ]
+          "required": ["component", "child"]
         }
       ],
       "unevaluatedProperties": false
@@ -475,18 +407,12 @@
                     "description": "The ID of the child component. Do NOT define the component inline."
                   }
                 },
-                "required": [
-                  "title",
-                  "child"
-                ],
+                "required": ["title", "child"],
                 "additionalProperties": false
               }
             }
           },
-          "required": [
-            "component",
-            "tabs"
-          ]
+          "required": ["component", "tabs"]
         }
       ],
       "unevaluatedProperties": false
@@ -515,11 +441,7 @@
               "description": "The ID of the component to be displayed inside the modal. Do NOT define the component inline."
             }
           },
-          "required": [
-            "component",
-            "trigger",
-            "content"
-          ]
+          "required": ["component", "trigger", "content"]
         }
       ],
       "unevaluatedProperties": false
@@ -542,16 +464,11 @@
             "axis": {
               "type": "string",
               "description": "The orientation of the divider.",
-              "enum": [
-                "horizontal",
-                "vertical"
-              ],
+              "enum": ["horizontal", "vertical"],
               "default": "horizontal"
             }
           },
-          "required": [
-            "component"
-          ]
+          "required": ["component"]
         }
       ],
       "unevaluatedProperties": false
@@ -581,22 +498,14 @@
             "variant": {
               "type": "string",
               "description": "A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link.",
-              "enum": [
-                "default",
-                "primary",
-                "borderless"
-              ],
+              "enum": ["default", "primary", "borderless"],
               "default": "default"
             },
             "action": {
               "$ref": "common_types.json#/$defs/Action"
             }
           },
-          "required": [
-            "component",
-            "child",
-            "action"
-          ]
+          "required": ["component", "child", "action"]
         }
       ],
       "unevaluatedProperties": false
@@ -630,12 +539,7 @@
             "variant": {
               "type": "string",
               "description": "The type of input field to display.",
-              "enum": [
-                "longText",
-                "number",
-                "shortText",
-                "obscured"
-              ],
+              "enum": ["longText", "number", "shortText", "obscured"],
               "default": "shortText"
             },
             "validationRegexp": {
@@ -643,10 +547,7 @@
               "description": "A regular expression used for client-side validation of the input."
             }
           },
-          "required": [
-            "component",
-            "label"
-          ]
+          "required": ["component", "label"]
         }
       ],
       "unevaluatedProperties": false
@@ -678,11 +579,7 @@
               "description": "The current state of the checkbox (true for checked, false for unchecked)."
             }
           },
-          "required": [
-            "component",
-            "label",
-            "value"
-          ]
+          "required": ["component", "label", "value"]
         }
       ],
       "unevaluatedProperties": false
@@ -713,10 +610,7 @@
             "variant": {
               "type": "string",
               "description": "A hint for how the choice picker should be displayed and behave.",
-              "enum": [
-                "multipleSelection",
-                "mutuallyExclusive"
-              ],
+              "enum": ["multipleSelection", "mutuallyExclusive"],
               "default": "mutuallyExclusive"
             },
             "options": {
@@ -734,10 +628,7 @@
                     "description": "The stable value associated with this option."
                   }
                 },
-                "required": [
-                  "label",
-                  "value"
-                ],
+                "required": ["label", "value"],
                 "additionalProperties": false
               }
             },
@@ -748,10 +639,7 @@
             "displayStyle": {
               "type": "string",
               "description": "The display style of the component.",
-              "enum": [
-                "checkbox",
-                "chips"
-              ],
+              "enum": ["checkbox", "chips"],
               "default": "checkbox"
             },
             "filterable": {
@@ -760,11 +648,7 @@
               "default": false
             }
           },
-          "required": [
-            "component",
-            "options",
-            "value"
-          ]
+          "required": ["component", "options", "value"]
         }
       ],
       "unevaluatedProperties": false
@@ -805,11 +689,7 @@
               "description": "The current value of the slider."
             }
           },
-          "required": [
-            "component",
-            "value",
-            "max"
-          ]
+          "required": ["component", "value", "max"]
         }
       ],
       "unevaluatedProperties": false
@@ -903,10 +783,7 @@
               "description": "The text label for the input field."
             }
           },
-          "required": [
-            "component",
-            "value"
-          ]
+          "required": ["component", "value"]
         }
       ],
       "unevaluatedProperties": false
@@ -932,10 +809,7 @@
               "description": "Defines the children of the canvas."
             }
           },
-          "required": [
-            "component",
-            "children"
-          ]
+          "required": ["component", "children"]
         }
       ],
       "unevaluatedProperties": false
@@ -959,10 +833,7 @@
             "type": {
               "type": "string",
               "description": "The type of chart to render.",
-              "enum": [
-                "doughnut",
-                "pie"
-              ]
+              "enum": ["doughnut", "pie"]
             },
             "title": {
               "$ref": "common_types.json#/$defs/DynamicString",
@@ -983,11 +854,7 @@
               ]
             }
           },
-          "required": [
-            "component",
-            "type",
-            "chartData"
-          ]
+          "required": ["component", "type", "chartData"]
         }
       ],
       "unevaluatedProperties": false
@@ -1031,11 +898,7 @@
               ]
             }
           },
-          "required": [
-            "component",
-            "center",
-            "zoom"
-          ]
+          "required": ["component", "center", "zoom"]
         }
       ],
       "unevaluatedProperties": false
@@ -1072,17 +935,11 @@
                 "type": "number"
               }
             },
-            "required": [
-              "label",
-              "value"
-            ]
+            "required": ["label", "value"]
           }
         }
       },
-      "required": [
-        "label",
-        "value"
-      ]
+      "required": ["label", "value"]
     },
     "DynamicLatLng": {
       "oneOf": [
@@ -1096,10 +953,7 @@
               "type": "number"
             }
           },
-          "required": [
-            "lat",
-            "lng"
-          ],
+          "required": ["lat", "lng"],
           "additionalProperties": false
         },
         {
@@ -1135,11 +989,7 @@
           "description": "Hex color code for the pin's glyph/icon (e.g., '#000000')."
         }
       },
-      "required": [
-        "lat",
-        "lng",
-        "name"
-      ],
+      "required": ["lat", "lng", "name"],
       "additionalProperties": false
     },
     "anyComponent": {
@@ -1210,9 +1060,7 @@
       ]
     },
     "anyFunction": {
-      "enum": [
-        "none"
-      ]
+      "enum": ["none"]
     }
   }
 }

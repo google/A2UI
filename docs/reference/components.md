@@ -2,15 +2,15 @@
 
 This page showcases all A2UI components with examples and usage patterns.
 
-!!! abstract "Schema Files"
-
-    === "v0.8"
-
-        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
-
-    === "v0.9"
-
-        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
+> NOTE: Schema Files
+>
+> === "v0.8"
+>
+>     [:material-code-json: Standard Catalog Definition (JSON Schema)](../../specification/v0_8/json/standard_catalog_definition.json)
+>
+> === "v0.9"
+>
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
 
 ---
 
@@ -604,26 +604,26 @@ Tabbed interface for organizing content into switchable panels.
 
 All components share:
 
-- `id` (required): Unique identifier within the surface
-- `accessibility`: Accessibility attributes (label, role)
-- `weight`: Flex-grow value when inside a Row or Column
+- `id` (required): Unique identifier within the surface.
+- `accessibility`: Accessibility attributes (label, role).
+- `weight`: Flex-grow value when inside a Row or Column.
 
 ## Version Differences Summary
 
 The component names and properties are largely the same across versions. The structural differences are:
 
-| Aspect | v0.8 | v0.9 |
-|--------|------|------|
-| Component wrapper | `"component": { "Text": { ... } }` | `"component": "Text", ...props` |
-| String values | `{ "literalString": "Hello" }` | `"Hello"` |
-| Children | `{ "explicitList": ["a", "b"] }` | `["a", "b"]` |
-| Data binding | `{ "path": "/data" }` | `{ "path": "/data" }` (same) |
-| Text/Image styling | `usageHint` | `variant` |
-| Button styling | `primary: true` | `variant: "primary"` |
-| Action format | `{ "name": "..." }` | `{ "event": { "name": "..." } }` |
-| Choice component | `MultipleChoice` | `ChoicePicker` |
-| Layout alignment | `distribution`, `alignment` | `justify`, `align` |
-| TextField value | `text` | `value` |
+| Aspect             | v0.8                               | v0.9                             |
+| ------------------ | ---------------------------------- | -------------------------------- |
+| Component wrapper  | `"component": { "Text": { ... } }` | `"component": "Text", ...props`  |
+| String values      | `{ "literalString": "Hello" }`     | `"Hello"`                        |
+| Children           | `{ "explicitList": ["a", "b"] }`   | `["a", "b"]`                     |
+| Data binding       | `{ "path": "/data" }`              | `{ "path": "/data" }` (same)     |
+| Text/Image styling | `usageHint`                        | `variant`                        |
+| Button styling     | `primary: true`                    | `variant: "primary"`             |
+| Action format      | `{ "name": "..." }`                | `{ "event": { "name": "..." } }` |
+| Choice component   | `MultipleChoice`                   | `ChoicePicker`                   |
+| Layout alignment   | `distribution`, `alignment`        | `justify`, `align`               |
+| TextField value    | `text`                             | `value`                          |
 
 ## Live Examples
 
@@ -636,15 +636,15 @@ npm start -- gallery
 
 ## Further Reading
 
-!!! abstract "Schema Files"
+> NOTE: Schema Files
+>
+> === "v0.8"
+>
+>     [:material-code-json: Standard Catalog Definition (JSON Schema)](../../specification/v0_8/json/standard_catalog_definition.json)
+>
+> === "v0.9"
+>
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
 
-    === "v0.8"
-
-        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
-
-    === "v0.9"
-
-        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
-
-- **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
+- **[Defining Your Own Catalog](../guides/defining-your-own-catalog.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

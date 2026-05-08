@@ -8,14 +8,12 @@ The agent is only responsible for generating the A2UI messages.
 
 ## How Agents Work
 
-```
-User Input → Agent Logic → LLM → A2UI JSON → Send to Client
-```
+The agent workflow typically involves the following steps:
 
-1. **Receive** user message
-2. **Process** with LLM (Gemini, GPT, Claude, etc.)
-3. **Generate** A2UI JSON messages as structured output
-4. **Send** to client via transport
+1. **Receive** user message.
+2. **Process** with LLM (Gemini, GPT, Claude, etc.).
+3. **Generate** A2UI JSON messages as structured output.
+4. **Send** to client via transport.
 
 User interactions from the client can be treated as new user input.
 
@@ -23,31 +21,33 @@ User interactions from the client can be treated as new user input.
 
 The A2UI repository includes sample agents you can learn from:
 
-- [Restaurant Finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder) 
-    - Table reservations with forms
-    - Written with the ADK
-- [Contact Lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup) 
-    - Search with result lists
-    - Written with the ADK
-- [Rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) 
-    - A2UI Custom components demo
-    - Written with the ADK
-- [Orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator) 
-    - Passes A2UI messages from remote subagents
-    - Written with the ADK
+- [Restaurant Finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder)
+  - Table reservations with forms.
+  - Written with the ADK.
+- [Contact Lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup)
+  - Search with result lists.
+  - Written with the ADK.
+- [Rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts/python)
+  - A2UI Custom components demo.
+  - Written with the ADK.
+- [Orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator)
+  - Passes A2UI messages from remote subagents.
+  - Written with the ADK.
 
-## Different types of agents you will use A2A with
+## Agent Types in A2A
 
 ### 1. User Facing Agent (standalone)
 
-A user facing agent is one that is directly interacted with by the user. 
+A user facing agent is one that is directly interacted with by the user.
 
 ### 2. User Facing Agent as a host for a Remote Agent
 
 This is a pattern where the user facing agent is a host for one or more remote agents. The user facing agent will call the remote agent and the remote agent will generate the A2UI messages. This is a common pattern in [A2A](https://a2a-protocol.org) with the client agent calling the server agent.
 
-- The user facing agent may "passthrough" the A2UI message without altering them
-- The user facing agent may alter the A2UI message before sending it to the client
+In this pattern, the user-facing agent can handle messages in two ways:
+
+- The user facing agent may "passthrough" the A2UI message without altering them.
+- The user facing agent may alter the A2UI message before sending it to the client.
 
 ### 3. Remote Agent
 

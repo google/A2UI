@@ -43,9 +43,8 @@
 .user-message-container {
   background-color: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface);
-  border-radius: var(--mat-sys-corner-extra-large)
-    var(--mat-sys-corner-extra-small) var(--mat-sys-corner-extra-large)
-    var(--mat-sys-corner-extra-large);
+  border-radius: var(--mat-sys-corner-extra-large) var(--mat-sys-corner-extra-small)
+    var(--mat-sys-corner-extra-large) var(--mat-sys-corner-extra-large);
   max-width: fit-content;
   padding: 0.75rem;
 }

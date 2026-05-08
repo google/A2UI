@@ -14,33 +14,62 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {getBaseLeafStyle, getWeightStyle, useBasicCatalogStyles} from '../utils';
+import {useMarkdown} from '../hooks/useMarkdown';
 
-export const Text = createReactComponent(TextApi, ({props}) => {
-  const text = props.text ?? '';
+// Import CSS Module
+import styles from './Text.module.css';
+
+/**
+ * Wraps the plain text with appropriate Markdown syntax based on the requested variant.
+ *
+ * @param text The plain text to be wrapped.
+ * @param variant The typography variant (e.g., 'h1', 'caption').
+ * @returns The text wrapped in Markdown syntax.
+ */
+const handleVariant = (text: string, variant?: string): string => {
+  switch (variant) {
+    case 'h1':
+      return `# ${text}`;
+    case 'h2':
+      return `## ${text}`;
+    case 'h3':
+      return `### ${text}`;
+    case 'h4':
+      return `#### ${text}`;
+    case 'h5':
+      return `##### ${text}`;
+    case 'caption':
+      return `*${text}*`;
+    default:
+      return text;
+  }
+};
+
+export const Text = createComponentImplementation(TextApi, ({props}) => {
+  useBasicCatalogStyles();
+  const text = typeof props.text === 'string' ? props.text : String(props.text ?? '');
+  const markdownText = handleVariant(text, props.variant);
+  const renderedHtml = useMarkdown(markdownText);
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
-    display: 'inline-block',
+    ...getWeightStyle(props.weight),
   };
 
-  switch (props.variant) {
-    case 'h1':
-      return <h1 style={style}>{text}</h1>;
-    case 'h2':
-      return <h2 style={style}>{text}</h2>;
-    case 'h3':
-      return <h3 style={style}>{text}</h3>;
-    case 'h4':
-      return <h4 style={style}>{text}</h4>;
-    case 'h5':
-      return <h5 style={style}>{text}</h5>;
-    case 'caption':
-      return <caption style={{...style, color: '#666', textAlign: 'left'}}>{text}</caption>;
-    case 'body':
-    default:
-      return <span style={style}>{text}</span>;
+  const isCaption = props.variant === 'caption';
+  const classes = [styles.a2uiText, isCaption ? styles.a2uiCaption : props.variant || 'body'];
+  if (renderedHtml === null) {
+    classes.push('no-markdown-renderer');
   }
+  const contentProps =
+    renderedHtml !== null
+      ? {dangerouslySetInnerHTML: {__html: renderedHtml}}
+      : {children: markdownText};
+
+  if (isCaption) {
+    return <span className={classes.join(' ')} style={style} {...contentProps} />;
+  }
+  return <div className={classes.join(' ')} style={style} {...contentProps} />;
 });

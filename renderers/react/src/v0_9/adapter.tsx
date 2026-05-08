@@ -41,11 +41,11 @@ export type ReactA2uiComponentProps<T> = {
 /**
  * Creates a React component implementation using the deep generic binder.
  */
-export function createReactComponent<Api extends ComponentApi>(
+export function createComponentImplementation<Api extends ComponentApi>(
   api: Api,
   RenderComponent: React.FC<
     ReactA2uiComponentProps<ResolveA2uiProps<InferredComponentApiSchemaType<Api>>>
-  >
+  >,
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<InferredComponentApiSchemaType<Api>>;
 
@@ -78,7 +78,7 @@ export function createReactComponent<Api extends ComponentApi>(
         const sub = binding.subscribe(callback);
         return () => sub.unsubscribe();
       },
-      [binding]
+      [binding],
     );
 
     const getSnapshot = useCallback(() => binding.snapshot, [binding]);
@@ -104,12 +104,12 @@ export function createReactComponent<Api extends ComponentApi>(
 /**
  * Creates a React component implementation that manages its own context bindings (no generic binder).
  */
-export function createBinderlessComponent(
+export function createBinderlessComponentImplementation(
   api: ComponentApi,
   RenderComponent: React.FC<{
     context: ComponentContext;
     buildChild: (id: string, basePath?: string) => React.ReactNode;
-  }>
+  }>,
 ): ReactComponentImplementation {
   return {
     name: api.name,

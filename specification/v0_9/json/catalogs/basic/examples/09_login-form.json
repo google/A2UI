@@ -1,5 +1,5 @@
 {
-  "name": "Login Form",
+  "name": "Login Form with Validation",
   "description": "Example of login form demonstrating validation checks and logic.",
   "messages": [
     {
@@ -35,10 +35,7 @@
           {
             "id": "header",
             "component": "Column",
-            "children": [
-              "title",
-              "subtitle"
-            ],
+            "children": ["title", "subtitle"],
             "align": "center"
           },
           {
@@ -175,10 +172,7 @@
           {
             "id": "signup-text",
             "component": "Row",
-            "children": [
-              "no-account",
-              "signup-link"
-            ],
+            "children": ["no-account", "signup-link"],
             "justify": "center"
           },
           {

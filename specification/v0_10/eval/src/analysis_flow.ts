@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { z } from "genkit";
-import { ai } from "./ai";
-import { rateLimiter } from "./rateLimiter";
-import { logger } from "./logger";
+import {z} from 'genkit';
+import {ai} from './ai';
+import {rateLimiter} from './rateLimiter';
+import {logger} from './logger';
 
 export const analysisFlow = ai.defineFlow(
   {
-    name: "analysisFlow",
+    name: 'analysisFlow',
     inputSchema: z.object({
       modelName: z.string(),
       failures: z.array(
@@ -38,21 +38,21 @@ export const analysisFlow = ai.defineFlow(
     }),
     outputSchema: z.string(),
   },
-  async ({ modelName, failures, numRuns, evalModel }) => {
+  async ({modelName, failures, numRuns, evalModel}) => {
     const failureDetails = failures
-      .map((f) => {
+      .map(f => {
         let details = `Prompt: ${f.promptName} (Run ${f.runNumber})\nType: ${f.failureType}\nReason: ${f.reason}`;
         if (f.issues && f.issues.length > 0) {
-          details += `\nIssues:\n- ${f.issues.join("\n- ")}`;
+          details += `\nIssues:\n- ${f.issues.join('\n- ')}`;
         }
         return details;
       })
-      .join("\n\n---\n\n");
+      .join('\n\n---\n\n');
 
     const analysisPrompt = `You are an expert AI analyst.
 Your task is to analyze the following failures from an evaluation run of the model "${modelName}".
 
-Out of the ${failures.length} failures, ${failures.filter((f) => f.failureType === "Schema Validation").length} are schema validation failures, ${failures.filter((f) => f.failureType === "Missing Components").length} are missing components failures, and ${failures.filter((f) => f.failureType === "Incorrect Logic").length} are incorrect logic failures.
+Out of the ${failures.length} failures, ${failures.filter(f => f.failureType === 'Schema Validation').length} are schema validation failures, ${failures.filter(f => f.failureType === 'Missing Components').length} are missing components failures, and ${failures.filter(f => f.failureType === 'Incorrect Logic').length} are incorrect logic failures.
 
 There were ${numRuns - failures.length} successful runs. Take this into account in the final summary of the analysis.
 
@@ -73,8 +73,8 @@ Return a Markdown formatted summary. Use headers and bullet points.
     // Calculate estimated tokens for rate limiting
     const estimatedInputTokens = Math.ceil(analysisPrompt.length / 2.5);
 
-    const { modelsToTest } = await import("./models");
-    let evalModelConfig = modelsToTest.find((m) => m.name === evalModel);
+    const {modelsToTest} = await import('./models');
+    let evalModelConfig = modelsToTest.find(m => m.name === evalModel);
 
     if (!evalModelConfig) {
       evalModelConfig = {
@@ -93,17 +93,17 @@ Return a Markdown formatted summary. Use headers and bullet points.
         model: evalModelConfig.model || evalModel,
         config: evalModelConfig.config,
         output: {
-          format: "text",
+          format: 'text',
         },
       });
 
       const output = response.output;
       if (!output) {
-        throw new Error("No output from analysis model");
+        throw new Error('No output from analysis model');
       }
 
-      if (typeof output !== "string") {
-        return "Analysis failed: Output was not a string.";
+      if (typeof output !== 'string') {
+        return 'Analysis failed: Output was not a string.';
       }
 
       return output;

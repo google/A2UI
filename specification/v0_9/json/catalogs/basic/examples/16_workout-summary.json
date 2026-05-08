@@ -23,20 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "divider",
-              "metrics-row",
-              "date"
-            ]
+            "children": ["header", "divider", "metrics-row", "date"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "workout-icon",
-              "title"
-            ],
+            "children": ["workout-icon", "title"],
             "align": "center"
           },
           {
@@ -59,20 +51,13 @@
           {
             "id": "metrics-row",
             "component": "Row",
-            "children": [
-              "duration-col",
-              "calories-col",
-              "distance-col"
-            ],
+            "children": ["duration-col", "calories-col", "distance-col"],
             "justify": "spaceAround"
           },
           {
             "id": "duration-col",
             "component": "Column",
-            "children": [
-              "duration-value",
-              "duration-label"
-            ],
+            "children": ["duration-value", "duration-label"],
             "align": "center"
           },
           {
@@ -92,10 +77,7 @@
           {
             "id": "calories-col",
             "component": "Column",
-            "children": [
-              "calories-value",
-              "calories-label"
-            ],
+            "children": ["calories-value", "calories-label"],
             "align": "center"
           },
           {
@@ -121,10 +103,7 @@
           {
             "id": "distance-col",
             "component": "Column",
-            "children": [
-              "distance-value",
-              "distance-label"
-            ],
+            "children": ["distance-value", "distance-label"],
             "align": "center"
           },
           {

@@ -23,7 +23,8 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "./tsconfig.spec.json"
+            "tsConfig": "./tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js"
           }
         }
       }
@@ -40,6 +41,7 @@
           "options": {
             "browser": "a2ui_explorer/src/main.ts",
             "tsConfig": "a2ui_explorer/tsconfig.app.json",
+            "preserveSymlinks": false,
             "assets": [
               {
                 "glob": "**/*",

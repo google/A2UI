@@ -18,11 +18,7 @@
           {
             "id": "root",
             "component": "Column",
-            "children": [
-              "input_field",
-              "result_label",
-              "result_text"
-            ],
+            "children": ["input_field", "result_label", "result_text"],
             "justify": "start",
             "align": "stretch"
           },

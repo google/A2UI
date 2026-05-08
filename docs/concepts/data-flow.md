@@ -311,11 +311,15 @@ Users see UI building in real-time instead of staring at a spinner.
 
 ## Error Handling
 
-- **Malformed messages:** Skip and continue, or send error back to agent for correction
-- **Network interruptions:** Display error state, reconnect, agent resends or resumes
+The system handles errors as follows:
+
+- **Malformed messages:** Skip and continue, or send error back to agent for correction.
+- **Network interruptions:** Display error state, reconnect, agent resends or resumes.
 
 ## Performance
 
-- **Batching:** Buffer updates for 16ms, batch render together
-- **Diffing:** Compare old/new components, update only changed properties
-- **Granular updates:** Update `/user/name` not entire `/` model
+To optimize performance:
+
+- **Batching:** Buffer updates for 16ms, batch render together.
+- **Diffing:** Compare old/new components, update only changed properties.
+- **Granular updates:** Update `/user/name` not entire `/` model.

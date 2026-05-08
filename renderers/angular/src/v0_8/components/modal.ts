@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
-import { DynamicComponent } from '../rendering/dynamic-component';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
+import {ChangeDetectionStrategy, Component, input, signal} from '@angular/core';
+import {DynamicComponent} from '../rendering/dynamic-component';
+import {Renderer} from '../rendering/renderer';
+import type {AnyComponentNode, ModalNode} from '../types';
 
 @Component({
   selector: 'a2ui-modal',
@@ -25,11 +25,7 @@ import { Types } from '../types';
   template: `
     <div class="a2ui-modal-entry-point" (click)="openModal()">
       @if (entryPointChild()) {
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="entryPointChild()!"
-        />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="entryPointChild()!" />
       }
     </div>
 
@@ -37,11 +33,7 @@ import { Types } from '../types';
       <div [class]="theme.components.Modal.backdrop" (click)="closeModal()">
         <div [class]="theme.components.Modal.element" (click)="$event.stopPropagation()">
           @if (contentChild()) {
-            <ng-container
-              a2ui-renderer
-              [surfaceId]="surfaceId()!"
-              [component]="contentChild()!"
-            />
+            <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="contentChild()!" />
           }
         </div>
       </div>
@@ -57,9 +49,9 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Modal extends DynamicComponent<Types.ModalNode> {
-  readonly entryPointChild = input.required<Types.AnyComponentNode>();
-  readonly contentChild = input.required<Types.AnyComponentNode>();
+export class Modal extends DynamicComponent<ModalNode> {
+  readonly entryPointChild = input.required<AnyComponentNode>();
+  readonly contentChild = input.required<AnyComponentNode>();
 
   protected readonly isOpen = signal(false);
 

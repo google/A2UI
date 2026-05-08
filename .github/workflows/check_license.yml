@@ -31,7 +31,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.21'
+          go-version: "1.21"
 
       - name: Install addlicense
         run: go install github.com/google/addlicense@latest
@@ -41,6 +41,10 @@ jobs:
           if ! addlicense -check \
             -l apache \
             -c "Google LLC" \
+            -ignore "**/pnpm-lock.yaml" \
+            -ignore "**/package-lock.json" \
+            -ignore "**/yarn.lock" \
+            -ignore "eval/datasets/*.yaml" \
             .; then
             echo "License check failed. To fix this, install addlicense and run it:"
             echo "  go install github.com/google/addlicense@latest"

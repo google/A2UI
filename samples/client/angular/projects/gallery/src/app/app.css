@@ -1,4 +1,4 @@
-  /*
+/*
  Copyright 2025 Google LLC
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,43 +14,43 @@
  limitations under the License.
 */
 
-  .home-page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-  }
+.home-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
 
-  .app-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 16px; /* Space between items */
-  }
+.app-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 16px; /* Space between items */
+}
 
-  .app-nav li {
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
+.app-nav li {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
 
-  .app-nav li:hover {
-    background-color: #eee;
-  }
-  .app-nav li a {
-    text-decoration:  none;
-    color: inherit;
-  }
-  .hero-message {
-    font-weight: bold;
-    text-align: center;
-  }
-  .hero-message h1 {
-    font-size: 3rem;
-  }
-  .hero-message p {
-    font-size: 1.5rem;
-    font-weight: lighter;
-  }
+.app-nav li:hover {
+  background-color: #eee;
+}
+.app-nav li a {
+  text-decoration: none;
+  color: inherit;
+}
+.hero-message {
+  font-weight: bold;
+  text-align: center;
+}
+.hero-message h1 {
+  font-size: 3rem;
+}
+.hero-message p {
+  font-size: 1.5rem;
+  font-weight: lighter;
+}

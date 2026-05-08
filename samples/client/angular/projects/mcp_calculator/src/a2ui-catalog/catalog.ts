@@ -14,18 +14,62 @@
  * limitations under the License.
  */
 
-import { Catalog } from '@a2ui/angular';
-import { inputBinding } from '@angular/core';
+import {Catalog} from '@a2ui/angular';
+import {inputBinding} from '@angular/core';
 
 export const DEMO_CATALOG = {
   McpApp: {
-    type: () => import('./mcp-app').then((r) => r.McpApp),
-    bindings: ({ properties }) => [
+    type: () => import('./mcp-app').then(r => r.McpApp),
+    bindings: ({properties}) => [
       inputBinding(
         'content',
         () => ('content' in properties && properties['content']) || undefined,
       ),
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
+    ],
+  },
+  PongScoreBoard: {
+    type: () => import('./pong-scoreboard').then(r => r.PongScoreBoard),
+    bindings: ({properties}) => [
+      inputBinding(
+        'playerScore',
+        () => ('playerScore' in properties && properties['playerScore']) || undefined,
+      ),
+      inputBinding(
+        'cpuScore',
+        () => ('cpuScore' in properties && properties['cpuScore']) || undefined,
+      ),
+    ],
+  },
+  PongLayout: {
+    type: () => import('./pong-layout').then(r => r.PongLayout),
+    bindings: ({properties}) => [
+      inputBinding(
+        'mcpComponent',
+        () => ('mcpComponent' in properties && properties['mcpComponent']) || undefined,
+      ),
+      inputBinding(
+        'scoreboardComponent',
+        () =>
+          ('scoreboardComponent' in properties && properties['scoreboardComponent']) || undefined,
+      ),
+    ],
+  },
+  Column: {
+    type: () => import('@a2ui/angular').then(r => r.Column),
+    bindings: ({properties}) => [
+      inputBinding(
+        'alignment',
+        () => ('alignment' in properties && properties['alignment']) || undefined,
+      ),
+      inputBinding(
+        'distribution',
+        () => ('distribution' in properties && properties['distribution']) || undefined,
+      ),
+      inputBinding(
+        'children',
+        () => ('children' in properties && properties['children']) || undefined,
+      ),
     ],
   },
 } as Catalog;

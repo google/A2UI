@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Part } from '@a2a-js/sdk';
+import {Part} from '@a2a-js/sdk';
 import * as Types from '@a2ui/web_core/types/types';
-import { isA2aDataPart } from './type-guards';
+import {isA2aDataPart} from './type-guards';
 
 /**
  * Extracts A2UI ServerToClientMessages from an array of A2A Parts.

@@ -54,18 +54,12 @@
           {
             "id": "options",
             "component": "Column",
-            "children": [
-              "seats-row",
-              "period-row"
-            ]
+            "children": ["seats-row", "period-row"]
           },
           {
             "id": "seats-row",
             "component": "Row",
-            "children": [
-              "seats-label",
-              "seats-value"
-            ],
+            "children": ["seats-label", "seats-value"],
             "justify": "spaceBetween",
             "align": "center"
           },
@@ -86,10 +80,7 @@
           {
             "id": "period-row",
             "component": "Row",
-            "children": [
-              "period-label",
-              "period-picker"
-            ],
+            "children": ["period-label", "period-picker"],
             "justify": "spaceBetween",
             "align": "center"
           },
@@ -125,10 +116,7 @@
           {
             "id": "total-row",
             "component": "Row",
-            "children": [
-              "total-label",
-              "total-value"
-            ],
+            "children": ["total-label", "total-value"],
             "justify": "spaceBetween",
             "align": "center"
           },
@@ -153,10 +141,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "confirm-btn",
-              "cancel-btn"
-            ]
+            "children": ["confirm-btn", "cancel-btn"]
           },
           {
             "id": "confirm-btn-text",
@@ -201,7 +186,7 @@
           "productName": "Design Suite Pro",
           "seats": "10 seats",
           "billingPeriod": ["annual"],
-          "total": 1188.00
+          "total": 1188.0
         }
       }
     }

@@ -23,10 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "image",
-              "details"
-            ]
+            "children": ["image", "details"]
           },
           {
             "id": "image",
@@ -39,12 +36,7 @@
           {
             "id": "details",
             "component": "Column",
-            "children": [
-              "name",
-              "rating-row",
-              "price-row",
-              "actions"
-            ]
+            "children": ["name", "rating-row", "price-row", "actions"]
           },
           {
             "id": "name",
@@ -57,10 +49,7 @@
           {
             "id": "rating-row",
             "component": "Row",
-            "children": [
-              "stars",
-              "reviews"
-            ],
+            "children": ["stars", "reviews"],
             "align": "center"
           },
           {
@@ -86,10 +75,7 @@
           {
             "id": "price-row",
             "component": "Row",
-            "children": [
-              "price",
-              "original-price"
-            ],
+            "children": ["price", "original-price"],
             "align": "start"
           },
           {
@@ -125,9 +111,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "add-cart-btn"
-            ]
+            "children": ["add-cart-btn"]
           },
           {
             "id": "add-cart-btn-text",

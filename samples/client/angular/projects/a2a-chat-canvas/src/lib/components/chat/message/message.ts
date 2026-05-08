@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { A2aRenderer } from '@a2a_chat_canvas/a2a-renderer/a2a-renderer';
-import { AgentHeader } from '@a2a_chat_canvas/components/chat/agent-header/agent-header';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { Role, UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { isAgentThought } from '@a2a_chat_canvas/utils/a2a';
-import { isA2aPart } from '@a2a_chat_canvas/utils/type-guards';
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {A2aRenderer} from '@a2a_chat_canvas/a2a-renderer/a2a-renderer';
+import {AgentHeader} from '@a2a_chat_canvas/components/chat/agent-header/agent-header';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {Role, UiAgent, UiMessage, UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+import {isAgentThought} from '@a2a_chat_canvas/utils/a2a';
+import {isA2aPart} from '@a2a_chat_canvas/utils/type-guards';
+import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 
 /** UI message component. */
 @Component({
@@ -44,11 +44,11 @@ export class Message {
 
   /** Agent thought contents. */
   protected readonly agentThoughts = computed(() =>
-    this.message().contents.filter((content) => containsAgentThought(content)),
+    this.message().contents.filter(content => containsAgentThought(content)),
   );
   /** Agent non-thought contents. */
   protected readonly messageContents = computed(() =>
-    this.message().contents.filter((content) => !containsAgentThought(content)),
+    this.message().contents.filter(content => !containsAgentThought(content)),
   );
   /** Whether the message is pending. */
   protected readonly showProgressIndicator = computed(() => {

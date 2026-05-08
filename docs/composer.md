@@ -8,9 +8,11 @@ Try building A2UI widgets interactively with the **CopilotKit A2UI Widget Builde
 
 ## What it does
 
-- Experiment with A2UI components visually
-- Generate A2UI JSON by describing what you want
-- See real-time previews
-- Copy JSON to use in your agents
+The Widget Builder enables you to:
+
+- Experiment with A2UI components visually.
+- Generate A2UI JSON by describing desired interfaces.
+- View real-time previews.
+- Copy the generated JSON for use in agents.
 
 Built by the [CopilotKit](https://www.copilotkit.ai/) team.

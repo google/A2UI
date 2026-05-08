@@ -14,27 +14,40 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TextComponent } from './text.component';
-import { By } from '@angular/platform-browser';
-import { signal } from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TextComponent} from './text.component';
+import {By} from '@angular/platform-browser';
+import {MarkdownRenderer} from '../../core/markdown';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
+import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '../../core/a2ui-renderer.service';
 
 describe('TextComponent', () => {
   let component: TextComponent;
   let fixture: ComponentFixture<TextComponent>;
+  let mockMarkdownRenderer: jasmine.SpyObj<MarkdownRenderer>;
+  let defaultProps: ComponentToProps<TextComponent>;
 
   beforeEach(async () => {
+    mockMarkdownRenderer = jasmine.createSpyObj('MarkdownRenderer', ['render']);
+    mockMarkdownRenderer.render.and.callFake((text: string) => Promise.resolve(`<p>${text}</p>`));
+
     await TestBed.configureTestingModule({
       imports: [TextComponent],
+      providers: [
+        {provide: MarkdownRenderer, useValue: mockMarkdownRenderer},
+        A2uiRendererService,
+        {provide: A2UI_RENDERER_CONFIG, useValue: {catalogs: []}},
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('props', {
-      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
-      weight: { value: signal('bold'), raw: 'bold', onUpdate: () => {} },
-      style: { value: signal('italic'), raw: 'italic', onUpdate: () => {} },
-    });
+    fixture.componentRef.setInput('surfaceId', 'surf1');
+
+    defaultProps = {
+      text: createBoundProperty('Hello World'),
+    };
+    setComponentProps(fixture, defaultProps);
   });
 
   it('should create', () => {
@@ -42,16 +55,94 @@ describe('TextComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the text', () => {
+  it('should render the markdown text', async () => {
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     const span = fixture.debugElement.query(By.css('span'));
-    expect(span.nativeElement.textContent.trim()).toBe('Hello World');
+    expect(span.nativeElement.innerHTML.trim()).toBe('<p>Hello World</p>');
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('Hello World');
   });
 
-  it('should apply font-weight and font-style', () => {
+  it('should handle variant h1', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h1' as const),
+    });
     fixture.detectChanges();
-    const span = fixture.debugElement.query(By.css('span'));
-    expect(span.styles['font-weight']).toBe('bold');
-    expect(span.styles['font-style']).toBe('italic');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('# Heading');
+  });
+
+  it('should handle variant caption', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Caption'),
+      variant: createBoundProperty('caption' as const),
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('*Caption*');
+  });
+
+  it('should handle variant h2', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h2' as const),
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('## Heading');
+  });
+
+  it('should handle variant h3', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h3' as const),
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('### Heading');
+  });
+
+  it('should handle variant h4', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h4' as const),
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('#### Heading');
+  });
+
+  it('should handle variant h5', async () => {
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h5' as const),
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('##### Heading');
+  });
+
+  it('should handle missing text property', async () => {
+    setComponentProps(fixture, {} as ComponentToProps<TextComponent>);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('');
   });
 });

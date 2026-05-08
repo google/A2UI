@@ -9,19 +9,8 @@
       "description": "The unique identifier for a component, used for both definitions and references within the same surface."
     },
     "CallId": {
-      "type": "object",
-      "description": "The unique identifier for a server initiated function call.",
-      "properties": {
-        "agentId": {
-          "type": "string",
-          "description": "Identifies the agent initiating the function call."
-        },
-        "callId": {
-          "type": "string",
-          "description": "Uniquely identifies this instance of the function call."
-        }
-      },
-      "required": ["callId"]
+      "type": "string",
+      "description": "The unique identifier for a server initiated function call."
     },
     "AccessibilityAttributes": {
       "type": "object",
@@ -218,11 +207,7 @@
       "properties": {
         "callableFrom": {
           "description": "Specifies where this function can be invoked from.",
-          "enum": [
-            "clientOnly",
-            "remoteOnly",
-            "clientOrRemote"
-          ],
+          "enum": ["clientOnly", "remoteOnly", "clientOrRemote"],
           "default": "clientOnly"
         },
         "call": {
@@ -246,21 +231,12 @@
         },
         "returnType": {
           "description": "The expected return type of the function call.",
-          "enum": [
-            "array",
-            "boolean",
-            "number",
-            "object",
-            "string",
-            "void"
-          ],
+          "enum": ["array", "boolean", "number", "object", "string", "void"],
           "default": "boolean"
         }
       },
       "required": ["call"],
-      "oneOf": [
-        { "$ref": "catalog.json#/$defs/anyFunction" }
-      ]
+      "oneOf": [{"$ref": "catalog.json#/$defs/anyFunction"}]
     },
     "CheckRule": {
       "type": "object",

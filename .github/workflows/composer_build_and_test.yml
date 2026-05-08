@@ -17,12 +17,16 @@ name: Composer
 on:
   push:
     paths:
-      - 'tools/composer/**'
-      - '.github/workflows/composer_build_and_test.yml'
+      - "tools/composer/**"
+      - "renderers/react/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/composer_build_and_test.yml"
   pull_request:
     paths:
-      - 'tools/composer/**'
-      - '.github/workflows/composer_build_and_test.yml'
+      - "tools/composer/**"
+      - "renderers/react/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/composer_build_and_test.yml"
 
 jobs:
   build-and-test:
@@ -39,9 +43,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: 'tools/composer/pnpm-lock.yaml'
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "tools/composer/pnpm-lock.yaml"
+
+      - name: Build web_core (dependency of @a2ui/react)
+        working-directory: ./renderers/web_core
+        run: npm ci && npm run build
+
+      - name: Build React renderer (local file dependency)
+        working-directory: ./renderers/react
+        run: npm ci && npm run build
 
       - name: Install dependencies
         working-directory: ./tools/composer

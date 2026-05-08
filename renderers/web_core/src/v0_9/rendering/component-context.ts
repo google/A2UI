@@ -34,6 +34,8 @@ export class ComponentContext {
   readonly dataContext: DataContext;
   /** The collection of all component models for the current surface, allowing lookups by ID. */
   readonly surfaceComponents: SurfaceComponentsModel;
+  /** The theme configuration for the surface this component belongs to. */
+  readonly theme: any;
 
   /**
    * Creates a new component context.
@@ -42,21 +44,17 @@ export class ComponentContext {
    * @param componentId The ID of the component.
    * @param dataModelBasePath The base path for data model access (default: '/').
    */
-  constructor(
-    surface: SurfaceModel<any>,
-    componentId: string,
-    dataModelBasePath: string = '/',
-  ) {
+  constructor(surface: SurfaceModel<any>, componentId: string, dataModelBasePath: string = '/') {
     const model = surface.componentsModel.get(componentId);
     if (!model) {
       throw new A2uiStateError(`Component not found: ${componentId}`);
     }
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
+    this.theme = surface.theme;
 
     this.dataContext = new DataContext(surface, dataModelBasePath);
-    this._actionDispatcher = action =>
-      surface.dispatchAction(action, this.componentModel.id);
+    this._actionDispatcher = action => surface.dispatchAction(action, this.componentModel.id);
   }
 
   private _actionDispatcher: (action: any) => Promise<void>;

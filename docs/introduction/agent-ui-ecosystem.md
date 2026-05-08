@@ -4,16 +4,16 @@ The agentic UI space is evolving rapidly. Here's how A2UI relates to the other m
 
 ## At a Glance
 
-| | **A2UI** | **MCP Apps** | **AG UI** |
-|---|---|---|---|
-| **Approach** | Declarative component blueprints | Pre-built HTML via `ui://` URIs | High-bandwidth protocol connecting backends to frontends |
-| **Rendering** | Native components (Angular, Flutter, Lit, etc.) | Sandboxed `iframe` | Developer-defined (any framework) |
-| **Styling** | Host app controls — inherits design system | Isolated — remote server controls appearance | Developer controls — part of the host app |
-| **Security** | Declarative data, no code execution | Sandboxed iframe isolation | Trusted code within your own app |
-| **Multi-agent** | ✅ Across trust boundaries | ✅ Multiple MCP servers | ⚠️ Primarily single-agent |
-| **Cross-platform** | ✅ Web, mobile, desktop, native | ⚠️ Web-focused (iframe) | ✅ Protocol is framework-agnostic |
-| **LLM generation** | ✅ Designed for streaming output | ❌ Pre-built by server | ✅ Via A2UI integration |
-| **Spec** | Open protocol (Apache 2.0) | [MCP extension](https://modelcontextprotocol.io/docs/extensions/apps) (SEP-1865) | Open source (by CopilotKit) |
+|                    | **A2UI**                                        | **MCP Apps**                                                                     | **AG UI**                                                |
+| ------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Approach**       | Declarative component blueprints                | Pre-built HTML via `ui://` URIs                                                  | High-bandwidth protocol connecting backends to frontends |
+| **Rendering**      | Native components (Angular, Flutter, Lit, etc.) | Sandboxed `iframe`                                                               | Developer-defined (any framework)                        |
+| **Styling**        | Host app controls — inherits design system      | Isolated — remote server controls appearance                                     | Developer controls — part of the host app                |
+| **Security**       | Declarative data, no code execution             | Sandboxed iframe isolation                                                       | Trusted code within your own app                         |
+| **Multi-agent**    | ✅ Across trust boundaries                      | ✅ Multiple MCP servers                                                          | ⚠️ Primarily single-agent                                |
+| **Cross-platform** | ✅ Web, mobile, desktop, native                 | ⚠️ Web-focused (iframe)                                                          | ✅ Protocol is framework-agnostic                        |
+| **LLM generation** | ✅ Designed for streaming output                | ❌ Pre-built by server                                                           | ✅ Via A2UI integration                                  |
+| **Spec**           | Open protocol (Apache 2.0)                      | [MCP extension](https://modelcontextprotocol.io/docs/extensions/apps) (SEP-1865) | Open source (by CopilotKit)                              |
 
 ## A2UI vs MCP Apps
 
@@ -31,12 +31,14 @@ The agentic UI space is evolving rapidly. Here's how A2UI relates to the other m
 
 These approaches are complementary, not competing:
 
-- **A2UI + AG UI** — AG UI as transport, A2UI as the generative UI format
-- **A2UI + A2A** — A2UI messages sent via the [A2A protocol](../concepts/transports.md) for multi-agent systems
-- **A2UI + MCP** — Upcoming bridge lets MCP servers provide A2UI blueprints alongside HTML resources
+- **A2UI + AG UI** — AG UI as transport, A2UI as the generative UI format.
+- **A2UI + A2A** — A2UI messages sent via the [A2A protocol](../concepts/transports.md) for multi-agent systems.
+- **A2UI + MCP** — Upcoming bridge lets MCP servers provide A2UI blueprints alongside HTML resources.
 
 ## Further Reading
 
-- [What is A2UI?](what-is-a2ui.md) — Protocol overview
-- [Transports](../concepts/transports.md) — How A2UI messages travel between agents and clients
-- [Where is A2UI Used?](../ecosystem/a2ui-in-the-world.md) — Case studies and adopters
+For more information, see the following resources:
+
+- [What is A2UI?](what-is-a2ui.md) — Protocol overview.
+- [Transports](../concepts/transports.md) — How A2UI messages travel between agents and clients.
+- [Where is A2UI Used?](../ecosystem/a2ui-in-the-world.md) — Case studies and adopters.

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { SafeUrl } from '@angular/platform-browser';
+import {NgTemplateOutlet} from '@angular/common';
+import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import {MatIcon} from '@angular/material/icon';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {SafeUrl} from '@angular/platform-browser';
 
 /** Avatar component. */
 @Component({

@@ -2,6 +2,8 @@
 
 This section explains the fundamental architecture of A2UI. Understanding these concepts will help you build effective agent-driven interfaces.
 
+See [Glossary](../glossary.md) for short definitions of key terms.
+
 ## The Big Picture
 
 A2UI is built around three core ideas:
@@ -13,17 +15,22 @@ A2UI is built around three core ideas:
 ## Key Topics
 
 ### [Data Flow](data-flow.md)
+
 How messages travel from agents to rendered UI. Includes a complete lifecycle example of a restaurant booking flow, transport options (SSE, WebSockets, A2A), progressive rendering, and error handling.
 
 ### [Component Structure](components.md)
+
 A2UI's **adjacency list model** for representing component hierarchies. Learn why flat lists are better than nested trees, how to use static vs. dynamic children, and best practices for incremental updates.
 
 ### [Data Binding](data-binding.md)
+
 How components connect to application state using JSON Pointer paths. Covers reactive components, dynamic lists, input bindings, and the separation of structure from state that makes A2UI powerful.
 
 ## Message Types
 
 === "v0.8 (Stable)"
+
+    Version 0.8 uses the following message types:
 
     - **`surfaceUpdate`**: Define or update UI components
     - **`dataModelUpdate`**: Update application state
@@ -31,6 +38,8 @@ How components connect to application state using JSON Pointer paths. Covers rea
     - **`deleteSurface`**: Remove a UI surface
 
 === "v0.9 (Draft)"
+
+    Version 0.9 uses the following message types:
 
     - **`createSurface`**: Create a new surface and specify its catalog
     - **`updateComponents`**: Add or update UI components in a surface

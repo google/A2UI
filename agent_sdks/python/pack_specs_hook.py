@@ -47,7 +47,7 @@ class PackSpecsBuildHook(BuildHookInterface):
     project_root = self.root
 
     # Load constants and utils dynamically from src/
-    schema_path = "a2ui.core.schema"
+    schema_path = "a2ui.schema"
     a2ui_constants = load_module(
         project_root, schema_path, "constants.py", "_constants_load"
     )

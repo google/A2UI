@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { AgentCard, SendMessageSuccessResponse } from '@a2a-js/sdk';
-import { PART_RESOLVERS } from '@a2a_chat_canvas/a2a-renderer/tokens';
-import { A2A_SERVICE } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { extractA2aPartsFromResponse } from '@a2a_chat_canvas/utils/a2a';
-import { extractA2uiDataParts } from '@a2a_chat_canvas/utils/a2ui';
-import { convertPartToUiMessageContent } from '@a2a_chat_canvas/utils/ui-message-utils';
-import { MessageProcessor, DispatchedEvent } from '@a2ui/angular';
-import { inject, Injectable, resource, signal } from '@angular/core';
-import { v4 as uuid } from 'uuid';
+import {AgentCard, SendMessageSuccessResponse} from '@a2a-js/sdk';
+import {PART_RESOLVERS} from '@a2a_chat_canvas/a2a-renderer/tokens';
+import {A2A_SERVICE} from '@a2a_chat_canvas/interfaces/a2a-service';
+import {UiAgent, UiMessage, UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+import {extractA2aPartsFromResponse} from '@a2a_chat_canvas/utils/a2a';
+import {extractA2uiDataParts} from '@a2a_chat_canvas/utils/a2ui';
+import {convertPartToUiMessageContent} from '@a2a_chat_canvas/utils/ui-message-utils';
+import {MessageProcessor, DispatchedEvent} from '@a2ui/angular';
+import {inject, Injectable, resource, signal} from '@angular/core';
+import {v4 as uuid} from 'uuid';
 
 /**
  * Service responsible for managing chat interactions, including sending messages,
@@ -76,8 +76,9 @@ export class ChatService {
     this.a2uiMessageProcessor.events.subscribe(async (event: DispatchedEvent) => {
       try {
         // TODO: Replace this with a more robust event handling mechanism.
-        // Currently, it just sends the event message back to the agent.
-        await this.sendMessage(JSON.stringify(event.message));
+        // Send A2UI actions silently if requested from the action context
+        const isSilent = Boolean(event.message.userAction?.context?.['silent']);
+        await this.sendMessage(JSON.stringify(event.message), isSilent);
         event.completion.next([]);
         event.completion.complete();
       } catch (err) {
@@ -92,19 +93,21 @@ export class ChatService {
    *
    * @param text The text message to send.
    */
-  async sendMessage(text: string) {
-    this.addUserAndPendingAgentMessages(text);
+  async sendMessage(text: string, silent: boolean = false) {
+    if (!silent) {
+      this.addUserAndPendingAgentMessages(text);
+    }
     this.isA2aStreamOpen.set(true);
 
     try {
       this.abortController = new AbortController();
       const a2aResponse = await this.a2aService.sendMessage(
-        [{ kind: 'text', text }],
+        [{kind: 'text', text}],
         this.abortController.signal,
       );
-      this.handleSuccess(a2aResponse);
+      this.handleSuccess(a2aResponse, silent);
     } catch (error) {
-      this.handleError(error);
+      this.handleError(error, silent);
     } finally {
       this.isA2aStreamOpen.set(false);
       this.abortController = null;
@@ -131,7 +134,7 @@ export class ChatService {
     const now = new Date().toISOString();
     const userMessage = this.createNewUserMessage(text, now);
     const agentMessage = this.createPendingAgentMessage(now);
-    this.history.update((curr) => [...curr, userMessage, agentMessage]);
+    this.history.update(curr => [...curr, userMessage, agentMessage]);
   }
 
   /**
@@ -140,19 +143,21 @@ export class ChatService {
    *
    * @param response The success response from the A2A service.
    */
-  private handleSuccess(response: SendMessageSuccessResponse) {
+  private handleSuccess(response: SendMessageSuccessResponse, silent: boolean = false) {
     const agentResponseParts = extractA2aPartsFromResponse(response);
     const newContents = agentResponseParts.map(
       (part): UiMessageContent => convertPartToUiMessageContent(part, this.partResolvers),
     );
 
-    this.updateLastMessage((msg) => ({
-      ...msg,
-      role: this.createRole(response),
-      contents: [...msg.contents, ...newContents],
-      status: 'completed',
-      lastUpdated: new Date().toISOString(),
-    }));
+    if (!silent) {
+      this.updateLastMessage(msg => ({
+        ...msg,
+        role: this.createRole(response),
+        contents: [...msg.contents, ...newContents],
+        status: 'completed',
+        lastUpdated: new Date().toISOString(),
+      }));
+    }
 
     // Let A2UI Renderer process the A2UI data parts in agent response.
     this.a2uiMessageProcessor.processMessages(extractA2uiDataParts(agentResponseParts));
@@ -165,7 +170,12 @@ export class ChatService {
    *
    * @param error The error object or message.
    */
-  private handleError(error: unknown) {
+  private handleError(error: unknown, silent: boolean = false) {
+    if (silent) {
+      console.error('Silent message send failed:', error);
+      return;
+    }
+
     let errorMessage = 'Something went wrong: ' + error;
     if (error instanceof Error && error.name === 'AbortError') {
       errorMessage = 'You cancelled the response.';
@@ -181,7 +191,7 @@ export class ChatService {
       variant: 'default_text_part',
     };
 
-    this.updateLastMessage((msg) => ({
+    this.updateLastMessage(msg => ({
       ...msg,
       contents: [...msg.contents, errorContent],
       status: 'completed',
@@ -196,7 +206,7 @@ export class ChatService {
    * @param updater A function that takes the current last message and returns the updated message.
    */
   private updateLastMessage(updater: (msg: UiMessage) => UiMessage) {
-    this.history.update((history) => {
+    this.history.update(history => {
       if (history.length === 0) return history;
       // New reference of the same object for OnPush ChangeDetectionStrategy.
       const lastMessage = history[history.length - 1];
@@ -275,7 +285,7 @@ export class ChatService {
     const agentRole: UiAgent = {
       ...rootagentRole,
       subagentName: (subagentCard as AgentCard).name,
-    }
+    };
 
     return agentRole;
   }

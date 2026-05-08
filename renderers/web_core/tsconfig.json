@@ -28,7 +28,17 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "rxjs/operators": ["./node_modules/rxjs/operators/index.js"]
+    }
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictTemplates": true,
+    "strictPropertyInitialization": false
   },
   "include": ["src/**/*.ts", "src/**/*.json"]
 }

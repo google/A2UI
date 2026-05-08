@@ -23,11 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "poster",
-              "content",
-              "trailer-modal"
-            ]
+            "children": ["poster", "content", "trailer-modal"]
           },
           {
             "id": "poster",
@@ -40,21 +36,12 @@
           {
             "id": "content",
             "component": "Column",
-            "children": [
-              "title-row",
-              "genre",
-              "rating-row",
-              "runtime",
-              "watch-trailer-btn"
-            ]
+            "children": ["title-row", "genre", "rating-row", "runtime", "watch-trailer-btn"]
           },
           {
             "id": "title-row",
             "component": "Row",
-            "children": [
-              "movie-title",
-              "year"
-            ],
+            "children": ["movie-title", "year"],
             "align": "start"
           },
           {
@@ -84,10 +71,7 @@
           {
             "id": "rating-row",
             "component": "Row",
-            "children": [
-              "star-icon",
-              "rating-value"
-            ],
+            "children": ["star-icon", "rating-value"],
             "align": "center"
           },
           {
@@ -106,10 +90,7 @@
           {
             "id": "runtime",
             "component": "Row",
-            "children": [
-              "time-icon",
-              "runtime-text"
-            ],
+            "children": ["time-icon", "runtime-text"],
             "align": "center"
           },
           {

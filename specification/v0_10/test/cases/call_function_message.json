@@ -15,7 +15,7 @@
           "returnType": "void",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "unique-call-id-123" },
+        "functionCallId": "unique-call-id-123",
         "wantResponse": true
       }
     },
@@ -29,7 +29,7 @@
           "returnType": "void",
           "callableFrom": "remoteOnly"
         },
-        "functionCallId": { "callId": "unique-call-id-123a" },
+        "functionCallId": "unique-call-id-123a",
         "wantResponse": false
       }
     },
@@ -46,7 +46,7 @@
           "returnType": "void",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "unique-call-id-124" }
+        "functionCallId": "unique-call-id-124"
       }
     },
     {
@@ -56,7 +56,7 @@
         "version": "v0.10",
         "callFunction": {
           "call": "required",
-          "args": { "value": "bar" },
+          "args": {"value": "bar"},
           "returnType": "boolean",
           "callableFrom": "clientOrRemote"
         }
@@ -67,7 +67,7 @@
       "valid": false,
       "data": {
         "version": "v0.10",
-        "functionCallId": { "callId": "unique-call-id-125" }
+        "functionCallId": "unique-call-id-125"
       }
     },
     {
@@ -77,11 +77,11 @@
         "version": "v0.10",
         "callFunction": {
           "call": "required",
-          "args": { "value": "bar" },
+          "args": {"value": "bar"},
           "returnType": "boolean",
           "callableFrom": "clientOnly"
         },
-        "functionCallId": { "callId": "unique-call-id-126" }
+        "functionCallId": "unique-call-id-126"
       }
     },
     {
@@ -91,10 +91,10 @@
         "version": "v0.10",
         "callFunction": {
           "call": "required",
-          "args": { "value": "bar" },
+          "args": {"value": "bar"},
           "returnType": "boolean"
         },
-        "functionCallId": { "callId": "unique-call-id-126b" }
+        "functionCallId": "unique-call-id-126b"
       }
     },
     {
@@ -105,12 +105,12 @@
         "callFunction": {
           "call": "required",
           "args": {
-            "value": { "nested": "object" }
+            "value": {"nested": "object"}
           },
           "returnType": "boolean",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "unique-call-id-127" }
+        "functionCallId": "unique-call-id-127"
       }
     },
     {
@@ -121,12 +121,12 @@
         "callFunction": {
           "call": "required",
           "args": {
-            "value": [{ "nested": "object" }]
+            "value": [{"nested": "object"}]
           },
           "returnType": "boolean",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "unique-call-id-128" }
+        "functionCallId": "unique-call-id-128"
       }
     },
     {
@@ -136,11 +136,11 @@
         "version": "v0.10",
         "callFunction": {
           "call": "required",
-          "args": { "value": "bar" },
+          "args": {"value": "bar"},
           "returnType": "object",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "unique-call-id-129" }
+        "functionCallId": "unique-call-id-129"
       }
     },
     {
@@ -156,7 +156,7 @@
           "returnType": "boolean",
           "callableFrom": "clientOrRemote"
         },
-        "functionCallId": { "callId": "id-3" }
+        "functionCallId": "id-3"
       }
     }
   ]

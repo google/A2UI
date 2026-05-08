@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-export * as Events from "./events/index.js";
-export * from "./data/guards.js";
-export * from "./data/model-processor.js";
-export * from "./styles/index.js";
-export * from "./types/colors.js";
-export * from "./types/primitives.js";
-export * from "./types/types.js";
-export * from "./errors.js";
+export * as Events from './events/index.js';
+export * from './data/guards.js';
+export * from './data/model-processor.js';
+export * from './styles/index.js';
+export * from './types/colors.js';
+export * from './types/primitives.js';
+export * from './types/types.js';
+export * from './errors.js';
 
-import A2UIClientEventMessage from "./schemas/server_to_client_with_standard_catalog.json" with { type: "json" };
+import A2UIClientEventMessage from './schemas/server_to_client_with_standard_catalog.json' with {type: 'json'};
 
 export const Schemas = {
   A2UIClientEventMessage,

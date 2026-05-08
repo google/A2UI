@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Modal } from './modal';
-import { MessageProcessor } from '../data/processor';
-import { Theme } from '../rendering/theming';
-import { Catalog } from '../rendering/catalog';
-import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
-import { Component, Directive, Input, ChangeDetectionStrategy } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {Modal} from './modal';
+import {MessageProcessor} from '../data/processor';
+import {Theme} from '../rendering/theming';
+import {Catalog} from '../rendering/catalog';
+import type {AnyComponentNode} from '../types';
+import {Directive, Input, ChangeDetectionStrategy} from '@angular/core';
+import {By} from '@angular/platform-browser';
 
 @Directive({
   selector: '[a2ui-renderer]',
@@ -43,15 +42,15 @@ describe('Modal Component', () => {
   let fixture: ComponentFixture<Modal>;
   let mockTheme: Theme;
 
-  const mockEntryPoint: Types.AnyComponentNode = {
+  const mockEntryPoint: AnyComponentNode = {
     id: 'btn-1',
     type: 'Button',
-    properties: { text: 'Open' },
+    properties: {text: 'Open'},
   };
-  const mockContent: Types.AnyComponentNode = {
+  const mockContent: AnyComponentNode = {
     id: 'text-1',
     type: 'Text',
-    properties: { text: 'Hello' },
+    properties: {text: 'Hello'},
   };
 
   beforeEach(async () => {
@@ -66,9 +65,9 @@ describe('Modal Component', () => {
     await TestBed.configureTestingModule({
       imports: [Modal],
       providers: [
-        { provide: MessageProcessor, useValue: {} },
-        { provide: Theme, useValue: mockTheme },
-        { provide: Catalog, useValue: {} },
+        {provide: MessageProcessor, useValue: {}},
+        {provide: Theme, useValue: mockTheme},
+        {provide: Catalog, useValue: {}},
       ],
     })
       .overrideComponent(Modal, {
@@ -87,7 +86,7 @@ describe('Modal Component', () => {
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('entryPointChild', mockEntryPoint);
     fixture.componentRef.setInput('contentChild', mockContent);
-    fixture.componentRef.setInput('component', { id: 'modal-1', type: 'Modal', weight: 1 });
+    fixture.componentRef.setInput('component', {id: 'modal-1', type: 'Modal', weight: 1});
     fixture.componentRef.setInput('weight', 1);
 
     fixture.detectChanges();

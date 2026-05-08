@@ -37,4 +37,4 @@ export * from './components/video';
 export * from './config';
 export * from './data/index';
 export * from './rendering/index';
-export * from './types';
+export * as Types from './types';

@@ -18,10 +18,7 @@
         {
           "id": "root",
           "component": "Column",
-          "children": [
-            "chart-title",
-            "category-list"
-          ]
+          "children": ["chart-title", "category-list"]
         },
         {
           "id": "chart-title",
@@ -49,10 +46,7 @@
           "id": "item-row",
           "component": "Row",
           "justify": "spaceBetween",
-          "children": [
-            "item-label",
-            "item-value"
-          ]
+          "children": ["item-label", "item-value"]
         },
         {
           "id": "item-label",

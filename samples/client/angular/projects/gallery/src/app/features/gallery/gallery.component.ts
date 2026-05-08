@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Surface } from '@a2ui/angular';
+import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Surface} from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
 
 interface GallerySample {
@@ -50,7 +50,7 @@ export class GalleryComponent {
             this.createComponent('Row', {
               children: [
                 this.createComponent('Image', {
-                  url: { literalString: 'https://picsum.photos/id/11/300/300' },
+                  url: {literalString: 'https://picsum.photos/id/11/300/300'},
                 }),
                 this.createComponent('Column', {
                   children: [
@@ -66,7 +66,7 @@ export class GalleryComponent {
             this.createComponent('Row', {
               children: [
                 this.createComponent('Image', {
-                  url: { literalString: 'https://picsum.photos/id/12/300/300' },
+                  url: {literalString: 'https://picsum.photos/id/12/300/300'},
                 }),
                 this.createComponent('Column', {
                   children: [
@@ -83,7 +83,7 @@ export class GalleryComponent {
             this.createComponent('Row', {
               children: [
                 this.createComponent('Image', {
-                  url: { literalString: 'https://picsum.photos/id/13/300/300' },
+                  url: {literalString: 'https://picsum.photos/id/13/300/300'},
                 }),
                 this.createComponent('Text', {
                   text: {
@@ -105,7 +105,7 @@ export class GalleryComponent {
         child: this.createComponent('Column', {
           children: [
             this.createComponent('Image', {
-              url: { literalString: 'https://picsum.photos/id/10/600/300' },
+              url: {literalString: 'https://picsum.photos/id/10/600/300'},
             }),
             this.createComponent('Text', {
               text: {
@@ -114,8 +114,8 @@ export class GalleryComponent {
               },
             }),
             this.createComponent('Button', {
-              action: { type: 'submit' },
-              child: this.createComponent('Text', { text: { literalString: 'Get Started' } }),
+              action: {type: 'submit'},
+              child: this.createComponent('Text', {text: {literalString: 'Get Started'}}),
             }),
           ],
           alignment: 'center',
@@ -132,32 +132,32 @@ export class GalleryComponent {
             this.createComponent('Row', {
               children: [
                 this.createComponent('TextField', {
-                  label: { literalString: 'Name' },
+                  label: {literalString: 'Name'},
                   type: 'text',
-                  text: { literalString: '' },
+                  text: {literalString: ''},
                 }),
               ],
             }),
             this.createComponent('Row', {
               children: [
                 this.createComponent('TextField', {
-                  label: { literalString: 'Email Address' },
+                  label: {literalString: 'Email Address'},
                   type: 'email',
-                  text: { literalString: '' },
+                  text: {literalString: ''},
                 }),
               ],
             }),
             this.createComponent('Row', {
               children: [
                 this.createComponent('TextField', {
-                  label: { literalString: 'Message' },
-                  text: { literalString: '' },
+                  label: {literalString: 'Message'},
+                  text: {literalString: ''},
                 }),
               ],
             }),
             this.createComponent('Button', {
-              action: { type: 'submit' },
-              child: this.createComponent('Text', { text: { literalString: 'Send Message' } }),
+              action: {type: 'submit'},
+              child: this.createComponent('Text', {text: {literalString: 'Send Message'}}),
             }),
           ],
         }),
@@ -178,7 +178,7 @@ export class GalleryComponent {
     this.activeSection = id;
     const element = document.getElementById('section-' + id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
   }
 

@@ -201,14 +201,8 @@ export const ContainsApi = {
   name: 'contains' as const,
   returnType: 'boolean' as const,
   schema: z.object({
-    string: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
-    substring: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    string: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
+    substring: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 
@@ -223,14 +217,8 @@ export const StartsWithApi = {
   name: 'starts_with' as const,
   returnType: 'boolean' as const,
   schema: z.object({
-    string: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
-    prefix: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    string: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
+    prefix: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 
@@ -245,14 +233,8 @@ export const EndsWithApi = {
   name: 'ends_with' as const,
   returnType: 'boolean' as const,
   schema: z.object({
-    string: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
-    suffix: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    string: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
+    suffix: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 
@@ -282,14 +264,8 @@ export const RegexApi = {
   name: 'regex' as const,
   returnType: 'boolean' as const,
   schema: z.object({
-    value: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
-    pattern: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    value: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
+    pattern: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 
@@ -347,10 +323,7 @@ export const EmailApi = {
   name: 'email' as const,
   returnType: 'boolean' as const,
   schema: z.object({
-    value: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    value: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 
@@ -483,10 +456,7 @@ export const OpenUrlApi = {
   name: 'openUrl' as const,
   returnType: 'void' as const,
   schema: z.object({
-    url: z.preprocess(
-      v => (v === undefined ? undefined : String(v)),
-      z.string(),
-    ),
+    url: z.preprocess(v => (v === undefined ? undefined : String(v)), z.string()),
   }),
 };
 

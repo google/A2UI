@@ -19,14 +19,16 @@ A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
 
-The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from a server (Agent). Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from an agent. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the renderer processes each message.
 
-Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
+Communication occurs via a stream of JSON objects. The renderer parses each object as a distinct message and incrementally builds or updates the UI. The agent-to-renderer protocol defines four message types:
 
-- `createSurface`: Signals the client to create a new surface and begin rendering it.
+- `createSurface`: Signals the renderer to create a new surface and begin rendering it.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
+
+End of agent turn is signaled by [transport layer](https://github.com/google/A2UI/tree/main/docs/concepts/transports.md).
 
 ## Changes from previous versions
 
@@ -146,15 +148,15 @@ The [`server_to_client.json`] envelope schema is designed to be catalog-agnostic
 To validate A2UI messages:
 
 1.  **Basic Catalog**: Map `catalog.json` to `basic_catalog.json`.
-2.  **Custom Catalog**: Map `catalog.json` to your custom catalog file (e.g., `my_custom_catalog.json`).
+2.  **Client Catalog**: Map `catalog.json` to your own catalog file (e.g., `my_company_catalog.json`).
 
 This indirection allows the same core envelope schema to be used with any compliant component catalog without modification.
 
-Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the basic catalog. It should have the same form as the basic catalog, and use common elements in the [`common_types.json`] schema.
+Defining your own catalog allows you to restrict the agent to using exactly the components and visual language that exist in your application. To use your own catalog, simply include it in the prompt in place of the basic catalog. It should have the same form as the basic catalog and use common elements in the [`common_types.json`] schema.
 
-### Validator compliance & custom catalogs
+### Validator compliance when defining catalogs
 
-To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
+To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), any catalog you define MUST adhere to the following strict typing rules:
 
 1.  **Single child references:** Any property that holds the ID of another component MUST use the `ComponentId` type defined in `common_types.json`.
     - Use: `"$ref": "common_types.json#/$defs/ComponentId"`
@@ -171,7 +173,7 @@ The envelope defines several message types, and every message streamed by the se
 
 ### `createSurface`
 
-This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
+This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. It is an error to send `createSurface` for a `surfaceId` that already exists without first deleting it. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
 
 **Properties:**
 
@@ -283,16 +285,17 @@ This message is sent by the server to respond to a client-initiated `action` tha
 
 - `actionId` (string, required): The unique ID of the action call this response belongs to. MUST match the `actionId` sent by the client.
 - `actionResponse` (object, required): The payload containing the response.
-    - `value` (any): The return value of the action. Present on success.
-    - `error` (object): Error details if the action failed.
-        - `code` (string): Error code.
-        - `message` (string): Description of the error.
+  - `value` (any): The return value of the action. Present on success.
+  - `error` (object): Error details if the action failed.
+    - `code` (string): Error code.
+    - `message` (string): Description of the error.
 
 Exactly one of `value` or `error` must be present.
 
 **Example:**
 
 Client sends this to the server:
+
 ```json
 {
   "version": "v0.10",
@@ -310,6 +313,7 @@ Client sends this to the server:
 ```
 
 Server responds with:
+
 ```json
 {
   "version": "v0.10",
@@ -347,7 +351,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The component catalog
 
-The set of available UI components and functions is defined in a **Catalog**. The basic catalog is defined in [`basic_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. Advanced use cases may want to define their own custom catalogs to support custom front end design systems or renderers. The server must generate messages that conform to the catalog understood by the client.
+The set of available UI components and functions is defined in a **Catalog**. The basic catalog is defined in [`basic_catalog.json`]. While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system. The server must generate messages that conform to the catalog understood by the client.
 
 ### UI composition: the adjacency list model
 
@@ -462,8 +466,8 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 {
   "company": "Acme Corp",
   "employees": [
-    { "name": "Alice", "role": "Engineer" },
-    { "name": "Bob", "role": "Designer" }
+    {"name": "Alice", "role": "Engineer"},
+    {"name": "Bob", "role": "Designer"}
   ]
 }
 ```
@@ -607,8 +611,8 @@ _Replace the entire data model:_
   "updateDataModel": {
     "surfaceId": "surface_123",
     "value": {
-      "user": { "firstName": "Alice", "lastName": "Smith" },
-      "preferences": { "theme": "dark" }
+      "user": {"firstName": "Alice", "lastName": "Smith"},
+      "preferences": {"theme": "dark"}
     }
   }
 }
@@ -667,7 +671,7 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
           "values": [
             {
               "call": "required",
-              "args": { "value": { "path": "/formData/terms" } }
+              "args": {"value": {"path": "/formData/terms"}}
             },
             {
               "call": "or",
@@ -675,11 +679,11 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
                 "values": [
                   {
                     "call": "required",
-                    "args": { "value": { "path": "/formData/email" } }
+                    "args": {"value": {"path": "/formData/email"}}
                   },
                   {
                     "call": "required",
-                    "args": { "value": { "path": "/formData/phone" } }
+                    "args": {"value": {"path": "/formData/phone"}}
                   }
                 ]
               }

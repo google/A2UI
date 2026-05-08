@@ -1,20 +1,28 @@
 {
   "name": "@a2ui/markdown-it",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A Markdown renderer using markdown-it and dompurify.",
-  "keywords": [],
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "repository": {
+    "directory": "renderers/markdown/markdown-it",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
   "bugs": {
     "url": "https://github.com/google/A2UI/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/google/A2UI.git",
-    "directory": "renderers/markdown/markdown-it"
-  },
+  "keywords": [
+    "a2ui",
+    "markdown",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "license": "Apache-2.0",
   "author": "Google",
   "type": "module",
+  "main": "./dist/src/markdown.js",
+  "types": "./dist/src/markdown.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/markdown.d.ts",
@@ -28,11 +36,12 @@
     "build": "wireit",
     "format": "prettier --ignore-path ../.gitignore --write .",
     "format:check": "prettier --ignore-path ../.gitignore --check .",
-    "prepack": "npm run build",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && node ../../scripts/prepare-publish.mjs && npm publish dist/ --access public",
     "test": "wireit"
   },
   "dependencies": {
-    "dompurify": "^3.3.1",
+    "dompurify": "3.3.1",
     "markdown-it": "^14.1.0"
   },
   "devDependencies": {

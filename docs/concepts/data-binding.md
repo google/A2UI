@@ -1,6 +1,6 @@
 # Data Binding
 
-Data binding connects UI components to application state using JSON Pointer paths ([RFC 6901](https://tools.ietf.org/html/rfc6901)). It's what allows A2UI to efficiently define layouts for large arrays of data, or to show updated content without being regenerated from scratch.
+Data binding connects UI components to application state using JSON Pointer paths ([RFC 6901](https://tools.ietf.org/html/rfc6901)). It allows A2UI to efficiently define layouts for large arrays of data and to show updated content without regenerating it from scratch.
 
 ## Structure vs. State
 
@@ -9,7 +9,12 @@ A2UI separates:
 1. **UI Structure** (Components): What the interface looks like
 2. **Application State** (Data Model): What data it displays
 
-This enables: reactive updates, data-driven UIs, reusable templates, and bidirectional binding.
+This enables:
+
+- Reactive updates.
+- Data-driven UIs.
+- Reusable templates.
+- Bidirectional binding.
 
 ## The Data Model
 
@@ -101,7 +106,7 @@ Components bound to data paths automatically update when the data changes:
   "id": "status",
   "component": {
     "Text": {
-      "text": { "path": "/order/status" }
+      "text": {"path": "/order/status"}
     }
   }
 }
@@ -133,11 +138,12 @@ Use templates to render arrays:
 ```
 
 **Data:**
+
 ```json
 {
   "products": [
-    { "name": "Widget", "price": 9.99 },
-    { "name": "Gadget", "price": 19.99 }
+    {"name": "Widget", "price": 9.99},
+    {"name": "Gadget", "price": 19.99}
   ]
 }
 ```
@@ -153,7 +159,7 @@ Inside a template, paths are scoped to the array item:
   "id": "product-name",
   "component": {
     "Text": {
-      "text": { "path": "/name" }
+      "text": {"path": "/name"}
     }
   }
 }
@@ -168,32 +174,32 @@ Adding/removing items automatically updates the rendered components.
 
 Interactive components update the data model bidirectionally:
 
-| Component | Example | User Action | Data Update |
-|-----------|---------|-------------|-------------|
-| **TextField** | `{"text": {"path": "/form/name"}}` | Types "Alice" | `/form/name` = "Alice" |
-| **CheckBox** | `{"value": {"path": "/form/agreed"}}` | Checks box | `/form/agreed` = true |
+| Component          | Example                                     | User Action      | Data Update              |
+| ------------------ | ------------------------------------------- | ---------------- | ------------------------ |
+| **TextField**      | `{"text": {"path": "/form/name"}}`          | Types "Alice"    | `/form/name` = "Alice"   |
+| **CheckBox**       | `{"value": {"path": "/form/agreed"}}`       | Checks box       | `/form/agreed` = true    |
 | **MultipleChoice** | `{"selections": {"path": "/form/country"}}` | Selects "Canada" | `/form/country` = ["ca"] |
 
 ## Best Practices
 
-**1. Use granular updates** - Update only changed paths:
-```json
-{
-  "dataModelUpdate": {
-    "path": "/user",
-    "contents": [
-      { "key": "name", "valueString": "Alice" }
-    ]
+- **Use granular updates**: Update only changed paths.
+
+  ```json
+  {
+    "dataModelUpdate": {
+      "path": "/user",
+      "contents": [{"key": "name", "valueString": "Alice"}]
+    }
   }
-}
-```
+  ```
 
-**2. Organize by domain** - Group related data:
-```json
-{"user": {...}, "cart": {...}, "ui": {...}}
-```
+- **Organize by domain**: Group related data.
 
-**3. Pre-compute display values** - Agent formats data (currency, dates) before sending:
-```json
-{"price": "$19.99"}  // Not: {"price": 19.99}
-```
+  ```json
+  {"user": {...}, "cart": {...}, "ui": {...}}
+  ```
+
+- **Pre-compute display values**: Formats data (currency, dates) on the agent before sending.
+  ```json
+  {"price": "$19.99"} // Not: {"price": 19.99}
+  ```

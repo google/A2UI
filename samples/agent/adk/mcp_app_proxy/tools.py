@@ -22,6 +22,10 @@ from mcp.client.session import ClientSession
 
 logger = logging.getLogger(__name__)
 
+# Global variables for Pong game.
+PONG_SURFACE_ID = "pong_surface"
+PONG_CURRENT_SCORE = {"player": 0, "cpu": 0}
+
 
 # Define get_calculator_app tool in a way that the LlmAgent can use.
 async def get_calculator_app(tool_context: ToolContext):
@@ -108,3 +112,121 @@ async def calculate_via_mcp(operation: str, a: float, b: float):
   except Exception as e:
     logger.error(f"Error calling MCP calculate: {e} {traceback.format_exc()}")
     return f"Error connecting to MCP server: {e}"
+
+
+async def score_update(tool_context: ToolContext, player: str):
+  """Updates the score for Pong game.
+
+  Args:
+      player: The player who scored a point. Expected values: "player" or "cpu".
+  """
+  global PONG_CURRENT_SCORE
+  if player == "player":
+    PONG_CURRENT_SCORE["player"] += 1
+  elif player == "cpu":
+    PONG_CURRENT_SCORE["cpu"] += 1
+  else:
+    logger.error(f"Invalid player for score update: {player}")
+    return {"error": f"Invalid player: {player}"}
+
+  logger.info(
+      f"Score updated: Player={PONG_CURRENT_SCORE['player']},"
+      f" CPU={PONG_CURRENT_SCORE['cpu']}"
+  )
+
+  # Send dataModelUpdate
+  messages = [{
+      "dataModelUpdate": {
+          "surfaceId": PONG_SURFACE_ID,
+          "path": "/",
+          "contents": [{
+              "key": "pong_state",
+              "valueMap": [
+                  {"key": "player_score", "valueNumber": PONG_CURRENT_SCORE["player"]},
+                  {"key": "cpu_score", "valueNumber": PONG_CURRENT_SCORE["cpu"]},
+              ],
+          }],
+      }
+  }]
+  tool_context.actions.skip_summarization = True
+  return {"validated_a2ui_json": messages}
+
+
+async def get_pong_app_a2ui_json(tool_context: ToolContext):
+  """Fetches the Pong game app."""
+
+  current_dir = os.path.dirname(os.path.abspath(__file__))
+  html_file_path = os.path.join(current_dir, "pong_app.html")
+
+  try:
+    with open(html_file_path, "r", encoding="utf-8") as f:
+      html_content = f.read()
+  except FileNotFoundError:
+    logger.error(f"Could not find {html_file_path}")
+    return {"error": "Could not find pong app HTML file."}
+
+  encoded_html = "url_encoded:" + urllib.parse.quote(html_content)
+
+  # Reset score on reload
+  global PONG_CURRENT_SCORE
+  PONG_CURRENT_SCORE = {"player": 0, "cpu": 0}
+
+  messages = [
+      {
+          "beginRendering": {
+              "surfaceId": PONG_SURFACE_ID,
+              "root": "pong_layout_root",
+          },
+      },
+      {
+          "dataModelUpdate": {
+              "surfaceId": PONG_SURFACE_ID,
+              "path": "/",
+              "contents": [{
+                  "key": "pong_state",
+                  "valueMap": [
+                      {
+                          "key": "player_score",
+                          "valueNumber": PONG_CURRENT_SCORE["player"],
+                      },
+                      {"key": "cpu_score", "valueNumber": PONG_CURRENT_SCORE["cpu"]},
+                  ],
+              }],
+          }
+      },
+      {
+          "surfaceUpdate": {
+              "surfaceId": PONG_SURFACE_ID,
+              "components": [{
+                  "id": "pong_layout_root",
+                  "component": {
+                      "PongLayout": {
+                          "mcpComponent": {
+                              "id": "mcp_app_root",
+                              "component": {
+                                  "McpApp": {
+                                      "content": {"literalString": encoded_html},
+                                      "title": {"literalString": "Neon Pong"},
+                                      "allowedTools": ["score_update"],
+                                  }
+                              },
+                          },
+                          "scoreboardComponent": {
+                              "id": "scoreboard_root",
+                              "component": {
+                                  "PongScoreBoard": {
+                                      "playerScore": {
+                                          "path": "/pong_state/player_score"
+                                      },
+                                      "cpuScore": {"path": "/pong_state/cpu_score"},
+                                  }
+                              },
+                          },
+                      }
+                  },
+              }],
+          },
+      },
+  ]
+  tool_context.actions.skip_summarization = True
+  return {"validated_a2ui_json": messages}

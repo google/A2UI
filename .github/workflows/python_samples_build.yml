@@ -19,14 +19,14 @@ on:
     branches:
       - main
     paths:
-      - 'samples/agent/adk/**'
-      - 'agent_sdks/python/**'
-      - 'specification/**/json/**'
+      - "samples/agent/adk/**"
+      - "agent_sdks/python/**"
+      - "specification/**/json/**"
   pull_request:
     paths:
-      - 'samples/agent/adk/**'
-      - 'agent_sdks/python/**'
-      - 'specification/**/json/**'
+      - "samples/agent/adk/**"
+      - "agent_sdks/python/**"
+      - "specification/**/json/**"
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install `uv` globally
         run: |
@@ -55,10 +55,6 @@ jobs:
         run: |
           PYTHONPATH=agent_sdks/python/src uv run --project agent_sdks/python pytest -vv samples/agent/adk/tests/test_examples_validation.py
 
-      - name: Build contact_lookup
-        working-directory: samples/agent/adk/contact_lookup
-        run: uv build .
-
       - name: Build orchestrator
         working-directory: samples/agent/adk/orchestrator
         run: uv build .
@@ -68,5 +64,5 @@ jobs:
         run: uv build .
 
       - name: Build rizzcharts
-        working-directory: samples/agent/adk/rizzcharts
+        working-directory: samples/agent/adk/rizzcharts/python
         run: uv build .

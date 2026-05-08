@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { DestroyRef } from '@angular/core';
-import { signal as preactSignal } from '@preact/signals-core';
-import { ComponentContext } from '@a2ui/web_core/v0_9';
-import { ComponentBinder } from './component-binder.service';
+import {TestBed} from '@angular/core/testing';
+import {DestroyRef} from '@angular/core';
+import {signal as preactSignal} from '@preact/signals-core';
+import {ComponentContext} from '@a2ui/web_core/v0_9';
+import {Child, ComponentBinder} from './component-binder.service';
 
 describe('ComponentBinder', () => {
   let binder: ComponentBinder;
   let mockDestroyRef: jasmine.SpyObj<DestroyRef>;
-  let onDestroyCallback: () => void;
 
   beforeEach(() => {
-    onDestroyCallback = () => {};
     mockDestroyRef = jasmine.createSpyObj('DestroyRef', ['onDestroy']);
     mockDestroyRef.onDestroy.and.callFake((callback: () => void) => {
-      onDestroyCallback = callback;
       return () => {}; // Return unregister function
     });
 
     TestBed.configureTestingModule({
-      providers: [ComponentBinder, { provide: DestroyRef, useValue: mockDestroyRef }],
+      providers: [ComponentBinder, {provide: DestroyRef, useValue: mockDestroyRef}],
     });
 
     binder = TestBed.inject(ComponentBinder);
@@ -84,7 +81,7 @@ describe('ComponentBinder', () => {
   it('should add update() method for data bindings (two-way binding)', () => {
     const mockComponentModel = {
       properties: {
-        value: { path: '/data/text' },
+        value: {path: '/data/text'},
       },
     };
 
@@ -139,5 +136,71 @@ describe('ComponentBinder', () => {
     // Call onUpdate on literal, should not crash or call set
     bound['text'].onUpdate('new');
     expect(mockDataContext.set).not.toHaveBeenCalled();
+  });
+
+  it('should expand ChildList object templates', () => {
+    const mockComponentModel = {
+      properties: {
+        children: {componentId: 'item-comp', path: '/list/data'},
+      },
+    };
+
+    const mockListSig = preactSignal(['a', 'b']);
+    const mockDataContext = {
+      resolveSignal: jasmine.createSpy('resolveSignal').and.callFake((val: any) => {
+        if (val && val.path === '/list/data') return mockListSig;
+        return preactSignal(val);
+      }),
+      nested: jasmine.createSpy('nested').and.callFake((path: string) => ({
+        path,
+        nested: (sub: string) => ({path: `${path}/${sub}`}),
+      })),
+      set: jasmine.createSpy('set'),
+    };
+
+    const mockContext = {
+      componentModel: mockComponentModel,
+      dataContext: mockDataContext,
+    } as unknown as ComponentContext;
+
+    const bound = binder.bind(mockContext);
+
+    expect(bound['children']).toBeDefined();
+    const children = bound['children'].value() as Child[];
+    expect(Array.isArray(children)).toBe(true);
+    expect(children.length).toBe(2);
+    expect(children[0]).toEqual({id: 'item-comp', basePath: '/list/data/0'});
+    expect(children[1]).toEqual({id: 'item-comp', basePath: '/list/data/1'});
+  });
+
+  it('should handle static array of child IDs', () => {
+    const mockComponentModel = {
+      properties: {
+        children: ['child1', 'child2'],
+      },
+    };
+
+    const mockpSig = preactSignal(['child1', 'child2']);
+    const mockDataContext = {
+      resolveSignal: jasmine.createSpy('resolveSignal').and.returnValue(mockpSig),
+      path: '/current/path',
+      set: jasmine.createSpy('set'),
+    };
+
+    const mockContext = {
+      componentModel: mockComponentModel,
+      dataContext: mockDataContext,
+    } as unknown as ComponentContext;
+
+    const bound = binder.bind(mockContext);
+
+    expect(bound['children']).toBeDefined();
+    const children = bound['children'].value() as Child[];
+    expect(Array.isArray(children)).toBe(true);
+    expect(children.length).toBe(2);
+    expect(children[0]).toEqual({id: 'child1', basePath: '/current/path'});
+    expect(children[1]).toEqual({id: 'child2', basePath: '/current/path'});
+
+    expect((bound['children'] as any).template).toBeUndefined();
   });
 });

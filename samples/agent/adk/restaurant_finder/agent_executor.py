@@ -31,7 +31,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.a2a.extension import try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
@@ -63,6 +63,7 @@ class RestaurantAgentExecutor(AgentExecutor):
           "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
       )
 
+    use_streaming = True
     if context.message and context.message.parts:
       logger.info(
           f"--- AGENT_EXECUTOR: Processing {len(context.message.parts)} message"
@@ -70,8 +71,15 @@ class RestaurantAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
-          if "userAction" in part.root.data:
-            logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
+          if "useStreaming" in part.root.data:
+            use_streaming = part.root.data["useStreaming"]
+            logger.info(f"  Part {i}: Found useStreaming={use_streaming}")
+
+          if part.root.data.get("version") == "v0.9" and "action" in part.root.data:
+            logger.info(f"  Part {i}: Found a2ui v0.9 action payload.")
+            ui_event_part = part.root.data["action"]
+          elif "userAction" in part.root.data:
+            logger.info(f"  Part {i}: Found a2ui v0.8 UI ClientEvent payload.")
             ui_event_part = part.root.data["userAction"]
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
@@ -82,7 +90,7 @@ class RestaurantAgentExecutor(AgentExecutor):
 
     if ui_event_part:
       logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-      action = ui_event_part.get("actionName")
+      action = ui_event_part.get("name")
       ctx = ui_event_part.get("context", {})
 
       if action == "book_restaurant":
@@ -121,13 +129,19 @@ class RestaurantAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in self._agent.stream(query, task.context_id, active_ui_version):
+    async for item in self._agent.stream(
+        query, task.context_id, active_ui_version, use_streaming=use_streaming
+    ):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
-        await updater.update_status(
-            TaskState.working,
-            new_agent_text_message(item["updates"], task.context_id, task.id),
-        )
+        message = None
+        if "parts" in item:
+          message = new_agent_parts_message(item["parts"], task.context_id, task.id)
+        elif "updates" in item:
+          message = new_agent_text_message(item["updates"], task.context_id, task.id)
+
+        if message:
+          await updater.update_status(TaskState.working, message)
         continue
 
       final_state = (

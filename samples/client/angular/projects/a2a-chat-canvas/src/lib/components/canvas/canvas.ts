@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Renderer } from '@a2ui/angular';
-import { InteractivityChecker } from '@angular/cdk/a11y';
+import {Renderer} from '@a2ui/angular';
+import {InteractivityChecker} from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +24,7 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import { CanvasService } from '../../services/canvas-service';
+import {CanvasService} from '../../services/canvas-service';
 
 /**
  * Component responsible for rendering A2UI content on a canvas.

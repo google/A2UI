@@ -26,14 +26,7 @@ export function isSignal(val: any): val is Signal<any> {
   return val && typeof val === 'object' && 'value' in val && 'peek' in val;
 }
 
-export type A2uiReturnType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'array'
-  | 'object'
-  | 'any'
-  | 'void';
+export type A2uiReturnType = 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
 
 export type InferA2uiReturnType<T extends A2uiReturnType> = T extends 'string'
   ? string
@@ -84,11 +77,7 @@ export function createFunctionImplementation<
     name: api.name,
     returnType: api.returnType,
     schema: api.schema,
-    execute: execute as (
-      args: Record<string, any>,
-      ctx: DataContext,
-      ab?: AbortSignal,
-    ) => unknown,
+    execute: execute as (args: Record<string, any>, ctx: DataContext, ab?: AbortSignal) => unknown,
   };
 }
 
@@ -120,9 +109,7 @@ export interface ComponentApi<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
  * This type uses `z.infer` on the `schema` property of a `ComponentApi` object.
  * It is used to access the schema props of a component with type safety.
  */
-export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<
-  Api['schema']
->;
+export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<Api['schema']>;
 
 /**
  * A collection of available components and functions.
@@ -177,10 +164,7 @@ export class Catalog<T extends ComponentApi> {
     this.invoker = (name, rawArgs, ctx, abortSignal) => {
       const fn = this.functions.get(name);
       if (!fn) {
-        throw new A2uiExpressionError(
-          `Function not found in catalog '${this.id}': ${name}`,
-          name,
-        );
+        throw new A2uiExpressionError(`Function not found in catalog '${this.id}': ${name}`, name);
       }
 
       // Provides runtime safety: Coerces and strips invalid arguments before execute()
