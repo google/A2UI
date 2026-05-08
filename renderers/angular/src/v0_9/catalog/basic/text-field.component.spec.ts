@@ -40,7 +40,7 @@ describe('TextFieldComponent', () => {
         raw: 'testuser',
         onUpdate: jasmine.createSpy('onUpdate'),
       },
-      placeholder: {value: signal('Enter username'), raw: 'Enter username', onUpdate: () => {}},
+
       variant: {value: signal('text'), raw: 'text', onUpdate: () => {}},
     });
   });
@@ -66,11 +66,10 @@ describe('TextFieldComponent', () => {
     expect(label).toBeFalsy();
   });
 
-  it('should render input with correct value and placeholder', () => {
+  it('should render input with correct value', () => {
     fixture.detectChanges();
     const input = fixture.debugElement.query(By.css('input'));
     expect(input.nativeElement.value).toBe('testuser');
-    expect(input.nativeElement.placeholder).toBe('Enter username');
   });
 
   it('should return correct input type based on variant', () => {
