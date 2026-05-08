@@ -162,11 +162,11 @@
                 {
                   "type": "object",
                   "properties": {
-                    "path": {
+                    "svgPath": {
                       "type": "string"
                     }
                   },
-                  "required": ["path"],
+                  "required": ["svgPath"],
                   "additionalProperties": false
                 }
               ]
