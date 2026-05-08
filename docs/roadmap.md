@@ -6,10 +6,10 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 ### Protocol
 
-| Version  | Status    | Notes                                   |
-| -------- | --------- | --------------------------------------- |
-| **v0.9** | ✅ Stable | Prompt-First specification improvements |
-| **v0.10** | 🚧 Draft | Draft of the next release |
+| Version   | Status    | Notes                                   |
+| --------- | --------- | --------------------------------------- |
+| **v0.9**  | ✅ Stable | Prompt-First specification improvements |
+| **v0.10** | 🚧 Draft  | Draft of the next release               |
 
 Key features:
 

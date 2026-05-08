@@ -134,24 +134,55 @@ Let's peek at what the agent is sending. Here's a simplified example of the JSON
 **Creating the surface:**
 
 ```json
-{"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"}}
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "main",
+    "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+  }
+}
 ```
 
 **Defining the UI:**
 
 ```json
-{"version": "v0.9", "updateComponents": {"surfaceId": "main", "components": [
-  {"id": "header", "component": "Text", "text": "# Book Your Table", "variant": "h1"},
-  {"id": "date-picker", "component": "DateTimeInput", "label": "Select Date", "value": {"path": "/reservation/date"}, "enableDate": true},
-  {"id": "submit-text", "component": "Text", "text": "Confirm Reservation"},
-  {"id": "submit-btn", "component": "Button", "child": "submit-text", "variant": "primary", "action": {"event": {"name": "confirm_booking"}}}
-]}}
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "main",
+    "components": [
+      {"id": "header", "component": "Text", "text": "# Book Your Table", "variant": "h1"},
+      {
+        "id": "date-picker",
+        "component": "DateTimeInput",
+        "label": "Select Date",
+        "value": {"path": "/reservation/date"},
+        "enableDate": true
+      },
+      {"id": "submit-text", "component": "Text", "text": "Confirm Reservation"},
+      {
+        "id": "submit-btn",
+        "component": "Button",
+        "child": "submit-text",
+        "variant": "primary",
+        "action": {"event": {"name": "confirm_booking"}}
+      }
+    ]
+  }
+}
 ```
 
 **Populating data:**
 
 ```json
-{"version": "v0.9", "updateDataModel": {"surfaceId": "main", "path": "/reservation", "value": {"date": "2025-12-15", "time": "19:00", "guests": 2}}}
+{
+  "version": "v0.9",
+  "updateDataModel": {
+    "surfaceId": "main",
+    "path": "/reservation",
+    "value": {"date": "2025-12-15", "time": "19:00", "guests": 2}
+  }
+}
 ```
 
 TIP: It's Just JSON
