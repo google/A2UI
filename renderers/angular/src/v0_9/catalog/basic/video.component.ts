@@ -18,7 +18,6 @@ import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
 import {BasicCatalogComponent} from './basic-catalog-component';
 import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
-
 /**
  * Angular implementation of the A2UI Video component (v0.9).
  *
@@ -33,12 +32,7 @@ import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
   imports: [],
   template: `
     <div class="a2ui-video-container">
-      <video
-        [attr.src]="url() || null"
-        controls
-
-        class="a2ui-video"
-      >
+      <video [attr.src]="url() || null" controls class="a2ui-video">
         Your browser does not support the video tag.
       </video>
     </div>
@@ -61,5 +55,4 @@ import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class VideoComponent extends BasicCatalogComponent<typeof VideoApi> {
   readonly url = computed(() => this.props()['url']?.value());
-
 }
