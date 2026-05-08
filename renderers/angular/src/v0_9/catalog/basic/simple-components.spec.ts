@@ -280,6 +280,7 @@ describe('Simple Components', () => {
       expect(icon.textContent.trim()).toBe('star_border');
     });
 
+    it('should render path icon', () => {
       setComponentProps(fixture, {
         ...defaultProps,
         name: createBoundProperty({
