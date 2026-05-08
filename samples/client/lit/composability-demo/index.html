@@ -269,19 +269,36 @@
       background: var(--surface-color);
       border: 1px solid var(--surface-border);
       border-radius: 24px;
-      padding: 28px;
+      padding: 0; /* SEAMLESS BORDER-TO-BORDER BODY */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card:hover {
+      transform: translateY(-4px);
     }
 
     .card-title {
       font-family: var(--title-font);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 16px;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.01);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: var(--text-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .card-body {
+      padding: 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .console {
@@ -308,7 +325,7 @@
     .log-warn { color: var(--warning-color); }
 
     .shimmer {
-      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%);
       background-size: 200% 100%;
       animation: loading-shimmer 1.5s infinite;
     }
@@ -394,7 +411,9 @@
           <span>Surface A: Standard Catalog Primitives</span>
           <span style="font-size:12px; color:var(--success-color);">Bundled</span>
         </div>
-        <div id="surface-a" style="min-height:60px; display:flex; flex-direction:column; gap:12px;"></div>
+        <div class="card-body" style="padding: 20px 24px;">
+          <div id="surface-a" style="min-height:60px; display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
       </div>
 
       <!-- Local Pre-Registered Card -->
@@ -403,8 +422,10 @@
           <span>Surface B: Dynamic Component (Option B: Local Loading)</span>
           <span id="surface-b-badge" style="font-size:12px; color:var(--warning-color);">Awaiting Loading...</span>
         </div>
-        <div id="surface-b" style="min-height:80px;">
-          <div class="a2ui-loading-shimmer shimmer" style="height:80px; border-radius:12px;"></div>
+        <div class="card-body">
+          <div id="surface-b" style="min-height:80px; display:flex; flex-direction:column; justify-content:stretch; align-items:stretch;">
+            <div class="a2ui-loading-shimmer shimmer" style="height:80px;"></div>
+          </div>
         </div>
       </div>
 
@@ -414,8 +435,10 @@
           <span>Surface C: Dynamic Component (Option B: Remote SRI Check)</span>
           <span id="surface-c-badge" style="font-size:12px; color:var(--warning-color);">Awaiting Loading...</span>
         </div>
-        <div id="surface-c" style="min-height:200px;">
-          <div class="a2ui-loading-shimmer shimmer" style="height:200px; border-radius:12px;"></div>
+        <div class="card-body">
+          <div id="surface-c" style="min-height:200px; display:flex; flex-direction:column; justify-content:stretch; align-items:stretch;">
+            <div class="a2ui-loading-shimmer shimmer" style="height:200px;"></div>
+          </div>
         </div>
       </div>
     </div>

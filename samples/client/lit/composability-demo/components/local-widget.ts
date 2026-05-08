@@ -25,18 +25,13 @@ export class A2uiLocalWidget extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 24px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 28px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
       color: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      border: none;
+      border-radius: 0;
       font-family: 'Outfit', system-ui, sans-serif;
-      transition: transform 0.3s ease;
-      margin: 16px 0;
       box-sizing: border-box;
-    }
-    :host(:hover) {
-      transform: translateY(-4px);
     }
     h3 {
       margin: 0 0 8px 0;

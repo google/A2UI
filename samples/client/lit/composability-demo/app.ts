@@ -121,7 +121,7 @@ async function renderSurfaceB() {
 
         const resultEl = document.createElement('div');
         resultEl.className = 'agent-result';
-        resultEl.style.cssText = 'margin-top: 16px; padding: 16px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--primary-color); border-radius: 12px; color: #a5b4fc; font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; box-shadow: 0 4px 12px rgba(99,102,241,0.15);';
+        resultEl.style.cssText = 'margin: 16px 28px; padding: 16px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--primary-color); border-radius: 12px; color: #a5b4fc; font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(99,102,241,0.15);';
         resultEl.innerHTML = `⚡ Agent Response: local_widget_click action received successfully!`;
         container.appendChild(resultEl);
       }
@@ -162,7 +162,7 @@ async function renderSurfaceC() {
         <html>
         <head>
           <style>
-            body { font-family: sans-serif; background: #111827; color: white; padding: 24px; border-radius: 12px; text-align: center; margin: 0; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05); }
+            body { font-family: sans-serif; background: #111827; color: white; padding: 28px; text-align: center; margin: 0; box-sizing: border-box; }
             h3 { margin-top: 0; font-size: 18px; color: #a5b4fc; }
             p { font-size: 13px; color: #9ca3af; line-height: 1.5; margin-bottom: 16px; }
             button { background: #6366f1; color: white; border: none; padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(99,102,241,0.3); transition: all 0.2s; }
@@ -195,7 +195,7 @@ async function renderSurfaceC() {
 
         const resultEl = document.createElement('div');
         resultEl.className = 'agent-result';
-        resultEl.style.cssText = 'margin-top: 16px; padding: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success-color); border-radius: 12px; color: var(--success-color); font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s ease; box-shadow: 0 4px 12px rgba(16,185,129,0.15);';
+        resultEl.style.cssText = 'margin: 16px 28px; padding: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success-color); border-radius: 12px; color: var(--success-color); font-size: 14px; font-weight: 600; text-align: center; animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(16,185,129,0.15);';
         resultEl.innerHTML = `✓ Agent Simulated Tool Success: calculate_sum(${x}, ${y}) = ${sum}`;
         container.appendChild(resultEl);
       }

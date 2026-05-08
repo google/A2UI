@@ -34,10 +34,10 @@ export class A2uiMcpApp extends LitElement {
     :host {
       display: block;
       width: 100%;
-      border: 1px solid var(--a2ui-color-border, #eee);
+      border: none;
       position: relative;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 0;
       background: #fff;
       box-sizing: border-box;
     }
