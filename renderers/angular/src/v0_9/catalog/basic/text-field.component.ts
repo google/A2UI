@@ -49,7 +49,7 @@ import {AnyDuringSchemaAlignment} from '../types';
         [type]="inputType()"
         [value]="value()"
         (input)="handleInput($event)"
-        [placeholder]="placeholder()"
+
         [class.invalid]="props()['isValid']?.value() === false"
       />
       @for (message of props()['validationErrors']?.value(); track message) {
@@ -98,9 +98,7 @@ import {AnyDuringSchemaAlignment} from '../types';
 export class TextFieldComponent extends BasicCatalogComponent<typeof TextFieldApi> {
   readonly label = computed(() => this.props()['label']?.value());
   readonly value = computed(() => this.props()['value']?.value() || '');
-  readonly placeholder = computed(
-    () => (this.props() as AnyDuringSchemaAlignment)['placeholder']?.value() || '',
-  );
+
   readonly variant = computed(() => this.props()['variant']?.value());
 
   readonly inputType = computed(() => {
