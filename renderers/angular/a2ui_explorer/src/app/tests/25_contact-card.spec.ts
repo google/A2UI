@@ -24,7 +24,7 @@ describe('Example: Contact Card', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Contact Card');
+    fixture = await loadExample('Contact Card');
     component = fixture.componentInstance;
     textContent = fixture.nativeElement.textContent;
   });

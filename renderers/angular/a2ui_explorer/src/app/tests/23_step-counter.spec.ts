@@ -23,7 +23,7 @@ describe('Example: Step Counter', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Step Counter');
+    fixture = await loadExample('Step Counter');
     textContent = fixture.nativeElement.textContent;
   });
 

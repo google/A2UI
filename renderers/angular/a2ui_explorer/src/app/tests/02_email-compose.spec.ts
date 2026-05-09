@@ -24,7 +24,7 @@ describe('Example: Email Compose', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Email Compose');
+    fixture = await loadExample('Email Compose');
     component = fixture.componentInstance;
     textContent = fixture.nativeElement.textContent;
   });

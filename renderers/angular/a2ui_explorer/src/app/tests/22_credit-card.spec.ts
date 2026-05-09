@@ -23,7 +23,7 @@ describe('Example: Credit Card', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Credit Card');
+    fixture = await loadExample('Credit Card');
     textContent = fixture.nativeElement.textContent;
   });
 

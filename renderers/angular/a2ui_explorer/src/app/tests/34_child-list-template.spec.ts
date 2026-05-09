@@ -23,7 +23,7 @@ describe('Example: ChildList Template Expansion', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('ChildList Template Expansion');
+    fixture = await loadExample('ChildList Template Expansion');
     textContent = fixture.nativeElement.textContent;
   });
 

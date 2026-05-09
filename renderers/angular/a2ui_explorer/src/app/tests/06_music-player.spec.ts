@@ -23,7 +23,7 @@ describe('Example: Music Player', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Music Player');
+    fixture = await loadExample('Music Player');
     textContent = fixture.nativeElement.textContent;
   });
 

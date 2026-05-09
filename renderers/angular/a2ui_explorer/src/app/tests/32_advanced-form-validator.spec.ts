@@ -23,7 +23,7 @@ describe('Example: Advanced Form Validator', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Advanced Form Validator');
+    fixture = await loadExample('Advanced Form Validator');
     textContent = fixture.nativeElement.textContent;
   });
 

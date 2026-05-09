@@ -24,7 +24,7 @@ describe('Example: Software Purchase', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Software Purchase');
+    fixture = await loadExample('Software Purchase');
     component = fixture.componentInstance;
     textContent = fixture.nativeElement.textContent;
   });

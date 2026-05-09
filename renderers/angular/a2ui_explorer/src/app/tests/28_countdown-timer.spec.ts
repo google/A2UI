@@ -23,7 +23,7 @@ describe('Example: Countdown Timer', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Countdown Timer');
+    fixture = await loadExample('Countdown Timer');
     textContent = fixture.nativeElement.textContent;
   });
 

@@ -23,7 +23,7 @@ describe('Example: Sports Player', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Sports Player');
+    fixture = await loadExample('Sports Player');
     textContent = fixture.nativeElement.textContent;
   });
 

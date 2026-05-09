@@ -23,7 +23,7 @@ describe('Example: Login Form with Validation', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Login Form with Validation');
+    fixture = await loadExample('Login Form with Validation');
     textContent = fixture.nativeElement.textContent;
   });
 

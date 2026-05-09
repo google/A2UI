@@ -23,7 +23,7 @@ describe('Example: Weather Current', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Weather Current');
+    fixture = await loadExample('Weather Current');
     textContent = fixture.nativeElement.textContent;
   });
 

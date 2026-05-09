@@ -22,7 +22,7 @@ describe('Example: Markdown Text Support', () => {
   let fixture: ComponentFixture<DemoComponent>;
 
   beforeEach(async () => {
-        fixture = await loadExample('Markdown Text Support');
+    fixture = await loadExample('Markdown Text Support');
   });
 
   it('should render text content', async () => {

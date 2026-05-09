@@ -23,7 +23,7 @@ describe('Example: Calendar Day', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Calendar Day');
+    fixture = await loadExample('Calendar Day');
     textContent = fixture.nativeElement.textContent;
   });
 

@@ -24,7 +24,7 @@ describe('Example: Account Balance', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Account Balance');
+    fixture = await loadExample('Account Balance');
     component = fixture.componentInstance;
     textContent = fixture.nativeElement.textContent;
   });

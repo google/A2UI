@@ -24,7 +24,7 @@ describe('Example: Notification Permission', () => {
   let textContent: string;
 
   beforeEach(async () => {
-        fixture = await loadExample('Notification Permission');
+    fixture = await loadExample('Notification Permission');
     component = fixture.componentInstance;
     textContent = fixture.nativeElement.textContent;
   });
