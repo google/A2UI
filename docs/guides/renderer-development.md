@@ -117,24 +117,24 @@ Implement the following communication features:
     - Optionally, if the server supports it, provide `inlineCatalogs` for custom, on-the-fly component definitions.
 - **Error Reporting**: Implement a mechanism to send an `error` message to the server to report any client-side errors (e.g., failed data binding, unknown component type).
 
-## II. Standard Component Catalog Checklist
+## II. Basic Component Catalog Checklist
 
-To ensure a consistent user experience across platforms, A2UI defines a standard set of components. Your client should map these abstract definitions to their corresponding native UI widgets.
+To ensure a consistent user experience across platforms, A2UI defines a basic set of components. Your client should map these abstract definitions to their corresponding native UI widgets.
 
 ### Basic Content
 
-The standard catalog includes the following basic content components:
+The basic catalog includes the following basic content components:
 
 - **Text**: Render text content. Must support data binding on `text` and a `usageHint` for styling (h1-h5, body, caption).
 - **Image**: Render an image from a URL. Must support `fit` (cover, contain, etc.) and `usageHint` (avatar, hero, etc.) properties.
-- **Icon**: Render a predefined icon from the standard set specified in the catalog.
+- **Icon**: Render a predefined icon from the basic set specified in the catalog.
 - **Video**: Render a video player for a given URL.
 - **AudioPlayer**: Render an audio player for a given URL, optionally with a description.
 - **Divider**: Render a visual separator, supporting both `horizontal` and `vertical` axes.
 
 ### Layout & Containers
 
-The standard catalog includes the following layout and container components:
+The basic catalog includes the following layout and container components:
 
 - **Row**: Arrange children horizontally. Must support `distribution` (justify-content) and `alignment` (align-items). Children can have a `weight` property to control flex-grow behavior.
 - **Column**: Arrange children vertically. Must support `distribution` and `alignment`. Children can have a `weight` property to control flex-grow behavior.
@@ -145,7 +145,7 @@ The standard catalog includes the following layout and container components:
 
 ### Interactive & Input Components
 
-The standard catalog includes the following interactive and input components:
+The basic catalog includes the following interactive and input components:
 
 - **Button**: A clickable element that triggers a `userAction`. Must be able to contain a `child` component (typically Text or Icon) and may vary in style based on the `primary` boolean.
 - **CheckBox**: A checkbox that can be toggled, reflecting a boolean value.
