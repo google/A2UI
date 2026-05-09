@@ -87,7 +87,11 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "a2ui_explorer/tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js"
+          }
         }
       }
     }
