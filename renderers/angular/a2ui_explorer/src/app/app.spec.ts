@@ -20,9 +20,6 @@ import {provideMarkdownRenderer} from '../../../src/v0_9/core/markdown';
 
 describe('App', () => {
   beforeEach(async () => {
-    if (typeof document !== 'undefined' && !document.adoptedStyleSheets) {
-      (document as any).adoptedStyleSheets = [];
-    }
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideMarkdownRenderer()],
