@@ -17,14 +17,13 @@
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
 import {loadExample, wait} from './test_utils';
-import {AgentStubService} from '../agent-stub.service';
 
 describe('Example: Live Invitation Builder', () => {
   let fixture: ComponentFixture<DemoComponent>;
   let textContent: string;
 
   beforeEach(async () => {
-    fixture = await loadExample('Live Invitation Builder', [AgentStubService]);
+    fixture = await loadExample('Live Invitation Builder');
     textContent = fixture.nativeElement.textContent;
   });
 

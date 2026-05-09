@@ -23,13 +23,10 @@ import {provideMarkdownRenderer} from '../../../../src/v0_9/core/markdown';
  * Helper function to load an example in the DemoComponent for testing.
  * Resolves after the example is selected and initial async rendering has time to complete.
  */
-export async function loadExample(exampleName: string, extraProviders: any[] = []) {
+export async function loadExample(exampleName: string) {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
-    providers: [
-      provideMarkdownRenderer(),
-      ...extraProviders
-    ],
+    providers: [provideMarkdownRenderer()],
   }).compileComponents();
 
   const fixture = TestBed.createComponent(DemoComponent);
@@ -41,7 +38,7 @@ export async function loadExample(exampleName: string, extraProviders: any[] = [
 
   component.selectExample(example!);
   fixture.detectChanges();
-  
+
   // Wait for async operations (like agent stub playback) to complete
   await wait(50);
   fixture.detectChanges();
