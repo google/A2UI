@@ -54,7 +54,7 @@ describe('Example: Coffee Order', () => {
     const purchaseBtn = buttons.find(b => b.textContent.includes('Purchase'))!;
     expect(purchaseBtn).withContext('Should find Purchase button').toBeTruthy();
 
-    (purchaseBtn as any).click();
+    purchaseBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();
@@ -70,7 +70,7 @@ describe('Example: Coffee Order', () => {
     const addToCartBtn = buttons.find(b => b.textContent.includes('Add to cart'))!;
     expect(addToCartBtn).withContext('Should find Add to cart button').toBeTruthy();
 
-    (addToCartBtn as any).click();
+    addToCartBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();

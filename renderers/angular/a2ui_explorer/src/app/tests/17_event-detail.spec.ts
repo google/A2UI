@@ -63,7 +63,7 @@ describe('Example: Event Detail', () => {
     const acceptBtn = buttons.find(b => b.textContent.includes('Accept'))!;
     expect(acceptBtn).withContext('Should find Accept button').toBeTruthy();
 
-    (acceptBtn as any).click();
+    acceptBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();
@@ -79,7 +79,7 @@ describe('Example: Event Detail', () => {
     const declineBtn = buttons.find(b => b.textContent.includes('Decline'))!;
     expect(declineBtn).withContext('Should find Decline button').toBeTruthy();
 
-    (declineBtn as any).click();
+    declineBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();

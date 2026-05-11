@@ -63,7 +63,7 @@ describe('Example: Contact Card', () => {
     const callBtn = buttons.find(b => b.textContent.includes('Call'))!;
     expect(callBtn).withContext('Should find Call button').toBeTruthy();
 
-    (callBtn as any).click();
+    callBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();
@@ -79,7 +79,7 @@ describe('Example: Contact Card', () => {
     const messageBtn = buttons.find(b => b.textContent.includes('Message'))!;
     expect(messageBtn).withContext('Should find Message button').toBeTruthy();
 
-    (messageBtn as any).click();
+    messageBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();

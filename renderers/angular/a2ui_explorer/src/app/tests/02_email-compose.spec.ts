@@ -53,7 +53,7 @@ describe('Example: Email Compose', () => {
     const sendBtn = buttons.find(b => b.textContent.includes('Send'))!;
     expect(sendBtn).withContext('Should find Send button').toBeTruthy();
 
-    (sendBtn as any).click();
+    sendBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();

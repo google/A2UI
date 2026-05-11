@@ -53,7 +53,7 @@ describe('Example: Notification Permission', () => {
     const yesBtn = buttons.find(b => b.textContent.includes('Yes'))!;
     expect(yesBtn).withContext('Should find Yes button').toBeTruthy();
 
-    (yesBtn as any).click();
+    yesBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();
@@ -69,7 +69,7 @@ describe('Example: Notification Permission', () => {
     const noBtn = buttons.find(b => b.textContent.includes('No'))!;
     expect(noBtn).withContext('Should find No button').toBeTruthy();
 
-    (noBtn as any).click();
+    noBtn.click();
     fixture.detectChanges();
     await wait(50);
     fixture.detectChanges();
