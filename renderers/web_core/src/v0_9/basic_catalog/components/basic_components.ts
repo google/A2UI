@@ -152,6 +152,11 @@ export const IconApi = {
           z.enum(ICON_NAMES),
           z
             .object({
+              svgPath: z.string().describe('Custom SVG path data'),
+            })
+            .strict(),
+          z
+            .object({
               path: z.string(),
             })
             .strict(),

@@ -8,6 +8,8 @@
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
+    "@editorjs/editorjs": "^2.30.0",
+    "@editorjs/paragraph": "^2.11.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -20,7 +22,7 @@
   },
   "scripts": {
     "build": "ng build --output-path=../dist/raw --configuration production",
-    "inline": "node ../inline.js --input ../dist/raw --output ../public/app.html",
+    "inline": "node ../inline.js --input ../dist/raw --output ../public/editor.html",
     "build:all": "npm run build && npm run inline"
   }
 }
