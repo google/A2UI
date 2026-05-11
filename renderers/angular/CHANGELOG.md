@@ -1,5 +1,6 @@
 ## Unreleased
 
+- **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` to fix type collision and avoid forced casts.
 - (v0_9) Re-style the v0_9 catalog components using the default theme from
   `web_core`. [#1166](https://github.com/google/A2UI/pull/1166)
 - (v0_9) Improve type safety of `props()` in Catalog components. Custom catalog

@@ -1,5 +1,6 @@
 ## Unreleased
 
+- **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` and update component to correctly render SVG elements.
 - (v0_9) Wire up agent-provided primary color to basic catalog components.
 - (v0_9) Re-style the v0_9 catalog components using the default theme from
   `web_core`. [#1079](https://github.com/google/A2UI/pull/1079)
