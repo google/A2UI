@@ -71,7 +71,11 @@ export function toAngularSignal<T>(
  * @param index The index of the child component.
  * @returns A fully normalized absolute path for the indexed child.
  */
-export function getNormalizedPath(path: string, dataContextPath: string, index: number): string {
+export function getNormalizedPath(
+  path: string | undefined,
+  dataContextPath: string,
+  index: number,
+): string {
   let normalized = path || '';
   if (!normalized.startsWith('/')) {
     const base = dataContextPath === '/' ? '' : dataContextPath;

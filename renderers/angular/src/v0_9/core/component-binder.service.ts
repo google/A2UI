@@ -17,7 +17,7 @@
 import {DestroyRef, Injectable, inject, NgZone} from '@angular/core';
 import {ComponentContext, computed} from '@a2ui/web_core/v0_9';
 import {toAngularSignal} from './utils';
-import {BoundProperty} from './types';
+import {BoundProperty, ComponentTemplate} from './types';
 
 /** Represents a reference to a child component. */
 export interface Child {
@@ -49,6 +49,7 @@ export class ComponentBinder {
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, BoundProperty<any>> = {};
+    let template: ComponentTemplate | undefined = undefined;
 
     for (const key of Object.keys(props)) {
       const value = props[key];
@@ -86,6 +87,11 @@ export class ComponentBinder {
         });
       } else if (key === 'children') {
         const originalSig = preactSig;
+        const id = value.componentId;
+        const path = value.path;
+        if (id && path) {
+          template = {id, path};
+        }
         preactSig = computed(() => {
           const val = originalSig.value;
           const arr = Array.isArray(val) ? val : [];
@@ -103,6 +109,7 @@ export class ComponentBinder {
       bound[key] = {
         value: angSig,
         raw: value,
+        template,
         onUpdate: isBoundPath
           ? (newValue: any) => context.dataContext.set(value.path, newValue)
           : () => {}, // No-op for non-bound values

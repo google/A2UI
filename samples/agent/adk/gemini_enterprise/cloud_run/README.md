@@ -14,6 +14,36 @@ Gemini-based agent that can communicate with users with A2UI components. By the
 end of this guide, you will have an agent running on Cloud Run and can display
 A2UI components on Gemini Enterprise UI.
 
+## Prerequisites
+
+Before running the deployment script, ensure you have the following:
+
+- A **Google Cloud Project** with billing enabled.
+- **Google Cloud SDK** installed and up to date.
+
+### Authentication
+
+Authenticate with Google Cloud by running the following commands:
+
+```bash
+gcloud auth login
+gcloud auth application-default login
+gcloud config set project <YOUR_PROJECT_ID>
+```
+
+### Enable Required APIs
+
+Enable the required Google Cloud APIs for Cloud Run, Cloud Build, Vertex AI, and Discovery Engine:
+
+```bash
+gcloud services enable \
+run.googleapis.com \
+cloudbuild.googleapis.com \
+aiplatform.googleapis.com \
+discoveryengine.googleapis.com \
+--project <YOUR_PROJECT_ID>
+```
+
 ## Steps
 
 There are 2 steps:
@@ -100,6 +130,18 @@ curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
      https://discoveryengine.googleapis.com/v1alpha/projects/$PROJECT_NUMBER/locations/$LOCATION/collections/default_collection/engines/$GEMINI_ENTERPRISE_APP_ID/assistants/default_assistant/agents \
      -d @agent_request.json
 ```
+
+**Placeholder Descriptions:**
+
+- `PROJECT_NUMBER`: Your Google Cloud project number.
+- `LOCATION`: The location of your Discovery Engine instance (e.g., `global`).
+- `ENGINE_ID`: The ID of your Gemini Enterprise engine (a.k.a App ID).
+- `AGENT_NAME`: A unique name for your agent.
+- `AGENT_DISPLAY_NAME`: The name that will be displayed in the Gemini
+  Enterprise UI.
+- `AGENT_DESCRIPTION`: A brief description of your agent's capabilities.
+- `AGENT_URL`: The service URL of your deployed agent which was printed in the
+  previous step.
 
 **3. Locate the agent on the Gemini Enterprise UI:**
 

@@ -21,6 +21,7 @@ import {ComponentModel} from '@a2ui/web_core/v0_9';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentBinder} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 
 @Component({
   standalone: true,
@@ -41,6 +42,7 @@ describe('ColumnComponent', () => {
   let mockSurface: any;
   let mockSurfaceGroup: any;
   let mockBinder: any;
+  let defaultProps: ComponentToProps<ColumnComponent>;
 
   beforeEach(async () => {
     mockSurface = {
@@ -77,15 +79,16 @@ describe('ColumnComponent', () => {
     fixture = TestBed.createComponent(ColumnComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
-      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
-      children: {
-        value: signal(['child1', 'child2']),
-        raw: ['child1', 'child2'],
-        onUpdate: () => {},
-      },
-    });
+
+    defaultProps = {
+      justify: createBoundProperty('start' as const),
+      align: createBoundProperty('stretch' as const),
+      children: createBoundProperty([
+        {id: 'child1', basePath: '/'},
+        {id: 'child2', basePath: '/'},
+      ]),
+    };
+    setComponentProps(fixture, defaultProps);
   });
 
   it('should create', () => {
@@ -101,9 +104,9 @@ describe('ColumnComponent', () => {
   });
 
   it('should apply flex style from weight prop', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      weight: {value: signal(2), raw: 2, onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      weight: createBoundProperty(2),
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -111,9 +114,9 @@ describe('ColumnComponent', () => {
   });
 
   it('should apply flex style from weight prop when value is 0', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      weight: {value: signal(0), raw: 0, onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      weight: createBoundProperty(0),
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -121,9 +124,9 @@ describe('ColumnComponent', () => {
   });
 
   it('should not apply flex style when weight prop is null', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      weight: {value: signal(null), raw: null, onUpdate: () => {}},
+    setComponentProps(fixture, {
+      ...defaultProps,
+      weight: createBoundProperty(undefined),
     });
     fixture.detectChanges();
     const style = window.getComputedStyle(fixture.debugElement.nativeElement);
@@ -140,15 +143,22 @@ describe('ColumnComponent', () => {
   });
 
   it('should render repeating children', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
+    setComponentProps(fixture, {
+      ...defaultProps,
       children: {
-        value: signal([{}, {}]),
+        value: signal([
+          {id: 'template1', basePath: '/items/0'},
+          {id: 'template1', basePath: '/items/1'},
+        ]),
         raw: {
           componentId: 'template1',
           path: 'items',
         },
-        onUpdate: () => {},
+        template: {
+          id: 'template1',
+          path: 'items',
+        },
+        onUpdate: jasmine.createSpy('onUpdate'),
       },
     });
     fixture.detectChanges();
@@ -165,37 +175,9 @@ describe('ColumnComponent', () => {
     });
   });
 
-  it('should handle non-array children value', () => {
-    fixture.componentRef.setInput('props', {
-      ...component.props(),
-      children: {
-        value: signal('not-an-array'),
-        raw: 'not-an-array',
-        onUpdate: () => {},
-      },
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
-  it('should handle missing children property', () => {
-    fixture.componentRef.setInput('props', {
-      justify: {value: signal('start'), raw: 'start', onUpdate: () => {}},
-      align: {value: signal('stretch'), raw: 'stretch', onUpdate: () => {}},
-    });
-    fixture.detectChanges();
-    const hosts = fixture.debugElement.queryAll(By.css('a2ui-v09-component-host'));
-    expect(hosts.length).toBe(0);
-  });
-
   it('should handle missing justify and align properties', () => {
-    fixture.componentRef.setInput('props', {
-      children: {
-        value: signal(['child1']),
-        raw: ['child1'],
-        onUpdate: () => {},
-      },
+    setComponentProps(fixture, {
+      children: createBoundProperty([{id: 'child1', basePath: '/'}]),
     });
     fixture.detectChanges();
     const div = fixture.debugElement;

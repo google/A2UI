@@ -40,7 +40,7 @@ export abstract class CatalogComponent<
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
-  readonly props = input<ComponentApiToProps<Api>>({} as any);
+  readonly props = input<ComponentApiToProps<Api>>({} as ComponentApiToProps<Api>);
   readonly surfaceId = input.required<string>();
   readonly componentId = input.required<string>();
   readonly dataContextPath = input<string>('/');

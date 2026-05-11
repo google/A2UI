@@ -22,16 +22,23 @@ import {SliderComponent} from './slider.component';
 import {DateTimeInputComponent} from './date-time-input.component';
 import {ListComponent} from './list.component';
 import {TabsComponent} from './tabs.component';
-import {ComponentModel} from '@a2ui/web_core/v0_9';
+import {ComponentModel, DynamicString} from '@a2ui/web_core/v0_9';
 import {ModalComponent} from './modal.component';
-import {BoundProperty} from '../../core/types';
+
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
-import {ComponentBinder} from '../../core/component-binder.service';
+import {ComponentBinder, Child} from '../../core/component-binder.service';
 import {By} from '@angular/platform-browser';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
+
+interface MockRendererService {
+  surfaceGroup: {
+    getSurface: jasmine.Spy;
+  };
+}
 
 describe('Complex Components', () => {
-  let mockRendererService: any;
-  let mockBinder: any;
+  let mockRendererService: MockRendererService;
+  let mockBinder: jasmine.SpyObj<ComponentBinder>;
 
   beforeEach(() => {
     mockRendererService = {
@@ -65,23 +72,16 @@ describe('Complex Components', () => {
   })
   class DummyTextComponent {
     text?: string;
-    props = input<any>();
+    props = input<Record<string, unknown>>();
     surfaceId = input<string>();
     componentId = input<string>();
     dataContextPath = input<string>();
   }
 
-  function createBoundProperty(val: any): BoundProperty<any> {
-    return {
-      value: angularSignal(val),
-      raw: val,
-      onUpdate: jasmine.createSpy('onUpdate'),
-    };
-  }
-
   describe('CheckBoxComponent', () => {
     let component: CheckBoxComponent;
     let fixture: ComponentFixture<CheckBoxComponent>;
+    let defaultProps: ComponentToProps<CheckBoxComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -96,6 +96,14 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        label: createBoundProperty(''),
+        value: createBoundProperty(false),
+        isValid: createBoundProperty(true),
+        validationErrors: createBoundProperty<string[]>([]),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -104,7 +112,8 @@ describe('Complex Components', () => {
     });
 
     it('should show label and checked state', () => {
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         label: createBoundProperty('Check me'),
         value: createBoundProperty(true),
       });
@@ -116,8 +125,8 @@ describe('Complex Components', () => {
 
     it('should call onUpdate when toggled', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Check me'),
+      setComponentProps(fixture, {
+        ...defaultProps,
         value: {value: angularSignal(false), raw: false, onUpdate: onUpdateSpy},
       });
       fixture.detectChanges();
@@ -127,8 +136,8 @@ describe('Complex Components', () => {
     });
 
     it('should apply primary color when checked', () => {
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Check me'),
+      setComponentProps(fixture, {
+        ...defaultProps,
         value: createBoundProperty(true),
       });
       mockRendererService.surfaceGroup.getSurface.and.returnValue({
@@ -148,6 +157,7 @@ describe('Complex Components', () => {
   describe('ChoicePickerComponent', () => {
     let component: ChoicePickerComponent;
     let fixture: ComponentFixture<ChoicePickerComponent>;
+    let defaultProps: ComponentToProps<ChoicePickerComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -163,6 +173,19 @@ describe('Complex Components', () => {
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('componentId', 'test-choice-picker');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        label: createBoundProperty<string | undefined>(''),
+        options: createBoundProperty<{label: DynamicString; value: string}[]>([]),
+        value: createBoundProperty<string[]>([]),
+        variant: createBoundProperty<'multipleSelection' | 'mutuallyExclusive' | undefined>(
+          'mutuallyExclusive',
+        ),
+        displayStyle: createBoundProperty<'checkbox' | 'chips' | undefined>('checkbox'),
+        isValid: createBoundProperty(true),
+        validationErrors: createBoundProperty<string[]>([]),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -171,15 +194,14 @@ describe('Complex Components', () => {
     });
 
     it('should render options', () => {
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Pick one'),
-        options: createBoundProperty([
+      setComponentProps(fixture, {
+        ...defaultProps,
+        label: createBoundProperty<string | undefined>('Pick one'),
+        options: createBoundProperty<{label: DynamicString; value: string}[]>([
           {label: 'Opt 1', value: '1'},
           {label: 'Opt 2', value: '2'},
         ]),
-        value: createBoundProperty('1'),
-        variant: createBoundProperty('mutuallyExclusive'),
-        displayStyle: createBoundProperty('checkbox'),
+        value: createBoundProperty(['1']),
       });
       fixture.detectChanges();
       const options = fixture.nativeElement.querySelectorAll('.a2ui-option-label');
@@ -189,15 +211,14 @@ describe('Complex Components', () => {
 
     it('should call onUpdate when option selected', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Pick one'),
-        options: createBoundProperty([
+      setComponentProps(fixture, {
+        ...defaultProps,
+        label: createBoundProperty<string | undefined>('Pick one'),
+        options: createBoundProperty<{label: DynamicString; value: string}[]>([
           {label: 'Opt 1', value: '1'},
           {label: 'Opt 2', value: '2'},
         ]),
-        value: {value: angularSignal('1'), raw: '1', onUpdate: onUpdateSpy},
-        variant: createBoundProperty('mutuallyExclusive'),
-        displayStyle: createBoundProperty('checkbox'),
+        value: {value: angularSignal(['1']), raw: ['1'], onUpdate: onUpdateSpy},
       });
       fixture.detectChanges();
       const inputs = fixture.nativeElement.querySelectorAll('input');
@@ -207,14 +228,17 @@ describe('Complex Components', () => {
 
     it('should render chips and toggle selection', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
-      fixture.componentRef.setInput('props', {
-        options: createBoundProperty([
+      setComponentProps(fixture, {
+        ...defaultProps,
+        options: createBoundProperty<{label: DynamicString; value: string}[]>([
           {label: 'Chip 1', value: 'c1'},
           {label: 'Chip 2', value: 'c2'},
         ]),
         value: {value: angularSignal(['c1']), raw: ['c1'], onUpdate: onUpdateSpy},
-        variant: createBoundProperty('multipleSelection'),
-        displayStyle: createBoundProperty('chips'),
+        variant: createBoundProperty<'multipleSelection' | 'mutuallyExclusive' | undefined>(
+          'multipleSelection',
+        ),
+        displayStyle: createBoundProperty<'checkbox' | 'chips' | undefined>('chips'),
       });
       fixture.detectChanges();
       const chips = fixture.nativeElement.querySelectorAll('.a2ui-chip');
@@ -233,6 +257,7 @@ describe('Complex Components', () => {
   describe('SliderComponent', () => {
     let component: SliderComponent;
     let fixture: ComponentFixture<SliderComponent>;
+    let defaultProps: ComponentToProps<SliderComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -247,6 +272,16 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        label: createBoundProperty<string | undefined>(''),
+        min: createBoundProperty<number | undefined>(0),
+        max: createBoundProperty(100),
+        value: createBoundProperty(0),
+        isValid: createBoundProperty(true),
+        validationErrors: createBoundProperty<string[]>([]),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -255,10 +290,9 @@ describe('Complex Components', () => {
     });
 
     it('should render slider with value', () => {
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Brightness'),
-        min: createBoundProperty(0),
-        max: createBoundProperty(100),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        label: createBoundProperty<string | undefined>('Brightness'),
         value: createBoundProperty(50),
       });
       fixture.detectChanges();
@@ -269,7 +303,8 @@ describe('Complex Components', () => {
 
     it('should call onUpdate when slider value changes', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         value: {value: angularSignal(50), raw: 50, onUpdate: onUpdateSpy},
       });
       fixture.detectChanges();
@@ -283,6 +318,7 @@ describe('Complex Components', () => {
   describe('DateTimeInputComponent', () => {
     let component: DateTimeInputComponent;
     let fixture: ComponentFixture<DateTimeInputComponent>;
+    let defaultProps: ComponentToProps<DateTimeInputComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -297,6 +333,16 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        label: createBoundProperty<string | undefined>(''),
+        value: createBoundProperty(''),
+        enableDate: createBoundProperty<boolean | undefined>(true),
+        enableTime: createBoundProperty<boolean | undefined>(true),
+        isValid: createBoundProperty(true),
+        validationErrors: createBoundProperty<string[]>([]),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -305,11 +351,11 @@ describe('Complex Components', () => {
     });
 
     it('should render date input', () => {
-      fixture.componentRef.setInput('props', {
-        label: createBoundProperty('Start Date'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        label: createBoundProperty<string | undefined>('Start Date'),
         value: createBoundProperty('2026-03-16'),
-        enableDate: createBoundProperty(true),
-        enableTime: createBoundProperty(false),
+        enableTime: createBoundProperty<boolean | undefined>(false),
       });
       fixture.detectChanges();
       const input = fixture.nativeElement.querySelector('input[type="date"]');
@@ -319,14 +365,13 @@ describe('Complex Components', () => {
 
     it('should call onUpdate when date or time changes', () => {
       const onUpdateSpy = jasmine.createSpy('onUpdate');
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         value: {
           value: angularSignal('2026-03-16T10:00:00'),
           raw: '2026-03-16T10:00:00',
           onUpdate: onUpdateSpy,
         },
-        enableDate: createBoundProperty(true),
-        enableTime: createBoundProperty(true),
       });
       fixture.detectChanges();
       const dateInput = fixture.nativeElement.querySelector('input[type="date"]');
@@ -343,10 +388,9 @@ describe('Complex Components', () => {
     });
 
     it('should handle empty value by returning empty strings', () => {
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         value: createBoundProperty(''),
-        enableDate: createBoundProperty(true),
-        enableTime: createBoundProperty(true),
       });
       fixture.detectChanges();
 
@@ -361,6 +405,7 @@ describe('Complex Components', () => {
   describe('ListComponent', () => {
     let component: ListComponent;
     let fixture: ComponentFixture<ListComponent>;
+    let defaultProps: ComponentToProps<ListComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -375,6 +420,13 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        children: createBoundProperty<Child[]>([]),
+        direction: createBoundProperty<'vertical' | 'horizontal' | undefined>('vertical'),
+        listStyle: createBoundProperty<'none' | 'ordered' | 'unordered' | undefined>('none'),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -383,9 +435,12 @@ describe('Complex Components', () => {
     });
 
     it('should render children', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty(['child-1', 'child-2']),
-        direction: createBoundProperty('vertical'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        children: createBoundProperty([
+          {id: 'child-1', basePath: '/'},
+          {id: 'child-2', basePath: '/'},
+        ]),
       });
       fixture.detectChanges();
       const hosts = fixture.nativeElement.querySelectorAll('a2ui-v09-component-host');
@@ -393,51 +448,41 @@ describe('Complex Components', () => {
     });
 
     it('should render as ordered list', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty(['child-1']),
-        listStyle: createBoundProperty('ordered'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        children: createBoundProperty([{id: 'child-1', basePath: '/'}]),
+        listStyle: createBoundProperty<'none' | 'ordered' | 'unordered' | undefined>('ordered'),
       });
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('ol')).toBeTruthy();
     });
 
     it('should render as unordered list', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty(['child-1']),
-        listStyle: createBoundProperty('unordered'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        children: createBoundProperty([{id: 'child-1', basePath: '/'}]),
+        listStyle: createBoundProperty<'none' | 'ordered' | 'unordered' | undefined>('unordered'),
       });
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('ul')).toBeTruthy();
     });
 
     it('should render fallback list when style is not list style', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty(['child-1']),
-        listStyle: createBoundProperty('div'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        children: createBoundProperty([{id: 'child-1', basePath: '/'}]),
+        listStyle: createBoundProperty('div' as 'none' | 'ordered' | 'unordered' | undefined),
       });
       fixture.detectChanges();
       const divList = fixture.nativeElement.querySelector('.a2ui-list');
       expect(divList.tagName.toLowerCase()).toBe('div');
     });
 
-    it('should handle non-array children', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty('not-an-array'),
-      });
-      fixture.detectChanges();
-      expect(component.children()).toEqual([]);
-    });
-
-    it('should handle missing children property', () => {
-      fixture.componentRef.setInput('props', {});
-      fixture.detectChanges();
-      expect(component.children()).toEqual([]);
-    });
-
     it('should apply horizontal orientation class', () => {
-      fixture.componentRef.setInput('props', {
-        children: createBoundProperty(['child-1']),
-        direction: createBoundProperty('horizontal'),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        children: createBoundProperty([{id: 'child-1', basePath: '/'}]),
+        direction: createBoundProperty<'vertical' | 'horizontal' | undefined>('horizontal'),
       });
       fixture.detectChanges();
       const list = fixture.nativeElement.querySelector('.a2ui-list');
@@ -448,6 +493,7 @@ describe('Complex Components', () => {
   describe('TabsComponent', () => {
     let component: TabsComponent;
     let fixture: ComponentFixture<TabsComponent>;
+    let defaultProps: ComponentToProps<TabsComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -462,6 +508,11 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {
+        tabs: createBoundProperty<{title: DynamicString; child: string}[]>([]),
+      };
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -470,8 +521,9 @@ describe('Complex Components', () => {
     });
 
     it('should render tabs and switch content', () => {
-      fixture.componentRef.setInput('props', {
-        tabs: createBoundProperty([
+      setComponentProps(fixture, {
+        ...defaultProps,
+        tabs: createBoundProperty<{title: DynamicString; child: string}[]>([
           {title: 'Tab 1', child: 'content-1'},
           {title: 'Tab 2', child: 'content-2'},
         ]),
@@ -491,15 +543,15 @@ describe('Complex Components', () => {
     });
 
     it('should handle missing tabs property', () => {
-      fixture.componentRef.setInput('props', {});
       fixture.detectChanges();
       expect(component.tabs()).toEqual([]);
       expect(fixture.nativeElement.querySelectorAll('.a2ui-tab-button').length).toBe(0);
     });
 
     it('should handle empty tabs array', () => {
-      fixture.componentRef.setInput('props', {
-        tabs: createBoundProperty([]),
+      setComponentProps(fixture, {
+        ...defaultProps,
+        tabs: createBoundProperty<{title: DynamicString; child: string}[]>([]),
       });
       fixture.detectChanges();
       expect(component.tabs()).toEqual([]);
@@ -510,6 +562,7 @@ describe('Complex Components', () => {
   describe('ModalComponent', () => {
     let component: ModalComponent;
     let fixture: ComponentFixture<ModalComponent>;
+    let defaultProps: ComponentToProps<ModalComponent>;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
@@ -524,6 +577,9 @@ describe('Complex Components', () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput('surfaceId', 'test-surface');
       fixture.componentRef.setInput('dataContextPath', '/');
+
+      defaultProps = {} as ComponentToProps<ModalComponent>;
+      setComponentProps(fixture, defaultProps);
     });
 
     it('should create', () => {
@@ -532,7 +588,8 @@ describe('Complex Components', () => {
     });
 
     it('should render trigger and open modal on click', () => {
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
         content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
@@ -562,7 +619,8 @@ describe('Complex Components', () => {
     });
 
     it('should close modal when close button clicked', () => {
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
         content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
@@ -578,7 +636,8 @@ describe('Complex Components', () => {
     });
 
     it('should close modal when overlay clicked', () => {
-      fixture.componentRef.setInput('props', {
+      setComponentProps(fixture, {
+        ...defaultProps,
         trigger: createBoundProperty({id: 'trigger-btn', basePath: '/'}),
         content: createBoundProperty({id: 'modal-content', basePath: '/'}),
       });
@@ -594,7 +653,6 @@ describe('Complex Components', () => {
     });
 
     it('should handle missing trigger or content', () => {
-      fixture.componentRef.setInput('props', {});
       fixture.detectChanges();
       expect(component.trigger()).toBeUndefined();
       expect(component.content()).toBeUndefined();

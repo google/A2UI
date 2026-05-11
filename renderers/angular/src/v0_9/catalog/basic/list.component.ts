@@ -97,10 +97,7 @@ import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 export class ListComponent extends BasicCatalogComponent<typeof ListApi> {
   readonly listStyle = computed(() => this.props()['listStyle']?.value());
   readonly direction = computed(() => this.props()['direction']?.value() || 'vertical');
-  readonly children = computed(() => {
-    const raw = this.props()['children']?.value();
-    return Array.isArray(raw) ? raw : [];
-  });
+  readonly children = computed(() => this.props()['children'].value());
 
   readonly listTag = computed(() => {
     const style = this.listStyle();
