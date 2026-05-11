@@ -22,10 +22,10 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 ## Specification Versions
 
-| Version                                | Status     | Description                                                                                                                                               |
-| -------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **[v0.8](specification/v0.8-a2ui.md)** | **Stable** | Current production release. Surfaces, components, data binding, adjacency list model.                                                                     |
-| **[v0.9](specification/v0.9-a2ui.md)** | **Draft**  | Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. [Evolution guide →](specification/v0.9-evolution-guide.md) |
+| Version                                | Status      | Description                                                                                                                                               |
+| -------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **[v0.8](specification/v0.8-a2ui.md)** | **Stable**  | Current production release. Surfaces, components, data binding, adjacency list model.                                                                     |
+| **[v0.9](specification/v0.9-a2ui.md)** | **Current** | Adds `createSurface`, client-side functions, custom catalogs, and the extension specification. [Evolution guide →](specification/v0.9-evolution-guide.md) |
 
 A2UI is Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,

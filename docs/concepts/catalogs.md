@@ -59,7 +59,7 @@ Whether you are building a simple prototype or a complex production application,
 
 To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
 
-This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.
+This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.
 
 The basic catalog allows you to bootstrap an application or validate A2UI concepts without needing to write your own schema from scratch. It is intentionally sparse to remain easily implementable by different renderers.
 
@@ -389,7 +389,7 @@ Here is how catalog version mismatches are handled in practice:
 
 - **An old iOS client is using an older catalog than the agent**
   - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
-  - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
+  - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the basic button.
   - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
 
 - **A web client rolls out a new catalog version ahead of the agent**
