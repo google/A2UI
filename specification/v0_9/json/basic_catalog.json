@@ -68,14 +68,7 @@
             "variant": {
               "type": "string",
               "description": "A hint for the image size and style.",
-              "enum": [
-                "icon",
-                "avatar",
-                "smallFeature",
-                "mediumFeature",
-                "largeFeature",
-                "header"
-              ],
+              "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"],
               "default": "mediumFeature"
             }
           },

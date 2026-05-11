@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { LibraryComponent } from './features/library/library.component';
-import { GalleryComponent } from './features/gallery/gallery.component';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {LibraryComponent} from './features/library/library.component';
+import {GalleryComponent} from './features/gallery/gallery.component';
 
 @Component({
   selector: 'app-root',

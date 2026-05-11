@@ -8,8 +8,8 @@ A2UI utilizes a **double-iframe isolation pattern** to run untrusted third-party
 
 ## Files
 
--   `sandbox.ts`: Logic for origin validation and message relaying between the Host and the inner iframe.
--   `sandbox.html`: The container for the outer proxy iframe.
+- `sandbox.ts`: Logic for origin validation and message relaying between the Host and the inner iframe.
+- `sandbox.html`: The container for the outer proxy iframe.
 
 ## Testing guidelines
 
@@ -32,7 +32,7 @@ This test verifies the sandbox with a Lit-based client and an ADK-based A2A agen
 This test verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
 
 - **MCP Server (Calculator)**:
-  - Path: `../../../agent/mcp/mcp-apps-calculator/`
+  - Path: `../../../mcp/mcp-apps-calculator/`
   - Command: `uv run .` (runs on port 8000)
 - **MCP Apps Proxy Agent**:
   - Path: `../../../agent/adk/mcp_app_proxy/`

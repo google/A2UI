@@ -311,22 +311,10 @@ describe('DataModel', () => {
   });
 
   it('throws when path is null or undefined', () => {
-    assert.throws(
-      () => model.get(null as any),
-      /Path cannot be null or undefined/,
-    );
-    assert.throws(
-      () => model.get(undefined as any),
-      /Path cannot be null or undefined/,
-    );
-    assert.throws(
-      () => model.set(null as any, 'value'),
-      /Path cannot be null or undefined/,
-    );
-    assert.throws(
-      () => model.set(undefined as any, 'value'),
-      /Path cannot be null or undefined/,
-    );
+    assert.throws(() => model.get(null as any), /Path cannot be null or undefined/);
+    assert.throws(() => model.get(undefined as any), /Path cannot be null or undefined/);
+    assert.throws(() => model.set(null as any, 'value'), /Path cannot be null or undefined/);
+    assert.throws(() => model.set(undefined as any, 'value'), /Path cannot be null or undefined/);
   });
 
   it('calculates descendants against root path', () => {

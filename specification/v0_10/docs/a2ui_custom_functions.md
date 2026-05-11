@@ -22,7 +22,7 @@ Use the `functions` property to define a map of function schemas.
       "type": "object",
       "description": "Removes whitespace (or other characters) from the beginning and end of a string.",
       "properties": {
-        "call": { "const": "trim" },
+        "call": {"const": "trim"},
         "args": {
           "type": "object",
           "properties": {
@@ -38,7 +38,7 @@ Use the `functions` property to define a map of function schemas.
           "required": ["value"],
           "unevaluatedProperties": false
         },
-        "returnType": { "const": "string" }
+        "returnType": {"const": "string"}
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
@@ -47,7 +47,7 @@ Use the `functions` property to define a map of function schemas.
       "type": "object",
       "description": "Queries hardware for screen resolution.",
       "properties": {
-        "call": { "const": "getScreenResolution" },
+        "call": {"const": "getScreenResolution"},
         "args": {
           "type": "object",
           "properties": {
@@ -58,7 +58,7 @@ Use the `functions` property to define a map of function schemas.
           },
           "unevaluatedProperties": false
         },
-        "returnType": { "const": "array" }
+        "returnType": {"const": "array"}
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
@@ -71,14 +71,12 @@ Use the `functions` property to define a map of function schemas.
 
 The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-basic-catalog).
 In your catalog, you simply need to define the `anyFunction` reference:
+
 ```json
 {
   "$defs": {
     "anyFunction": {
-      "oneOf": [
-        {"$ref": "#/functions/trim"},
-        {"$ref": "#/functions/getScreenResolution"}
-      ]
+      "oneOf": [{"$ref": "#/functions/trim"}, {"$ref": "#/functions/getScreenResolution"}]
     }
   }
 }
@@ -86,6 +84,7 @@ In your catalog, you simply need to define the `anyFunction` reference:
 
 If you want to incorporate functions defined in the [`basic_catalog.json`],
 those can be added too:
+
 ```json
 {
   "$defs": {
@@ -93,7 +92,7 @@ those can be added too:
       "oneOf": [
         {"$ref": "#/functions/trim"},
         {"$ref": "#/functions/getScreenResolution"},
-        {"$ref": "basic_catalog.json#/$defs/anyFunction" }
+        {"$ref": "basic_catalog.json#/$defs/anyFunction"}
       ]
     }
   }
@@ -107,11 +106,11 @@ When a `FunctionCall` is validated:
 1. **Discriminator Lookup:** The validator looks at the `call` property of the
    object.
 2. **Schema Matching:**
-    * If `call` is "length", it matches `Functions` -> `length`
-      and validates the named arguments in `args` against the length rules.
-    * If `call` is "trim", it matches `CustomFunctions` -> `trim` and
-      validates against your custom rules.
-    * If `call` is "unknownFunc", validation FAILS immediately (strict mode).
+   - If `call` is "length", it matches `Functions` -> `length`
+     and validates the named arguments in `args` against the length rules.
+   - If `call` is "trim", it matches `CustomFunctions` -> `trim` and
+     validates against your custom rules.
+   - If `call` is "unknownFunc", validation FAILS immediately (strict mode).
 
 This strict-by-default approach ensures typos are caught early, while the
 modular structure makes it easy to add new capabilities with full type safety.

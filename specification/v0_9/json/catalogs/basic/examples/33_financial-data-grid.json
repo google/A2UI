@@ -23,21 +23,13 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header-row",
-              "grid-list"
-            ],
+            "children": ["header-row", "grid-list"],
             "align": "stretch"
           },
           {
             "id": "header-row",
             "component": "Row",
-            "children": [
-              "col-asset",
-              "col-price",
-              "col-change",
-              "col-market-cap"
-            ],
+            "children": ["col-asset", "col-price", "col-change", "col-market-cap"],
             "align": "center"
           },
           {
@@ -79,12 +71,7 @@
           {
             "id": "row-template",
             "component": "Row",
-            "children": [
-              "asset-info",
-              "asset-price",
-              "asset-change",
-              "asset-market-cap"
-            ],
+            "children": ["asset-info", "asset-price", "asset-change", "asset-market-cap"],
             "align": "center"
           },
           {
@@ -107,13 +94,13 @@
           {
             "id": "asset-name",
             "component": "Text",
-            "text": { "path": "name" },
+            "text": {"path": "name"},
             "variant": "body"
           },
           {
             "id": "asset-symbol",
             "component": "Text",
-            "text": { "path": "symbol" },
+            "text": {"path": "symbol"},
             "variant": "caption"
           },
           {
@@ -121,7 +108,7 @@
             "component": "Text",
             "text": {
               "call": "formatCurrency",
-              "args": { "value": { "path": "price" }, "currency": "USD" },
+              "args": {"value": {"path": "price"}, "currency": "USD"},
               "returnType": "string"
             },
             "weight": 1
@@ -131,7 +118,7 @@
             "component": "Text",
             "text": {
               "call": "formatString",
-              "args": { "value": "${change}%" },
+              "args": {"value": "${change}%"},
               "returnType": "string"
             },
             "weight": 1
@@ -141,7 +128,7 @@
             "component": "Text",
             "text": {
               "call": "formatCurrency",
-              "args": { "value": { "path": "marketCap" }, "currency": "USD" },
+              "args": {"value": {"path": "marketCap"}, "currency": "USD"},
               "returnType": "string"
             },
             "weight": 1.5
@@ -155,9 +142,27 @@
         "surfaceId": "gallery-financial-grid",
         "value": {
           "assets": [
-            { "name": "Bitcoin", "symbol": "BTC", "price": 43500.25, "change": 1.2, "marketCap": 850000000000 },
-            { "name": "Ethereum", "symbol": "ETH", "price": 2250.50, "change": -0.5, "marketCap": 270000000000 },
-            { "name": "Solana", "symbol": "SOL", "price": 95.80, "change": 5.4, "marketCap": 40000000000 }
+            {
+              "name": "Bitcoin",
+              "symbol": "BTC",
+              "price": 43500.25,
+              "change": 1.2,
+              "marketCap": 850000000000
+            },
+            {
+              "name": "Ethereum",
+              "symbol": "ETH",
+              "price": 2250.5,
+              "change": -0.5,
+              "marketCap": 270000000000
+            },
+            {
+              "name": "Solana",
+              "symbol": "SOL",
+              "price": 95.8,
+              "change": 5.4,
+              "marketCap": 40000000000
+            }
           ]
         }
       }

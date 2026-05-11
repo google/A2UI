@@ -46,13 +46,7 @@
           "description": "Unique ID for this action call. Only needed if wantResponse is true."
         }
       },
-      "required": [
-        "name",
-        "surfaceId",
-        "sourceComponentId",
-        "timestamp",
-        "context"
-      ]
+      "required": ["name", "surfaceId", "sourceComponentId", "timestamp", "context"]
     },
     "functionResponse": {
       "properties": {
@@ -66,14 +60,7 @@
         },
         "value": {
           "description": "The return value of the function invocation.",
-          "type": [
-            "string",
-            "number",
-            "boolean",
-            "array",
-            "object",
-            "null"
-          ]
+          "type": ["string", "number", "boolean", "array", "object", "null"]
         }
       },
       "required": ["functionCallId", "call", "value"],

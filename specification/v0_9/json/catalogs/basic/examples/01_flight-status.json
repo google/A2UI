@@ -23,31 +23,20 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header-row",
-              "route-row",
-              "divider",
-              "times-row"
-            ],
+            "children": ["header-row", "route-row", "divider", "times-row"],
             "align": "stretch"
           },
           {
             "id": "header-row",
             "component": "Row",
-            "children": [
-              "header-left",
-              "date"
-            ],
+            "children": ["header-left", "date"],
             "justify": "spaceBetween",
             "align": "center"
           },
           {
             "id": "header-left",
             "component": "Row",
-            "children": [
-              "flight-indicator",
-              "flight-number"
-            ],
+            "children": ["flight-indicator", "flight-number"],
             "align": "center"
           },
           {
@@ -81,11 +70,7 @@
           {
             "id": "route-row",
             "component": "Row",
-            "children": [
-              "origin",
-              "arrow",
-              "destination"
-            ],
+            "children": ["origin", "arrow", "destination"],
             "align": "center"
           },
           {
@@ -117,20 +102,13 @@
           {
             "id": "times-row",
             "component": "Row",
-            "children": [
-              "departure-col",
-              "status-col",
-              "arrival-col"
-            ],
+            "children": ["departure-col", "status-col", "arrival-col"],
             "justify": "spaceBetween"
           },
           {
             "id": "departure-col",
             "component": "Column",
-            "children": [
-              "departure-label",
-              "departure-time"
-            ],
+            "children": ["departure-label", "departure-time"],
             "align": "start"
           },
           {
@@ -157,10 +135,7 @@
           {
             "id": "status-col",
             "component": "Column",
-            "children": [
-              "status-label",
-              "status-value"
-            ],
+            "children": ["status-label", "status-value"],
             "align": "center"
           },
           {
@@ -180,10 +155,7 @@
           {
             "id": "arrival-col",
             "component": "Column",
-            "children": [
-              "arrival-label",
-              "arrival-time"
-            ],
+            "children": ["arrival-label", "arrival-time"],
             "align": "end"
           },
           {

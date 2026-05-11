@@ -18,12 +18,7 @@
 import {signal, computed, Signal, effect} from '@preact/signals-core';
 import {z} from 'zod';
 import {DataModel, DataSubscription} from '../state/data-model.js';
-import type {
-  DynamicValue,
-  DataBinding,
-  FunctionCall,
-  Action,
-} from '../schema/common-types.js';
+import type {DynamicValue, DataBinding, FunctionCall, Action} from '../schema/common-types.js';
 import {A2uiExpressionError} from '../errors.js';
 import {isSignal} from '../catalog/types.js';
 
@@ -117,11 +112,7 @@ export class DataContext {
 
       const abortController = new AbortController();
 
-      const result = this.evaluateFunctionReactive<V>(
-        call.call,
-        args,
-        abortController.signal,
-      );
+      const result = this.evaluateFunctionReactive<V>(call.call, args, abortController.signal);
 
       if (result === undefined) {
         return undefined as any;
@@ -211,6 +202,14 @@ export class DataContext {
         argSignals[key] = this.resolveSignal(argVal);
       }
 
+      if (Object.keys(argSignals).length === 0) {
+        const abortController = new AbortController();
+        const result = this.evaluateFunctionReactive<V>(call.call, {}, abortController.signal);
+        const sig = result instanceof Signal ? result : signal(result);
+        (sig as any).unsubscribe = () => abortController.abort();
+        return sig;
+      }
+
       const keys = Object.keys(argSignals);
       const resultSig = signal<V | undefined>(undefined);
       let abortController: AbortController | undefined;
@@ -255,12 +254,7 @@ export class DataContext {
           stopCurrentResult();
           abortController = new AbortController();
 
-          const res = this.evaluateFunctionReactive<V>(
-            call.call,
-            args,
-            abortController.signal,
-          );
-          functionResultUnsubscribe = getUnsubscribe(res);
+          const res = this.evaluateFunctionReactive<V>(call.call, args, abortController.signal);
 
           if (isSignal(res)) {
             innerUnsubscribe = effect(() => {
@@ -371,8 +365,7 @@ export class DataContext {
     } else {
       this.surface.dispatchError({
         code: 'EXPRESSION_ERROR',
-        message:
-          e.message ?? `An unexpected error occurred in function ${name}.`,
+        message: e.message ?? `An unexpected error occurred in function ${name}.`,
         expression: name,
         details: {stack: e.stack},
       });

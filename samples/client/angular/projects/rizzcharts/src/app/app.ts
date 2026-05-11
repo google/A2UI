@@ -23,14 +23,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { Toolbar } from '@rizzcharts/components/toolbar/toolbar';
-import { environment } from '@rizzcharts/environments/environment';
-import { A2aService } from '@rizzcharts/services/a2a_service';
+import {DOCUMENT} from '@angular/common';
+import {RouterOutlet} from '@angular/router';
+import {MatButtonModule} from '@angular/material/button';
+import {A2aChatCanvas} from '@a2a_chat_canvas/a2a-chat-canvas';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {Toolbar} from '@rizzcharts/components/toolbar/toolbar';
+import {environment} from '@rizzcharts/environments/environment';
+import {A2aService} from '@rizzcharts/services/a2a_service';
 
 @Component({
   selector: 'app-root',
@@ -55,7 +55,7 @@ export class App implements OnInit {
     script.async = true;
     script.defer = true;
     this._renderer2.appendChild(this._document.body, script);
-    this.a2aService.getAgentCard().then((card) => {
+    this.a2aService.getAgentCard().then(card => {
       this.agentName.set(card.name);
     });
   }

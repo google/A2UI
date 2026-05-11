@@ -17,10 +17,7 @@
           {
             "id": "root",
             "component": "Row",
-            "children": [
-              "left_text",
-              "right_text"
-            ],
+            "children": ["left_text", "right_text"],
             "justify": "spaceBetween",
             "align": "center"
           },

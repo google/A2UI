@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { A2uiMessage } from '@a2ui/web_core/v0_9';
+import {A2uiMessage} from '@a2ui/web_core/v0_9';
 
 /**
  * Mock A2UI messages for the restaurant finder demo.
@@ -76,7 +76,7 @@ export function createRestaurantListMessages(): A2uiMessage[] {
       createSurface: {
         surfaceId: 'default',
         catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
-        theme: { primaryColor: '#FF0000', font: 'Roboto' },
+        theme: {primaryColor: '#FF0000', font: 'Roboto'},
       },
     },
     {
@@ -93,7 +93,7 @@ export function createRestaurantListMessages(): A2uiMessage[] {
             id: 'title-heading',
             component: 'Text',
             variant: 'h1',
-            text: { path: '/title' },
+            text: {path: '/title'},
           },
           {
             id: 'item-list',
@@ -117,7 +117,7 @@ export function createRestaurantListMessages(): A2uiMessage[] {
           {
             id: 'template-image',
             component: 'Image',
-            url: { path: 'imageUrl' },
+            url: {path: 'imageUrl'},
             weight: 1,
           },
           {
@@ -136,22 +136,22 @@ export function createRestaurantListMessages(): A2uiMessage[] {
             id: 'template-name',
             component: 'Text',
             variant: 'h3',
-            text: { path: 'name' },
+            text: {path: 'name'},
           },
           {
             id: 'template-rating',
             component: 'Text',
-            text: { path: 'rating' },
+            text: {path: 'rating'},
           },
           {
             id: 'template-detail',
             component: 'Text',
-            text: { path: 'detail' },
+            text: {path: 'detail'},
           },
           {
             id: 'template-link',
             component: 'Text',
-            text: { path: 'infoLink' },
+            text: {path: 'infoLink'},
           },
           {
             id: 'template-book-button',
@@ -162,9 +162,9 @@ export function createRestaurantListMessages(): A2uiMessage[] {
               event: {
                 name: 'book_restaurant',
                 context: {
-                  restaurantName: { path: 'name' },
-                  imageUrl: { path: 'imageUrl' },
-                  address: { path: 'address' },
+                  restaurantName: {path: 'name'},
+                  imageUrl: {path: 'imageUrl'},
+                  address: {path: 'address'},
                 },
               },
             },
@@ -184,7 +184,7 @@ export function createRestaurantListMessages(): A2uiMessage[] {
         path: '/',
         value: {
           title: 'Top 5 Chinese Restaurants in New York',
-          items: restaurantData.map((restaurant) => ({
+          items: restaurantData.map(restaurant => ({
             name: restaurant.name,
             rating: restaurant.rating,
             detail: restaurant.detail,
@@ -205,7 +205,7 @@ export function createRestaurantListMessages(): A2uiMessage[] {
 export function createBookingFormMessages(
   restaurantName: string,
   imageUrl: string,
-  address: string
+  address: string,
 ): A2uiMessage[] {
   return [
     {
@@ -213,7 +213,7 @@ export function createBookingFormMessages(
       createSurface: {
         surfaceId: 'booking-form',
         catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
-        theme: { primaryColor: '#FF0000', font: 'Roboto' },
+        theme: {primaryColor: '#FF0000', font: 'Roboto'},
       },
     },
     {
@@ -238,30 +238,30 @@ export function createBookingFormMessages(
             id: 'booking-title',
             component: 'Text',
             variant: 'h2',
-            text: { path: '/title' },
+            text: {path: '/title'},
           },
           {
             id: 'restaurant-image',
             component: 'Image',
-            url: { path: '/imageUrl' },
+            url: {path: '/imageUrl'},
           },
           {
             id: 'restaurant-address',
             component: 'Text',
-            text: { path: '/address' },
+            text: {path: '/address'},
           },
           {
             id: 'party-size-field',
             component: 'TextField',
             label: 'Party Size',
-            value: { path: '/partySize' },
+            value: {path: '/partySize'},
             variant: 'number',
           },
           {
             id: 'datetime-field',
             component: 'DateTimeInput',
             label: 'Date & Time',
-            value: { path: '/reservationTime' },
+            value: {path: '/reservationTime'},
             enableDate: true,
             enableTime: true,
           },
@@ -269,7 +269,7 @@ export function createBookingFormMessages(
             id: 'dietary-field',
             component: 'TextField',
             label: 'Dietary Requirements',
-            value: { path: '/dietary' },
+            value: {path: '/dietary'},
           },
           {
             id: 'submit-button',
@@ -280,11 +280,11 @@ export function createBookingFormMessages(
               event: {
                 name: 'submit_booking',
                 context: {
-                  restaurantName: { path: '/restaurantName' },
-                  partySize: { path: '/partySize' },
-                  reservationTime: { path: '/reservationTime' },
-                  dietary: { path: '/dietary' },
-                  imageUrl: { path: '/imageUrl' },
+                  restaurantName: {path: '/restaurantName'},
+                  partySize: {path: '/partySize'},
+                  reservationTime: {path: '/reservationTime'},
+                  dietary: {path: '/dietary'},
+                  imageUrl: {path: '/imageUrl'},
                 },
               },
             },
@@ -325,7 +325,7 @@ export function createConfirmationMessages(
   partySize: string,
   reservationTime: string,
   dietary: string,
-  imageUrl: string
+  imageUrl: string,
 ): A2uiMessage[] {
   return [
     {
@@ -333,7 +333,7 @@ export function createConfirmationMessages(
       createSurface: {
         surfaceId: 'confirmation',
         catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json',
-        theme: { primaryColor: '#FF0000', font: 'Roboto' },
+        theme: {primaryColor: '#FF0000', font: 'Roboto'},
       },
     },
     {
@@ -364,22 +364,22 @@ export function createConfirmationMessages(
             id: 'confirm-title',
             component: 'Text',
             variant: 'h2',
-            text: { path: '/title' },
+            text: {path: '/title'},
           },
           {
             id: 'confirm-image',
             component: 'Image',
-            url: { path: '/imageUrl' },
+            url: {path: '/imageUrl'},
           },
           {
             id: 'confirm-details',
             component: 'Text',
-            text: { path: '/bookingDetails' },
+            text: {path: '/bookingDetails'},
           },
           {
             id: 'confirm-dietary',
             component: 'Text',
-            text: { path: '/dietaryRequirements' },
+            text: {path: '/dietaryRequirements'},
           },
           {
             id: 'confirm-text',
@@ -387,9 +387,9 @@ export function createConfirmationMessages(
             variant: 'h5',
             text: 'We look forward to seeing you!',
           },
-          { id: 'divider1', component: 'Divider' },
-          { id: 'divider2', component: 'Divider' },
-          { id: 'divider3', component: 'Divider' },
+          {id: 'divider1', component: 'Divider'},
+          {id: 'divider2', component: 'Divider'},
+          {id: 'divider3', component: 'Divider'},
         ],
       },
     },

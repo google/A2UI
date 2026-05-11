@@ -18,13 +18,12 @@ import {z} from 'zod';
 
 export const DataBindingSchema = z
   .object({
-    path: z
-      .string()
-      .describe('A JSON Pointer path to a value in the data model.'),
+    path: z.string().describe('A JSON Pointer path to a value in the data model.'),
   })
   .describe(
     'REF:common_types.json#/$defs/DataBinding|A JSON Pointer path to a value in the data model.',
   );
+export type DataBindingType = z.infer<typeof DataBindingSchema>;
 
 export const FunctionCallSchema = z
   .object({
@@ -34,9 +33,8 @@ export const FunctionCallSchema = z
       .enum(['string', 'number', 'boolean', 'array', 'object', 'any', 'void'])
       .default('boolean'),
   })
-  .describe(
-    'REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.',
-  );
+  .describe('REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.');
+export type FunctionCallType = z.infer<typeof FunctionCallSchema>;
 
 export const DynamicBooleanSchema = z
   .union([z.boolean(), DataBindingSchema, FunctionCallSchema])
@@ -95,25 +93,19 @@ export type DynamicValue = z.infer<typeof DynamicValueSchema>;
 
 export const ComponentIdSchema = z
   .string()
-  .describe(
-    'REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.',
-  );
+  .describe('REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.');
 /** The unique identifier for a component. */
 export type ComponentId = z.infer<typeof ComponentIdSchema>;
 
 export const ChildListSchema = z
   .union([
-    z
-      .array(ComponentIdSchema)
-      .describe('A static list of child component IDs.'),
+    z.array(ComponentIdSchema).describe('A static list of child component IDs.'),
     z
       .object({
         componentId: ComponentIdSchema,
         path: z
           .string()
-          .describe(
-            'The path to the list of component property objects in the data model.',
-          ),
+          .describe('The path to the list of component property objects in the data model.'),
       })
       .describe('A template for generating a dynamic list of children.'),
   ])
@@ -144,9 +136,7 @@ export type Action = z.infer<typeof ActionSchema>;
 export const CheckRuleSchema = z
   .object({
     condition: DynamicBooleanSchema,
-    message: z
-      .string()
-      .describe('The error message to display if the check fails.'),
+    message: z.string().describe('The error message to display if the check fails.'),
   })
   .describe(
     'REF:common_types.json#/$defs/CheckRule|A check rule consisting of a condition and an error message.',
@@ -156,10 +146,7 @@ export type CheckRule = z.infer<typeof CheckRuleSchema>;
 
 export const CheckableSchema = z
   .object({
-    checks: z
-      .array(CheckRuleSchema)
-      .optional()
-      .describe('A list of checks to perform.'),
+    checks: z.array(CheckRuleSchema).optional().describe('A list of checks to perform.'),
   })
   .describe(
     'REF:common_types.json#/$defs/Checkable|Properties for components that support client-side checks.',
@@ -181,9 +168,7 @@ export const AccessibilityAttributesSchema = z
   );
 
 /** Accessibility attributes like label and description. */
-export type AccessibilityAttributes = z.infer<
-  typeof AccessibilityAttributesSchema
->;
+export type AccessibilityAttributes = z.infer<typeof AccessibilityAttributesSchema>;
 
 export const AnyComponentSchema = z
   .object({

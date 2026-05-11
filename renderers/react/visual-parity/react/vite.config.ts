@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
@@ -30,10 +30,7 @@ export default defineConfig({
     force: true,
     // Pre-bundle web_core subpath imports so Vite doesn't discover them lazily
     // (which causes "optimized dependencies changed. reloading" mid-page-load)
-    include: [
-      '@a2ui/web_core/styles/index',
-      '@a2ui/web_core/data/model-processor',
-    ],
+    include: ['@a2ui/web_core/styles/index', '@a2ui/web_core/data/model-processor'],
     exclude: [
       '@a2ui/react',
       '@a2ui/lit',

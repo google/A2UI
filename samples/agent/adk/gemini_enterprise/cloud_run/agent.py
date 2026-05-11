@@ -42,6 +42,7 @@ from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
+from google.genai.errors import ServerError
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
 from tools import get_contact_info
@@ -133,7 +134,7 @@ class ContactAgent:
         default_input_modes=SUPPORTED_CONTENT_TYPES,
         default_output_modes=SUPPORTED_CONTENT_TYPES,
         capabilities=capabilities,
-        preferred_transport="HTTP+JSON",
+        preferred_transport="JSONRPC",
         skills=[skill],
     )
 
@@ -244,14 +245,18 @@ class ContactAgent:
 
       full_content_list = []
 
-      async for event in runner.run_async(
-          user_id=self._user_id,
-          session_id=session.id,
-          new_message=current_message,
-      ):
-        if event.is_final_response():
-          if event.content and event.content.parts and event.content.parts[0].text:
-            full_content_list.extend([p.text for p in event.content.parts if p.text])
+      try:
+        async for event in runner.run_async(
+            user_id=self._user_id,
+            session_id=session.id,
+            new_message=current_message,
+        ):
+          if event.is_final_response():
+            if event.content and event.content.parts and event.content.parts[0].text:
+              full_content_list.extend([p.text for p in event.content.parts if p.text])
+      except ServerError as e:
+        logger.error(f"GenAI ServerError: {e}")
+        return [Part(root=TextPart(text=f"GenAI Error: {e}"))]
 
       final_response_content = "".join(full_content_list)
 
@@ -344,7 +349,10 @@ class ContactAgent:
         )
 
         # Already validated, so we can return the parts.
-        return parse_response_to_parts(final_response_content)
+        if ui_version:
+          return parse_response_to_parts(final_response_content)
+        else:
+          return [Part(root=TextPart(text=final_response_content))]
 
       # --- If we're here, it means validation failed ---
       if attempt <= max_retries:

@@ -13,6 +13,13 @@
       "cwd": "${workspaceFolder}"
     },
     {
+      "name": "restaurant finder, Flutter renderer",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}/samples/client/flutter/restaurant_finder/app"
+    },
+    {
       "name": "restaurant finder, Python agent",
       "type": "node-terminal",
       "request": "launch",
@@ -28,6 +35,6 @@
       "request": "launch",
       "command": "./scripts/fix_licenses.sh",
       "cwd": "${workspaceFolder}"
-    },
+    }
   ]
 }

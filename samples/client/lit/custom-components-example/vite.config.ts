@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { config } from "dotenv";
-import { UserConfig } from "vite";
-import * as Middleware from "./middleware";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { SANDBOX_ENTRY_NAME, SANDBOX_BASE_PATH, SANDBOX_IFRAME_PATH } from "./ui/shared-constants.js";
+import {config} from 'dotenv';
+import {UserConfig} from 'vite';
+import * as Middleware from './middleware';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {SANDBOX_ENTRY_NAME, SANDBOX_BASE_PATH, SANDBOX_IFRAME_PATH} from './ui/shared-constants.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -27,7 +27,7 @@ export default async () => {
   config();
 
   const entry: Record<string, string> = {
-    contact: resolve(__dirname, "index.html"),
+    contact: resolve(__dirname, 'index.html'),
     [SANDBOX_ENTRY_NAME]: resolve(__dirname, `../..${SANDBOX_IFRAME_PATH}`),
   };
 
@@ -39,35 +39,49 @@ export default async () => {
         configureServer(server) {
           server.middlewares.use((req, _res, next) => {
             if (req.url?.startsWith(`/${SANDBOX_BASE_PATH}`)) {
-              req.url = '/@fs' + resolve(__dirname, '../../' + req.url.slice(1));
+              let targetPath = req.url.slice(1);
+              // Normalize .js requests from HTML back to source .ts files for Vite bundling
+              if (targetPath.endsWith('.js')) {
+                targetPath = targetPath.slice(0, -3) + '.ts';
+              }
+              req.url = '/@fs' + resolve(__dirname, '../../' + targetPath);
             }
             next();
           });
-        }
-      }
+        },
+      },
     ],
     build: {
       rollupOptions: {
         input: entry,
       },
-      target: "es2021",
+      target: 'es2021',
     },
     define: {},
     resolve: {
-      dedupe: ["lit"],
+      dedupe: ['lit'],
       alias: {
-        "@a2ui/markdown-it": resolve(__dirname, "../../../../renderers/markdown/markdown-it/dist/src/markdown.js"),
-        "sandbox.js": resolve(__dirname, "../../" + SANDBOX_ENTRY_NAME + ".ts"),
-        "@modelcontextprotocol/ext-apps/app-bridge": resolve(__dirname, "../node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js"),
-      }
+        '@a2ui/markdown-it': resolve(
+          __dirname,
+          '../../../../renderers/markdown/markdown-it/dist/src/markdown.js',
+        ),
+        'sandbox.js': resolve(__dirname, '../../' + SANDBOX_ENTRY_NAME + '.ts'),
+        '@modelcontextprotocol/ext-apps/app-bridge': resolve(
+          __dirname,
+          '../node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js',
+        ),
+      },
     },
     optimizeDeps: {
       esbuildOptions: {
-        target: "es2021",
-      }
+        target: 'es2021',
+      },
     },
     server: {
       host: true, // Listen on all network interfaces (0.0.0.0), enabling both localhost and 127.0.0.1 simultaneously
+      fs: {
+        allow: ['../../', './'],
+      },
     },
   } satisfies UserConfig;
 };

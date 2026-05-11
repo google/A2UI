@@ -14,102 +14,98 @@
  * limitations under the License.
  */
 
-import { componentRegistry } from "@a2ui/lit/ui";
-import { OrgChart } from "./org-chart.js";
-import { WebFrame } from "./web-frame.js";
-import { PremiumTextField } from "./premium-text-field.js";
-import { McpApp } from "./mcp-apps-component.js";
+import {componentRegistry} from '@a2ui/lit/ui';
+import {OrgChart} from './org-chart.js';
+import {WebFrame} from './web-frame.js';
+import {PremiumTextField} from './premium-text-field.js';
+import {McpApp} from './mcp-apps-component.js';
 
 export function registerContactComponents() {
   // Register OrgChart
-  componentRegistry.register("OrgChart", OrgChart, "org-chart", {
-    type: "object",
+  componentRegistry.register('OrgChart', OrgChart, 'org-chart', {
+    type: 'object',
     properties: {
       chain: {
-        type: "object",
+        type: 'object',
         properties: {
-          path: { type: "string" },
+          path: {type: 'string'},
           literalArray: {
-            type: "array",
+            type: 'array',
             items: {
-              type: "object",
+              type: 'object',
               properties: {
-                title: { type: "string" },
-                name: { type: "string" },
+                title: {type: 'string'},
+                name: {type: 'string'},
               },
-              required: ["title", "name"],
+              required: ['title', 'name'],
             },
           },
         },
       },
       action: {
-        type: "object",
+        type: 'object',
         properties: {
-          name: { type: "string" },
+          name: {type: 'string'},
           context: {
-            type: "array",
+            type: 'array',
             items: {
-              type: "object",
+              type: 'object',
               properties: {
-                key: { type: "string" },
+                key: {type: 'string'},
                 value: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    path: { type: "string" },
-                    literalString: { type: "string" },
-                    literalNumber: { type: "number" },
-                    literalBoolean: { type: "boolean" },
+                    path: {type: 'string'},
+                    literalString: {type: 'string'},
+                    literalNumber: {type: 'number'},
+                    literalBoolean: {type: 'boolean'},
                   },
                 },
               },
-              required: ["key", "value"],
+              required: ['key', 'value'],
             },
           },
         },
-        required: ["name"],
+        required: ['name'],
       },
     },
-    required: ["chain"],
+    required: ['chain'],
   });
 
   // Register PremiumTextField as an override for TextField
-  componentRegistry.register(
-    "TextField",
-    PremiumTextField,
-    "premium-text-field"
-  );
+  componentRegistry.register('TextField', PremiumTextField, 'premium-text-field');
 
   // Register McpApp
-  componentRegistry.register("McpApp", McpApp, "a2ui-mcp-apps-component", {
-    type: "object",
+  componentRegistry.register('McpApp', McpApp, 'a2ui-mcp-apps-component', {
+    type: 'object',
     properties: {
-      resourceUri: { type: "string" },
-      htmlContent: { type: "string" },
-      height: { type: "number" },
+      resourceUri: {type: 'string'},
+      htmlContent: {type: 'string'},
+      height: {type: 'number'},
       allowedTools: {
-        type: "array",
-        items: { type: "string" }
-      }
+        type: 'array',
+        items: {type: 'string'},
+      },
     },
   });
 
   // Register WebFrame
-  componentRegistry.register("WebFrame", WebFrame, "a2ui-web-frame", {
-    type: "object",
+  componentRegistry.register('WebFrame', WebFrame, 'a2ui-web-frame', {
+    type: 'object',
     properties: {
-      url: { type: "string" },
-      html: { type: "string" },
-      height: { type: "number" },
+      url: {type: 'string'},
+      html: {type: 'string'},
+      height: {type: 'number'},
       interactionMode: {
-        type: "string",
-        enum: ["readOnly", "interactive"]
+        type: 'string',
+        enum: ['readOnly', 'interactive'],
       },
       allowedEvents: {
-        type: "array",
-        items: { type: "string" }
-      }
+        type: 'array',
+        items: {type: 'string'},
+      },
     },
   });
 
-  console.log("Registered Contact App Custom Components");
+  console.log('Registered Contact App Custom Components');
 }

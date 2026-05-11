@@ -23,21 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "items-list",
-              "divider",
-              "totals",
-              "actions"
-            ]
+            "children": ["header", "items-list", "divider", "totals", "actions"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "coffee-icon",
-              "store-name"
-            ],
+            "children": ["coffee-icon", "store-name"],
             "align": "center"
           },
           {
@@ -64,20 +55,14 @@
           {
             "id": "order-item-template",
             "component": "Row",
-            "children": [
-              "item-details",
-              "item-price"
-            ],
+            "children": ["item-details", "item-price"],
             "justify": "spaceBetween",
             "align": "start"
           },
           {
             "id": "item-details",
             "component": "Column",
-            "children": [
-              "item-name",
-              "item-size"
-            ]
+            "children": ["item-name", "item-size"]
           },
           {
             "id": "item-name",
@@ -117,19 +102,12 @@
           {
             "id": "totals",
             "component": "Column",
-            "children": [
-              "subtotal-row",
-              "tax-row",
-              "total-row"
-            ]
+            "children": ["subtotal-row", "tax-row", "total-row"]
           },
           {
             "id": "subtotal-row",
             "component": "Row",
-            "children": [
-              "subtotal-label",
-              "subtotal-value"
-            ],
+            "children": ["subtotal-label", "subtotal-value"],
             "justify": "spaceBetween"
           },
           {
@@ -156,10 +134,7 @@
           {
             "id": "tax-row",
             "component": "Row",
-            "children": [
-              "tax-label",
-              "tax-value"
-            ],
+            "children": ["tax-label", "tax-value"],
             "justify": "spaceBetween"
           },
           {
@@ -186,10 +161,7 @@
           {
             "id": "total-row",
             "component": "Row",
-            "children": [
-              "total-label",
-              "total-value"
-            ],
+            "children": ["total-label", "total-value"],
             "justify": "spaceBetween"
           },
           {
@@ -216,10 +188,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "purchase-btn",
-              "add-btn"
-            ]
+            "children": ["purchase-btn", "add-btn"]
           },
           {
             "id": "purchase-btn-text",
@@ -274,7 +243,7 @@
               "price": 4.25
             }
           ],
-          "subtotal": 10.70,
+          "subtotal": 10.7,
           "tax": 0.96,
           "total": 11.66
         }

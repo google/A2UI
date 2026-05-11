@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {AnyDuringSchemaAlignment} from '../types';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   play: 'play_arrow',
@@ -82,8 +84,8 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IconComponent extends BasicCatalogComponent {
-  readonly color = computed(() => this.props()['color']?.value());
+export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
+  readonly color = computed(() => (this.props() as AnyDuringSchemaAlignment)['color']?.value());
   readonly iconNameRaw = computed(() => this.props()['name']?.value());
 
   readonly isPath = computed(() => {
@@ -101,6 +103,6 @@ export class IconComponent extends BasicCatalogComponent {
     if (typeof name !== 'string') return '';
     if (ICON_NAME_OVERRIDES[name]) return ICON_NAME_OVERRIDES[name];
     // Convert camelCase to snake_case for Material Icons
-    return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+    return name.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
   });
 }

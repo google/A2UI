@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {SliderApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI Slider component (v0.9).
@@ -44,7 +45,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
         [min]="min()"
         [max]="max()"
         [step]="step()"
-        [value]="value() ?? min()"
+        [value]="value()"
         (input)="handleInput($event)"
         class="a2ui-slider"
       />
@@ -79,7 +80,7 @@ import { BasicCatalogComponent } from './basic-catalog-component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SliderComponent extends BasicCatalogComponent {
+export class SliderComponent extends BasicCatalogComponent<typeof SliderApi> {
   readonly label = computed(() => this.props()['label']?.value());
   readonly value = computed(() => this.props()['value']?.value());
   readonly min = computed(() => this.props()['min']?.value() ?? 0);

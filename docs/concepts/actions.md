@@ -21,13 +21,14 @@ Functions execute immediate behavior on the renderer without a network round-tri
   "action": {
     "functionCall": {
       "call": "openUrl",
-      "args": { "url": "https://a2ui.org/help" }
+      "args": {"url": "https://a2ui.org/help"}
     }
   }
 }
 ```
 
 Common uses for Functions include:
+
 - **Navigation**: Opening a URL or switching tabs.
 - **Validation**: Checking inputs before submission (see Checks below).
 
@@ -46,8 +47,8 @@ Components like `Button` expose an `action` property. Here is how an Event is wi
     "event": {
       "name": "submit_reservation",
       "context": {
-        "time": { "path": "/reservationTime" },
-        "size": { "path": "/partySize" }
+        "time": {"path": "/reservationTime"},
+        "size": {"path": "/partySize"}
       }
     }
   }
@@ -55,10 +56,9 @@ Components like `Button` expose an `action` property. Here is how an Event is wi
 ```
 
 - **`name`**: A stable identifier for the agent to switch on.
-- **`context`**: A map of key-value pairs. Values can be literal or use a `path` to pull from the current state of the data model. 
+- **`context`**: A map of key-value pairs. Values can be literal or use a `path` to pull from the current state of the data model.
 
 NOTE: **Context vs. Data Model**: While the Data Model represents the entire state tree of a surface, the `context` in an action is effectively a hand-picked **"view"** or subset of that state. This simplifies the Agent's job by providing exactly the values needed for a specific event, without requiring the Agent to navigate a potentially large and complex data model.
-
 
 ### Basic Catalog Function Validation (Checks)
 
@@ -77,12 +77,12 @@ This allows the UI to enforce requirements (like a non-empty field) before the u
     {
       "condition": {
         "call": "required",
-        "args": { "value": { "path": "/partySize" } }
+        "args": {"value": {"path": "/partySize"}}
       },
       "message": "Party size is required"
     }
   ],
-  "action": { "event": { "name": "submit_booking" } }
+  "action": {"event": {"name": "submit_booking"}}
 }
 ```
 
@@ -203,7 +203,7 @@ In an A2A (Agent-to-Agent) binding, the data model is placed in an `a2uiClientDa
 
 ```json
 {
-  "parts": [{ "text": "Submit the reservation" }],
+  "parts": [{"text": "Submit the reservation"}],
   "metadata": {
     "a2uiClientDataModel": {
       "version": "v0.9",
@@ -322,10 +322,10 @@ When the renderer sends an `action` back to the orchestrator, the orchestrator l
 async def handle_incoming_action(payload, session):
     action = payload.get("action")
     surface_id = action.get("surfaceId")
-    
+
     # Lookup the owning agent
     target_agent = session.state.get(f"owner_of_{surface_id}")
-    
+
     if target_agent:
         # Programmatically route the request to the sub-agent
         return transfer_to(target_agent)
@@ -344,14 +344,14 @@ This is best implemented in an outbound metadata interceptor:
 async def intercept(self, request_payload, target_agent, session):
     message = request_payload["params"]["message"]
     data_model = message.get("metadata", {}).get("a2uiClientDataModel")
-    
+
     if data_model:
         # Filter surfaces to only those owned by the target_agent
         filtered_surfaces = {
             surface_id: state for surface_id, state in data_model["surfaces"].items()
             if session.state.get(f"owner_of_{surface_id}") == target_agent.name
         }
-        
+
         # Replace with the stripped data model
         message["metadata"]["a2uiClientDataModel"]["surfaces"] = filtered_surfaces
 
@@ -371,6 +371,7 @@ CAUTION: **Security Risk: State Scraping**: If an Orchestrator fails to strip th
 This example shows a button that explicitly gathers the data it needs to send.
 
 **Component Definition:**
+
 ```json
 {
   "id": "submit-button",
@@ -380,8 +381,8 @@ This example shows a button that explicitly gathers the data it needs to send.
     "event": {
       "name": "submit_booking",
       "context": {
-        "partySize": { "path": "/partySize" },
-        "reservationTime": { "path": "/reservationTime" }
+        "partySize": {"path": "/partySize"},
+        "reservationTime": {"path": "/reservationTime"}
       }
     }
   }
@@ -414,7 +415,7 @@ The renderer sends an A2A message containing the user's text and the data model 
 
 ```json
 {
-  "parts": [{ "text": "Okay, submit the form" }],
+  "parts": [{"text": "Okay, submit the form"}],
   "metadata": {
     "a2uiClientDataModel": {
       "version": "v0.9",

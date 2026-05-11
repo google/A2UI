@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // You can add global styles to this file, and also import other style files
 @use '@angular/material' as mat;
-
 
 @mixin styled-scrollbar {
   ::-webkit-scrollbar {
@@ -41,15 +39,17 @@
 
 html {
   color-scheme: light dark;
-  @include mat.theme((
-    color: mat.$blue-palette,
-    typography: Roboto,
-    density: 0
-  ));
+  @include mat.theme(
+    (
+      color: mat.$blue-palette,
+      typography: Roboto,
+      density: 0,
+    )
+  );
 
   @include styled-scrollbar;
 }
- 
+
 :root {
   --n-100: #ffffff;
   --n-99: #fcfcfc;

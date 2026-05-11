@@ -8,11 +8,11 @@ message validation for A2A (Agent-to-Agent/Agent-to-Client) communication.
 
 The `agent_sdk` revolves around three main classes:
 
-* **`CatalogConfig`**: Defines the metadata for a component catalog (name,
+- **`CatalogConfig`**: Defines the metadata for a component catalog (name,
   schema path, examples path).
-* **`A2uiCatalog`**: Represents a processed catalog, providing methods for
+- **`A2uiCatalog`**: Represents a processed catalog, providing methods for
   validation and LLM instruction rendering.
-* **`A2uiSchemaManager`**: The central coordinator that loads catalogs, manages
+- **`A2uiSchemaManager`**: The central coordinator that loads catalogs, manages
   versioning, and generates system prompts.
 
 ## Prerequisites
@@ -188,10 +188,11 @@ yield {
 
 ##### Option B: Incremental Streaming Parsing (Advanced)
 
-Use this approach for sub-second UI updates. The `A2uiStreamParser` **automatically parses, validates, and fixes (heals)** the JSON payload chunks *incrementally* as they arrive from the LLM stream. It yields valid UI messages *before* the entire JSON block is complete by automatically closing open quotes and braces.
+Use this approach for sub-second UI updates. The `A2uiStreamParser` **automatically parses, validates, and fixes (heals)** the JSON payload chunks _incrementally_ as they arrive from the LLM stream. It yields valid UI messages _before_ the entire JSON block is complete by automatically closing open quotes and braces.
 
 > [!IMPORTANT]
 > **Prerequisite**: To use incremental streaming, your agent executor must support streaming mode. In ADK, enable this using `RunConfig`:
+>
 > ```python
 > run_config=run_config.RunConfig(
 >     streaming_mode=run_config.StreamingMode.SSE
@@ -208,7 +209,7 @@ parser = A2uiStreamParser(catalog=selected_catalog)
 for chunk in llm_response_stream:
     # Process text chunks as they arrive
     response_parts = parser.process_chunk(chunk.text)
-    
+
     for part in response_parts:
         if part.a2ui_json:
             # Yield partial UI updates immediately
@@ -330,7 +331,6 @@ When the LLM calls the UI tool, the toolset uses the dynamic catalog to:
 3. **Validate Payloads**: Validate the LLM's generated JSON against the specific
    `A2uiCatalog` object's validator.
 
-
 ### 3. Multiple Version Support
 
 To support multiple protocol versions (e.g., v0.8 and v0.9), pre-configure `A2uiSchemaManager` and `LlmAgent` instances for each version during your agent's initialization. At runtime, use `try_activate_a2ui_extension` to negotiate the version and select the pre-configured schema manager or runner.
@@ -397,6 +397,3 @@ agent_card = AgentCard(
     )
 )
 ```
-
-
-

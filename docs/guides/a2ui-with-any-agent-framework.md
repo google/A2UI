@@ -34,11 +34,11 @@ Turn on A2UI in `CopilotRuntime` and inject the `render_a2ui` tool so your
 agent can produce A2UI surfaces:
 
 ```ts title="app/api/copilotkit/route.ts"
-import { CopilotRuntime } from "@copilotkit/runtime";
+import {CopilotRuntime} from '@copilotkit/runtime';
 
 const runtime = new CopilotRuntime({
-  agents: { default: myAgent },
-  a2ui: { injectA2UITool: true },
+  agents: {default: myAgent},
+  a2ui: {injectA2UITool: true},
 });
 ```
 
@@ -49,15 +49,17 @@ Scope to specific agents with `a2ui: { injectA2UITool: true, agents: ["my-agent"
 The A2UI renderer activates automatically. Optionally pass a theme:
 
 {% raw %}
-```tsx
-import { CopilotKitProvider } from "@copilotkit/react-core/v2";
-import "@copilotkit/react-core/v2/styles.css";
-import { myCustomTheme } from "@copilotkit/a2ui-renderer";
 
-<CopilotKitProvider runtimeUrl="/api/copilotkit" a2ui={{ theme: myCustomTheme }}>
+```tsx
+import {CopilotKitProvider} from '@copilotkit/react-core/v2';
+import '@copilotkit/react-core/v2/styles.css';
+import {myCustomTheme} from '@copilotkit/a2ui-renderer';
+
+<CopilotKitProvider runtimeUrl="/api/copilotkit" a2ui={{theme: myCustomTheme}}>
   {children}
-</CopilotKitProvider>
+</CopilotKitProvider>;
 ```
+
 {% endraw %}
 
 ### Custom components (BYOC)
@@ -82,22 +84,22 @@ gets injected into the agent's prompt so the LLM knows when to reach for
 each component; the schema validates the props the agent sends.
 
 ```ts title="lib/a2ui/definitions.ts"
-import { z } from "zod";
+import {z} from 'zod';
 
 export const myDefinitions = {
   StatusBadge: {
-    description: "A colored status badge.",
+    description: 'A colored status badge.',
     props: z.object({
       text: z.string(),
-      variant: z.enum(["success", "warning", "error"]).optional(),
+      variant: z.enum(['success', 'warning', 'error']).optional(),
     }),
   },
   Metric: {
-    description: "A key metric with label and value.",
+    description: 'A key metric with label and value.',
     props: z.object({
       label: z.string(),
       value: z.string(),
-      trend: z.enum(["up", "down"]).optional(),
+      trend: z.enum(['up', 'down']).optional(),
     }),
   },
 };
@@ -112,42 +114,52 @@ the definitions type, so the props your renderer receives are type-checked
 against the Zod schema — a typo in `props.text` is a compile error.
 
 {% raw %}
-```tsx title="lib/a2ui/renderers.tsx"
-"use client";
 
-import { createCatalog, type CatalogRenderers } from "@copilotkit/a2ui-renderer";
-import { myDefinitions, type MyDefinitions } from "./definitions";
+```tsx title="lib/a2ui/renderers.tsx"
+'use client';
+
+import {createCatalog, type CatalogRenderers} from '@copilotkit/a2ui-renderer';
+import {myDefinitions, type MyDefinitions} from './definitions';
 
 const myRenderers: CatalogRenderers<MyDefinitions> = {
-  StatusBadge: ({ props }) => {
+  StatusBadge: ({props}) => {
     const colors = {
-      success: { bg: "#dcfce7", text: "#166534" },
-      warning: { bg: "#fef3c7", text: "#92400e" },
-      error: { bg: "#fee2e2", text: "#991b1b" },
+      success: {bg: '#dcfce7', text: '#166534'},
+      warning: {bg: '#fef3c7', text: '#92400e'},
+      error: {bg: '#fee2e2', text: '#991b1b'},
     };
-    const c = colors[props.variant ?? "success"];
+    const c = colors[props.variant ?? 'success'];
     return (
-      <span style={{ padding: "2px 8px", borderRadius: 9999, fontSize: "0.75rem", background: c.bg, color: c.text }}>
+      <span
+        style={{
+          padding: '2px 8px',
+          borderRadius: 9999,
+          fontSize: '0.75rem',
+          background: c.bg,
+          color: c.text,
+        }}
+      >
         {props.text}
       </span>
     );
   },
 
-  Metric: ({ props }) => (
+  Metric: ({props}) => (
     <div>
-      <div style={{ fontSize: "0.75rem", color: "#6b7280" }}>{props.label}</div>
-      <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-        {props.value} {props.trend === "up" ? "↑" : props.trend === "down" ? "↓" : ""}
+      <div style={{fontSize: '0.75rem', color: '#6b7280'}}>{props.label}</div>
+      <div style={{fontSize: '1.5rem', fontWeight: 700}}>
+        {props.value} {props.trend === 'up' ? '↑' : props.trend === 'down' ? '↓' : ''}
       </div>
     </div>
   ),
 };
 
 export const myCatalog = createCatalog(myDefinitions, myRenderers, {
-  catalogId: "my-app-catalog",
+  catalogId: 'my-app-catalog',
   includeBasicCatalog: true, // merges with built-in components
 });
 ```
+
 {% endraw %}
 
 `catalogId` is the stable handle the agent uses to target this catalog;
@@ -157,21 +169,23 @@ alongside your own (omit it to render _only_ your components).
 #### 3. Pass the catalog to CopilotKit
 
 {% raw %}
+
 ```tsx title="app/layout.tsx"
-"use client";
+'use client';
 
-import { CopilotKitProvider } from "@copilotkit/react-core/v2";
-import "@copilotkit/react-core/v2/styles.css";
-import { myCatalog } from "@/lib/a2ui/renderers";
+import {CopilotKitProvider} from '@copilotkit/react-core/v2';
+import '@copilotkit/react-core/v2/styles.css';
+import {myCatalog} from '@/lib/a2ui/renderers';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({children}: {children: React.ReactNode}) {
   return (
-    <CopilotKitProvider runtimeUrl="/api/copilotkit" a2ui={{ catalog: myCatalog }}>
+    <CopilotKitProvider runtimeUrl="/api/copilotkit" a2ui={{catalog: myCatalog}}>
       {children}
     </CopilotKitProvider>
   );
 }
 ```
+
 {% endraw %}
 
 Agents will now see your custom components alongside the built-ins and

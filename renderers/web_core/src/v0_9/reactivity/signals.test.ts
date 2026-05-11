@@ -16,11 +16,7 @@
 
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import {
-  Signal as PSignal,
-  computed as pComputed,
-  effect as pEffect,
-} from '@preact/signals-core';
+import {Signal as PSignal, computed as pComputed, effect as pEffect} from '@preact/signals-core';
 import {
   signal as aSignal,
   computed as aComputed,

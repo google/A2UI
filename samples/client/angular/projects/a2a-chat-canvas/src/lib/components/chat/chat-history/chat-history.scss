@@ -32,12 +32,7 @@
 .empty-history-text {
   margin: 0;
   font: var(--mat-sys-display-small);
-  background: linear-gradient(
-    90deg,
-    #217bfe 28.03%,
-    #078efb 49.56%,
-    #ac87eb 71.1%
-  );
+  background: linear-gradient(90deg, #217bfe 28.03%, #078efb 49.56%, #ac87eb 71.1%);
   background-clip: text;
   color: transparent;
 }

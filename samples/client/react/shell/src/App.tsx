@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef, FormEvent } from 'react';
+import {useState, useEffect, useCallback, useMemo, useRef, FormEvent} from 'react';
 import {
   A2uiSurface,
   basicCatalog,
   MarkdownContext,
   ReactComponentImplementation,
 } from '@a2ui/react/v0_9';
-import {
-  A2uiClientMessage,
-  A2uiMessage,
-  MessageProcessor,
-  SurfaceModel,
-} from '@a2ui/web_core/v0_9';
-import { renderMarkdown } from '@a2ui/markdown-it';
-import { A2UIClient } from './client';
-import { AppConfig, restaurantConfig } from './configs';
+import {A2uiClientMessage, A2uiMessage, MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {renderMarkdown} from '@a2ui/markdown-it';
+import {A2UIClient} from './client';
+import {AppConfig, restaurantConfig} from './configs';
 import {
   createRestaurantListMessages,
   createBookingFormMessages,
@@ -55,32 +50,26 @@ export function App() {
   }, []);
 
   // Create client instance
-  const client = useMemo(
-    () => new A2UIClient(),
-    []
-  );
+  const client = useMemo(() => new A2UIClient(), []);
 
   // Set document title and background on mount
   useEffect(() => {
     document.title = config.title;
     if (config.background) {
-      document.documentElement.style.setProperty(
-        '--background',
-        config.background
-      );
+      document.documentElement.style.setProperty('--background', config.background);
     }
   }, [config]);
 
   // Use a ref to hold the sendAndProcess function that will be set by ShellContent
-  const sendAndProcessRef = useRef<
-    ((message: A2uiClientMessage | string) => Promise<void>) | null
-  >(null);
+  const sendAndProcessRef = useRef<((message: A2uiClientMessage | string) => Promise<void>) | null>(
+    null,
+  );
 
   const processor = useMemo(() => {
-    return new MessageProcessor([basicCatalog], (action) => {
+    return new MessageProcessor([basicCatalog], action => {
       console.log('User action:', action);
       if (sendAndProcessRef.current) {
-        sendAndProcessRef.current({ version: 'v0.9', action });
+        sendAndProcessRef.current({version: 'v0.9', action});
       }
     });
   }, []);
@@ -106,7 +95,7 @@ interface ShellContentProps {
   processor: MessageProcessor<ReactComponentImplementation>;
 }
 
-function ShellContent({ config, client, sendAndProcessRef, processor }: ShellContentProps) {
+function ShellContent({config, client, sendAndProcessRef, processor}: ShellContentProps) {
   const [requesting, setRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<A2uiMessage[]>([]);
@@ -120,14 +109,14 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
   });
 
   const [surfaces, setSurfaces] = useState<SurfaceModel<ReactComponentImplementation>[]>(() =>
-    Array.from(processor.model.surfacesMap.values())
+    Array.from(processor.model.surfacesMap.values()),
   );
 
   useEffect(() => {
-    const sub1 = processor.onSurfaceCreated((surface) => {
+    const sub1 = processor.onSurfaceCreated(surface => {
       setSurfaces(prev => [...prev, surface]);
     });
-    const sub2 = processor.onSurfaceDeleted((id) => {
+    const sub2 = processor.onSurfaceDeleted(id => {
       setSurfaces(prev => prev.filter(s => s.id !== id));
     });
     return () => {
@@ -139,50 +128,46 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
   // Loading text rotation
   useEffect(() => {
     if (!requesting) return;
-    if (!Array.isArray(config.loadingText) || config.loadingText.length <= 1)
-      return;
+    if (!Array.isArray(config.loadingText) || config.loadingText.length <= 1) return;
 
     const interval = setInterval(() => {
-      setLoadingTextIndex((prev) => (prev + 1) % config.loadingText!.length);
+      setLoadingTextIndex(prev => (prev + 1) % config.loadingText!.length);
     }, 2000);
 
     return () => clearInterval(interval);
   }, [requesting, config.loadingText]);
 
   // Generate mock response based on message/action
-  const getMockResponse = useCallback(
-    (message: A2uiClientMessage | string): A2uiMessage[] => {
-      // Handle user actions
-      if (typeof message === 'object' && 'action' in message) {
-        const action = message.action;
-        const context = action.context || {};
+  const getMockResponse = useCallback((message: A2uiClientMessage | string): A2uiMessage[] => {
+    // Handle user actions
+    if (typeof message === 'object' && 'action' in message) {
+      const action = message.action;
+      const context = action.context || {};
 
-        if (action.name === 'book_restaurant') {
-          // User clicked "Book Now" - show booking form
-          return createBookingFormMessages(
-            String(context.restaurantName || 'Restaurant'),
-            String(context.imageUrl || ''),
-            String(context.address || '')
-          );
-        }
-
-        if (action.name === 'submit_booking') {
-          // User submitted booking - show confirmation
-          return createConfirmationMessages(
-            String(context.restaurantName || 'Restaurant'),
-            String(context.partySize || '2'),
-            String(context.reservationTime || ''),
-            String(context.dietary || ''),
-            String(context.imageUrl || '')
-          );
-        }
+      if (action.name === 'book_restaurant') {
+        // User clicked "Book Now" - show booking form
+        return createBookingFormMessages(
+          String(context.restaurantName || 'Restaurant'),
+          String(context.imageUrl || ''),
+          String(context.address || ''),
+        );
       }
 
-      // Default: show restaurant list
-      return createRestaurantListMessages();
-    },
-    []
-  );
+      if (action.name === 'submit_booking') {
+        // User submitted booking - show confirmation
+        return createConfirmationMessages(
+          String(context.restaurantName || 'Restaurant'),
+          String(context.partySize || '2'),
+          String(context.reservationTime || ''),
+          String(context.dietary || ''),
+          String(context.imageUrl || ''),
+        );
+      }
+    }
+
+    // Default: show restaurant list
+    return createRestaurantListMessages();
+  }, []);
 
   // Send message to agent and process response
   const sendAndProcess = useCallback(
@@ -200,7 +185,7 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
 
         if (isMockMode) {
           // Simulate network delay in mock mode
-          await new Promise((resolve) => setTimeout(resolve, 800));
+          await new Promise(resolve => setTimeout(resolve, 800));
           response = getMockResponse(message);
           console.log('Mock response:', response);
           processor.processMessages(response);
@@ -208,7 +193,7 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
         } else {
           setMessages([]);
 
-          response = await client.send(message, (chunkMessages) => {
+          response = await client.send(message, chunkMessages => {
             console.log('Chunk messages:', chunkMessages);
             processor.processMessages(chunkMessages);
             setMessages(prev => [...prev, ...chunkMessages]);
@@ -227,7 +212,7 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
         setRequesting(false);
       }
     },
-    [client, processor, getMockResponse]
+    [client, processor, getMockResponse],
   );
 
   // Expose sendAndProcess to parent via ref for action handling
@@ -245,12 +230,12 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
 
       sendAndProcess(body);
     },
-    [sendAndProcess]
+    [sendAndProcess],
   );
 
   // Toggle dark mode
   const toggleDarkMode = useCallback(() => {
-    setIsDarkMode((prev) => {
+    setIsDarkMode(prev => {
       const newValue = !prev;
       if (newValue) {
         document.body.classList.add('dark');
@@ -334,7 +319,7 @@ function ShellContent({ config, client, sendAndProcessRef, processor }: ShellCon
       {/* Render all surfaces */}
       {hasSurfaces && (
         <section className="surfaces">
-          {surfaces.map((surface) => (
+          {surfaces.map(surface => (
             <A2uiSurface key={surface.id} surface={surface} />
           ))}
         </section>

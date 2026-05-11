@@ -23,11 +23,7 @@
           {
             "id": "main-row",
             "component": "Row",
-            "children": [
-              "status-checkbox",
-              "content",
-              "priority"
-            ],
+            "children": ["status-checkbox", "content", "priority"],
             "align": "start"
           },
           {
@@ -41,11 +37,7 @@
           {
             "id": "content",
             "component": "Column",
-            "children": [
-              "title",
-              "description",
-              "meta-row"
-            ]
+            "children": ["title", "description", "meta-row"]
           },
           {
             "id": "title",
@@ -66,10 +58,7 @@
           {
             "id": "meta-row",
             "component": "Row",
-            "children": [
-              "due-date-input",
-              "project"
-            ],
+            "children": ["due-date-input", "project"],
             "align": "center"
           },
           {

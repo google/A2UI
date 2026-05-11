@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { MessageDecorator } from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
-import { Message } from '@a2a_chat_canvas/components/chat/message/message';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { UiMessage } from '@a2a_chat_canvas/types/ui-message';
-import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
+import {MessageDecorator} from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
+import {Message} from '@a2a_chat_canvas/components/chat/message/message';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {UiMessage} from '@a2a_chat_canvas/types/ui-message';
+import {NgComponentOutlet, NgTemplateOutlet} from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -88,7 +88,7 @@ export class ChatHistory {
   /** Resolves the message decorator component. */
   protected readonly resolvedMessageDecorator = resource({
     params: this.messageDecorator,
-    loader: async ({ params }) => {
+    loader: async ({params}) => {
       if (!params) {
         return null;
       }

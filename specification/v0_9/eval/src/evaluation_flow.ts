@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { z } from "genkit";
-import { ai } from "./ai";
-import { rateLimiter } from "./rateLimiter";
-import { logger } from "./logger";
-import * as yaml from "js-yaml";
+import {z} from 'genkit';
+import {ai} from './ai';
+import {rateLimiter} from './rateLimiter';
+import {logger} from './logger';
+import * as yaml from 'js-yaml';
 
 // Define an evaluation flow
 export const evaluationFlow = ai.defineFlow(
   {
-    name: "evaluationFlow",
+    name: 'evaluationFlow',
     inputSchema: z.object({
       originalPrompt: z.string(),
       generatedOutput: z.string(),
@@ -37,33 +37,31 @@ export const evaluationFlow = ai.defineFlow(
         .array(
           z.object({
             issue: z.string(),
-            severity: z.enum(["minor", "significant", "critical"]),
+            severity: z.enum(['minor', 'significant', 'critical']),
           }),
         )
         .optional(),
       evalPrompt: z.string().optional(),
     }),
   },
-  async ({ originalPrompt, generatedOutput, evalModel, schemas }) => {
+  async ({originalPrompt, generatedOutput, evalModel, schemas}) => {
     const schemaDefs = Object.values(schemas)
       .map((s: any) => JSON.stringify(s, null, 2))
-      .join("\n\n");
+      .join('\n\n');
 
     const EvalResultSchema = z.object({
-      pass: z
-        .boolean()
-        .describe("Whether the generated UI meets the requirements"),
-      reason: z.string().describe("Summary of the reason for a failure."),
+      pass: z.boolean().describe('Whether the generated UI meets the requirements'),
+      reason: z.string().describe('Summary of the reason for a failure.'),
       issues: z
         .array(
           z.object({
-            issue: z.string().describe("Description of the issue"),
+            issue: z.string().describe('Description of the issue'),
             severity: z
-              .enum(["minor", "significant", "critical"])
-              .describe("Severity of the issue"),
+              .enum(['minor', 'significant', 'critical'])
+              .describe('Severity of the issue'),
           }),
         )
-        .describe("List of specific issues found."),
+        .describe('List of specific issues found.'),
     });
 
     const evalPrompt = `You are an expert QA evaluator for a UI generation system.
@@ -143,8 +141,8 @@ Return a JSON object with the following schema:
     const estimatedInputTokens = Math.ceil(evalPrompt.length / 2.5);
 
     // Lookup eval model config to enforce rate limits, or generate a safe default fallback.
-    const { modelsToTest } = await import("./models");
-    let evalModelConfig = modelsToTest.find((m) => m.name === evalModel);
+    const {modelsToTest} = await import('./models');
+    let evalModelConfig = modelsToTest.find(m => m.name === evalModel);
 
     if (!evalModelConfig) {
       evalModelConfig = {
@@ -170,12 +168,12 @@ Return a JSON object with the following schema:
       // Parse the output
       const result = response.output;
       if (!result) {
-        throw new Error("No output from evaluation model");
+        throw new Error('No output from evaluation model');
       }
 
       return {
         pass: result.pass,
-        reason: result.reason || "No reason provided",
+        reason: result.reason || 'No reason provided',
         issues: result.issues || [],
         evalPrompt: evalPrompt,
       };

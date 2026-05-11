@@ -193,7 +193,22 @@
     - input: "}"
       expect: []
     - input: "}"
-      expect: [{a2ui: [{beginRendering: {root: "root", surfaceId: "s1", styles: {primaryColor: "#FF0000", font: "Roboto"}}}]}]
+      expect:
+        [
+          {
+            a2ui:
+              [
+                {
+                  beginRendering:
+                    {
+                      root: "root",
+                      surfaceId: "s1",
+                      styles: {primaryColor: "#FF0000", font: "Roboto"},
+                    },
+                },
+              ],
+          },
+        ]
 
 - name: test_multiple_a2ui_blocks
   description: Tests that multiple A2UI blocks are handled correctly with interleaved text.
@@ -956,7 +971,17 @@
         - a2ui:
             - dataModelUpdate:
                 surfaceId: "default"
-                contents: [{key: "items", valueMap: [{key: "name", valueString: "Item 1"}, {key: "name", valueString: "Item 2"}]}]
+                contents:
+                  [
+                    {
+                      key: "items",
+                      valueMap:
+                        [
+                          {key: "name", valueString: "Item 1"},
+                          {key: "name", valueString: "Item 2"},
+                        ],
+                    },
+                  ]
     - input: "]}}}]"
       expect: []
 
@@ -978,7 +1003,7 @@
       expect: []
 
 - name: test_sniff_partial_datamodel_with_cut_key
-  description: "Verifies that an unclosed string like {\"key or {\"key\": \"val still yields previous valid entries."
+  description: 'Verifies that an unclosed string like {"key or {"key": "val still yields previous valid entries.'
   catalog:
     version: "0.8"
     s2c_schema: "test_data/simplified_s2c_v08.json"
@@ -1325,7 +1350,8 @@
     - input: '"'
       expect: []
     - input: "}},"
-      expect: [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": ['
       expect: []
     - input: '{"id": "root", "component": "Column", "children": ['
@@ -1433,7 +1459,8 @@
   action: process_chunk
   steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "c1", "component": "Text", "text": "hello"}'
       expect: []
     - input: ', {"id": "root", "component": "Card", "child": "c1"}}]}}</a2ui-json>'
@@ -1471,7 +1498,8 @@
   action: process_chunk
   steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "root"}, {"id": "orphan", "component": "Text", "text": "orphan"}]}}]</a2ui-json>'
       expect:
         - a2ui:
@@ -1504,7 +1532,8 @@
   action: process_chunk
   steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "child"}]}},{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "child", "component": "Card", "child": "root"}]}}'
       expect_error: "Circular reference detected"
 
@@ -1529,7 +1558,8 @@
   action: process_chunk
   steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}},'
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Card", "child": "root"}]}}'
       expect_error: "Self-reference detected"
 
@@ -1555,7 +1585,8 @@
     - input: "Here is your UI: <a2ui-json>"
       expect: [{text: "Here is your UI: "}]
     - input: '[{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}]'
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1"}}]}]
     - input: "</a2ui-json> That's all!"
       expect: [{text: " That's all!"}]
 
@@ -1623,7 +1654,23 @@
     - input: "}"
       expect: []
     - input: "}"
-      expect: [{a2ui: [{version: "v0.9", createSurface: {catalogId: "test_catalog", surfaceId: "s1", theme: {primaryColor: "#FF0000", font: "Roboto"}}}]}]
+      expect:
+        [
+          {
+            a2ui:
+              [
+                {
+                  version: "v0.9",
+                  createSurface:
+                    {
+                      catalogId: "test_catalog",
+                      surfaceId: "s1",
+                      theme: {primaryColor: "#FF0000", font: "Roboto"},
+                    },
+                },
+              ],
+          },
+        ]
 
 - name: test_multiple_a2ui_blocks_v09
   description: Tests that multiple A2UI blocks are handled correctly with interleaved text for v0.9.
@@ -1883,7 +1930,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "updateDataModel": {"surfaceId": "s1", "value": {"name": "Alice"}}}, '
       expect:
@@ -1938,7 +1985,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -1991,7 +2038,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2042,7 +2089,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
       expect: []
@@ -2091,7 +2138,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2143,7 +2190,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
       expect: []
@@ -2161,7 +2208,6 @@
                   - id: "root"
                     component: "Text"
                     text: "hi"
-
 
 - name: test_data_model_after_components_v09
   description: Tests that data model after components works.
@@ -2190,7 +2236,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2244,7 +2290,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2295,7 +2341,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "contact'
       expect: []
@@ -2344,7 +2390,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2396,7 +2442,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": "hi"}]}}, '
       expect: []
@@ -2426,7 +2472,7 @@
       components: {}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "deleteSurface": {"surfaceId": "s1"}}, '
       expect: []
@@ -2465,7 +2511,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2498,7 +2544,7 @@
       components: {}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"unknownMessage": "invalid"}]'
       expect_error: "Validation failed"
@@ -2525,7 +2571,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2559,9 +2605,9 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>'
+    - input: "<a2ui-json>"
       expect: []
-    - input: '['
+    - input: "["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}'
       expect:
@@ -2584,7 +2630,7 @@
                   - id: "root"
                     component: "Text"
                     text: "hello"
-    - input: ' world'
+    - input: " world"
       expect:
         - a2ui:
             - version: "v0.9"
@@ -2629,7 +2675,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "s1"}}, '
       expect:
@@ -2707,7 +2753,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"catalogId": "test_catalog", "surfaceId": "default"}}, '
       expect:
@@ -2823,7 +2869,7 @@
       components: {}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "updateDataModel": {"surfaceId": "default", "value": {"title": "Top Restaurants", "items": {'
       expect:
@@ -3086,7 +3132,7 @@
           discriminator: {propertyName: "component"}
   action: process_chunk
   steps:
-    - input: '<a2ui-json>['
+    - input: "<a2ui-json>["
       expect: []
     - input: '{"version": "v0.9", "createSurface": {"surfaceId": "surface1", "catalogId": "test_catalog"}},'
       expect:
@@ -3201,7 +3247,8 @@
   action: process_chunk
   steps:
     - input: '<a2ui-json>[{"version": "v0.9", "createSurface": {"surfaceId": "s1", "catalogId": "test_catalog"}}]</a2ui-json>'
-      expect: [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
+      expect:
+        [{a2ui: [{version: "v0.9", createSurface: {surfaceId: "s1", catalogId: "test_catalog"}}]}]
     - input: '<a2ui-json>[{"version": "v0.9", "updateComponents": {"surfaceId": "s1", "components": [{"id": "root", "component": "Text", "text": {"path": "some/relative/path"}}]}}]</a2ui-json>'
       expect:
         - a2ui:
@@ -3212,5 +3259,3 @@
                   - id: "root"
                     component: "Text"
                     text: {path: "some/relative/path"}
-
-

@@ -9,9 +9,10 @@ By defining your own catalog, you restrict the agent to using exactly the compon
 Every A2UI surface is driven by a **Catalog**. A catalog is simply a JSON Schema file that tells the agent which components, functions, and themes are available for it to use.
 
 Defining your own catalog offers the following benefits:
--   **Design System Alignment**: Restrict the agent to using exactly the components and visual language that exist in your application.
--   **Security and Type Safety**: You register entire catalogs with your client application, ensuring that only trusted components are rendered.
--   **No Mappers Needed**: It is recommended to build catalogs that directly reflect your client's design system rather than trying to map a generic catalog (like the Basic Catalog) to it through an adapter.
+
+- **Design System Alignment**: Restrict the agent to using exactly the components and visual language that exist in your application.
+- **Security and Type Safety**: You register entire catalogs with your client application, ensuring that only trusted components are rendered.
+- **No Mappers Needed**: It is recommended to build catalogs that directly reflect your client's design system rather than trying to map a generic catalog (like the Basic Catalog) to it through an adapter.
 
 The Basic Catalog is just one example and is intentionally sparse to remain easily implementable by different renderers.
 
@@ -31,10 +32,11 @@ It is recommended to create catalogs that directly map to your existing componen
 
     To implement your own catalog on the web:
     -   Create a JSON Schema containing your component definitions.
-- Create your own `Component` objects and `Catalog` object within your chosen web renderer.
-    -   Provide the schema or reference ID to the agent.
 
-    *Detailed guides for each framework coming soon.*
+- Create your own `Component` objects and `Catalog` object within your chosen web renderer.
+  - Provide the schema or reference ID to the agent.
+
+  _Detailed guides for each framework coming soon._
 
 === "Flutter"
 
@@ -54,6 +56,6 @@ When defining and registering catalogs:
 
 ## Next Steps
 
--   **[Theming & Styling](theming.md)**: Customize the look and feel of components.
--   **[Component Reference](../reference/components.md)**: Explore standard types that might be available for reuse.
--   **[Agent Development](agent-development.md)**: Build agents that interact with your Catalog.
+- **[Theming & Styling](theming.md)**: Customize the look and feel of components.
+- **[Component Reference](../reference/components.md)**: Explore standard types that might be available for reuse.
+- **[Agent Development](agent-development.md)**: Build agents that interact with your Catalog.

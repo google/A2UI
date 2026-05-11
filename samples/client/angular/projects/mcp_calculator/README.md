@@ -30,8 +30,8 @@ Once the application is running, open `http://localhost:4200/` in your browser. 
 
 You can perform calculations using standard operations. When computing the expression, there are two different "equals" buttons:
 
--   **Local JavaScript Calculation (💻 =)**: Click this button to evaluate the expression immediately using standard JavaScript in the browser. The result will appear in the calculator display.
--   **MCP Agent Tool Call Calculation (🤖 =)**: Click this button to dispatch a tool call to the MCP server. The local display will reset, and the calculation will be handled by the agent asynchronously (the result will appear in the chat conversation).
+- **Local JavaScript Calculation (💻 =)**: Click this button to evaluate the expression immediately using standard JavaScript in the browser. The result will appear in the calculator display.
+- **MCP Agent Tool Call Calculation (🤖 =)**: Click this button to dispatch a tool call to the MCP server. The local display will reset, and the calculation will be handled by the agent asynchronously (the result will appear in the chat conversation).
 
 ## Features
 

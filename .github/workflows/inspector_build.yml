@@ -16,18 +16,18 @@ name: Inspector
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'tools/inspector/**'
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
-      - '.github/workflows/inspector_build.yml'
+      - "tools/inspector/**"
+      - "renderers/lit/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/inspector_build.yml"
   pull_request:
     paths:
-      - 'tools/inspector/**'
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
-      - '.github/workflows/inspector_build.yml'
+      - "tools/inspector/**"
+      - "renderers/lit/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/inspector_build.yml"
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install web_core deps
         working-directory: ./renderers/web_core

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Signal, signal as angularSignal } from '@angular/core';
-import { Signal as PreactSignal, effect, signal as preactSignal } from '@a2ui/web_core/v0_9';
-export { preactSignal };
+import {DestroyRef, Signal, signal as angularSignal} from '@angular/core';
+import {Signal as PreactSignal, effect, signal as preactSignal} from '@a2ui/web_core/v0_9';
+export {preactSignal};
 
 /**
  * Bridges a Preact Signal (from A2UI web_core) to a reactive Angular Signal.
@@ -32,10 +32,7 @@ export { preactSignal };
  *               (necessary for correct change detection in OnPush components).
  * @returns A read-only Angular Signal.
  */
-
-type ManagedAngularSignal<T> = Signal<T> & {
-  dispose?: () => void;
-};
+import {NgZone} from '@angular/core';
 
 export function toAngularSignal<T>(
   preactSignal: PreactSignal<T>,
@@ -86,7 +83,11 @@ export function toAngularSignal<T>(
  * @param index The index of the child component.
  * @returns A fully normalized absolute path for the indexed child.
  */
-export function getNormalizedPath(path: string, dataContextPath: string, index: number): string {
+export function getNormalizedPath(
+  path: string | undefined,
+  dataContextPath: string,
+  index: number,
+): string {
   let normalized = path || '';
   if (!normalized.startsWith('/')) {
     const base = dataContextPath === '/' ? '' : dataContextPath;

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { html, nothing, css } from "lit";
-import { customElement, query } from "lit/decorators.js";
-import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css} from 'lit';
+import {customElement, query} from 'lit/decorators.js';
+import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
-@customElement("a2ui-modal")
+@customElement('a2ui-modal')
 export class A2uiLitModal extends BasicCatalogA2uiLitElement<typeof ModalApi> {
   /**
    * The styles of the modal can be customized by redefining the following
@@ -49,7 +49,7 @@ export class A2uiLitModal extends BasicCatalogA2uiLitElement<typeof ModalApi> {
   protected createController() {
     return new A2uiController(this, ModalApi);
   }
-  @query("dialog") accessor dialog!: HTMLDialogElement;
+  @query('dialog') accessor dialog!: HTMLDialogElement;
 
   render() {
     const props = this.controller.props;
@@ -71,5 +71,5 @@ export class A2uiLitModal extends BasicCatalogA2uiLitElement<typeof ModalApi> {
 
 export const A2uiModal = {
   ...ModalApi,
-  tagName: "a2ui-modal",
+  tagName: 'a2ui-modal',
 };

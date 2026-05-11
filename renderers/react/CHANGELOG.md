@@ -1,5 +1,7 @@
 ## Unreleased
 
+- (v0_8) Exclude SVG elements and descendants from CSS reset to restore SVG rendering. [#1252](https://github.com/google/A2UI/pull/1252)
+
 - **BREAKING CHANGE**: Renamed `createReactComponent` to `createComponentImplementation`.
 - **BREAKING CHANGE**: Renamed `createBinderlessComponent` to `createBinderlessComponentImplementation`.
 - **BREAKING CHANGE**: Removed `minimalCatalog`.

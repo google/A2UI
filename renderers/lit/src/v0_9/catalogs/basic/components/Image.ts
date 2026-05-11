@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { html, nothing, css, PropertyValues } from "lit";
-import { customElement } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
-import { styleMap } from "lit/directives/style-map.js";
-import { ImageApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css, PropertyValues} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {styleMap} from 'lit/directives/style-map.js';
+import {ImageApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
-@customElement("a2ui-image")
+@customElement('a2ui-image')
 export class A2uiImageElement extends BasicCatalogA2uiLitElement<typeof ImageApi> {
   /**
    * The styles of the image can be customized by redefining the following
@@ -76,17 +76,17 @@ export class A2uiImageElement extends BasicCatalogA2uiLitElement<typeof ImageApi
     if (!props) return nothing;
 
     const classes = {
-      "a2ui-image": true,
-      [props.variant || ""]: !!props.variant,
+      'a2ui-image': true,
+      [props.variant || '']: !!props.variant,
     };
 
     const styles = {
-      objectFit: props.fit || "fill",
+      objectFit: props.fit || 'fill',
     };
 
     return html`<img
       src=${props.url}
-      alt=${props.description || ""}
+      alt=${props.description || ''}
       class=${classMap(classes)}
       style=${styleMap(styles)}
     />`;
@@ -95,5 +95,5 @@ export class A2uiImageElement extends BasicCatalogA2uiLitElement<typeof ImageApi
 
 export const A2uiImage = {
   ...ImageApi,
-  tagName: "a2ui-image",
+  tagName: 'a2ui-image',
 };

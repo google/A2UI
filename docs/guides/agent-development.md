@@ -82,7 +82,7 @@ root_agent = Agent(
 )
 ```
 
-Don't forget to set the `GOOGLE_API_KEY` environment variable to run this example.  
+Don't forget to set the `GOOGLE_API_KEY` environment variable to run this example.
 
 ```bash
 echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
@@ -94,7 +94,7 @@ You can test out this agent with the ADK web interface:
 adk web
 ```
 
-Select `my_agent` from the list, and ask questions about restaurants in New York.  You should see a list of restaurants in the UI as plain text.
+Select `my_agent` from the list, and ask questions about restaurants in New York. You should see a list of restaurants in the UI as plain text.
 
 ## Generating A2UI Messages
 
@@ -162,8 +162,8 @@ Your agent will no longer strictly output text. Instead, it will output text and
 
 The `A2UI_SCHEMA` that we imported is a standard JSON schema that defines valid operations like:
 
-* `render` (displaying a UI)
-* `update` (changing data in an existing UI)
+- `render` (displaying a UI)
+- `update` (changing data in an existing UI)
 
 Because the output is structured JSON, you may parse and validate it before sending it to the client.
 
@@ -183,4 +183,4 @@ jsonschema.validate(
 
 By validating the output against `A2UI_SCHEMA`, you ensure that your client never receives malformed UI instructions.
 
-TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer   without the A2A extension.
+TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer without the A2A extension.

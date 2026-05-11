@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { MessageSendParams, Part, SendMessageResponse } from '@a2a-js/sdk';
-import { A2AClient } from '@a2a-js/sdk/client';
+import {MessageSendParams, Part, SendMessageResponse} from '@a2a-js/sdk';
+import {A2AClient} from '@a2a-js/sdk/client';
 import {
   AngularNodeAppEngine,
   createNodeRequestHandler,
@@ -23,8 +23,8 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import { join } from 'node:path';
-import { v4 as uuidv4 } from 'uuid';
+import {join} from 'node:path';
+import {v4 as uuidv4} from 'uuid';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
@@ -42,7 +42,7 @@ app.use(
 app.post('/a2a', (req, res) => {
   let originalBody = '';
 
-  req.on('data', (chunk) => {
+  req.on('data', chunk => {
     originalBody += chunk.toString();
   });
 
@@ -74,7 +74,7 @@ app.post('/a2a', (req, res) => {
     try {
       client = await createOrGetClient();
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create A2A client.' });
+      res.status(500).json({error: 'Failed to create A2A client.'});
       return;
     }
 
@@ -82,14 +82,14 @@ app.post('/a2a', (req, res) => {
     try {
       response = await client.sendMessage(sendParams);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to send message.' });
+      res.status(500).json({error: 'Failed to send message.'});
       return;
     }
 
     res.set('Cache-Control', 'no-store');
 
     if ('error' in response) {
-      res.status(500).json({ error: JSON.stringify(response.error) });
+      res.status(500).json({error: JSON.stringify(response.error)});
       return;
     }
 
@@ -103,27 +103,27 @@ app.get('/a2a/agent-card', async (req, res) => {
       'http://localhost:10006/.well-known/agent-card.json',
     );
     if (!response.ok) {
-      res.status(response.status).json({ error: 'Failed to fetch agent card' });
+      res.status(response.status).json({error: 'Failed to fetch agent card'});
       return;
     }
     const card = await response.json();
     res.json(card);
   } catch (error) {
     console.error('Error fetching agent card:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({error: 'Internal server error'});
   }
 });
 
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .then(response => (response ? writeResponseToNodeResponse(response, res) : next()))
     .catch(next);
 });
 
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
   const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
+  app.listen(port, error => {
     if (error) {
       throw error;
     }
@@ -135,7 +135,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
   headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.8');
-  const newInit = { ...init, headers };
+  const newInit = {...init, headers};
   return fetch(url, newInit);
 }
 

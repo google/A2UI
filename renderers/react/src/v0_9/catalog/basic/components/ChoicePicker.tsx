@@ -47,7 +47,7 @@ export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({pro
     (opt: _Option) =>
       !props.filterable ||
       filter === '' ||
-      String(opt.label).toLowerCase().includes(filter.toLowerCase())
+      String(opt.label).toLowerCase().includes(filter.toLowerCase()),
   );
 
   const listClasses = `${styles.options} ${props.displayStyle === 'chips' ? styles.chips : ''}`;
@@ -60,7 +60,7 @@ export const ChoicePicker = createComponentImplementation(ChoicePickerApi, ({pro
           type="text"
           placeholder="Filter options..."
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={e => setFilter(e.target.value)}
           className={styles.filterInput}
         />
       )}

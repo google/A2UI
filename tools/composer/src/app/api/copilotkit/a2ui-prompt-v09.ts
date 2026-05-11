@@ -19,8 +19,8 @@
  *
  * Uses the actual v0.9 catalog spec and rules from the specification directory.
  */
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import {readFileSync} from 'fs';
+import {join} from 'path';
 
 // Load the actual v0.9 catalog spec and rules
 const catalogSpec = readFileSync(

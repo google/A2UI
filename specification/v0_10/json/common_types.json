@@ -207,11 +207,7 @@
       "properties": {
         "callableFrom": {
           "description": "Specifies where this function can be invoked from.",
-          "enum": [
-            "clientOnly",
-            "remoteOnly",
-            "clientOrRemote"
-          ],
+          "enum": ["clientOnly", "remoteOnly", "clientOrRemote"],
           "default": "clientOnly"
         },
         "call": {
@@ -235,21 +231,12 @@
         },
         "returnType": {
           "description": "The expected return type of the function call.",
-          "enum": [
-            "array",
-            "boolean",
-            "number",
-            "object",
-            "string",
-            "void"
-          ],
+          "enum": ["array", "boolean", "number", "object", "string", "void"],
           "default": "boolean"
         }
       },
       "required": ["call"],
-      "oneOf": [
-        { "$ref": "catalog.json#/$defs/anyFunction" }
-      ]
+      "oneOf": [{"$ref": "catalog.json#/$defs/anyFunction"}]
     },
     "CheckRule": {
       "type": "object",

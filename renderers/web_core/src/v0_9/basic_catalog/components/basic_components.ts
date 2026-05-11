@@ -72,14 +72,7 @@ export const ImageApi = {
         )
         .optional(),
       variant: z
-        .enum([
-          'icon',
-          'avatar',
-          'smallFeature',
-          'mediumFeature',
-          'largeFeature',
-          'header',
-        ])
+        .enum(['icon', 'avatar', 'smallFeature', 'mediumFeature', 'largeFeature', 'header'])
         .default('mediumFeature')
         .describe('A hint for the image size and style.')
         .optional(),
@@ -200,15 +193,7 @@ export const RowApi = {
         'Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list. Children cannot be defined inline, they must be referred to by ID.',
       ),
       justify: z
-        .enum([
-          'center',
-          'end',
-          'spaceAround',
-          'spaceBetween',
-          'spaceEvenly',
-          'start',
-          'stretch',
-        ])
+        .enum(['center', 'end', 'spaceAround', 'spaceBetween', 'spaceEvenly', 'start', 'stretch'])
         .default('start')
         .describe(
           "Defines the arrangement of children along the main axis (horizontally). Use 'spaceBetween' to push items to the edges, or 'start'/'end'/'center' to pack them together.",
@@ -237,15 +222,7 @@ export const ColumnApi = {
         'Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list. Children cannot be defined inline, they must be referred to by ID.',
       ),
       justify: z
-        .enum([
-          'start',
-          'center',
-          'end',
-          'spaceBetween',
-          'spaceAround',
-          'spaceEvenly',
-          'stretch',
-        ])
+        .enum(['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly', 'stretch'])
         .default('start')
         .describe(
           "Defines the arrangement of children along the main axis (vertically). Use 'spaceBetween' to push items to the edges (e.g. header at top, footer at bottom), or 'start'/'end'/'center' to pack them together.",
@@ -282,6 +259,10 @@ export const ListApi = {
         .enum(['start', 'center', 'end', 'stretch'])
         .default('stretch')
         .describe('Defines the alignment of children along the cross axis.')
+        .optional(),
+      listStyle: z
+        .enum(['ordered', 'unordered', 'none'])
+        .describe('The style of the list (ordered, unordered, or none).')
         .optional(),
     })
     .strict(),
@@ -378,12 +359,8 @@ export const TextFieldApi = {
   schema: z
     .object({
       ...CommonProps,
-      label: DynamicStringSchema.describe(
-        'The text label for the input field.',
-      ),
-      value: DynamicStringSchema.describe(
-        'The value of the text field.',
-      ).optional(),
+      label: DynamicStringSchema.describe('The text label for the input field.'),
+      value: DynamicStringSchema.describe('The value of the text field.').optional(),
       variant: z
         .enum(['longText', 'number', 'shortText', 'obscured'])
         .default('shortText')
@@ -391,9 +368,7 @@ export const TextFieldApi = {
         .optional(),
       validationRegexp: z
         .string()
-        .describe(
-          'A regular expression used for client-side validation of the input.',
-        )
+        .describe('A regular expression used for client-side validation of the input.')
         .optional(),
       checks: CheckableSchema.shape.checks,
     })
@@ -405,9 +380,7 @@ export const CheckBoxApi = {
   schema: z
     .object({
       ...CommonProps,
-      label: DynamicStringSchema.describe(
-        'The text to display next to the checkbox.',
-      ),
+      label: DynamicStringSchema.describe('The text to display next to the checkbox.'),
       value: DynamicBooleanSchema.describe(
         'The current state of the checkbox (true for checked, false for unchecked).',
       ),
@@ -421,26 +394,18 @@ export const ChoicePickerApi = {
   schema: z
     .object({
       ...CommonProps,
-      label: DynamicStringSchema.describe(
-        'The label for the group of options.',
-      ).optional(),
+      label: DynamicStringSchema.describe('The label for the group of options.').optional(),
       variant: z
         .enum(['multipleSelection', 'mutuallyExclusive'])
         .default('mutuallyExclusive')
-        .describe(
-          'A hint for how the choice picker should be displayed and behave.',
-        )
+        .describe('A hint for how the choice picker should be displayed and behave.')
         .optional(),
       options: z
         .array(
           z
             .object({
-              label: DynamicStringSchema.describe(
-                'The text to display for this option.',
-              ),
-              value: z
-                .string()
-                .describe('The stable value associated with this option.'),
+              label: DynamicStringSchema.describe('The text to display for this option.'),
+              value: z.string().describe('The stable value associated with this option.'),
             })
             .strict(),
         )
@@ -461,9 +426,7 @@ export const ChoicePickerApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict()
-    .describe(
-      'A component that allows selecting one or more options from a list.',
-    ),
+    .describe('A component that allows selecting one or more options from a list.'),
 } satisfies ComponentApi;
 
 export const SliderApi = {
@@ -471,15 +434,10 @@ export const SliderApi = {
   schema: z
     .object({
       ...CommonProps,
-      label: DynamicStringSchema.describe(
-        'The label for the slider.',
-      ).optional(),
-      min: z
-        .number()
-        .default(0)
-        .describe('The minimum value of the slider.')
-        .optional(),
+      label: DynamicStringSchema.describe('The label for the slider.').optional(),
+      min: z.number().default(0).describe('The minimum value of the slider.').optional(),
       max: z.number().describe('The maximum value of the slider.'),
+      step: z.number().describe('The granularity or step size of the slider.').optional(),
       value: DynamicNumberSchema.describe('The current value of the slider.'),
       checks: CheckableSchema.shape.checks,
     })
@@ -505,26 +463,14 @@ export const DateTimeInputApi = {
         .describe('If true, allows the user to select a time.')
         .optional(),
       min: z
-        .union([
-          DynamicStringSchema,
-          z.string().date(),
-          z.string().time(),
-          z.string().datetime(),
-        ])
+        .union([DynamicStringSchema, z.string().date(), z.string().time(), z.string().datetime()])
         .describe('The minimum allowed date/time in ISO 8601 format.')
         .optional(),
       max: z
-        .union([
-          DynamicStringSchema,
-          z.string().date(),
-          z.string().time(),
-          z.string().datetime(),
-        ])
+        .union([DynamicStringSchema, z.string().date(), z.string().time(), z.string().datetime()])
         .describe('The maximum allowed date/time in ISO 8601 format.')
         .optional(),
-      label: DynamicStringSchema.describe(
-        'The text label for the input field.',
-      ).optional(),
+      label: DynamicStringSchema.describe('The text label for the input field.').optional(),
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
