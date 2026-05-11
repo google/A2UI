@@ -92,7 +92,7 @@ export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
   });
 
   readonly svgPath = computed(() => {
-    const name = this.iconNameRaw() as any;
+    const name = this.iconNameRaw();
     if (typeof name === 'object' && name !== null && 'svgPath' in name) {
       return name.svgPath;
     }
