@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Sports Player', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Sports Player', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Sports Player');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {

@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample, wait} from './test_utils';
+import {getCanvas, loadExample, wait} from './test_utils';
 
 describe('Example: Incremental Dashboard', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -29,7 +29,7 @@ describe('Example: Incremental Dashboard', () => {
     await wait(500);
     fixture.detectChanges();
 
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render header', async () => {

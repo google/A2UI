@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Financial Data Grid', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Financial Data Grid', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Financial Data Grid');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render table headers', async () => {

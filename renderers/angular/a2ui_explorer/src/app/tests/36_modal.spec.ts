@@ -37,7 +37,9 @@ describe('Example: Modal', () => {
     expect(fixture.nativeElement.querySelector('.a2ui-modal-overlay')).toBeTruthy();
 
     // Check content
-    expect(fixture.nativeElement.textContent).toContain('This is the content inside the modal.');
+    expect(fixture.nativeElement.querySelector('.a2ui-modal-overlay').textContent).toContain(
+      'This is the content inside the modal.',
+    );
 
     // Click close button
     const closeBtn = fixture.nativeElement.querySelector('.a2ui-modal-close');

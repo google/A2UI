@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import {ComponentFixture} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Login Form with Validation', () => {
-  let fixture: ComponentFixture<DemoComponent>;
   let textContent: string;
 
   beforeEach(async () => {
-    fixture = await loadExample('Login Form with Validation');
-    textContent = fixture.nativeElement.textContent;
+    await loadExample('Login Form with Validation');
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {

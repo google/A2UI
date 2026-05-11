@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample, wait} from './test_utils';
+import {getCanvas, loadExample, wait} from './test_utils';
 
 describe('Example: Purchase Complete', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -26,7 +26,7 @@ describe('Example: Purchase Complete', () => {
   beforeEach(async () => {
     fixture = await loadExample('Purchase Complete');
     component = fixture.componentInstance;
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {

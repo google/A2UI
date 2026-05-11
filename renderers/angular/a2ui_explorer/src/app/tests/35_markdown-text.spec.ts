@@ -16,17 +16,19 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Markdown Text Support', () => {
   let fixture: ComponentFixture<DemoComponent>;
+  let textContent: string;
 
   beforeEach(async () => {
     fixture = await loadExample('Markdown Text Support');
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {
-    expect(fixture.nativeElement.textContent).toContain('Markdown Rendering');
+    expect(textContent).toContain('Markdown Rendering');
   });
 
   it('should render markdown HTML tags', async () => {

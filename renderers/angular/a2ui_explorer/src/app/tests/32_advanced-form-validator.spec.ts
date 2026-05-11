@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample, wait} from './test_utils';
+import {getCanvas, loadExample, wait} from './test_utils';
 
 describe('Example: Advanced Form Validator', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Advanced Form Validator', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Advanced Form Validator');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {
@@ -56,7 +56,7 @@ describe('Example: Advanced Form Validator', () => {
     await wait(100);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Invalid email format');
+    expect(textContent).toContain('Invalid email format');
   });
 
   it('should show error for invalid phone', async () => {
@@ -70,7 +70,7 @@ describe('Example: Advanced Form Validator', () => {
     await wait(100);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Invalid phone format');
+    expect(textContent).toContain('Invalid phone format');
   });
 
   it('should show error for invalid zip', async () => {
@@ -84,6 +84,6 @@ describe('Example: Advanced Form Validator', () => {
     await wait(100);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Must be exactly 5 digits');
+    expect(textContent).toContain('Must be exactly 5 digits');
   });
 });

@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import {ComponentFixture} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Weather Current', () => {
-  let fixture: ComponentFixture<DemoComponent>;
   let textContent: string;
 
   beforeEach(async () => {
-    fixture = await loadExample('Weather Current');
-    textContent = fixture.nativeElement.textContent;
+    await loadExample('Weather Current');
+    textContent = getCanvas().textContent;
   });
 
   it('should render main content', async () => {

@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample, wait} from './test_utils';
+import {getCanvas, loadExample, wait} from './test_utils';
 
 describe('Example: Recipe Card', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Recipe Card', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Recipe Card');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render tab titles', async () => {
@@ -55,7 +55,7 @@ describe('Example: Recipe Card', () => {
     await wait(50);
     fixture.detectChanges();
 
-    const ingredientsText = fixture.nativeElement.textContent;
+    const ingredientsText = getCanvas().textContent;
     expect(ingredientsText).toContain('1 cup quinoa');
     expect(ingredientsText).toContain('1 cucumber, diced');
   });
@@ -70,7 +70,7 @@ describe('Example: Recipe Card', () => {
     await wait(50);
     fixture.detectChanges();
 
-    const instructionsText = fixture.nativeElement.textContent;
+    const instructionsText = getCanvas().textContent;
     expect(instructionsText).toContain('Rinse quinoa and bring to a boil in water.');
     expect(instructionsText).toContain('Mix with diced vegetables.');
   });

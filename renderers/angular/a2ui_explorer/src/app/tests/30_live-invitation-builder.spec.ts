@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample, wait} from './test_utils';
+import {getCanvas, loadExample, wait} from './test_utils';
 
 describe('Example: Live Invitation Builder', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Live Invitation Builder', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Live Invitation Builder');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   function getLivePreview() {
@@ -39,7 +39,7 @@ describe('Example: Live Invitation Builder', () => {
     // Wait for async rendering to complete
     await wait(100);
     fixture.detectChanges();
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
 
     expect(textContent).toContain('Invitation Builder');
     expect(textContent).toContain('Customize your invitation');

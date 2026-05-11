@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Step Counter', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Step Counter', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Step Counter');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {
@@ -35,6 +35,6 @@ describe('Example: Step Counter', () => {
 
   it('should render icon', async () => {
     expect(fixture.nativeElement.querySelector('.a2ui-icon')).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain(`person`);
+    expect(textContent).toContain(`person`);
   });
 });

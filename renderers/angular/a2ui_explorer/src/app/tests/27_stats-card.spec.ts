@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import {ComponentFixture} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Stats Card', () => {
-  let fixture: ComponentFixture<DemoComponent>;
   let textContent: string;
 
   beforeEach(async () => {
-    fixture = await loadExample('Stats Card');
-    textContent = fixture.nativeElement.textContent;
+    await loadExample('Stats Card');
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content and icons', async () => {

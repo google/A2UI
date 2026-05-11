@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {loadExample} from './test_utils';
+import {getCanvas, loadExample} from './test_utils';
 
 describe('Example: Credit Card', () => {
   let fixture: ComponentFixture<DemoComponent>;
@@ -24,7 +24,7 @@ describe('Example: Credit Card', () => {
 
   beforeEach(async () => {
     fixture = await loadExample('Credit Card');
-    textContent = fixture.nativeElement.textContent;
+    textContent = getCanvas().textContent;
   });
 
   it('should render text content', async () => {
@@ -38,6 +38,6 @@ describe('Example: Credit Card', () => {
 
   it('should render icon', async () => {
     expect(fixture.nativeElement.querySelector('.a2ui-icon')).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain(`payment`);
+    expect(textContent).toContain(`payment`);
   });
 });
