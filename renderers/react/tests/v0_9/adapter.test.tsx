@@ -183,4 +183,85 @@ describe('adapter', () => {
     // The DeferredChild wrapper localized the update.
     expect(parentRenderCount).toBe(countBeforeChild);
   });
+
+  it('recreates and disposes binder when context instance changes', () => {
+    const TestApiDef = {
+      name: 'TestComp',
+      schema: z.object({
+        text: CommonSchemas.DynamicString,
+      }),
+    };
+
+    const TestComponent = createReactComponent(TestApiDef, ({props}) => {
+      return <div data-testid="msg">{props.text}</div>;
+    });
+
+    const surface1 = new SurfaceModel<any>('surface-1', mockCatalog);
+    surface1.dataModel.set('/greeting', 'from-one');
+    const compModel1 = new ComponentModel('c1', 'TestComp', {text: {path: '/greeting'}});
+    surface1.componentsModel.addComponent(compModel1);
+    const context1 = new ComponentContext(surface1, 'c1', '/');
+
+    const surface2 = new SurfaceModel<any>('surface-2', mockCatalog);
+    surface2.dataModel.set('/greeting', 'from-two');
+    const compModel2 = new ComponentModel('c1', 'TestComp', {text: {path: '/greeting'}});
+    surface2.componentsModel.addComponent(compModel2);
+    const context2 = new ComponentContext(surface2, 'c1', '/');
+
+    const disposeSpy = vi.spyOn(GenericBinder.prototype, 'dispose');
+
+    const {rerender, getByTestId, unmount} = render(
+      <TestComponent.render context={context1} buildChild={() => null} />
+    );
+
+    expect(getByTestId('msg').textContent).toBe('from-one');
+
+    rerender(<TestComponent.render context={context2} buildChild={() => null} />);
+
+    expect(getByTestId('msg').textContent).toBe('from-two');
+    expect(disposeSpy).toHaveBeenCalled();
+
+    unmount();
+    disposeSpy.mockRestore();
+  });
+
+  it('handles rapid data updates around unmount without stale listeners', async () => {
+    const surface = new SurfaceModel<any>('race-surface', mockCatalog);
+    const compModel = new ComponentModel('c1', 'TestComp', {text: {path: '/greeting'}});
+    surface.componentsModel.addComponent(compModel);
+    surface.dataModel.set('/greeting', 'start');
+
+    const context = new ComponentContext(surface, 'c1', '/');
+
+    const TestApiDef = {
+      name: 'TestComp',
+      schema: z.object({
+        text: CommonSchemas.DynamicString,
+      }),
+    };
+
+    const TestComponent = createReactComponent(TestApiDef, ({props}) => (
+      <div data-testid="race-msg">{props.text}</div>
+    ));
+
+    const {unmount, getByTestId} = render(
+      <TestComponent.render context={context} buildChild={() => null} />
+    );
+
+    expect(getByTestId('race-msg').textContent).toBe('start');
+
+    await act(async () => {
+      for (let i = 0; i < 10; i++) {
+        surface.dataModel.set('/greeting', `update-${i}`);
+      }
+    });
+
+    unmount();
+
+    expect(() => {
+      for (let i = 0; i < 10; i++) {
+        surface.dataModel.set('/greeting', `post-unmount-${i}`);
+      }
+    }).not.toThrow();
+  });
 });

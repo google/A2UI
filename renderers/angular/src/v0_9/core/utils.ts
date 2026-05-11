@@ -49,15 +49,27 @@ export function toAngularSignal<T>(
     }
   });
 
-  destroyRef.onDestroy(() => {
+  let isDisposed = false;
+  const cleanup = () => {
+    if (isDisposed) {
+      return;
+    }
+    isDisposed = true;
+
     dispose();
+
     // Some signals returned by DataContext.resolveSignal have a custom unsubscribe for AbortControllers
     if ((preactSignal as any).unsubscribe) {
       (preactSignal as any).unsubscribe();
     }
-  });
+  };
 
-  return s.asReadonly();
+  destroyRef.onDestroy(cleanup);
+
+  const readonlySignal = s.asReadonly() as ManagedAngularSignal<T>;
+  readonlySignal.dispose = cleanup;
+
+  return readonlySignal;
 }
 
 /**
