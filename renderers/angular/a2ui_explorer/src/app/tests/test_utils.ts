@@ -27,23 +27,35 @@ export async function loadExample(exampleName: string) {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
     providers: [provideMarkdownRenderer()],
-  }).compileComponents();
+  });
 
   const fixture = TestBed.createComponent(DemoComponent);
   const component = fixture.componentInstance;
   fixture.detectChanges();
 
   const example = EXAMPLES.find(ex => ex.name === exampleName);
-  expect(example).toBeTruthy();
+  expect(example).withContext(`Example not found: ${exampleName}`).toBeTruthy();
 
   component.selectExample(example!);
   fixture.detectChanges();
 
-  // Wait for async operations (like agent stub playback) to complete
-  await wait(50);
-  fixture.detectChanges();
+  await whenSettled();
 
   return fixture;
+}
+
+/**
+ * Returns a promise that resolves when the renderer is settled.
+ */
+async function whenSettled(): Promise<void> {
+  // In a zoneless application, we cannot rely on NgZone.onStable.
+  // Yielding to the macrotask queue ensures that all pending microtasks
+  // (like Preact signal listeners and Angular CD cycles) are executed.
+  const MACROTASKS_TO_FLUSH = 20;
+
+  for (let i = 0; i < MACROTASKS_TO_FLUSH; i++) {
+    await wait(0);
+  }
 }
 
 /**
@@ -51,4 +63,8 @@ export async function loadExample(exampleName: string) {
  */
 export function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function getCanvas(): HTMLDivElement {
+  return document.querySelector('.canvas-frame')!;
 }
