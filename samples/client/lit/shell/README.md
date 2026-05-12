@@ -1,6 +1,6 @@
 # Restaurant finder - Lit UI with Python agent
 
-See the[video](https://github.com/user-attachments/assets/2a406115-3a17-4bea-8000-ac12e0b7b9bd) on how it works.
+See the [video](https://github.com/user-attachments/assets/2a406115-3a17-4bea-8000-ac12e0b7b9bd) on how it works.
 
 ## Prerequisites
 
