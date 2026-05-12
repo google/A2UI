@@ -17,10 +17,7 @@
           }
         }
       },
-      "required": [
-        "resourceUri",
-        "htmlContent"
-      ]
+      "required": ["resourceUri", "htmlContent"]
     }
   }
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
+import {A2aChatCanvas} from '@a2a_chat_canvas/a2a-chat-canvas';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,10 +25,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterOutlet } from '@angular/router';
-import { environment } from '../environments/environment';
-import { demoMessageDecorator } from '../message-decorator/demo-message-decorator';
+import {MatButtonModule} from '@angular/material/button';
+import {RouterOutlet} from '@angular/router';
+import {environment} from '../environments/environment';
+import {demoMessageDecorator} from '../message-decorator/demo-message-decorator';
 
 @Component({
   selector: 'app-root',

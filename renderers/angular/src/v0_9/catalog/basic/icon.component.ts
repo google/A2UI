@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { IconApi } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {AnyDuringSchemaAlignment} from '../types';
 
 const ICON_NAME_OVERRIDES: Record<string, string> = {
   play: 'play_arrow',
@@ -41,9 +42,9 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   standalone: true,
   imports: [],
   template: `
-    @if (isPath()) {
+    @if (isSvgPath()) {
       <svg class="a2ui-icon svg" viewBox="0 0 24 24" [style.fill]="color() || 'currentColor'">
-        <path [attr.d]="path()"></path>
+        <path [attr.d]="svgPath()"></path>
       </svg>
     } @else {
       <i class="material-icons a2ui-icon" [style.color]="color()">
@@ -84,17 +85,20 @@ const ICON_NAME_OVERRIDES: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
-  readonly color = computed(() => (this.props() as any)['color']?.value());
+  readonly color = computed(() => (this.props() as AnyDuringSchemaAlignment)['color']?.value());
   readonly iconNameRaw = computed(() => this.props()['name']?.value());
 
-  readonly isPath = computed(() => {
+  readonly isSvgPath = computed(() => {
     const name = this.iconNameRaw();
-    return typeof name === 'object' && name !== null && 'path' in name;
+    return typeof name === 'object' && name !== null && 'svgPath' in name;
   });
 
-  readonly path = computed(() => {
+  readonly svgPath = computed(() => {
     const name = this.iconNameRaw();
-    return (name as any)?.path || '';
+    if (typeof name === 'object' && name !== null && 'svgPath' in name) {
+      return name.svgPath;
+    }
+    return '';
   });
 
   readonly iconName = computed(() => {
@@ -102,6 +106,6 @@ export class IconComponent extends BasicCatalogComponent<typeof IconApi> {
     if (typeof name !== 'string') return '';
     if (ICON_NAME_OVERRIDES[name]) return ICON_NAME_OVERRIDES[name];
     // Convert camelCase to snake_case for Material Icons
-    return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+    return name.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
   });
 }

@@ -16,16 +16,16 @@ name: Lit renderer
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
-      - '.github/workflows/lit_build_and_test.yml'
+      - "renderers/lit/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/lit_build_and_test.yml"
   pull_request:
     paths:
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
-      - '.github/workflows/lit_build_and_test.yml'
+      - "renderers/lit/**"
+      - "renderers/web_core/**"
+      - ".github/workflows/lit_build_and_test.yml"
 
 jobs:
   build-and-test:
@@ -37,7 +37,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install web_core dependencies
         working-directory: ./renderers/web_core

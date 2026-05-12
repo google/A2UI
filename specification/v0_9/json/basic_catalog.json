@@ -68,14 +68,7 @@
             "variant": {
               "type": "string",
               "description": "A hint for the image size and style.",
-              "enum": [
-                "icon",
-                "avatar",
-                "smallFeature",
-                "mediumFeature",
-                "largeFeature",
-                "header"
-              ],
+              "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"],
               "default": "mediumFeature"
             }
           },
@@ -169,12 +162,15 @@
                 {
                   "type": "object",
                   "properties": {
-                    "path": {
+                    "svgPath": {
                       "type": "string"
                     }
                   },
-                  "required": ["path"],
+                  "required": ["svgPath"],
                   "additionalProperties": false
+                },
+                {
+                  "$ref": "common_types.json#/$defs/DataBinding"
                 }
               ]
             }

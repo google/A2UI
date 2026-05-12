@@ -18,10 +18,7 @@
           {
             "id": "root",
             "component": "Column",
-            "children": [
-              "header",
-              "main-content"
-            ],
+            "children": ["header", "main-content"],
             "align": "stretch"
           },
           {
@@ -33,10 +30,7 @@
           {
             "id": "main-content",
             "component": "Row",
-            "children": [
-              "editor-col",
-              "preview-col"
-            ],
+            "children": ["editor-col", "preview-col"],
             "align": "start"
           },
           {
@@ -89,9 +83,9 @@
             "component": "ChoicePicker",
             "label": "Location",
             "options": [
-              { "label": "Grand Ballroom", "value": "ballroom" },
-              { "label": "Sunset Terrace", "value": "terrace" },
-              { "label": "Garden Pavillion", "value": "garden" }
+              {"label": "Grand Ballroom", "value": "ballroom"},
+              {"label": "Sunset Terrace", "value": "terrace"},
+              {"label": "Garden Pavillion", "value": "garden"}
             ],
             "value": {
               "path": "/event/location"
@@ -102,10 +96,7 @@
           {
             "id": "preview-col",
             "component": "Column",
-            "children": [
-              "preview-title",
-              "invitation-card"
-            ],
+            "children": ["preview-title", "invitation-card"],
             "weight": 1,
             "align": "center"
           },
@@ -149,10 +140,7 @@
           {
             "id": "invite-guest-row",
             "component": "Row",
-            "children": [
-              "invite-for-text",
-              "invite-guest-name"
-            ],
+            "children": ["invite-for-text", "invite-guest-name"],
             "align": "center"
           },
           {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ComponentHostComponent } from '../../core/component-host.component';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { Child } from '../../core/component-binder.service';
-import { ListApi } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {ComponentHostComponent} from '../../core/component-host.component';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {Child} from '../../core/component-binder.service';
+import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI List component (v0.9).
@@ -97,10 +97,7 @@ import { ListApi } from '@a2ui/web_core/v0_9/basic_catalog';
 export class ListComponent extends BasicCatalogComponent<typeof ListApi> {
   readonly listStyle = computed(() => this.props()['listStyle']?.value());
   readonly direction = computed(() => this.props()['direction']?.value() || 'vertical');
-  readonly children = computed(() => {
-    const raw = this.props()['children']?.value();
-    return Array.isArray(raw) ? raw : [];
-  });
+  readonly children = computed(() => this.props()['children'].value());
 
   readonly listTag = computed(() => {
     const style = this.listStyle();

@@ -33,7 +33,7 @@
 - name: test_parse_response_only_json_with_tags
   description: Tests parsing only JSON with tags.
   action: parse_full
-  input: "<a2ui-json>[{\"id\": \"test\"}]</a2ui-json>"
+  input: '<a2ui-json>[{"id": "test"}]</a2ui-json>'
   expect:
     - text: ""
       a2ui: [{"id": "test"}]
@@ -121,3 +121,9 @@
   action: has_parts
   input: "Hello <a2ui-json> World"
   expect: false
+
+- name: test_fix_payload_commas_in_strings
+  description: "Tests that commas in strings are not removed."
+  action: fix_payload
+  input: '{"text": "Hello, world", "array": ["a,b", "c"]}'
+  expect: [{"text": "Hello, world", "array": ["a,b", "c"]}]

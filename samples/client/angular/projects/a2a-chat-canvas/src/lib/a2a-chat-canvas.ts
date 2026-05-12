@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Canvas } from '@a2a_chat_canvas/components/canvas/canvas';
-import { Chat } from '@a2a_chat_canvas/components/chat/chat';
-import { MessageDecorator } from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
+import {Canvas} from '@a2a_chat_canvas/components/canvas/canvas';
+import {Chat} from '@a2a_chat_canvas/components/chat/chat';
+import {MessageDecorator} from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +25,7 @@ import {
   input,
   TemplateRef,
 } from '@angular/core';
-import { CanvasService } from './services/canvas-service';
+import {CanvasService} from './services/canvas-service';
 
 /**
  * The main component for the A2A Chat Canvas library.

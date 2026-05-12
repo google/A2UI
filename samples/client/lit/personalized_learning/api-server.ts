@@ -32,13 +32,13 @@
  *   GENAI_MODEL - Gemini model to use (default: gemini-2.5-flash)
  */
 
-import { createServer } from "http";
-import { execSync } from "child_process";
-import { writeFileSync, readFileSync, existsSync } from "fs";
-import { join } from "path";
-import { config } from "dotenv";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import {createServer} from 'http';
+import {execSync} from 'child_process';
+import {writeFileSync, readFileSync, existsSync} from 'fs';
+import {join} from 'path';
+import {config} from 'dotenv';
+import {initializeApp, applicationDefault} from 'firebase-admin/app';
+import {getAuth} from 'firebase-admin/auth';
 
 // Load environment variables
 config();
@@ -46,19 +46,21 @@ config();
 // =============================================================================
 // FIREBASE ADMIN - Server-side authentication
 // =============================================================================
-initializeApp({ credential: applicationDefault() });
+initializeApp({credential: applicationDefault()});
 
 // Local dev mode: skip auth when Firebase is not configured (matches client behavior)
 const IS_LOCAL_DEV_MODE = !process.env.VITE_FIREBASE_API_KEY;
 if (IS_LOCAL_DEV_MODE) {
-  console.warn("[API Server] ⚠️  LOCAL DEV MODE: Authentication disabled (VITE_FIREBASE_API_KEY not set)");
+  console.warn(
+    '[API Server] ⚠️  LOCAL DEV MODE: Authentication disabled (VITE_FIREBASE_API_KEY not set)',
+  );
 }
 
 // Access control - reads from environment variables (shared with src/firebase-auth.ts)
 // Uses VITE_ prefix so the same .env works for both client and server
-const ALLOWED_DOMAIN = process.env.VITE_ALLOWED_DOMAIN ?? "google.com";
-const ALLOWED_EMAILS: string[] = (process.env.VITE_ALLOWED_EMAILS ?? "")
-  .split(",")
+const ALLOWED_DOMAIN = process.env.VITE_ALLOWED_DOMAIN ?? 'google.com';
+const ALLOWED_EMAILS: string[] = (process.env.VITE_ALLOWED_EMAILS ?? '')
+  .split(',')
   .map((e: string) => e.trim().toLowerCase())
   .filter((e: string) => e.length > 0);
 
@@ -78,26 +80,26 @@ async function authenticateRequest(req: any, res: any): Promise<boolean> {
   }
 
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
-    res.writeHead(401, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Missing or malformed Authorization header" }));
+  if (!authHeader?.startsWith('Bearer ')) {
+    res.writeHead(401, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({error: 'Missing or malformed Authorization header'}));
     return false;
   }
   try {
-    const token = authHeader.split("Bearer ")[1];
+    const token = authHeader.split('Bearer ')[1];
     const decoded = await getAuth().verifyIdToken(token);
     if (!isAllowedEmail(decoded.email)) {
-      console.error("[API Server] Access denied for:", decoded.email);
-      res.writeHead(403, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Email not authorized" }));
+      console.error('[API Server] Access denied for:', decoded.email);
+      res.writeHead(403, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify({error: 'Email not authorized'}));
       return false;
     }
     return true;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[API Server] Auth failed:", message);
-    res.writeHead(403, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Invalid or expired token" }));
+    console.error('[API Server] Auth failed:', message);
+    res.writeHead(403, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({error: 'Invalid or expired token'}));
     return false;
   }
 }
@@ -105,20 +107,20 @@ async function authenticateRequest(req: any, res: any): Promise<boolean> {
 // =============================================================================
 // MESSAGE LOG - Captures all request/response traffic for demo purposes
 // =============================================================================
-const LOG_FILE = "./demo-message-log.json";
+const LOG_FILE = './demo-message-log.json';
 let messageLog: Array<{
   sequence: number;
   timestamp: string;
-  direction: "CLIENT_TO_SERVER" | "SERVER_TO_AGENT" | "AGENT_TO_SERVER" | "SERVER_TO_CLIENT";
+  direction: 'CLIENT_TO_SERVER' | 'SERVER_TO_AGENT' | 'AGENT_TO_SERVER' | 'SERVER_TO_CLIENT';
   endpoint: string;
   data: unknown;
 }> = [];
 let sequenceCounter = 0;
 
 function logMessage(
-  direction: "CLIENT_TO_SERVER" | "SERVER_TO_AGENT" | "AGENT_TO_SERVER" | "SERVER_TO_CLIENT",
+  direction: 'CLIENT_TO_SERVER' | 'SERVER_TO_AGENT' | 'AGENT_TO_SERVER' | 'SERVER_TO_CLIENT',
   endpoint: string,
-  data: unknown
+  data: unknown,
 ) {
   const entry = {
     sequence: ++sequenceCounter,
@@ -137,22 +139,22 @@ function logMessage(
 function resetLog() {
   messageLog = [];
   sequenceCounter = 0;
-  writeFileSync(LOG_FILE, "[]");
+  writeFileSync(LOG_FILE, '[]');
   console.log(`[LOG] Reset log file: ${LOG_FILE}`);
 }
 
 // Reset log on server start
 resetLog();
 
-const PORT = parseInt(process.env.API_PORT || "8080");
+const PORT = parseInt(process.env.API_PORT || '8080');
 const PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
 // Use us-central1 region for consistency with Agent Engine
-const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
-const MODEL = process.env.GENAI_MODEL || "gemini-2.5-flash";
+const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || 'us-central1';
+const MODEL = process.env.GENAI_MODEL || 'gemini-2.5-flash';
 
 // Validate required environment variables
 if (!PROJECT) {
-  console.error("ERROR: GOOGLE_CLOUD_PROJECT environment variable is required");
+  console.error('ERROR: GOOGLE_CLOUD_PROJECT environment variable is required');
   process.exit(1);
 }
 
@@ -160,62 +162,92 @@ if (!PROJECT) {
 // See QUICKSTART.md for deployment instructions
 // Note: Agent Engine is deployed in us-central1 (not global like Gemini API)
 const AGENT_ENGINE_CONFIG = {
-  projectNumber: process.env.AGENT_ENGINE_PROJECT_NUMBER || "",
-  location: process.env.AGENT_ENGINE_LOCATION || "us-central1",
-  resourceId: process.env.AGENT_ENGINE_RESOURCE_ID || "",
+  projectNumber: process.env.AGENT_ENGINE_PROJECT_NUMBER || '',
+  location: process.env.AGENT_ENGINE_LOCATION || 'us-central1',
+  resourceId: process.env.AGENT_ENGINE_RESOURCE_ID || '',
 };
 
 if (!AGENT_ENGINE_CONFIG.projectNumber || !AGENT_ENGINE_CONFIG.resourceId) {
-  console.warn("WARNING: AGENT_ENGINE_PROJECT_NUMBER and AGENT_ENGINE_RESOURCE_ID not set.");
-  console.warn("         Agent Engine features will not work. See QUICKSTART.md for setup.");
+  console.warn('WARNING: AGENT_ENGINE_PROJECT_NUMBER and AGENT_ENGINE_RESOURCE_ID not set.');
+  console.warn('         Agent Engine features will not work. See QUICKSTART.md for setup.');
 }
 
 // =============================================================================
 // OpenStax Source Attribution - Maps topics to specific textbook sections
 // =============================================================================
-const OPENSTAX_BASE = "https://openstax.org/books/biology-ap-courses/pages/";
+const OPENSTAX_BASE = 'https://openstax.org/books/biology-ap-courses/pages/';
 
-const OPENSTAX_SECTIONS: Record<string, { slug: string; title: string }> = {
+const OPENSTAX_SECTIONS: Record<string, {slug: string; title: string}> = {
   // ATP and Energy
-  "atp": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
-  "bond energy": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
-  "energy currency": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
-  "hydrolysis": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
+  atp: {slug: '6-4-atp-adenosine-triphosphate', title: 'ATP: Adenosine Triphosphate'},
+  'bond energy': {slug: '6-4-atp-adenosine-triphosphate', title: 'ATP: Adenosine Triphosphate'},
+  'energy currency': {
+    slug: '6-4-atp-adenosine-triphosphate',
+    title: 'ATP: Adenosine Triphosphate',
+  },
+  hydrolysis: {slug: '6-4-atp-adenosine-triphosphate', title: 'ATP: Adenosine Triphosphate'},
   // Thermodynamics
-  "thermodynamics": { slug: "6-3-the-laws-of-thermodynamics", title: "The Laws of Thermodynamics" },
-  "gibbs": { slug: "6-2-potential-kinetic-free-and-activation-energy", title: "Potential, Kinetic, Free, and Activation Energy" },
-  "free energy": { slug: "6-2-potential-kinetic-free-and-activation-energy", title: "Potential, Kinetic, Free, and Activation Energy" },
+  thermodynamics: {slug: '6-3-the-laws-of-thermodynamics', title: 'The Laws of Thermodynamics'},
+  gibbs: {
+    slug: '6-2-potential-kinetic-free-and-activation-energy',
+    title: 'Potential, Kinetic, Free, and Activation Energy',
+  },
+  'free energy': {
+    slug: '6-2-potential-kinetic-free-and-activation-energy',
+    title: 'Potential, Kinetic, Free, and Activation Energy',
+  },
   // Metabolism
-  "metabolism": { slug: "6-1-energy-and-metabolism", title: "Energy and Metabolism" },
-  "enzymes": { slug: "6-5-enzymes", title: "Enzymes" },
-  "glycolysis": { slug: "7-2-glycolysis", title: "Glycolysis" },
-  "krebs": { slug: "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", title: "Oxidation of Pyruvate and the Citric Acid Cycle" },
-  "citric acid": { slug: "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", title: "Oxidation of Pyruvate and the Citric Acid Cycle" },
-  "oxidative phosphorylation": { slug: "7-4-oxidative-phosphorylation", title: "Oxidative Phosphorylation" },
-  "electron transport": { slug: "7-4-oxidative-phosphorylation", title: "Oxidative Phosphorylation" },
+  metabolism: {slug: '6-1-energy-and-metabolism', title: 'Energy and Metabolism'},
+  enzymes: {slug: '6-5-enzymes', title: 'Enzymes'},
+  glycolysis: {slug: '7-2-glycolysis', title: 'Glycolysis'},
+  krebs: {
+    slug: '7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle',
+    title: 'Oxidation of Pyruvate and the Citric Acid Cycle',
+  },
+  'citric acid': {
+    slug: '7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle',
+    title: 'Oxidation of Pyruvate and the Citric Acid Cycle',
+  },
+  'oxidative phosphorylation': {
+    slug: '7-4-oxidative-phosphorylation',
+    title: 'Oxidative Phosphorylation',
+  },
+  'electron transport': {
+    slug: '7-4-oxidative-phosphorylation',
+    title: 'Oxidative Phosphorylation',
+  },
   // Photosynthesis
-  "photosynthesis": { slug: "8-1-overview-of-photosynthesis", title: "Overview of Photosynthesis" },
-  "light reactions": { slug: "8-2-the-light-dependent-reaction-of-photosynthesis", title: "The Light-Dependent Reactions" },
-  "calvin cycle": { slug: "8-3-using-light-to-make-organic-molecules", title: "Using Light to Make Organic Molecules" },
+  photosynthesis: {slug: '8-1-overview-of-photosynthesis', title: 'Overview of Photosynthesis'},
+  'light reactions': {
+    slug: '8-2-the-light-dependent-reaction-of-photosynthesis',
+    title: 'The Light-Dependent Reactions',
+  },
+  'calvin cycle': {
+    slug: '8-3-using-light-to-make-organic-molecules',
+    title: 'Using Light to Make Organic Molecules',
+  },
   // Cell structure
-  "cell membrane": { slug: "5-1-components-and-structure", title: "Cell Membrane Components and Structure" },
-  "transport": { slug: "5-2-passive-transport", title: "Passive Transport" },
+  'cell membrane': {
+    slug: '5-1-components-and-structure',
+    title: 'Cell Membrane Components and Structure',
+  },
+  transport: {slug: '5-2-passive-transport', title: 'Passive Transport'},
   // Reproduction
-  "reproductive system": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
-  "reproductive": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
-  "reproduction": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
+  'reproductive system': {slug: '34-1-reproduction-methods', title: 'Reproduction Methods'},
+  reproductive: {slug: '34-1-reproduction-methods', title: 'Reproduction Methods'},
+  reproduction: {slug: '34-1-reproduction-methods', title: 'Reproduction Methods'},
   // Default - intentionally empty to avoid wrong citations
-  "default": { slug: "", title: "Biology Content" },
+  default: {slug: '', title: 'Biology Content'},
 };
 
-function getOpenStaxSource(topic: string): { provider: string; title: string; url: string } {
+function getOpenStaxSource(topic: string): {provider: string; title: string; url: string} {
   const topicLower = topic.toLowerCase();
 
   // Find matching section
   for (const [keyword, section] of Object.entries(OPENSTAX_SECTIONS)) {
-    if (keyword !== "default" && topicLower.includes(keyword)) {
+    if (keyword !== 'default' && topicLower.includes(keyword)) {
       return {
-        provider: "OpenStax Biology for AP Courses",
+        provider: 'OpenStax Biology for AP Courses',
         title: section.title,
         url: OPENSTAX_BASE + section.slug,
       };
@@ -223,9 +255,9 @@ function getOpenStaxSource(topic: string): { provider: string; title: string; ur
   }
 
   // Default fallback
-  const defaultSection = OPENSTAX_SECTIONS["default"];
+  const defaultSection = OPENSTAX_SECTIONS['default'];
   return {
-    provider: "OpenStax Biology for AP Courses",
+    provider: 'OpenStax Biology for AP Courses',
     title: defaultSection.title,
     url: OPENSTAX_BASE + defaultSection.slug,
   };
@@ -235,7 +267,7 @@ function getOpenStaxSource(topic: string): { provider: string; title: string; ur
 let genai: any = null;
 
 async function initGenAI() {
-  const { GoogleGenAI } = await import("@google/genai");
+  const {GoogleGenAI} = await import('@google/genai');
   // Use VertexAI with Application Default Credentials
   genai = new GoogleGenAI({
     vertexai: true,
@@ -248,7 +280,7 @@ async function initGenAI() {
 
 interface ChatMessage {
   role: string;
-  parts: { text: string }[];
+  parts: {text: string}[];
 }
 
 interface ChatRequest {
@@ -261,7 +293,7 @@ interface ChatRequest {
 // =============================================================================
 // ACCESS TOKEN CACHING
 // =============================================================================
-let cachedAccessToken: { token: string; expiresAt: number } | null = null;
+let cachedAccessToken: {token: string; expiresAt: number} | null = null;
 
 // Get Google Cloud access token with caching
 // In Cloud Run, use the metadata server. Locally, use gcloud CLI.
@@ -275,9 +307,10 @@ async function getAccessToken(): Promise<string> {
 
   // Try metadata server first (Cloud Run environment)
   try {
-    const metadataUrl = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token";
+    const metadataUrl =
+      'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token';
     const response = await fetch(metadataUrl, {
-      headers: { "Metadata-Flavor": "Google" },
+      headers: {'Metadata-Flavor': 'Google'},
     });
     if (response.ok) {
       const data = await response.json();
@@ -286,7 +319,7 @@ async function getAccessToken(): Promise<string> {
         token: data.access_token,
         expiresAt: now + 3480000, // 58 minutes
       };
-      console.log("[API Server] Cached access token from metadata server");
+      console.log('[API Server] Cached access token from metadata server');
       return data.access_token;
     }
   } catch {
@@ -295,25 +328,25 @@ async function getAccessToken(): Promise<string> {
 
   // Fall back to gcloud CLI (local development)
   try {
-    const token = execSync("gcloud auth print-access-token", {
-      encoding: "utf-8",
+    const token = execSync('gcloud auth print-access-token', {
+      encoding: 'utf-8',
     }).trim();
     // Cache the token
     cachedAccessToken = {
       token: token,
       expiresAt: now + 3480000, // 58 minutes
     };
-    console.log("[API Server] Cached access token from gcloud CLI");
+    console.log('[API Server] Cached access token from gcloud CLI');
     return token;
   } catch (error) {
-    console.error("[API Server] Failed to get access token:", error);
-    throw new Error("Failed to get Google Cloud access token. Run: gcloud auth login");
+    console.error('[API Server] Failed to get access token:', error);
+    throw new Error('Failed to get Google Cloud access token. Run: gcloud auth login');
   }
 }
 
 // Query Agent Engine for A2UI content using streamQuery
-async function queryAgentEngine(format: string, context: string = ""): Promise<any> {
-  const { projectNumber, location, resourceId } = AGENT_ENGINE_CONFIG;
+async function queryAgentEngine(format: string, context: string = ''): Promise<any> {
+  const {projectNumber, location, resourceId} = AGENT_ENGINE_CONFIG;
   // Use :streamQuery endpoint with stream_query method for ADK agents
   const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${location}/reasoningEngines/${resourceId}:streamQuery`;
 
@@ -322,8 +355,8 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
   // For audio/video, don't include topic context - we only have one pre-built podcast/video
   // Including a topic might confuse the agent into thinking we want topic-specific content
   let message: string;
-  if (format === "podcast" || format === "audio" || format === "video") {
-    message = format === "video" ? "Play the video" : "Play the podcast";
+  if (format === 'podcast' || format === 'audio' || format === 'video') {
+    message = format === 'video' ? 'Play the video' : 'Play the podcast';
   } else {
     message = context ? `Generate ${format} for: ${context}` : `Generate ${format}`;
   }
@@ -333,61 +366,72 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
 
   // Build the request payload
   const requestPayload = {
-    class_method: "stream_query",
+    class_method: 'stream_query',
     input: {
-      user_id: "demo-user",
+      user_id: 'demo-user',
       message: message,
     },
   };
 
   // LOG: Server → Agent Engine request
-  logMessage("SERVER_TO_AGENT", "Vertex AI Agent Engine (A2UI Generator)", {
-    description: "Request to remote A2UI-generating agent",
+  logMessage('SERVER_TO_AGENT', 'Vertex AI Agent Engine (A2UI Generator)', {
+    description: 'Request to remote A2UI-generating agent',
     agentUrl: url,
     payload: requestPayload,
   });
 
   const response = await fetch(url, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Authorization": `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(requestPayload),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("[API Server] Agent Engine error:", errorText);
+    console.error('[API Server] Agent Engine error:', errorText);
     throw new Error(`Agent Engine error: ${response.status}`);
   }
 
   // Parse the newline-delimited JSON response
   const responseText = await response.text();
-  console.log("[API Server] Agent Engine response length:", responseText.length);
-  console.log("[API Server] Raw response (first 1000 chars):", responseText.substring(0, 1000));
+  console.log('[API Server] Agent Engine response length:', responseText.length);
+  console.log('[API Server] Raw response (first 1000 chars):', responseText.substring(0, 1000));
 
   // LOG: Agent Engine → Server raw response
-  logMessage("AGENT_TO_SERVER", "Vertex AI Agent Engine (raw)", {
-    description: "Raw streaming response from Agent Engine (newline-delimited JSON)",
+  logMessage('AGENT_TO_SERVER', 'Vertex AI Agent Engine (raw)', {
+    description: 'Raw streaming response from Agent Engine (newline-delimited JSON)',
     responseLength: responseText.length,
-    rawChunks: responseText.trim().split("\n").slice(0, 5).map(chunk => {
-      try { return JSON.parse(chunk); } catch { return chunk.substring(0, 200); }
-    }),
-    note: "Showing first 5 chunks only",
+    rawChunks: responseText
+      .trim()
+      .split('\n')
+      .slice(0, 5)
+      .map(chunk => {
+        try {
+          return JSON.parse(chunk);
+        } catch {
+          return chunk.substring(0, 200);
+        }
+      }),
+    note: 'Showing first 5 chunks only',
   });
 
   // Extract text from all chunks
-  const chunks = responseText.trim().split("\n").filter((line: string) => line.trim());
-  let fullText = "";
+  const chunks = responseText
+    .trim()
+    .split('\n')
+    .filter((line: string) => line.trim());
+  let fullText = '';
 
-  let functionResponseResult = "";  // Prioritize function_response over text
-  let textParts = "";
+  let functionResponseResult = ''; // Prioritize function_response over text
+  let textParts = '';
 
   for (const chunk of chunks) {
     try {
       const parsed = JSON.parse(chunk);
-      console.log("[API Server] Parsed chunk keys:", Object.keys(parsed));
+      console.log('[API Server] Parsed chunk keys:', Object.keys(parsed));
 
       // Extract from content.parts - can contain text, function_call, or function_response
       if (parsed.content?.parts) {
@@ -395,23 +439,23 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
           // Check for function_response which contains the tool result (prioritize this)
           if (part.function_response?.response?.result) {
             const result = part.function_response.response.result;
-            console.log("[API Server] Found function_response result:", result.substring(0, 200));
+            console.log('[API Server] Found function_response result:', result.substring(0, 200));
             functionResponseResult += result;
           } else if (part.text) {
-            console.log("[API Server] Found text part:", part.text.substring(0, 100));
+            console.log('[API Server] Found text part:', part.text.substring(0, 100));
             textParts += part.text;
           }
         }
       }
     } catch (e) {
-      console.warn("[API Server] Failed to parse chunk:", e, chunk.substring(0, 100));
+      console.warn('[API Server] Failed to parse chunk:', e, chunk.substring(0, 100));
     }
   }
 
   // Prefer function_response result over text parts (agent text often just wraps the same data)
   fullText = functionResponseResult || textParts;
 
-  console.log("[API Server] Extracted text:", fullText.substring(0, 300));
+  console.log('[API Server] Extracted text:', fullText.substring(0, 300));
 
   // Try to parse A2UI JSON from the response
   try {
@@ -420,36 +464,37 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
     cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
     cleaned = cleaned.trim();
 
-    console.log("[API Server] Cleaned text:", cleaned.substring(0, 200));
+    console.log('[API Server] Cleaned text:', cleaned.substring(0, 200));
 
     // Helper to extract A2UI content and source info from various formats
-    const extractA2UIWithSource = (text: string): { a2ui: unknown[] | null; source?: { url: string; title: string; provider: string } } => {
+    const extractA2UIWithSource = (
+      text: string,
+    ): {a2ui: unknown[] | null; source?: {url: string; title: string; provider: string}} => {
       // Try parsing as raw JSON array (legacy format)
-      if (text.startsWith("[")) {
+      if (text.startsWith('[')) {
         try {
           const parsed = JSON.parse(text);
-          if (Array.isArray(parsed)) return { a2ui: parsed };
+          if (Array.isArray(parsed)) return {a2ui: parsed};
         } catch {}
       }
 
       // Try parsing as object with a2ui and source (new format)
-      if (text.startsWith("{")) {
+      if (text.startsWith('{')) {
         try {
           const wrapper = JSON.parse(text);
           // New format: {a2ui: [...], source: {...}}
           if (wrapper.a2ui && Array.isArray(wrapper.a2ui)) {
-            return { a2ui: wrapper.a2ui, source: wrapper.source || undefined };
+            return {a2ui: wrapper.a2ui, source: wrapper.source || undefined};
           }
           // Legacy format: {"result": "..."}
           if (wrapper.result) {
-            const inner = typeof wrapper.result === 'string'
-              ? JSON.parse(wrapper.result)
-              : wrapper.result;
+            const inner =
+              typeof wrapper.result === 'string' ? JSON.parse(wrapper.result) : wrapper.result;
             // Check if inner is the new format
             if (inner && inner.a2ui && Array.isArray(inner.a2ui)) {
-              return { a2ui: inner.a2ui, source: inner.source || undefined };
+              return {a2ui: inner.a2ui, source: inner.source || undefined};
             }
-            if (Array.isArray(inner)) return { a2ui: inner };
+            if (Array.isArray(inner)) return {a2ui: inner};
           }
         } catch {}
       }
@@ -459,7 +504,7 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
       if (arrayMatch) {
         try {
           const parsed = JSON.parse(arrayMatch[0]);
-          if (Array.isArray(parsed)) return { a2ui: parsed };
+          if (Array.isArray(parsed)) return {a2ui: parsed};
         } catch {}
       }
 
@@ -468,35 +513,33 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
       if (resultMatch) {
         try {
           // Unescape the JSON string
-          const unescaped = resultMatch[1]
-            .replace(/\\"/g, '"')
-            .replace(/\\\\/g, '\\');
+          const unescaped = resultMatch[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
           const parsed = JSON.parse(unescaped);
           // Check if parsed is new format
           if (parsed && parsed.a2ui && Array.isArray(parsed.a2ui)) {
-            return { a2ui: parsed.a2ui, source: parsed.source || undefined };
+            return {a2ui: parsed.a2ui, source: parsed.source || undefined};
           }
-          if (Array.isArray(parsed)) return { a2ui: parsed };
+          if (Array.isArray(parsed)) return {a2ui: parsed};
         } catch {}
       }
 
-      return { a2ui: null };
+      return {a2ui: null};
     };
 
     const extracted = extractA2UIWithSource(cleaned);
     if (extracted.a2ui) {
       const result = {
         format,
-        surfaceId: "learningContent",
+        surfaceId: 'learningContent',
         a2ui: extracted.a2ui,
         source: extracted.source,
       };
 
       // LOG: Parsed A2UI content
-      logMessage("AGENT_TO_SERVER", "Vertex AI Agent Engine (parsed A2UI)", {
-        description: "Successfully parsed A2UI JSON from agent response",
+      logMessage('AGENT_TO_SERVER', 'Vertex AI Agent Engine (parsed A2UI)', {
+        description: 'Successfully parsed A2UI JSON from agent response',
         format,
-        surfaceId: "learningContent",
+        surfaceId: 'learningContent',
         source: extracted.source,
         a2uiMessageCount: extracted.a2ui.length,
         a2uiMessages: extracted.a2ui,
@@ -508,18 +551,18 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
     // Return raw text if no JSON found
     return {
       format,
-      surfaceId: "learningContent",
+      surfaceId: 'learningContent',
       a2ui: [],
       rawText: fullText,
     };
   } catch (e) {
-    console.error("[API Server] Failed to parse agent response:", e);
+    console.error('[API Server] Failed to parse agent response:', e);
     return {
       format,
-      surfaceId: "learningContent",
+      surfaceId: 'learningContent',
       a2ui: [],
       rawText: fullText,
-      error: "Failed to parse A2UI JSON",
+      error: 'Failed to parse A2UI JSON',
     };
   }
 }
@@ -616,18 +659,26 @@ Replace all [BRACKETED] placeholders with actual content. Vary which option is c
   try {
     const response = await genai.models.generateContent({
       model: MODEL,
-      contents: [{ role: "user", parts: [{ text: `Generate quiz questions about: ${topic || 'ATP and bond energy'}` }] }],
+      contents: [
+        {
+          role: 'user',
+          parts: [{text: `Generate quiz questions about: ${topic || 'ATP and bond energy'}`}],
+        },
+      ],
       config: {
         systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
+        responseMimeType: 'application/json',
       },
     });
 
-    const text = response.text?.trim() || "";
-    console.log("[API Server] Local quiz generation response:", text.substring(0, 500));
+    const text = response.text?.trim() || '';
+    console.log('[API Server] Local quiz generation response:', text.substring(0, 500));
 
     // Parse the JSON
-    let cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    let cleaned = text
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
     let parsed = JSON.parse(cleaned);
 
     // Handle case where Gemini wraps the A2UI array in an object
@@ -640,40 +691,40 @@ Replace all [BRACKETED] placeholders with actual content. Vary which option is c
     } else if (parsed.messages && Array.isArray(parsed.messages)) {
       a2ui = parsed.messages;
     } else {
-      console.error("[API Server] Unexpected quiz format from Gemini:", Object.keys(parsed));
+      console.error('[API Server] Unexpected quiz format from Gemini:', Object.keys(parsed));
       return null;
     }
 
     // Match topic to specific OpenStax section for better attribution
     const source = getOpenStaxSource(topic);
     return {
-      format: "quiz",
-      surfaceId: "learningContent",
+      format: 'quiz',
+      surfaceId: 'learningContent',
       a2ui: a2ui,
       source,
     };
   } catch (error) {
-    console.error("[API Server] Local quiz generation failed:", error);
+    console.error('[API Server] Local quiz generation failed:', error);
     return null;
   }
 }
 
-async function handleChatRequest(request: ChatRequest): Promise<{ text: string }> {
-  const { systemPrompt, intentGuidance, messages, userMessage } = request;
+async function handleChatRequest(request: ChatRequest): Promise<{text: string}> {
+  const {systemPrompt, intentGuidance, messages, userMessage} = request;
 
   // Build the full system instruction
   const fullSystemPrompt = `${systemPrompt}\n\n${intentGuidance}`;
 
   // Convert messages to Gemini format
-  const contents = messages.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
     parts: m.parts,
   }));
 
   // Add the current user message
   contents.push({
-    role: "user",
-    parts: [{ text: userMessage }],
+    role: 'user',
+    parts: [{text: userMessage}],
   });
 
   try {
@@ -686,9 +737,9 @@ async function handleChatRequest(request: ChatRequest): Promise<{ text: string }
     });
 
     const text = response.text || "I apologize, I couldn't generate a response.";
-    return { text };
+    return {text};
   } catch (error) {
-    console.error("[API Server] Error calling Gemini:", error);
+    console.error('[API Server] Error calling Gemini:', error);
     throw error;
   }
 }
@@ -707,11 +758,13 @@ interface CombinedChatRequest {
 interface CombinedChatResponse {
   intent: string;
   text: string;
-  keywords?: string;  // Comma-separated keywords for content-generating intents
+  keywords?: string; // Comma-separated keywords for content-generating intents
 }
 
-async function handleCombinedChatRequest(request: CombinedChatRequest): Promise<CombinedChatResponse> {
-  const { systemPrompt, messages, userMessage, recentContext } = request;
+async function handleCombinedChatRequest(
+  request: CombinedChatRequest,
+): Promise<CombinedChatResponse> {
+  const {systemPrompt, messages, userMessage, recentContext} = request;
 
   const combinedSystemPrompt = `${systemPrompt}
 
@@ -758,8 +811,8 @@ The keywords help the content retrieval system find the right OpenStax textbook 
 Then provide an appropriate conversational response following your tutor persona.`;
 
   // Convert messages to Gemini format
-  const contents = messages.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
     parts: m.parts,
   }));
 
@@ -770,8 +823,8 @@ Then provide an appropriate conversational response following your tutor persona
   }
 
   contents.push({
-    role: "user",
-    parts: [{ text: contextualMessage }],
+    role: 'user',
+    parts: [{text: contextualMessage}],
   });
 
   try {
@@ -780,138 +833,138 @@ Then provide an appropriate conversational response following your tutor persona
       contents,
       config: {
         systemInstruction: combinedSystemPrompt,
-        responseMimeType: "application/json",
+        responseMimeType: 'application/json',
       },
     });
 
-    const responseText = response.text?.trim() || "";
-    console.log("[API Server] Combined response:", responseText.substring(0, 200));
+    const responseText = response.text?.trim() || '';
+    console.log('[API Server] Combined response:', responseText.substring(0, 200));
 
     try {
       const parsed = JSON.parse(responseText);
       const result: CombinedChatResponse = {
-        intent: parsed.intent || "general",
+        intent: parsed.intent || 'general',
         text: parsed.text || "I apologize, I couldn't generate a response.",
       };
       // Include keywords if present (for content-generating intents)
       if (parsed.keywords) {
         result.keywords = parsed.keywords;
-        console.log("[API Server] Keywords for content retrieval:", parsed.keywords);
+        console.log('[API Server] Keywords for content retrieval:', parsed.keywords);
       }
       return result;
     } catch (parseError) {
-      console.error("[API Server] Failed to parse combined response:", parseError);
+      console.error('[API Server] Failed to parse combined response:', parseError);
       // Fallback: return general intent with raw text
       return {
-        intent: "general",
+        intent: 'general',
         text: responseText || "I apologize, I couldn't generate a response.",
       };
     }
   } catch (error) {
-    console.error("[API Server] Error calling Gemini for combined request:", error);
+    console.error('[API Server] Error calling Gemini for combined request:', error);
     throw error;
   }
 }
 
 function parseBody(req: any): Promise<any> {
   return new Promise((resolve, reject) => {
-    let body = "";
-    req.on("data", (chunk: string) => {
+    let body = '';
+    req.on('data', (chunk: string) => {
       body += chunk;
     });
-    req.on("end", () => {
+    req.on('end', () => {
       try {
         resolve(JSON.parse(body));
       } catch (e) {
         reject(e);
       }
     });
-    req.on("error", reject);
+    req.on('error', reject);
   });
 }
 
 async function main() {
-  console.log("[API Server] Initializing Gemini client...");
+  console.log('[API Server] Initializing Gemini client...');
   await initGenAI();
 
   const server = createServer(async (req, res) => {
     // CORS headers
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-    if (req.method === "OPTIONS") {
+    if (req.method === 'OPTIONS') {
       res.writeHead(204);
       res.end();
       return;
     }
 
     // Health check
-    if (req.url === "/health" && req.method === "GET") {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "healthy" }));
+    if (req.url === '/health' && req.method === 'GET') {
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify({status: 'healthy'}));
       return;
     }
 
     // Reset message log (useful before demo)
-    if (req.url === "/reset-log" && req.method === "POST") {
+    if (req.url === '/reset-log' && req.method === 'POST') {
       resetLog();
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "log reset", file: LOG_FILE }));
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify({status: 'log reset', file: LOG_FILE}));
       return;
     }
 
     // View current log
-    if (req.url === "/log" && req.method === "GET") {
-      res.writeHead(200, { "Content-Type": "application/json" });
+    if (req.url === '/log' && req.method === 'GET') {
+      res.writeHead(200, {'Content-Type': 'application/json'});
       res.end(JSON.stringify(messageLog, null, 2));
       return;
     }
 
     // Authorization check endpoint - used by frontend to verify user is allowed
     // This is the SINGLE SOURCE OF TRUTH for access control decisions
-    if (req.url === "/api/check-access" && req.method === "GET") {
+    if (req.url === '/api/check-access' && req.method === 'GET') {
       if (!(await authenticateRequest(req, res))) return;
       // If authenticateRequest passes, user is both authenticated AND authorized
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ authorized: true }));
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify({authorized: true}));
       return;
     }
 
     // A2A Agent Engine endpoint
-    if (req.url === "/a2ui-agent/a2a/query" && req.method === "POST") {
+    if (req.url === '/a2ui-agent/a2a/query' && req.method === 'POST') {
       if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
-        console.log("[API Server] ========================================");
-        console.log("[API Server] A2A QUERY - REQUESTING A2UI CONTENT");
-        console.log("[API Server] Full message:", body.message);
-        console.log("[API Server] Session ID:", body.session_id);
-        console.log("[API Server] ========================================");
+        console.log('[API Server] ========================================');
+        console.log('[API Server] A2A QUERY - REQUESTING A2UI CONTENT');
+        console.log('[API Server] Full message:', body.message);
+        console.log('[API Server] Session ID:', body.session_id);
+        console.log('[API Server] ========================================');
 
         // LOG: Client → Server request for A2UI content
-        logMessage("CLIENT_TO_SERVER", "/a2ui-agent/a2a/query", {
-          description: "Browser client requesting A2UI content generation",
+        logMessage('CLIENT_TO_SERVER', '/a2ui-agent/a2a/query', {
+          description: 'Browser client requesting A2UI content generation',
           requestBody: body,
         });
 
         // Parse format from message (e.g., "flashcards:context" or just "flashcards")
-        const parts = (body.message || "flashcards").split(":");
+        const parts = (body.message || 'flashcards').split(':');
         const format = parts[0].trim();
-        const context = parts.slice(1).join(":").trim();
+        const context = parts.slice(1).join(':').trim();
 
-        console.log("[API Server] Parsed format:", format);
-        console.log("[API Server] Parsed context (keywords):", context);
-        console.log("[API Server] This context will be sent to Agent Engine for topic matching");
+        console.log('[API Server] Parsed format:', format);
+        console.log('[API Server] Parsed context (keywords):', context);
+        console.log('[API Server] This context will be sent to Agent Engine for topic matching');
 
         let result = await queryAgentEngine(format, context);
 
         // If quiz was requested but Agent Engine returned Flashcards or empty,
         // generate quiz locally using Gemini
-        if (format.toLowerCase() === "quiz") {
+        if (format.toLowerCase() === 'quiz') {
           const a2uiStr = JSON.stringify(result.a2ui || []);
-          const hasFlashcards = a2uiStr.includes("Flashcard");
-          const hasQuizCards = a2uiStr.includes("QuizCard");
+          const hasFlashcards = a2uiStr.includes('Flashcard');
+          const hasQuizCards = a2uiStr.includes('QuizCard');
           const isEmpty = !result.a2ui || result.a2ui.length === 0;
 
           if (isEmpty || (hasFlashcards && !hasQuizCards)) {
@@ -924,8 +977,8 @@ async function main() {
         }
 
         // LOG: Server → Client response with A2UI
-        logMessage("SERVER_TO_CLIENT", "/a2ui-agent/a2a/query", {
-          description: "Sending A2UI JSON payload to browser for rendering",
+        logMessage('SERVER_TO_CLIENT', '/a2ui-agent/a2a/query', {
+          description: 'Sending A2UI JSON payload to browser for rendering',
           format: result.format,
           surfaceId: result.surfaceId,
           source: result.source,
@@ -933,63 +986,63 @@ async function main() {
           a2uiPayload: result.a2ui,
         });
 
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(result));
       } catch (error: any) {
-        console.error("[API Server] A2A error:", error);
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: error.message }));
+        console.error('[API Server] A2A error:', error);
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: error.message}));
       }
       return;
     }
 
     // Chat endpoint
-    if (req.url === "/api/chat" && req.method === "POST") {
+    if (req.url === '/api/chat' && req.method === 'POST') {
       if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
-        console.log("[API Server] Chat request received");
+        console.log('[API Server] Chat request received');
 
         // LOG: Client → Server chat request
-        logMessage("CLIENT_TO_SERVER", "/api/chat", {
-          description: "Browser client sending chat message to Gemini",
+        logMessage('CLIENT_TO_SERVER', '/api/chat', {
+          description: 'Browser client sending chat message to Gemini',
           userMessage: body.userMessage,
-          intentGuidance: body.intentGuidance?.substring(0, 100) + "...",
+          intentGuidance: body.intentGuidance?.substring(0, 100) + '...',
           conversationLength: body.messages?.length || 0,
         });
 
         const result = await handleChatRequest(body);
 
         // LOG: Server → Client chat response
-        logMessage("SERVER_TO_CLIENT", "/api/chat", {
-          description: "Gemini response text (conversational layer)",
+        logMessage('SERVER_TO_CLIENT', '/api/chat', {
+          description: 'Gemini response text (conversational layer)',
           responseText: result.text,
         });
 
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(result));
       } catch (error: any) {
-        console.error("[API Server] Error:", error);
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: error.message }));
+        console.error('[API Server] Error:', error);
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: error.message}));
       }
       return;
     }
 
     // Combined chat endpoint - performs intent detection AND response in one LLM call
-    if (req.url === "/api/chat-with-intent" && req.method === "POST") {
+    if (req.url === '/api/chat-with-intent' && req.method === 'POST') {
       if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
-        console.log("[API Server] ========================================");
-        console.log("[API Server] COMBINED CHAT REQUEST RECEIVED");
-        console.log("[API Server] User message:", body.userMessage);
-        console.log("[API Server] Conversation history length:", body.messages?.length || 0);
-        console.log("[API Server] ========================================");
+        console.log('[API Server] ========================================');
+        console.log('[API Server] COMBINED CHAT REQUEST RECEIVED');
+        console.log('[API Server] User message:', body.userMessage);
+        console.log('[API Server] Conversation history length:', body.messages?.length || 0);
+        console.log('[API Server] ========================================');
 
         // LOG: Client → Server combined request
-        logMessage("CLIENT_TO_SERVER", "/api/chat-with-intent", {
-          description: "Browser client requesting combined intent+response (latency optimization)",
+        logMessage('CLIENT_TO_SERVER', '/api/chat-with-intent', {
+          description: 'Browser client requesting combined intent+response (latency optimization)',
           userMessage: body.userMessage,
           recentContext: body.recentContext,
           conversationLength: body.messages?.length || 0,
@@ -998,52 +1051,52 @@ async function main() {
 
         const result = await handleCombinedChatRequest(body);
 
-        console.log("[API Server] ========================================");
-        console.log("[API Server] GEMINI COMBINED RESPONSE:");
-        console.log("[API Server] Intent:", result.intent);
-        console.log("[API Server] Keywords:", result.keywords || "(none - not a content intent)");
-        console.log("[API Server] Text:", result.text.substring(0, 200));
-        console.log("[API Server] ========================================");
+        console.log('[API Server] ========================================');
+        console.log('[API Server] GEMINI COMBINED RESPONSE:');
+        console.log('[API Server] Intent:', result.intent);
+        console.log('[API Server] Keywords:', result.keywords || '(none - not a content intent)');
+        console.log('[API Server] Text:', result.text.substring(0, 200));
+        console.log('[API Server] ========================================');
 
         // LOG: Server → Client combined response
-        logMessage("SERVER_TO_CLIENT", "/api/chat-with-intent", {
-          description: "Combined intent detection and response in single LLM call",
+        logMessage('SERVER_TO_CLIENT', '/api/chat-with-intent', {
+          description: 'Combined intent detection and response in single LLM call',
           intent: result.intent,
           keywords: result.keywords,
           responseText: result.text,
         });
 
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(result));
       } catch (error: any) {
-        console.error("[API Server] Combined chat error:", error);
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: error.message }));
+        console.error('[API Server] Combined chat error:', error);
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: error.message}));
       }
       return;
     }
 
     // Static file serving for frontend
     const MIME_TYPES: Record<string, string> = {
-      ".html": "text/html",
-      ".js": "application/javascript",
-      ".css": "text/css",
-      ".json": "application/json",
-      ".png": "image/png",
-      ".jpg": "image/jpeg",
-      ".svg": "image/svg+xml",
-      ".ico": "image/x-icon",
+      '.html': 'text/html',
+      '.js': 'application/javascript',
+      '.css': 'text/css',
+      '.json': 'application/json',
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.svg': 'image/svg+xml',
+      '.ico': 'image/x-icon',
     };
 
     // Serve static files (Vite builds to dist/, but index.html is in root for dev)
-    if (req.method === "GET") {
-      let filePath = req.url === "/" ? "/index.html" : req.url || "/index.html";
+    if (req.method === 'GET') {
+      let filePath = req.url === '/' ? '/index.html' : req.url || '/index.html';
 
       // Remove query string
-      filePath = filePath.split("?")[0];
+      filePath = filePath.split('?')[0];
 
       // Try dist/ first (production build), then root (development)
-      const distPath = join(process.cwd(), "dist", filePath);
+      const distPath = join(process.cwd(), 'dist', filePath);
       const rootPath = join(process.cwd(), filePath);
 
       const fullPath = existsSync(distPath) ? distPath : rootPath;
@@ -1051,10 +1104,10 @@ async function main() {
       if (existsSync(fullPath)) {
         try {
           const content = readFileSync(fullPath);
-          const ext = filePath.substring(filePath.lastIndexOf("."));
-          const contentType = MIME_TYPES[ext] || "application/octet-stream";
+          const ext = filePath.substring(filePath.lastIndexOf('.'));
+          const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-          res.writeHead(200, { "Content-Type": contentType });
+          res.writeHead(200, {'Content-Type': contentType});
           res.end(content);
           return;
         } catch (err) {
@@ -1064,8 +1117,8 @@ async function main() {
     }
 
     // 404 for other routes
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Not found" }));
+    res.writeHead(404, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({error: 'Not found'}));
   });
 
   server.listen(PORT, () => {

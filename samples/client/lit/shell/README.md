@@ -4,8 +4,8 @@ See the[video](https://github.com/user-attachments/assets/2a406115-3a17-4bea-800
 
 ## Prerequisites
 
-* [nodejs](https://nodejs.org/en)
-* [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- [nodejs](https://nodejs.org/en)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ## Running
 
@@ -28,7 +28,7 @@ If you hit errors around `npm i` remove the directory `node_modules` and the fil
 
 ### Open UI
 
-Follow the link in console output of the last command above. 
+Follow the link in console output of the last command above.
 
 ## Security Notice
 

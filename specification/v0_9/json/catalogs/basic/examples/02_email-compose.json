@@ -23,22 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "from-row",
-              "to-row",
-              "subject-row",
-              "divider",
-              "message",
-              "actions"
-            ]
+            "children": ["from-row", "to-row", "subject-row", "divider", "message", "actions"]
           },
           {
             "id": "from-row",
             "component": "Row",
-            "children": [
-              "from-label",
-              "from-value"
-            ],
+            "children": ["from-label", "from-value"],
             "align": "center"
           },
           {
@@ -58,10 +48,7 @@
           {
             "id": "to-row",
             "component": "Row",
-            "children": [
-              "to-label",
-              "to-value"
-            ],
+            "children": ["to-label", "to-value"],
             "align": "center"
           },
           {
@@ -81,10 +68,7 @@
           {
             "id": "subject-row",
             "component": "Row",
-            "children": [
-              "subject-label",
-              "subject-value"
-            ],
+            "children": ["subject-label", "subject-value"],
             "align": "center"
           },
           {
@@ -108,12 +92,7 @@
           {
             "id": "message",
             "component": "Column",
-            "children": [
-              "greeting",
-              "body-text",
-              "closing",
-              "signature"
-            ]
+            "children": ["greeting", "body-text", "closing", "signature"]
           },
           {
             "id": "greeting",
@@ -150,10 +129,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "send-btn",
-              "discard-btn"
-            ]
+            "children": ["send-btn", "discard-btn"]
           },
           {
             "id": "send-btn-text",

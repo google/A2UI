@@ -15,7 +15,7 @@
  */
 
 import * as Types from '@a2ui/web_core/types/types';
-import { Injectable, signal } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 
 /**
  * Service to manage the state of the canvas, which displays A2UI surfaces.

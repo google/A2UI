@@ -16,14 +16,14 @@ name: Web core
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'renderers/web_core/**/*'
-      - '.github/workflows/web_build_and_test.yml'
+      - "renderers/web_core/**/*"
+      - ".github/workflows/web_build_and_test.yml"
   pull_request:
     paths:
-      - 'renderers/web_core/**/*'
-      - '.github/workflows/web_build_and_test.yml'
+      - "renderers/web_core/**/*"
+      - ".github/workflows/web_build_and_test.yml"
 
 jobs:
   build-and-test:
@@ -35,7 +35,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install web_core dependencies
         working-directory: ./renderers/web_core
@@ -60,7 +60,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Run publish script integration test
         run: node --test renderers/scripts/publish_npm.test.mjs

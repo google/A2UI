@@ -117,8 +117,7 @@ export class DataModel {
       }
 
       if (current[segment] === undefined || current[segment] === null) {
-        const nextSegment =
-          i < segments.length - 1 ? segments[i + 1] : lastSegment;
+        const nextSegment = i < segments.length - 1 ? segments[i + 1] : lastSegment;
         current[segment] = isNumeric(nextSegment) ? [] : {};
       }
       current = current[segment];
@@ -181,10 +180,7 @@ export class DataModel {
    * @param onChange A callback fired whenever the value changes.
    * @returns A `DataSubscription` containing the initial value and an `unsubscribe` method.
    */
-  subscribe<T>(
-    path: string,
-    onChange: (value: T | undefined) => void,
-  ): DataSubscription<T> {
+  subscribe<T>(path: string, onChange: (value: T | undefined) => void): DataSubscription<T> {
     const sig = this.getSignal<T>(path);
     let isSync = true;
     let currentValue = sig.peek();
@@ -242,8 +238,7 @@ export class DataModel {
       // Notify Ancestors
       let parentPath = normalizedPath;
       while (parentPath !== '/' && parentPath !== '') {
-        parentPath =
-          parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
+        parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
         this.updateSignal(parentPath);
       }
 

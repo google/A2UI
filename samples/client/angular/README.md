@@ -19,27 +19,27 @@ cp ../../agent/adk/restaurant_finder/.env.example ../../agent/adk/restaurant_fin
 # Edit the .env file with your actual API key (do not commit .env)
 
 # Start the restaurant app frontend
-npm install 
-npm run demo:restaurant 
+npm install
+npm run demo:restaurant
 ```
 
-Here are the instructions if you want to do each step manually. 
+Here are the instructions if you want to do each step manually.
 
 1. **Install dependencies:** `npm install`
 2. **Run the relevant client app (also requires running the relevant backend A2A service):**
-   * **Restaurant app:**
-     * Run backend server in [restaurant_finder](../../agent/adk/restaurant_finder/README.md)
-     * Run client: `npm start -- restaurant`
-   * **Rizzcharts app:**
-     * Run backend server in [rizzcharts](../../agent/adk/rizzcharts/python/README.md)
-     * Run client: `npm start -- rizzcharts`
-   * **Orchestrator app:**
-     * Run backend server in [orchestrator](../../agent/adk/orchestrator/README.md)
-     * Run client: `npm start -- orchestrator`
-   * **MCP Calculator app:**
-     * Run client: `npm run build:sandbox && npm start -- mcp_calculator`
-   * **Gallery app:** (Client-only, no server required)
-     * Run client: `npm start -- gallery`
+   - **Restaurant app:**
+     - Run backend server in [restaurant_finder](../../agent/adk/restaurant_finder/README.md)
+     - Run client: `npm start -- restaurant`
+   - **Rizzcharts app:**
+     - Run backend server in [rizzcharts](../../agent/adk/rizzcharts/python/README.md)
+     - Run client: `npm start -- rizzcharts`
+   - **Orchestrator app:**
+     - Run backend server in [orchestrator](../../agent/adk/orchestrator/README.md)
+     - Run client: `npm start -- orchestrator`
+   - **MCP Calculator app:**
+     - Run client: `npm run build:sandbox && npm start -- mcp_calculator`
+   - **Gallery app:** (Client-only, no server required)
+     - Run client: `npm start -- gallery`
 3. **Open** http://localhost:4200/
 
 ## Streaming

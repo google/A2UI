@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { DynamicComponent } from '@a2ui/angular';
+import {DynamicComponent} from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
-import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {CanvasService} from '@a2a_chat_canvas/services/canvas-service';
 
 @Component({
   selector: 'a2ui-canvas',

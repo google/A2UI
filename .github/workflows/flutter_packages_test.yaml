@@ -18,14 +18,14 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main    
+      - main
   pull_request:
     branches:
       - main
   schedule:
     # Tests may fail due to new dependency releases.
     # Regular execution provides early detection of such regressions.
-    - cron: '0 * * * *' # hourly
+    - cron: "0 * * * *" # hourly
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}

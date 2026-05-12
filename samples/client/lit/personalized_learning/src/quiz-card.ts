@@ -21,10 +21,10 @@
  * This is a custom component for the personalized learning demo.
  */
 
-import { html, css, nothing, LitElement } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
-import type { StringValue } from "./types.js";
+import {html, css, nothing, LitElement} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import type {StringValue} from './types.js';
 
 interface QuizOption {
   label: StringValue;
@@ -32,18 +32,18 @@ interface QuizOption {
   isCorrect: boolean;
 }
 
-@customElement("a2ui-quizcard")
+@customElement('a2ui-quizcard')
 export class QuizCard extends LitElement {
-  @property({ attribute: false })
+  @property({attribute: false})
   question: StringValue | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   options: QuizOption[] = [];
 
-  @property({ attribute: false })
+  @property({attribute: false})
   explanation: StringValue | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   category: StringValue | null = null;
 
   @state()
@@ -86,7 +86,7 @@ export class QuizCard extends LitElement {
     }
 
     .category::before {
-      content: "";
+      content: '';
       width: 8px;
       height: 8px;
       background: #6366f1;
@@ -240,17 +240,21 @@ export class QuizCard extends LitElement {
   `;
 
   private resolveStringValue(value: StringValue | null): string {
-    if (!value) return "";
+    if (!value) return '';
 
-    if (typeof value === "object") {
-      if ("literalString" in value && value.literalString !== undefined && value.literalString !== null) {
+    if (typeof value === 'object') {
+      if (
+        'literalString' in value &&
+        value.literalString !== undefined &&
+        value.literalString !== null
+      ) {
         return value.literalString as string;
-      } else if ("literal" in value && value.literal !== undefined && value.literal !== null) {
+      } else if ('literal' in value && value.literal !== undefined && value.literal !== null) {
         return String(value.literal);
       }
     }
 
-    return "";
+    return '';
   }
 
   private handleOptionClick(value: string) {
@@ -277,9 +281,7 @@ export class QuizCard extends LitElement {
 
     return html`
       <div class="quiz-card">
-        ${categoryText
-          ? html`<div class="category">${categoryText}</div>`
-          : nothing}
+        ${categoryText ? html`<div class="category">${categoryText}</div>` : nothing}
 
         <div class="question">${questionText}</div>
 
@@ -298,7 +300,7 @@ export class QuizCard extends LitElement {
                   disabled: this.submitted,
                   correct: showCorrect && isSelected,
                   incorrect: showIncorrect,
-                  "correct-answer": showCorrect && !isSelected,
+                  'correct-answer': showCorrect && !isSelected,
                 })}
                 @click=${() => this.handleOptionClick(option.value)}
               >
@@ -328,10 +330,10 @@ export class QuizCard extends LitElement {
               </button>
             `
           : html`
-              <div class=${classMap({ explanation: true, incorrect: !isCorrect })}>
+              <div class=${classMap({explanation: true, incorrect: !isCorrect})}>
                 <div class="explanation-header">
-                  <span class="icon">${isCorrect ? "✓" : "✗"}</span>
-                  ${isCorrect ? "Correct!" : "Not quite..."}
+                  <span class="icon">${isCorrect ? '✓' : '✗'}</span>
+                  ${isCorrect ? 'Correct!' : 'Not quite...'}
                 </div>
                 <div class="explanation-text">${explanationText}</div>
               </div>
@@ -343,6 +345,6 @@ export class QuizCard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "a2ui-quizcard": QuizCard;
+    'a2ui-quizcard': QuizCard;
   }
 }

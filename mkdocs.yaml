@@ -23,12 +23,12 @@ extra:
     provider: google
     property: G-YX9TPV8DCC
   consent:
-      title: Cookie consent
-      description: >-
-        We use cookies to recognize repeated visits and preferences,
-        as well as to measure the effectiveness of our documentation and
-        whether users find the information they need. With your consent,
-        you're helping us to make our documentation better.
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize repeated visits and preferences,
+      as well as to measure the effectiveness of our documentation and
+      whether users find the information they need. With your consent,
+      you're helping us to make our documentation better.
 
 # Navigation
 nav:
@@ -55,7 +55,7 @@ nav:
       - Renderer Development: guides/renderer-development.md
       - Defining Your Own Catalog: guides/defining-your-own-catalog.md
       - Authoring Custom Components: guides/authoring-components.md
-      - Theming & Styling: guides/theming.md      
+      - Theming & Styling: guides/theming.md
       - A2UI over MCP: guides/a2ui_over_mcp.md
       - MCP Apps in A2UI: guides/mcp-apps-in-a2ui.md
       - A2UI in MCP Apps: guides/a2ui-in-mcp-apps.md
@@ -91,7 +91,6 @@ copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.goo
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
-
 
 # Configuration
 theme:
@@ -194,18 +193,17 @@ plugins:
   - redirects:
       redirect_maps:
         # Files moved in docs-file-org reorganization
-        'catalogs.md': 'concepts/catalogs.md'
-        'transports.md': 'concepts/transports.md'
-        'actions.md': 'concepts/actions.md'
-        'renderers.md': 'reference/renderers.md'
-        'agents.md': 'reference/agents.md'
-        'community.md': 'ecosystem/community.md'
-        'introduction/where-is-it-used.md': 'ecosystem/a2ui-in-the-world.md'
-        'guides/guide_a2ui_dynamic_mcp.md': 'guides/a2ui-in-mcp-apps.md'
-        'guides/mcp-apps-in-a2ui-surface.md': 'guides/mcp-apps-in-a2ui.md'
+        "catalogs.md": "concepts/catalogs.md"
+        "transports.md": "concepts/transports.md"
+        "actions.md": "concepts/actions.md"
+        "renderers.md": "reference/renderers.md"
+        "agents.md": "reference/agents.md"
+        "community.md": "ecosystem/community.md"
+        "introduction/where-is-it-used.md": "ecosystem/a2ui-in-the-world.md"
+        "guides/guide_a2ui_dynamic_mcp.md": "guides/a2ui-in-mcp-apps.md"
+        "guides/mcp-apps-in-a2ui-surface.md": "guides/mcp-apps-in-a2ui.md"
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:
   #       "Specification":
   #         - a2ui_protocol.md
-

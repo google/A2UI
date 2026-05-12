@@ -21,7 +21,7 @@ main {
 .empty-history {
   display: block;
   padding-bottom: 8rem;
-  background-image: url("/Gradient.png");
+  background-image: url('/Gradient.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position-y: bottom;
@@ -32,12 +32,7 @@ main {
   margin: 0;
   font: var(--mat-sys-display-small);
   // These values are not from the spec, but UX wants them for the gradient.
-  background: linear-gradient(
-    90deg,
-    #217bfe 28.03%,
-    #078efb 49.56%,
-    #ac87eb 71.1%
-  );
+  background: linear-gradient(90deg, #217bfe 28.03%, #078efb 49.56%, #ac87eb 71.1%);
   background-clip: text;
   color: transparent;
 }
@@ -65,13 +60,12 @@ main {
 }
 
 .large-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
-    border-radius: var(--mat-sys-corner-extra-large);
-    vertical-align: top;
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+  border-radius: var(--mat-sys-corner-extra-large);
+  vertical-align: top;
 }
-
 
 .agent-header {
   display: flex;
@@ -93,17 +87,17 @@ main {
 
 .chip {
   // Override Material button styles to look like a chip
-    border-radius: 100px !important; // Force pill shape
-    padding: 10px 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    height: auto !important;
-    line-height: 25px !important; // Match icon height
+  border-radius: 100px !important; // Force pill shape
+  padding: 10px 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: auto !important;
+  line-height: 25px !important; // Match icon height
   .material-icons-outlined {
     font-size: 20px;
     margin-right: 8px;
-      line-height: 1; // Prevent icon from affecting line height
-      position: relative;
-      top: 4px; // Move icon down slightly to match text
+    line-height: 1; // Prevent icon from affecting line height
+    position: relative;
+    top: 4px; // Move icon down slightly to match text
   }
 }

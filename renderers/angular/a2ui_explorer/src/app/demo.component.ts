@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, OnInit, inject, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '@a2ui/angular/v0_9';
-import { AgentStubService } from './agent-stub.service';
-import { SurfaceComponent } from '@a2ui/angular/v0_9';
-import { AngularCatalog } from '@a2ui/angular/v0_9';
-import { DemoCatalog } from './demo-catalog';
-import { A2uiClientAction, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
-import { EXAMPLES } from './generated/examples-bundle';
-import { Example } from './types';
-import { ActionDispatcher } from './action-dispatcher.service';
+import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
+import {AgentStubService} from './agent-stub.service';
+import {SurfaceComponent} from '@a2ui/angular/v0_9';
+import {AngularCatalog} from '@a2ui/angular/v0_9';
+import {DemoCatalog} from './demo-catalog';
+import {A2uiClientAction, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
+import {EXAMPLES} from './generated/examples-bundle';
+import {Example} from './types';
+import {ActionDispatcher} from './action-dispatcher.service';
 
 /**
  * Main dashboard component for A2UI v0.9 Angular Renderer.
@@ -73,17 +73,28 @@ import { ActionDispatcher } from './action-dispatcher.service';
       <!-- Inspect Panel -->
       <div class="inspect-area">
         <div class="inspect-section surface-section" [class.folded]="isSurfaceMessageFolded">
-          <div class="section-header" 
-               (click)="toggleSurfaceMessage()" 
-               (keydown.enter)="toggleSurfaceMessage()"
-               (keydown.space)="toggleSurfaceMessage(); $event.preventDefault()"
-               style="cursor: pointer;"
-               role="button"
-               tabindex="0"
-               [attr.aria-expanded]="!isSurfaceMessageFolded">
+          <div
+            class="section-header"
+            (click)="toggleSurfaceMessage()"
+            (keydown.enter)="toggleSurfaceMessage()"
+            (keydown.space)="toggleSurfaceMessage(); $event.preventDefault()"
+            style="cursor: pointer;"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!isSurfaceMessageFolded"
+          >
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isSurfaceMessageFolded">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </span>
@@ -108,17 +119,28 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
 
         <div class="inspect-section data-section" [class.folded]="isDataModelFolded">
-          <div class="section-header" 
-               (click)="toggleDataModel()" 
-               (keydown.enter)="toggleDataModel()"
-               (keydown.space)="toggleDataModel(); $event.preventDefault()"
-               style="cursor: pointer;"
-               role="button"
-               tabindex="0"
-               [attr.aria-expanded]="!isDataModelFolded">
+          <div
+            class="section-header"
+            (click)="toggleDataModel()"
+            (keydown.enter)="toggleDataModel()"
+            (keydown.space)="toggleDataModel(); $event.preventDefault()"
+            style="cursor: pointer;"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!isDataModelFolded"
+          >
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isDataModelFolded">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </span>
@@ -143,24 +165,37 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
 
         <div class="inspect-section events-section" [class.folded]="isEventsLogFolded">
-          <div class="section-header" 
-               (click)="toggleEventsLog()" 
-               (keydown.enter)="toggleEventsLog()"
-               (keydown.space)="toggleEventsLog(); $event.preventDefault()"
-               style="cursor: pointer;"
-               role="button"
-               tabindex="0"
-               [attr.aria-expanded]="!isEventsLogFolded">
+          <div
+            class="section-header"
+            (click)="toggleEventsLog()"
+            (keydown.enter)="toggleEventsLog()"
+            (keydown.space)="toggleEventsLog(); $event.preventDefault()"
+            style="cursor: pointer;"
+            role="button"
+            tabindex="0"
+            [attr.aria-expanded]="!isEventsLogFolded"
+          >
             <div class="header-left">
               <span class="toggle-icon" [class.expanded]="!isEventsLogFolded">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </span>
               <h4>Events Log</h4>
             </div>
             <div>
-              <button class="clear-btn" (click)="eventsLog = []; $event.stopPropagation()">Clear</button>
+              <button class="clear-btn" (click)="eventsLog = []; $event.stopPropagation()">
+                Clear
+              </button>
             </div>
           </div>
           <div class="section-content" *ngIf="!isEventsLogFolded">
@@ -460,7 +495,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
   ],
   providers: [
     A2uiRendererService,
-    { provide: AngularCatalog, useClass: DemoCatalog },
+    {provide: AngularCatalog, useClass: DemoCatalog},
     ActionDispatcher,
     AgentStubService,
     {
@@ -484,7 +519,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   inspectTab: 'data' | 'events' = 'data';
 
   currentDataModel: Record<string, unknown> = {};
-  eventsLog: Array<{ timestamp: Date; action: A2uiClientAction }> = [];
+  eventsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
   currentCreateSurfaceMessageJson: string = '';
   messageError: string | null = null;
   currentDataModelJson: string = '';
@@ -509,8 +544,8 @@ export class DemoComponent implements OnInit, OnDestroy {
     localStorage.setItem('isEventsLogFolded', String(this.isEventsLogFolded));
   }
 
-  private actionSub?: { unsubscribe: () => void };
-  private dataModelSub?: { unsubscribe: () => void };
+  private actionSub?: {unsubscribe: () => void};
+  private dataModelSub?: {unsubscribe: () => void};
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -518,9 +553,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
       this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
     }
-    if (this.examples.length > 0) {
-      this.selectExample(this.examples[0]);
-    }
+    this.selectExampleFromUrl();
   }
 
   /**
@@ -535,6 +568,8 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.currentDataModel = {};
     this.eventsLog = [];
     this.cdr.detectChanges();
+
+    window.location.hash = this.slugify(example.name);
 
     // Clean up previous subscriptions
     if (this.dataModelSub) {
@@ -564,8 +599,8 @@ export class DemoComponent implements OnInit, OnDestroy {
       if (this.actionSub) {
         this.actionSub.unsubscribe();
       }
-      this.actionSub = this.rendererService.surfaceGroup.onAction.subscribe((action) => {
-        this.eventsLog.unshift({ timestamp: new Date(), action });
+      this.actionSub = this.rendererService.surfaceGroup.onAction.subscribe(action => {
+        this.eventsLog.unshift({timestamp: new Date(), action});
         this.cdr.detectChanges();
       });
     }
@@ -592,7 +627,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       if (!('createSurface' in parsed) || !this.selectedExample) return;
 
       const updatedMessages = this.selectedExample.messages.map(m =>
-        'createSurface' in m ? parsed : m
+        'createSurface' in m ? parsed : m,
       );
 
       // Re-initialize the demo with the updated messages
@@ -611,7 +646,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.surfaceId = newSurfaceId;
       const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
       if (surface) {
-        this.dataModelSub = surface.dataModel.subscribe('/', (data) => {
+        this.dataModelSub = surface.dataModel.subscribe('/', data => {
           this.currentDataModel = data as Record<string, unknown>;
           this.currentDataModelJson = JSON.stringify(data, null, 2);
           this.cdr.detectChanges();
@@ -672,5 +707,20 @@ export class DemoComponent implements OnInit, OnDestroy {
     if (this.actionSub) {
       this.actionSub.unsubscribe();
     }
+  }
+
+  private slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  private selectExampleFromUrl(): void {
+    const hash = window.location.hash.substring(1) || '';
+    const example: Example | undefined =
+      this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
+    if (!example) return;
+    this.selectExample(example);
   }
 }

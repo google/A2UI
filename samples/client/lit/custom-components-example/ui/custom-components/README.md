@@ -8,13 +8,13 @@ Create a new Lit component file in `lib/src/0.8/ui/custom-components/`.
 Example: `my-component.ts`
 
 ```typescript
-import { html, css } from "lit";
-import { property } from "lit/decorators.js";
+import {html, css} from 'lit';
+import {property} from 'lit/decorators.js';
 
-import { Root } from "../root.js";
+import {Root} from '../root.js';
 
 export class MyComponent extends Root {
-  @property() accessor myProp: string = "Default";
+  @property() accessor myProp: string = 'Default';
 
   static styles = [
     ...Root.styles, // Inherit base styles
@@ -44,15 +44,15 @@ Update `lib/src/0.8/ui/custom-components/index.ts` to register your new componen
 You must pass the desired tag name as the third argument.
 
 ```typescript
-import { componentRegistry } from "../component-registry.js";
-import { MyComponent } from "./my-component.js"; // Import your component
+import {componentRegistry} from '../component-registry.js';
+import {MyComponent} from './my-component.js'; // Import your component
 
 export function registerCustomComponents() {
   // Register with explicit tag name
-  componentRegistry.register("MyComponent", MyComponent, "my-component");
+  componentRegistry.register('MyComponent', MyComponent, 'my-component');
 }
 
-export { MyComponent }; // Export for type usage if needed
+export {MyComponent}; // Export for type usage if needed
 ```
 
 ## Define the schema (server-side)
@@ -66,7 +66,7 @@ Example: `lib/my_component_schema.json`
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "type": { "const": "object" },
+    "type": {"const": "object"},
     "properties": {
       "type": "object",
       "additionalProperties": false,
@@ -88,7 +88,7 @@ Example: `lib/my_component_schema.json`
 In your client application (e.g., `contact` sample), ensure you import and call the registration function.
 
 ```typescript
-import { registerCustomComponents } from "@a2ui/lit/ui";
+import {registerCustomComponents} from '@a2ui/lit/ui';
 
 // Call this once at startup
 registerCustomComponents();
@@ -109,8 +109,8 @@ You can replace standard A2UI components (like `TextField`, `Video`, `Button`) w
     ```typescript
     // 1. Define your override
     class MyPremiumTextField extends Root {
-      @property() accessor label = "";
-      @property() accessor text = "";
+      @property() accessor label = '';
+      @property() accessor text = '';
 
       static styles = [
         ...Root.styles,
@@ -130,12 +130,8 @@ You can replace standard A2UI components (like `TextField`, `Video`, `Button`) w
     }
 
     // 2. Register with the STANDARD type name
-    import { componentRegistry } from "@a2ui/lit/ui";
-    componentRegistry.register(
-      "TextField",
-      MyPremiumTextField,
-      "my-premium-textfield"
-    );
+    import {componentRegistry} from '@a2ui/lit/ui';
+    componentRegistry.register('TextField', MyPremiumTextField, 'my-premium-textfield');
     ```
 
 **Result:**

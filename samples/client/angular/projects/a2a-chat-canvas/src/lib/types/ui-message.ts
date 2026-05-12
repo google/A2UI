@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Artifact, Part } from '@a2a-js/sdk';
+import {Artifact, Part} from '@a2a-js/sdk';
 
 /**
  * Represents a single message in the UI, either from the user or the agent.

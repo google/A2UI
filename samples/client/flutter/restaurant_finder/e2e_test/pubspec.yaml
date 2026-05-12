@@ -31,7 +31,6 @@ dependencies:
   restaurant_finder_client:
     path: ../app
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

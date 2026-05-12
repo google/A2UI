@@ -23,10 +23,10 @@
  */
 
 // Import A2UI web components (registers custom elements, including QuizCard)
-import "@a2ui/web-lib/ui";
+import '@a2ui/web-lib/ui';
 
-import { ChatOrchestrator } from "./chat-orchestrator";
-import { A2UIRenderer } from "./a2ui-renderer";
+import {ChatOrchestrator} from './chat-orchestrator';
+import {A2UIRenderer} from './a2ui-renderer';
 import {
   onAuthChange,
   signInWithGoogle,
@@ -34,26 +34,26 @@ import {
   getIdToken,
   isFirebaseConfigured,
   checkServerAuthorization,
-} from "./firebase-auth";
+} from './firebase-auth';
 
 // Store current user for display
 let currentUserEmail: string | null = null;
 
 // Initialize the application
 async function init() {
-  console.log("[Demo] Initializing...");
+  console.log('[Demo] Initializing...');
 
   // Local dev mode: skip auth if Firebase not configured
   if (!isFirebaseConfigured) {
-    console.log("[Demo] Running in local dev mode (no auth required)");
-    currentUserEmail = "Local Dev User";
+    console.log('[Demo] Running in local dev mode (no auth required)');
+    currentUserEmail = 'Local Dev User';
     showApp();
     initializeApp();
     return;
   }
 
   // Set up auth state listener
-  onAuthChange(async (user) => {
+  onAuthChange(async user => {
     if (user) {
       // User is authenticated with Firebase, now check server authorization
       console.log(`[Demo] Firebase auth OK: ${user.email}, checking server authorization...`);
@@ -67,11 +67,11 @@ async function init() {
         // User authenticated but not authorized - sign them out
         console.log(`[Demo] Not authorized: ${user.email}`);
         await signOutUser();
-        showLoginScreen("Your email is not authorized to access this application.");
+        showLoginScreen('Your email is not authorized to access this application.');
       }
     } else {
       currentUserEmail = null;
-      console.log("[Demo] Not authenticated");
+      console.log('[Demo] Not authenticated');
       showLoginScreen();
     }
   });
@@ -79,15 +79,15 @@ async function init() {
 
 // Show login screen
 function showLoginScreen(errorMessage?: string) {
-  const appContainer = document.getElementById("app-container");
-  const loginScreen = document.getElementById("login-screen");
+  const appContainer = document.getElementById('app-container');
+  const loginScreen = document.getElementById('login-screen');
 
-  if (appContainer) appContainer.style.display = "none";
+  if (appContainer) appContainer.style.display = 'none';
 
   if (!loginScreen) {
     // Create login screen
-    const screen = document.createElement("div");
-    screen.id = "login-screen";
+    const screen = document.createElement('div');
+    screen.id = 'login-screen';
     screen.innerHTML = `
       <div class="login-container">
         <div class="login-card">
@@ -113,24 +113,24 @@ function showLoginScreen(errorMessage?: string) {
     document.body.insertBefore(screen, document.body.firstChild);
 
     // Add login button handler
-    document.getElementById("google-signin-btn")?.addEventListener("click", handleSignIn);
+    document.getElementById('google-signin-btn')?.addEventListener('click', handleSignIn);
   } else {
-    loginScreen.style.display = "flex";
+    loginScreen.style.display = 'flex';
   }
 
   // Show error message if provided
   if (errorMessage) {
-    const errorEl = document.getElementById("login-error");
+    const errorEl = document.getElementById('login-error');
     if (errorEl) errorEl.textContent = errorMessage;
   }
 }
 
 // Handle sign in
 async function handleSignIn() {
-  const errorEl = document.getElementById("login-error");
-  const btn = document.getElementById("google-signin-btn") as HTMLButtonElement;
+  const errorEl = document.getElementById('login-error');
+  const btn = document.getElementById('google-signin-btn') as HTMLButtonElement;
 
-  if (errorEl) errorEl.textContent = "";
+  if (errorEl) errorEl.textContent = '';
   if (btn) btn.disabled = true;
 
   try {
@@ -145,7 +145,7 @@ async function handleSignIn() {
   } catch (error: any) {
     // Only catches Firebase errors (network issues, etc.), not authorization errors
     if (errorEl) {
-      errorEl.textContent = error.message || "Sign in failed. Please try again.";
+      errorEl.textContent = error.message || 'Sign in failed. Please try again.';
     }
     if (btn) btn.disabled = false;
   }
@@ -153,14 +153,14 @@ async function handleSignIn() {
 
 // Show main app
 function showApp() {
-  const loginScreen = document.getElementById("login-screen");
-  const appContainer = document.getElementById("app-container");
+  const loginScreen = document.getElementById('login-screen');
+  const appContainer = document.getElementById('app-container');
 
-  if (loginScreen) loginScreen.style.display = "none";
-  if (appContainer) appContainer.style.display = "flex";
+  if (loginScreen) loginScreen.style.display = 'none';
+  if (appContainer) appContainer.style.display = 'flex';
 
   // Update user display if element exists
-  const userDisplay = document.getElementById("user-email");
+  const userDisplay = document.getElementById('user-email');
   if (userDisplay && currentUserEmail) {
     userDisplay.textContent = currentUserEmail;
   }
@@ -182,34 +182,34 @@ function initializeApp() {
   setupEventHandlers(orchestrator);
 
   // Set up sign out button
-  document.getElementById("sign-out-btn")?.addEventListener("click", async () => {
+  document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
     await signOutUser();
     (window as any).__appInitialized = false;
   });
 
-  console.log("[Demo] Ready!");
+  console.log('[Demo] Ready!');
 }
 
 // Export getIdToken for use by API clients
-export { getIdToken };
+export {getIdToken};
 
 function setupEventHandlers(orchestrator: ChatOrchestrator) {
-  const chatInput = document.getElementById("chatInput") as HTMLTextAreaElement;
-  const sendBtn = document.getElementById("sendBtn") as HTMLButtonElement;
-  const chatArea = document.getElementById("chatArea") as HTMLDivElement;
+  const chatInput = document.getElementById('chatInput') as HTMLTextAreaElement;
+  const sendBtn = document.getElementById('sendBtn') as HTMLButtonElement;
+  const chatArea = document.getElementById('chatArea') as HTMLDivElement;
 
   // Auto-resize textarea
-  chatInput.addEventListener("input", () => {
-    chatInput.style.height = "auto";
-    chatInput.style.height = Math.min(chatInput.scrollHeight, 200) + "px";
+  chatInput.addEventListener('input', () => {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 200) + 'px';
 
     // Enable/disable send button
-    sendBtn.disabled = chatInput.value.trim() === "";
+    sendBtn.disabled = chatInput.value.trim() === '';
   });
 
   // Send on Enter (without Shift)
-  chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+  chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (chatInput.value.trim()) {
         sendMessage(orchestrator, chatInput, chatArea);
@@ -218,19 +218,19 @@ function setupEventHandlers(orchestrator: ChatOrchestrator) {
   });
 
   // Send on button click
-  sendBtn.addEventListener("click", () => {
+  sendBtn.addEventListener('click', () => {
     if (chatInput.value.trim()) {
       sendMessage(orchestrator, chatInput, chatArea);
     }
   });
 
   // Handle suggestion chips
-  document.querySelectorAll(".suggestion-chip").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const prompt = chip.getAttribute("data-prompt");
+  document.querySelectorAll('.suggestion-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const prompt = chip.getAttribute('data-prompt');
       if (prompt) {
         chatInput.value = prompt;
-        chatInput.dispatchEvent(new Event("input"));
+        chatInput.dispatchEvent(new Event('input'));
         sendMessage(orchestrator, chatInput, chatArea);
       }
     });
@@ -240,18 +240,18 @@ function setupEventHandlers(orchestrator: ChatOrchestrator) {
 async function sendMessage(
   orchestrator: ChatOrchestrator,
   input: HTMLTextAreaElement,
-  chatArea: HTMLDivElement
+  chatArea: HTMLDivElement,
 ) {
   const message = input.value.trim();
   if (!message) return;
 
   // Clear input
-  input.value = "";
-  input.style.height = "auto";
-  (document.getElementById("sendBtn") as HTMLButtonElement).disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
+  (document.getElementById('sendBtn') as HTMLButtonElement).disabled = true;
 
   // Hide welcome screen if visible
-  const welcomeScreen = chatArea.querySelector(".welcome-screen");
+  const welcomeScreen = chatArea.querySelector('.welcome-screen');
   if (welcomeScreen) {
     welcomeScreen.remove();
   }
@@ -269,10 +269,10 @@ async function sendMessage(
     // Process the message through the orchestrator
     await orchestrator.processMessage(message, assistantMessage);
   } catch (error) {
-    console.error("[Demo] Error processing message:", error);
+    console.error('[Demo] Error processing message:', error);
     setAssistantMessageError(
       assistantMessage,
-      "I'm sorry, I encountered an error. Please try again."
+      "I'm sorry, I encountered an error. Please try again.",
     );
   }
 
@@ -281,8 +281,8 @@ async function sendMessage(
 }
 
 function addUserMessage(chatArea: HTMLDivElement, message: string) {
-  const messageEl = document.createElement("div");
-  messageEl.className = "message user";
+  const messageEl = document.createElement('div');
+  messageEl.className = 'message user';
   messageEl.innerHTML = `
     <div class="message-avatar">M</div>
     <div class="message-content">
@@ -294,8 +294,8 @@ function addUserMessage(chatArea: HTMLDivElement, message: string) {
 }
 
 function addAssistantMessagePlaceholder(chatArea: HTMLDivElement): HTMLDivElement {
-  const messageEl = document.createElement("div");
-  messageEl.className = "message assistant";
+  const messageEl = document.createElement('div');
+  messageEl.className = 'message assistant';
   messageEl.innerHTML = `
     <div class="message-avatar">
       <span class="material-symbols-outlined">auto_awesome</span>
@@ -316,14 +316,14 @@ function addAssistantMessagePlaceholder(chatArea: HTMLDivElement): HTMLDivElemen
 }
 
 function setAssistantMessageError(messageEl: HTMLDivElement, error: string) {
-  const textEl = messageEl.querySelector(".message-text");
+  const textEl = messageEl.querySelector('.message-text');
   if (textEl) {
     textEl.innerHTML = `<p style="color: #f87171;">${escapeHtml(error)}</p>`;
   }
 }
 
 function escapeHtml(text: string): string {
-  const div = document.createElement("div");
+  const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }

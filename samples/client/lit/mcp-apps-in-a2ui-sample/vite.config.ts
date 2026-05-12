@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import {defineConfig} from 'vite';
+import {resolve} from 'path';
 import fs from 'fs';
-import { plugin as a2aPlugin } from './middleware/a2a';
-import { SANDBOX_BASE_PATH } from "./ui/shared-constants.js";
+import {plugin as a2aPlugin} from './middleware/a2a';
+import {SANDBOX_BASE_PATH} from './ui/shared-constants.js';
 
 export default defineConfig({
   plugins: [
@@ -29,7 +29,11 @@ export default defineConfig({
         server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith(`/${SANDBOX_BASE_PATH}`)) {
             let urlPath = req.url.slice(1);
-            if (urlPath.endsWith('.js') && !urlPath.endsWith('app-bridge.js') && !urlPath.endsWith('app-with-deps.js')) {
+            if (
+              urlPath.endsWith('.js') &&
+              !urlPath.endsWith('app-bridge.js') &&
+              !urlPath.endsWith('app-with-deps.js')
+            ) {
               urlPath = urlPath.slice(0, -3) + '.ts';
             }
             req.url = '/@fs' + resolve(__dirname, '../../' + urlPath);
@@ -49,8 +53,8 @@ export default defineConfig({
             next();
           }
         });
-      }
-    }
+      },
+    },
   ],
   build: {
     target: 'esnext',
@@ -58,9 +62,9 @@ export default defineConfig({
   resolve: {
     dedupe: ['lit'],
     alias: {
-      "sandbox.js": "../../shared/mcp_apps_inner_iframe/sandbox.ts",
-      "/lit/node_modules": resolve(__dirname, '../node_modules')
-    }
+      'sandbox.js': '../../shared/mcp_apps_inner_iframe/sandbox.ts',
+      '/lit/node_modules': resolve(__dirname, '../node_modules'),
+    },
   },
   server: {
     host: '0.0.0.0',
@@ -69,8 +73,8 @@ export default defineConfig({
         resolve(__dirname, '.'),
         resolve(__dirname, '../node_modules'),
         resolve(__dirname, '../../shared'),
-        resolve(__dirname, '../../../../renderers/lit')
-      ]
-    }
-  }
+        resolve(__dirname, '../../../../renderers/lit'),
+      ],
+    },
+  },
 });

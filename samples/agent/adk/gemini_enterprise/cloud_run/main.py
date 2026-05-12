@@ -35,9 +35,9 @@ def serve():
   try:
     host = "0.0.0.0"
     port = int(os.environ.get("PORT", 8080))
-    base_url = f"http://{host}:{port}"
 
-    agent = ContactAgent(base_url=base_url)
+    external_facing_base_url = os.environ.get("AGENT_URL", f"http://{host}:{port}")
+    agent = ContactAgent(base_url=external_facing_base_url)
     agent_executor = ContactAgentExecutor(agent=agent)
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,

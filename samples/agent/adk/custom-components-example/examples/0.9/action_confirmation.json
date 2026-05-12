@@ -29,11 +29,7 @@
         {
           "id": "modal-content-column",
           "component": "Column",
-          "children": [
-            "modal-title",
-            "modal-message",
-            "dismiss-button"
-          ],
+          "children": ["modal-title", "modal-message", "dismiss-button"],
           "align": "center"
         },
         {

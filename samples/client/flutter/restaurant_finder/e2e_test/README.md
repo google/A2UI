@@ -6,6 +6,6 @@ Tests that checks the following entities work well together:
 2. Python restaurant finder agent
 3. AI model
 
-This tests are in separate package and 
+This tests are in separate package and
 run in a separate CI/CD pipeline, because they
 require API key.

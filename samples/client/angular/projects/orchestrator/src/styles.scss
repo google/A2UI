@@ -14,7 +14,6 @@
 
 @use '@angular/material' as mat;
 
-
 @mixin styled-scrollbar {
   ::-webkit-scrollbar {
     width: 0.5rem;
@@ -39,11 +38,13 @@
 
 html {
   color-scheme: light dark;
-  @include mat.theme((
-    color: mat.$blue-palette,
-    typography: Roboto,
-    density: 0
-  ));
+  @include mat.theme(
+    (
+      color: mat.$blue-palette,
+      typography: Roboto,
+      density: 0,
+    )
+  );
 
   @include styled-scrollbar;
 }

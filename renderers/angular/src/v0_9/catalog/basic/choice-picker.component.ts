@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { ChoicePickerApi } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {ChoicePickerApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
  * Angular implementation of the A2UI ChoicePicker component (v0.9).
@@ -128,9 +128,7 @@ import { ChoicePickerApi } from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class ChoicePickerComponent extends BasicCatalogComponent<typeof ChoicePickerApi> {
   readonly displayStyle = computed(() => this.props()['displayStyle']?.value());
-  readonly options = computed(
-    () => this.props()['options']?.value() || [],
-  );
+  readonly options = computed(() => this.props()['options']?.value() || []);
   readonly variant = computed(() => this.props()['variant']?.value());
   readonly selectedValue = computed(() => this.props()['value']?.value());
 

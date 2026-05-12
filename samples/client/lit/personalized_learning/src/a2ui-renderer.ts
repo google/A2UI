@@ -21,10 +21,10 @@
  * Uses the signal-based model processor for proper reactivity.
  */
 
-import { v0_8 } from "@a2ui/web-lib";
-import type { SourceInfo } from "./a2a-client";
+import {v0_8} from '@a2ui/web-lib';
+import type {SourceInfo} from './a2a-client';
 // Import the theme provider to register the custom element
-import "./theme-provider.js";
+import './theme-provider.js';
 
 // Type alias for the processor - use the actual exported class name
 type A2UIModelProcessorInstance = InstanceType<typeof v0_8.Data.A2uiMessageProcessor>;
@@ -48,13 +48,13 @@ export class A2UIRenderer {
     }
 
     // Create a container for the A2UI content
-    const container = document.createElement("div");
-    container.className = "a2ui-container";
+    const container = document.createElement('div');
+    container.className = 'a2ui-container';
 
     // Find the message content element
-    const contentEl = messageElement.querySelector(".message-content");
+    const contentEl = messageElement.querySelector('.message-content');
     if (!contentEl) {
-      console.error("[A2UIRenderer] Message content element not found");
+      console.error('[A2UIRenderer] Message content element not found');
       return;
     }
 
@@ -67,7 +67,7 @@ export class A2UIRenderer {
     try {
       processor.processMessages(a2uiMessages as v0_8.Types.ServerToClientMessage[]);
     } catch (error) {
-      console.error("[A2UIRenderer] Error processing messages:", error);
+      console.error('[A2UIRenderer] Error processing messages:', error);
     }
 
     // Render the surfaces
@@ -87,8 +87,8 @@ export class A2UIRenderer {
    * Render source attribution below the A2UI content.
    */
   private renderSourceAttribution(container: HTMLElement, source: SourceInfo): void {
-    const attribution = document.createElement("div");
-    attribution.className = "source-attribution";
+    const attribution = document.createElement('div');
+    attribution.className = 'source-attribution';
 
     // If we have a URL, make it a link; otherwise just show the text
     if (source.url) {
@@ -117,18 +117,18 @@ export class A2UIRenderer {
     container: HTMLElement,
     surfaceId: string,
     surface: v0_8.Types.Surface,
-    processor: A2UIModelProcessorInstance
+    processor: A2UIModelProcessorInstance,
   ): void {
     // Create the theme provider wrapper which contains the a2ui-surface
-    const providerEl = document.createElement("a2ui-theme-provider") as A2UIThemeProviderElement;
+    const providerEl = document.createElement('a2ui-theme-provider') as A2UIThemeProviderElement;
 
     providerEl.surfaceId = surfaceId;
     providerEl.surface = surface;
     providerEl.processor = processor;
 
     // Add some styling for the container
-    providerEl.style.display = "block";
-    providerEl.style.marginTop = "16px";
+    providerEl.style.display = 'block';
+    providerEl.style.marginTop = '16px';
 
     container.appendChild(providerEl);
   }

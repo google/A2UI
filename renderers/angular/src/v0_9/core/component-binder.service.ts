@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Injectable, inject, NgZone } from '@angular/core';
-import { ComponentContext, computed } from '@a2ui/web_core/v0_9';
-import { toAngularSignal } from './utils';
-import { BoundProperty } from './types';
+import {DestroyRef, Injectable, inject, NgZone} from '@angular/core';
+import {ComponentContext, computed} from '@a2ui/web_core/v0_9';
+import {toAngularSignal} from './utils';
+import {BoundProperty, ComponentTemplate} from './types';
 
 /** Represents a reference to a child component. */
 export interface Child {
@@ -49,16 +49,19 @@ export class ComponentBinder {
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, BoundProperty<any>> = {};
+    let template: ComponentTemplate | undefined = undefined;
 
     for (const key of Object.keys(props)) {
       const value = props[key];
 
       let preactSig;
-      const isChildListTemplate = value && typeof value === 'object' && 'componentId' in value && 'path' in value;
-      const isBoundPath = value && typeof value === 'object' && 'path' in value && !('componentId' in value);
+      const isChildListTemplate =
+        value && typeof value === 'object' && 'componentId' in value && 'path' in value;
+      const isBoundPath =
+        value && typeof value === 'object' && 'path' in value && !('componentId' in value);
 
       if (isChildListTemplate) {
-        const listSig = context.dataContext.resolveSignal({ path: value.path });
+        const listSig = context.dataContext.resolveSignal({path: value.path});
         const listContext = context.dataContext.nested(value.path);
         preactSig = computed(() => {
           const arr = listSig.value;
@@ -80,10 +83,15 @@ export class ComponentBinder {
           if (typeof val === 'object' && val !== null && 'id' in val) {
             return val;
           }
-          return { id: val, basePath: context.dataContext.path };
+          return {id: val, basePath: context.dataContext.path};
         });
       } else if (key === 'children') {
         const originalSig = preactSig;
+        const id = value.componentId;
+        const path = value.path;
+        if (id && path) {
+          template = {id, path};
+        }
         preactSig = computed(() => {
           const val = originalSig.value;
           const arr = Array.isArray(val) ? val : [];
@@ -91,7 +99,7 @@ export class ComponentBinder {
             if (typeof item === 'object' && item !== null && 'id' in item) {
               return item;
             }
-            return { id: item, basePath: context.dataContext.path };
+            return {id: item, basePath: context.dataContext.path};
           });
         });
       }
@@ -101,6 +109,7 @@ export class ComponentBinder {
       bound[key] = {
         value: angSig,
         raw: value,
+        template,
         onUpdate: isBoundPath
           ? (newValue: any) => context.dataContext.set(value.path, newValue)
           : () => {}, // No-op for non-bound values
@@ -113,7 +122,7 @@ export class ComponentBinder {
           const condition = rule.condition || rule;
           const message = rule.message || 'Validation failed';
           const conditionSig = context.dataContext.resolveSignal(condition);
-          return { conditionSig, message };
+          return {conditionSig, message};
         });
 
         const isValidPreactSig = computed(() => {
@@ -121,9 +130,7 @@ export class ComponentBinder {
         });
 
         const validationErrorsPreactSig = computed(() => {
-          return ruleResults
-            .filter((r: any) => !r.conditionSig.value)
-            .map((r: any) => r.message);
+          return ruleResults.filter((r: any) => !r.conditionSig.value).map((r: any) => r.message);
         });
 
         bound['isValid'] = {

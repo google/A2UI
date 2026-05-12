@@ -71,7 +71,6 @@
       supportedCatalogIds: ["id_not_exists"]
   expect_error: "No client-supported catalog found"
 
-
 - name: test_select_catalog_inline
   description: Inline catalog loading (merges onto base).
   action: select_catalog
@@ -150,7 +149,6 @@
     components:
       Text: {}
       Button: {}
-
 
 # --- Manager Modifier Tests ---
 
@@ -275,7 +273,7 @@
     - "---BEGIN A2UI JSON SCHEMA---"
     - "### Server To Client Schema:"
     - "### Catalog Schema:"
-    - "\"Button\": {}"
+    - '"Button": {}'
     - "---END A2UI JSON SCHEMA---"
 
 # --- New Tests requested by User ---
@@ -322,5 +320,5 @@
     - "---BEGIN A2UI JSON SCHEMA---"
     - "### Server To Client Schema:"
     - "### Catalog Schema:"
-    - "\"Text\": {"
+    - '"Text": {'
     - "---END A2UI JSON SCHEMA---"

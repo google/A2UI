@@ -18,11 +18,11 @@ import {
   MessageDecorator,
   MessageDecoratorComponent,
 } from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
-import { UiMessage } from '@a2a_chat_canvas/types/ui-message'; // Assuming path based on context
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, TemplateRef } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import {UiMessage} from '@a2a_chat_canvas/types/ui-message'; // Assuming path based on context
+import {NgTemplateOutlet} from '@angular/common';
+import {ChangeDetectionStrategy, Component, input, TemplateRef} from '@angular/core';
+import {MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-custom-message-decorator',

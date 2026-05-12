@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-import { ComponentApi } from "@a2ui/web_core/v0_9";
-import { Directive, input } from "@angular/core";
-import { ComponentApiToProps } from './types';
+import {ComponentApi} from '@a2ui/web_core/v0_9';
+import {Directive, input, Signal} from '@angular/core';
+import {ComponentApiToProps} from './types';
+
+/** Describes the properties that a Catalog component needs to implement. For ease of use, please extend CatalogComponent. */
+export interface CatalogComponentInstance {
+  readonly props: Signal<Record<string, unknown>>;
+  readonly surfaceId: Signal<string>;
+  readonly componentId: Signal<string>;
+  readonly dataContextPath: Signal<string>;
+}
 
 /**
  * Base class for A2UI catalog component in Angular.
- * 
+ *
  * All Angular catalog components should extend this base class,
  * which provides type safe access to props() and other common
  * fields.
  */
 @Directive()
-export abstract class CatalogComponent<Api extends ComponentApi> {
+export abstract class CatalogComponent<
+  Api extends ComponentApi,
+> implements CatalogComponentInstance {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */
-  readonly props = input<ComponentApiToProps<Api>>({} as any);
+  readonly props = input<ComponentApiToProps<Api>>({} as ComponentApiToProps<Api>);
   readonly surfaceId = input.required<string>();
   readonly componentId = input.required<string>();
   readonly dataContextPath = input<string>('/');

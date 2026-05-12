@@ -49,7 +49,7 @@ Signals the client to initialize and render a surface.
     | ----------- | ------ | -------- | --------------------------------------------------------------------------------------- |
     | `surfaceId` | string | ✅        | Unique identifier for this surface.                                                     |
     | `root`      | string | ✅        | The `id` of the component that should be the root of the UI tree for this surface.      |
-    | `catalogId` | string | ❌        | Identifier for the component catalog. Defaults to the v0.8 standard catalog if omitted. |
+    | `catalogId` | string | ❌        | Identifier for the component catalog. Defaults to the v0.8 basic catalog if omitted. |
     | `styles`    | object | ❌        | Styling information for the UI, as defined by the catalog.                              |
 
     ### Example
@@ -586,11 +586,12 @@ Remove a surface and all its components and data.
 
 | Property    | Type   | Required | Description                 |
 | ----------- | ------ | -------- | --------------------------- |
-| `surfaceId` | string | ✅        | ID of the surface to delete |
+| `surfaceId` | string | ✅       | ID of the surface to delete |
 
 ### Usage Notes
 
 Keep these usage notes in mind:
+
 - Removes all components associated with the surface.
 - Clears the data model for the surface.
 - Client should remove the surface from the UI.

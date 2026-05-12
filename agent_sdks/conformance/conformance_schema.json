@@ -20,10 +20,7 @@
         "properties": {
           "version": {
             "type": "string",
-            "enum": [
-              "0.8",
-              "0.9"
-            ],
+            "enum": ["0.8", "0.9"],
             "description": "Protocol version."
           },
           "s2c_schema": {
@@ -66,7 +63,7 @@
             ]
           }
         },
-        "required": [ "version" ]
+        "required": ["version"]
       },
       "action": {
         "type": "string",
@@ -83,26 +80,44 @@
           "has_parts",
           "select_catalog",
           "generate_prompt",
-          "load_catalog"
+          "load_catalog",
+          "convert_event",
+          "create_a2ui_part",
+          "is_a2ui_part",
+          "try_activate_extension",
+          "handle_rpc",
+          "execute_tool",
+          "get_extension",
+          "try_activate",
+          "select_newest"
         ]
       }
     },
-    "required": [ "name", "action" ],
+    "required": ["name", "action"],
     "allOf": [
       {
         "oneOf": [
-          { "$ref": "#/$defs/ProcessChunkTest" },
-          { "$ref": "#/$defs/ValidateTest" },
-          { "$ref": "#/$defs/PruneTest" },
-          { "$ref": "#/$defs/RenderTest" },
-          { "$ref": "#/$defs/LoadTest" },
-          { "$ref": "#/$defs/RemoveStrictValidationTest" },
-          { "$ref": "#/$defs/ParseFullTest" },
-          { "$ref": "#/$defs/FixPayloadTest" },
-          { "$ref": "#/$defs/HasPartsTest" },
-          { "$ref": "#/$defs/SelectCatalogTest" },
-          { "$ref": "#/$defs/GeneratePromptTest" },
-          { "$ref": "#/$defs/LoadCatalogTest" }
+          {"$ref": "#/$defs/ProcessChunkTest"},
+          {"$ref": "#/$defs/ValidateTest"},
+          {"$ref": "#/$defs/PruneTest"},
+          {"$ref": "#/$defs/RenderTest"},
+          {"$ref": "#/$defs/LoadTest"},
+          {"$ref": "#/$defs/RemoveStrictValidationTest"},
+          {"$ref": "#/$defs/ParseFullTest"},
+          {"$ref": "#/$defs/FixPayloadTest"},
+          {"$ref": "#/$defs/HasPartsTest"},
+          {"$ref": "#/$defs/SelectCatalogTest"},
+          {"$ref": "#/$defs/GeneratePromptTest"},
+          {"$ref": "#/$defs/LoadCatalogTest"},
+          {"$ref": "#/$defs/ConvertEventTest"},
+          {"$ref": "#/$defs/CreateA2uiPartTest"},
+          {"$ref": "#/$defs/IsA2uiPartTest"},
+          {"$ref": "#/$defs/TryActivateExtensionTest"},
+          {"$ref": "#/$defs/HandleRpcTest"},
+          {"$ref": "#/$defs/ExecuteToolTest"},
+          {"$ref": "#/$defs/GetExtensionTest"},
+          {"$ref": "#/$defs/TryActivateTest"},
+          {"$ref": "#/$defs/SelectNewestTest"}
         ]
       }
     ]
@@ -111,7 +126,7 @@
     "ProcessChunkTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "process_chunk" },
+        "action": {"const": "process_chunk"},
         "steps": {
           "type": "array",
           "description": "Steps for parser tests.",
@@ -145,32 +160,26 @@
                 "description": "Expected error message (regex) if this step should fail."
               }
             },
-            "required": [
-              "input"
-            ],
+            "required": ["input"],
             "oneOf": [
               {
-                "required": [
-                  "expect"
-                ]
+                "required": ["expect"]
               },
               {
-                "required": [
-                  "expect_error"
-                ]
+                "required": ["expect_error"]
               }
             ]
           }
         }
       },
-      "required": [ "steps" ]
+      "required": ["steps"]
     },
     "ValidateTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "validate" }
+        "action": {"const": "validate"}
       },
-      "required": [ "action" ],
+      "required": ["action"],
       "oneOf": [
         {
           "properties": {
@@ -181,10 +190,7 @@
                 "type": "object",
                 "properties": {
                   "payload": {
-                    "oneOf": [
-                      { "type": "object" },
-                      { "type": "array", "items": { "type": "object" } }
-                    ],
+                    "oneOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}],
                     "description": "Payload to validate (single message or list of messages)."
                   },
                   "expect_error": {
@@ -192,19 +198,16 @@
                     "description": "Expected error message (regex) if validation should fail."
                   }
                 },
-                "required": [ "payload" ]
+                "required": ["payload"]
               }
             }
           },
-          "required": [ "steps" ]
+          "required": ["steps"]
         },
         {
           "properties": {
             "payload": {
-              "oneOf": [
-                { "type": "object" },
-                { "type": "array", "items": { "type": "object" } }
-              ],
+              "oneOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}],
               "description": "Payload to validate (single message or list of messages)."
             },
             "expect_error": {
@@ -212,153 +215,235 @@
               "description": "Expected error message (regex) if validation should fail."
             }
           },
-          "required": [ "payload" ]
+          "required": ["payload"]
         }
       ]
     },
     "PruneTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "prune" },
+        "action": {"const": "prune"},
         "args": {
           "type": "object",
           "properties": {
-            "allowed_components": { "type": "array", "items": { "type": "string" } },
-            "allowed_messages": { "type": "array", "items": { "type": "string" } }
+            "allowed_components": {"type": "array", "items": {"type": "string"}},
+            "allowed_messages": {"type": "array", "items": {"type": "string"}}
           }
         },
-        "expect": { "type": "object" }
+        "expect": {"type": "object"}
       },
-      "required": [ "args", "expect" ]
+      "required": ["args", "expect"]
     },
     "RenderTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "render" },
-        "expect_output": { "type": "string" }
+        "action": {"const": "render"},
+        "expect_output": {"type": "string"}
       },
-      "required": [ "expect_output" ]
+      "required": ["expect_output"]
     },
     "LoadTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "load" },
+        "action": {"const": "load"},
         "args": {
           "type": "object",
           "properties": {
-            "path": { "type": ["string", "null"] },
-            "validate": { "type": "boolean" }
+            "path": {"type": ["string", "null"]},
+            "validate": {"type": "boolean"}
           },
-          "required": [ "path" ]
+          "required": ["path"]
         },
-        "expect_output": { "type": "string" },
-        "expect_error": { "type": "string" }
+        "expect_output": {"type": "string"},
+        "expect_error": {"type": "string"}
       },
-      "required": [ "args" ]
+      "required": ["args"]
     },
     "RemoveStrictValidationTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "remove_strict_validation" },
+        "action": {"const": "remove_strict_validation"},
         "args": {
           "type": "object",
           "properties": {
-            "schema": { "type": "object" }
+            "schema": {"type": "object"}
           },
-          "required": [ "schema" ]
+          "required": ["schema"]
         },
         "expect": {
           "type": "object",
           "properties": {
-            "schema": { "type": "object" }
+            "schema": {"type": "object"}
           },
-          "required": [ "schema" ]
+          "required": ["schema"]
         }
       },
-      "required": [ "args", "expect" ]
+      "required": ["args", "expect"]
     },
     "ParseFullTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "parse_full" },
-        "input": { "type": "string" },
-        "expect": { "type": "array" },
-        "expect_error": { "type": "string" }
+        "action": {"const": "parse_full"},
+        "input": {"type": "string"},
+        "expect": {"type": "array"},
+        "expect_error": {"type": "string"}
       },
-      "required": [ "input" ]
+      "required": ["input"]
     },
     "FixPayloadTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "fix_payload" },
-        "input": { "type": "string" },
+        "action": {"const": "fix_payload"},
+        "input": {"type": "string"},
         "expect": {}
       },
-      "required": [ "input", "expect" ]
+      "required": ["input", "expect"]
     },
     "HasPartsTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "has_parts" },
-        "input": { "type": "string" },
-        "expect": { "type": "boolean" }
+        "action": {"const": "has_parts"},
+        "input": {"type": "string"},
+        "expect": {"type": "boolean"}
       },
-      "required": [ "input", "expect" ]
+      "required": ["input", "expect"]
     },
     "SelectCatalogTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "select_catalog" },
-        "args": { "type": "object" },
-        "expect_selected": { "type": "string" },
-        "expect_catalog_schema": { "type": "object" },
-        "expect_error": { "type": "string" }
+        "action": {"const": "select_catalog"},
+        "args": {"type": "object"},
+        "expect_selected": {"type": "string"},
+        "expect_catalog_schema": {"type": "object"},
+        "expect_error": {"type": "string"}
       },
-      "required": [ "args" ]
+      "required": ["args"]
     },
     "GeneratePromptTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "generate_prompt" },
-        "args": { "type": "object" },
+        "action": {"const": "generate_prompt"},
+        "args": {"type": "object"},
         "expect_contains": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {"type": "string"}
         }
       },
-      "required": [ "args", "expect_contains" ]
+      "required": ["args", "expect_contains"]
     },
     "LoadCatalogTest": {
       "type": "object",
       "properties": {
-        "action": { "const": "load_catalog" },
+        "action": {"const": "load_catalog"},
         "catalog_configs": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "path": { "type": "string" }
+              "name": {"type": "string"},
+              "path": {"type": "string"}
             },
-            "required": [ "name", "path" ]
+            "required": ["name", "path"]
           }
         },
         "modifiers": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {"type": "string"}
         },
         "expect": {
           "type": "object",
           "properties": {
-            "catalog_schema": { "type": "object" },
+            "catalog_schema": {"type": "object"},
             "supported_catalog_ids": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": {"type": "string"}
             }
           }
         }
       },
-      "required": [ "action", "catalog_configs" ]
+      "required": ["action", "catalog_configs"]
+    },
+    "ConvertEventTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "convert_event"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"},
+        "expect_empty": {"type": "boolean"}
+      },
+      "required": ["action", "args"]
+    },
+    "CreateA2uiPartTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "create_a2ui_part"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "IsA2uiPartTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "is_a2ui_part"},
+        "args": {"type": "object"},
+        "expect": {"type": "boolean"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "TryActivateExtensionTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "try_activate_extension"},
+        "args": {"type": "object"},
+        "expect": {"type": "boolean"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "HandleRpcTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "handle_rpc"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "ExecuteToolTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "execute_tool"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "GetExtensionTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "get_extension"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "TryActivateTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "try_activate"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
+    },
+    "SelectNewestTest": {
+      "type": "object",
+      "properties": {
+        "action": {"const": "select_newest"},
+        "args": {"type": "object"},
+        "expect": {"type": "object"}
+      },
+      "required": ["action", "args", "expect"]
     }
   }
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { html, css } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
-import { Root } from "@a2ui/lit/ui";
-import { v0_8 } from "@a2ui/lit";
-import { AppBridge, PostMessageTransport } from "@modelcontextprotocol/ext-apps/app-bridge";
-import type { McpUiSandboxProxyReadyNotification } from "@modelcontextprotocol/ext-apps/app-bridge";
-import { SANDBOX_IFRAME_PATH } from "../shared-constants.js";
+import {html, css} from 'lit';
+import {customElement, property, query, state} from 'lit/decorators.js';
+import {Root} from '@a2ui/lit/ui';
+import {v0_8} from '@a2ui/lit';
+import {AppBridge, PostMessageTransport} from '@modelcontextprotocol/ext-apps/app-bridge';
+import type {McpUiSandboxProxyReadyNotification} from '@modelcontextprotocol/ext-apps/app-bridge';
+import {SANDBOX_IFRAME_PATH} from '../shared-constants.js';
 
-@customElement("a2ui-mcp-apps-component")
+@customElement('a2ui-mcp-apps-component')
 export class McpApp extends Root {
   static override styles = [
     ...Root.styles,
@@ -41,28 +41,30 @@ export class McpApp extends Root {
         height: 100%;
         border: none;
         background: #f5f5f5;
-        transition: height 0.3s ease-out, min-width 0.3s ease-out;
+        transition:
+          height 0.3s ease-out,
+          min-width 0.3s ease-out;
       }
     `,
   ];
 
   /* --- Properties (Server Contract) --- */
 
-  @property({ type: String })
-  accessor resourceUri: string = "";
+  @property({type: String})
+  accessor resourceUri: string = '';
 
-  @property({ type: String })
-  accessor htmlContent: string = "";
+  @property({type: String})
+  accessor htmlContent: string = '';
 
-  @property({ type: Number })
+  @property({type: Number})
   accessor height: number | undefined = undefined;
 
-  @property({ type: Array })
+  @property({type: Array})
   accessor allowedTools: string[] = [];
 
   // --- Internal State ---
 
-  @query("iframe")
+  @query('iframe')
   accessor iframe!: HTMLIFrameElement;
 
   private bridge?: AppBridge;
@@ -104,22 +106,28 @@ export class McpApp extends Root {
     // Fall back to the 127.0.0.1 trick for local development to simulate cross-origin isolation
     const meta = import.meta as any;
     const configuredSandboxUrl = meta && meta.env ? meta.env.VITE_MCP_SANDBOX_URL : undefined;
-    const sandboxOrigin = configuredSandboxUrl || `http://127.0.0.1:${window.location.port}${SANDBOX_IFRAME_PATH}`;
+    const sandboxOrigin =
+      configuredSandboxUrl || `http://127.0.0.1:${window.location.port}${SANDBOX_IFRAME_PATH}`;
     const sandboxUrl = new URL(sandboxOrigin);
 
     // Set up the bridge. No MCP client needed because A2UI acts as the orchestrator.
-    this.bridge = new AppBridge(null, { name: "A2UI Client Host", version: "1.0.0" }, {
-      serverTools: {},
-      updateModelContext: { text: {} },
-    }, {
-      hostContext: {
-        theme: "light",
-        platform: "web",
-        displayMode: "inline",
-      }
-    });
+    this.bridge = new AppBridge(
+      null,
+      {name: 'A2UI Client Host', version: '1.0.0'},
+      {
+        serverTools: {},
+        updateModelContext: {text: {}},
+      },
+      {
+        hostContext: {
+          theme: 'light',
+          platform: 'web',
+          displayMode: 'inline',
+        },
+      },
+    );
 
-    this.bridge.onsizechange = ({ width, height }) => {
+    this.bridge.onsizechange = ({width, height}) => {
       // Allow the view to dynamically resize the iframe container
       const from: Keyframe = {};
       const to: Keyframe = {};
@@ -132,37 +140,42 @@ export class McpApp extends Root {
         from.height = `${this.iframe.offsetHeight}px`;
         this.iframe.style.height = to.height = `${height}px`;
       }
-      this.iframe.animate([from, to], { duration: 300, easing: "ease-out" });
+      this.iframe.animate([from, to], {duration: 300, easing: 'ease-out'});
     };
 
     // Forward Tool Calls to the A2UI Action Dispatch
-    this.bridge.oncalltool = async (params) => {
+    this.bridge.oncalltool = async params => {
       const actionName = params.name;
       const args = params.arguments || {};
 
       if (this.allowedTools.includes(actionName)) {
         this.dispatchAgentAction(actionName, args);
-        return { content: [{ type: "text", text: "Action dispatched to A2UI Agent" }] };
+        return {content: [{type: 'text', text: 'Action dispatched to A2UI Agent'}]};
       } else {
         console.warn(`[McpApp] Tool '${actionName}' blocked.`);
-        throw new Error("Tool not allowed");
+        throw new Error('Tool not allowed');
       }
     };
 
-    this.bridge.onloggingmessage = (params) => {
+    this.bridge.onloggingmessage = params => {
       console.log(`[MCP Sandbox ${params.level}]:`, params.data);
     };
 
     // 1. Listen for the Outer Iframe to declare itself ready.
-    const readyNotification: McpUiSandboxProxyReadyNotification["method"] = "ui/notifications/sandbox-proxy-ready";
-    const proxyReady = new Promise<boolean>((resolve) => {
-      const listener = ({ source, data, origin }: MessageEvent) => {
-        if (source === this.iframe.contentWindow && origin === sandboxUrl.origin && data?.method === readyNotification) {
-          window.removeEventListener("message", listener);
+    const readyNotification: McpUiSandboxProxyReadyNotification['method'] =
+      'ui/notifications/sandbox-proxy-ready';
+    const proxyReady = new Promise<boolean>(resolve => {
+      const listener = ({source, data, origin}: MessageEvent) => {
+        if (
+          source === this.iframe.contentWindow &&
+          origin === sandboxUrl.origin &&
+          data?.method === readyNotification
+        ) {
+          window.removeEventListener('message', listener);
           resolve(true);
         }
       };
-      window.addEventListener("message", listener);
+      window.addEventListener('message', listener);
     });
 
     // 2. Load the proxy iframe.
@@ -171,27 +184,29 @@ export class McpApp extends Root {
 
     // 3. Connect AppBridge via PostMessage transport.
     // We pass iframe.contentWindow to target just the sandbox proxy.
-    await this.bridge.connect(new PostMessageTransport(this.iframe.contentWindow!, this.iframe.contentWindow!));
+    await this.bridge.connect(
+      new PostMessageTransport(this.iframe.contentWindow!, this.iframe.contentWindow!),
+    );
 
     // 4. Send the Inner HTML UI resource to the sandbox to spin up the actual app.
     await this.bridge.sendSandboxResourceReady({
       html: this.htmlContent,
-      sandbox: "allow-scripts allow-forms allow-popups allow-modals"
+      sandbox: 'allow-scripts allow-forms allow-popups allow-modals',
     });
   }
 
   private dispatchAgentAction(actionName: string, params: any) {
-    const context: v0_8.Types.Action["context"] = [];
+    const context: v0_8.Types.Action['context'] = [];
     if (params && typeof params === 'object') {
       for (const [key, value] of Object.entries(params)) {
-        if (typeof value === "string") {
-          context.push({ key, value: { literalString: value } });
-        } else if (typeof value === "number") {
-          context.push({ key, value: { literalNumber: value } });
-        } else if (typeof value === "boolean") {
-          context.push({ key, value: { literalBoolean: value } });
+        if (typeof value === 'string') {
+          context.push({key, value: {literalString: value}});
+        } else if (typeof value === 'number') {
+          context.push({key, value: {literalNumber: value}});
+        } else if (typeof value === 'boolean') {
+          context.push({key, value: {literalBoolean: value}});
         } else if (value !== null && typeof value === 'object') {
-          context.push({ key, value: { literalString: JSON.stringify(value) } });
+          context.push({key, value: {literalString: JSON.stringify(value)}});
         }
       }
     }
@@ -201,8 +216,8 @@ export class McpApp extends Root {
       context,
     };
 
-    const eventPayload: v0_8.Events.StateEventDetailMap["a2ui.action"] = {
-      eventType: "a2ui.action",
+    const eventPayload: v0_8.Events.StateEventDetailMap['a2ui.action'] = {
+      eventType: 'a2ui.action',
       action,
       sourceComponentId: this.id,
       dataContextPath: this.dataContextPath,
@@ -212,4 +227,3 @@ export class McpApp extends Root {
     this.dispatchEvent(new v0_8.Events.StateEvent(eventPayload));
   }
 }
-

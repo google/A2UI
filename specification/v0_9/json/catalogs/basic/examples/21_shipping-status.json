@@ -23,21 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "tracking-number",
-              "divider",
-              "steps-list",
-              "eta"
-            ]
+            "children": ["header", "tracking-number", "divider", "steps-list", "eta"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "package-icon",
-              "title"
-            ],
+            "children": ["package-icon", "title"],
             "align": "center"
           },
           {
@@ -74,10 +65,7 @@
           {
             "id": "step-item-template",
             "component": "Row",
-            "children": [
-              "step-icon",
-              "step-text"
-            ],
+            "children": ["step-icon", "step-text"],
             "align": "center"
           },
           {
@@ -98,10 +86,7 @@
           {
             "id": "eta",
             "component": "Row",
-            "children": [
-              "eta-icon",
-              "eta-text"
-            ],
+            "children": ["eta-icon", "eta-text"],
             "align": "center"
           },
           {

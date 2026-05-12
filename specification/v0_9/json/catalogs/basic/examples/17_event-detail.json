@@ -23,14 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "title",
-              "time-row",
-              "location-row",
-              "description",
-              "divider",
-              "actions"
-            ]
+            "children": ["title", "time-row", "location-row", "description", "divider", "actions"]
           },
           {
             "id": "title",
@@ -43,10 +36,7 @@
           {
             "id": "time-row",
             "component": "Row",
-            "children": [
-              "time-icon",
-              "time-text"
-            ],
+            "children": ["time-icon", "time-text"],
             "align": "center"
           },
           {
@@ -69,10 +59,7 @@
           {
             "id": "location-row",
             "component": "Row",
-            "children": [
-              "location-icon",
-              "location-text"
-            ],
+            "children": ["location-icon", "location-text"],
             "align": "center"
           },
           {
@@ -103,10 +90,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "accept-btn",
-              "decline-btn"
-            ]
+            "children": ["accept-btn", "decline-btn"]
           },
           {
             "id": "accept-btn-text",

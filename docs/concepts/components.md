@@ -173,13 +173,14 @@ Every component has:
 
 To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
 
-This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.
+This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.
 
 For the complete component gallery with examples, see [Component Reference](../reference/components.md).
 
 ## Static vs. Dynamic Children
 
 **Static (`explicitList`)** - Fixed list of child IDs:
+
 ```json
 {
   "children": {
@@ -189,6 +190,7 @@ For the complete component gallery with examples, see [Component Reference](../r
 ```
 
 **Dynamic (`template`)** - Generate children from data array:
+
 ```json
 {
   "children": {

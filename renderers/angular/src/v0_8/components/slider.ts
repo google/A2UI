@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import type { NumberValue, SliderNode, StringValue } from '../types';
-import { DynamicComponent } from '../rendering/dynamic-component';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import type {NumberValue, SliderNode, StringValue} from '../types';
+import {DynamicComponent} from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-slider',
@@ -29,7 +29,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
         type="range"
         [class]="theme.components.Slider.element"
         [id]="inputId"
-        [attr.aria-labelledby]="labelId"
+        [attr.aria-label]="resolvedLabel() ? resolvedLabel() : 'Slider'"
         [min]="minValue()"
         [max]="maxValue()"
         [value]="resolvedValue() ?? 0"
@@ -69,12 +69,12 @@ export class Slider extends DynamicComponent<SliderNode> {
               valueNode.path as string,
               this.component().dataContextPath,
             ),
-            contents: [{ key: '.', valueNumber: value }],
+            contents: [{key: '.', valueNumber: value}],
           },
         },
       ]);
     } else {
-      this.handleAction('change', { value });
+      this.handleAction('change', {value});
     }
   }
 
@@ -83,7 +83,7 @@ export class Slider extends DynamicComponent<SliderNode> {
       name,
       context: Object.entries(context).map(([key, val]) => ({
         key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) },
+        value: typeof val === 'number' ? {literalNumber: val} : {literalString: String(val)},
       })),
     });
   }

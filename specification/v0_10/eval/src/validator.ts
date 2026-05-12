@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Ajv from "ajv/dist/2020";
-import addFormats from "ajv-formats";
-import * as fs from "fs";
-import * as path from "path";
-import * as yaml from "js-yaml";
+import Ajv from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
 
-import { GeneratedResult, ValidatedResult, IssueSeverity } from "./types";
-import { logger } from "./logger";
+import {GeneratedResult, ValidatedResult, IssueSeverity} from './types';
+import {logger} from './logger';
 
 export class Validator {
   private ajv: Ajv;
@@ -33,21 +33,21 @@ export class Validator {
     private outputDir?: string,
   ) {
     // Set strict: false to be lenient with unknown keywords, if any.
-    this.ajv = new Ajv({ allErrors: true, strict: false });
+    this.ajv = new Ajv({allErrors: true, strict: false});
     addFormats(this.ajv);
     for (const [name, schema] of Object.entries(schemas)) {
       this.ajv.addSchema(schema, name);
     }
     this.validateFn = this.ajv.getSchema(
-      "https://a2ui.org/specification/v0_10/server_to_client.json",
+      'https://a2ui.org/specification/v0_10/server_to_client.json',
     );
 
     // Populate basic functions from the catalog schema
     // schemas are keyed by filename in index.ts
-    const catalogSchema = schemas["basic_catalog.json"];
+    const catalogSchema = schemas['basic_catalog.json'];
     if (
       catalogSchema &&
-      typeof catalogSchema.functions === "object" &&
+      typeof catalogSchema.functions === 'object' &&
       catalogSchema.functions !== null
     ) {
       for (const funcName of Object.keys(catalogSchema.functions)) {
@@ -63,9 +63,7 @@ export class Validator {
   }
 
   async run(results: GeneratedResult[]): Promise<ValidatedResult[]> {
-    logger.info(
-      `Starting Phase 2: Schema Validation (${results.length} items)`,
-    );
+    logger.info(`Starting Phase 2: Schema Validation (${results.length} items)`);
     const validatedResults: ValidatedResult[] = [];
     let passedCount = 0;
     let failedCount = 0;
@@ -74,7 +72,7 @@ export class Validator {
 
     for (const result of results) {
       if (result.error || !result.components) {
-        validatedResults.push({ ...result, validationErrors: [] }); // Already failed generation
+        validatedResults.push({...result, validationErrors: []}); // Already failed generation
         continue;
       }
 
@@ -87,29 +85,16 @@ export class Validator {
           // Smart validation: check which key is present and validate against that specific definition
           // to avoid noisy "oneOf" errors.
           let validated = false;
-          const schemaUri =
-            "https://a2ui.org/specification/v0_10/server_to_client.json";
+          const schemaUri = 'https://a2ui.org/specification/v0_10/server_to_client.json';
 
           if (message.createSurface) {
-            validated = this.ajv.validate(
-              `${schemaUri}#/$defs/CreateSurfaceMessage`,
-              message,
-            );
+            validated = this.ajv.validate(`${schemaUri}#/$defs/CreateSurfaceMessage`, message);
           } else if (message.updateComponents) {
-            validated = this.ajv.validate(
-              `${schemaUri}#/$defs/UpdateComponentsMessage`,
-              message,
-            );
+            validated = this.ajv.validate(`${schemaUri}#/$defs/UpdateComponentsMessage`, message);
           } else if (message.updateDataModel) {
-            validated = this.ajv.validate(
-              `${schemaUri}#/$defs/UpdateDataModelMessage`,
-              message,
-            );
+            validated = this.ajv.validate(`${schemaUri}#/$defs/UpdateDataModelMessage`, message);
           } else if (message.deleteSurface) {
-            validated = this.ajv.validate(
-              `${schemaUri}#/$defs/DeleteSurfaceMessage`,
-              message,
-            );
+            validated = this.ajv.validate(`${schemaUri}#/$defs/DeleteSurfaceMessage`, message);
           } else {
             // Fallback to top-level validation if no known key matches (or if it's empty/invalid structure)
             validated = this.validateFn(message);
@@ -156,7 +141,7 @@ export class Validator {
                 targetedErrors.push({
                   instancePath: path,
                   message: `Unknown or hallucinated component type '${componentName}'`,
-                  params: { component: componentName }
+                  params: {component: componentName},
                 });
                 isValid = true; // prevents further noise collection, we already handled it
               }
@@ -166,7 +151,7 @@ export class Validator {
                   // Prepend the base path so the error correctly identifies where in the message it occurred
                   targetedErrors.push({
                     ...err,
-                    instancePath: `${path}${err.instancePath}`
+                    instancePath: `${path}${err.instancePath}`,
                   });
                 });
               }
@@ -180,7 +165,10 @@ export class Validator {
 
               // If this error happened inside a path we already handled, drop it
               for (const handledPath of handledPaths) {
-                if (err.instancePath === handledPath || err.instancePath.startsWith(`${handledPath}/`)) {
+                if (
+                  err.instancePath === handledPath ||
+                  err.instancePath.startsWith(`${handledPath}/`)
+                ) {
                   return false;
                 }
               }
@@ -208,15 +196,18 @@ export class Validator {
 
                 let msg = `${err.instancePath}${componentNameStr} ${err.message}`;
                 if (err.params && Object.keys(err.params).length > 0) {
-                  msg += " (\n";
+                  msg += ' (\n';
                   for (const [key, value] of Object.entries(err.params)) {
-                    const formattedValue = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value);
+                    const formattedValue =
+                      typeof value === 'object' && value !== null
+                        ? JSON.stringify(value)
+                        : String(value);
                     msg += `    ${key}: ${formattedValue}\n`;
                   }
-                  msg += "  )";
+                  msg += '  )';
                 }
                 return msg;
-              })
+              }),
             );
           }
         }
@@ -240,34 +231,26 @@ export class Validator {
       });
     }
 
-    logger.info(
-      `Phase 2: Validation Complete. Passed: ${passedCount}, Failed: ${failedCount}`,
-    );
+    logger.info(`Phase 2: Validation Complete. Passed: ${passedCount}, Failed: ${failedCount}`);
     return validatedResults;
   }
 
   private saveFailure(result: GeneratedResult, errors: string[]) {
     if (!this.outputDir) return;
-    const modelDir = path.join(
-      this.outputDir,
-      `output-${result.modelName.replace(/[\/:]/g, "_")}`,
-    );
-    const detailsDir = path.join(modelDir, "details");
+    const modelDir = path.join(this.outputDir, `output-${result.modelName.replace(/[\/:]/g, '_')}`);
+    const detailsDir = path.join(modelDir, 'details');
     const failureData = {
       pass: false,
-      reason: "Schema validation failure",
-      issues: errors.map((e) => ({
+      reason: 'Schema validation failure',
+      issues: errors.map(e => ({
         issue: e,
-        severity: "criticalSchema" as IssueSeverity,
+        severity: 'criticalSchema' as IssueSeverity,
       })),
-      overallSeverity: "criticalSchema" as IssueSeverity,
+      overallSeverity: 'criticalSchema' as IssueSeverity,
     };
 
     fs.writeFileSync(
-      path.join(
-        detailsDir,
-        `${result.prompt.name}.${result.runNumber}.failed.yaml`,
-      ),
+      path.join(detailsDir, `${result.prompt.name}.${result.runNumber}.failed.yaml`),
       yaml.dump(failureData),
     );
   }
@@ -292,7 +275,7 @@ export class Validator {
         // Check for root component in this message
         if (message.updateComponents.components) {
           for (const comp of message.updateComponents.components) {
-            if (comp.id === "root") {
+            if (comp.id === 'root') {
               hasRootComponent = true;
             }
           }
@@ -307,9 +290,7 @@ export class Validator {
       } else if (message.deleteSurface) {
         this.validateDeleteSurface(message.deleteSurface, errors);
       } else {
-        errors.push(
-          `Unknown message type in output: ${JSON.stringify(message)}`,
-        );
+        errors.push(`Unknown message type in output: ${JSON.stringify(message)}`);
       }
     }
 
@@ -324,7 +305,7 @@ export class Validator {
   }
 
   private validateFunctionCalls(root: any, errors: string[]) {
-    if (!root || typeof root !== "object") return;
+    if (!root || typeof root !== 'object') return;
 
     if (Array.isArray(root)) {
       for (const item of root) {
@@ -336,7 +317,7 @@ export class Validator {
     // Check if it's a FunctionCall
     if (
       root.call &&
-      typeof root.call === "string" &&
+      typeof root.call === 'string' &&
       (Object.keys(root).length === 2 || Object.keys(root).length === 3)
     ) {
       const functionName = root.call;
@@ -363,7 +344,7 @@ export class Validator {
     if (data.catalogId === undefined) {
       errors.push("createSurface must have a 'catalogId' property.");
     }
-    const allowed = ["surfaceId", "catalogId"];
+    const allowed = ['surfaceId', 'catalogId'];
     for (const key in data) {
       if (!allowed.includes(key)) {
         errors.push(`createSurface has unexpected property: ${key}`);
@@ -375,7 +356,7 @@ export class Validator {
     if (data.surfaceId === undefined) {
       errors.push("DeleteSurface must have a 'surfaceId' property.");
     }
-    const allowed = ["surfaceId"];
+    const allowed = ['surfaceId'];
     for (const key in data) {
       if (!allowed.includes(key)) {
         errors.push(`DeleteSurface has unexpected property: ${key}`);
@@ -405,8 +386,7 @@ export class Validator {
       // Smart Component Validation
       if (this.ajv && c.component) {
         const componentType = c.component;
-        const schemaUri =
-          "https://a2ui.org/specification/v0_10/basic_catalog.json";
+        const schemaUri = 'https://a2ui.org/specification/v0_10/basic_catalog.json';
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 
@@ -415,9 +395,7 @@ export class Validator {
           errors.push(
             ...(this.ajv.errors || []).map(
               (err: any) =>
-                `${err.instancePath} ${err.message} (in component '${
-                  c.id || "unknown"
-                }')`,
+                `${err.instancePath} ${err.message} (in component '${c.id || 'unknown'}')`,
             ),
           );
         }
@@ -437,11 +415,7 @@ export class Validator {
     // If path is missing and value is missing, it deletes the entire root (valid but rare).
   }
 
-  private validateComponent(
-    component: any,
-    allIds: Set<string>,
-    errors: string[],
-  ) {
+  private validateComponent(component: any, allIds: Set<string>, errors: string[]) {
     const id = component.id;
     if (!id) {
       errors.push(`Component is missing an 'id'.`);
@@ -449,7 +423,7 @@ export class Validator {
     }
 
     const componentType = component.component;
-    if (!componentType || typeof componentType !== "string") {
+    if (!componentType || typeof componentType !== 'string') {
       errors.push(`Component '${id}' is missing 'component' property.`);
       return;
     }
@@ -460,44 +434,39 @@ export class Validator {
     const checkRefs = (ids: (string | undefined)[]) => {
       for (const id of ids) {
         if (id && !allIds.has(id)) {
-          errors.push(
-            `Component ${JSON.stringify(id)} references non-existent component ID.`,
-          );
+          errors.push(`Component ${JSON.stringify(id)} references non-existent component ID.`);
         }
       }
     };
 
     switch (componentType) {
-      case "Row":
-      case "Column":
-      case "List":
+      case 'Row':
+      case 'Column':
+      case 'List':
         if (component.children) {
           if (Array.isArray(component.children)) {
             checkRefs(component.children);
-          } else if (
-            typeof component.children === "object" &&
-            component.children !== null
-          ) {
+          } else if (typeof component.children === 'object' && component.children !== null) {
             if (component.children.componentId) {
               checkRefs([component.children.componentId]);
             }
           }
         }
         break;
-      case "Card":
+      case 'Card':
         checkRefs([component.child]);
         break;
-      case "Tabs":
+      case 'Tabs':
         if (component.tabs && Array.isArray(component.tabs)) {
           component.tabs.forEach((tab: any) => {
             checkRefs([tab.child]);
           });
         }
         break;
-      case "Modal":
+      case 'Modal':
         checkRefs([component.trigger, component.content]);
         break;
-      case "Button":
+      case 'Button':
         checkRefs([component.child]);
         break;
     }

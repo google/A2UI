@@ -69,12 +69,14 @@ The source code for the Restaurant Finder agent is located in [`samples/agent/ad
 If you prefer to run the agent and client in separate terminals, or need to troubleshoot:
 
 **1. Run the Agent:**
+
 ```bash
 cd samples/agent/adk/restaurant_finder
 uv run .
 ```
 
 **2. Run the Client:**
+
 ```bash
 cd samples/client/lit/shell
 npm run dev
@@ -208,6 +210,7 @@ This runs a client-only demo showcasing every standard component (Card, Button, 
 ### Other Languages and Frameworks
 
 While this guide uses the Lit client as an example, A2UI provides samples for other popular frameworks in the `samples/client` directory:
+
 - **Angular**: `samples/client/angular`
 - **React**: `samples/client/react`
 

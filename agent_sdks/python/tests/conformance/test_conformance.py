@@ -350,9 +350,9 @@ def test_schema_manager_conformance(name, test_case):
         allowed_messages=args.get("allowed_messages"),
     )
 
-    output_normalized = re.sub(r"\s+", " ", output.strip())
+    output_normalized = re.sub(r"\s+", "", output.strip())
 
     if "expect_contains" in test_case:
       for expected in test_case["expect_contains"]:
-        expected_normalized = re.sub(r"\s+", " ", expected.strip())
+        expected_normalized = re.sub(r"\s+", "", expected.strip())
         assert expected_normalized in output_normalized

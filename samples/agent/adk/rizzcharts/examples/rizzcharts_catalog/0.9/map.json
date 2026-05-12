@@ -14,17 +14,12 @@
         {
           "id": "root",
           "component": "Canvas",
-          "children": [
-            "map-layout-container"
-          ]
+          "children": ["map-layout-container"]
         },
         {
           "id": "map-layout-container",
           "component": "Column",
-          "children": [
-            "map-header",
-            "location-map"
-          ],
+          "children": ["map-header", "location-map"],
           "align": "stretch"
         },
         {

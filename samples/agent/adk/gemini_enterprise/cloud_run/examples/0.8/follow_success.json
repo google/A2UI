@@ -22,10 +22,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "success_icon",
-                  "success_text"
-                ]
+                "explicitList": ["success_icon", "success_text"]
               },
               "alignment": "center"
             }

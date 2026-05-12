@@ -23,19 +23,12 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "header",
-              "divider",
-              "messages-list"
-            ]
+            "children": ["header", "divider", "messages-list"]
           },
           {
             "id": "header",
             "component": "Row",
-            "children": [
-              "channel-icon",
-              "channel-name"
-            ],
+            "children": ["channel-icon", "channel-name"],
             "align": "center"
           },
           {
@@ -67,10 +60,7 @@
           {
             "id": "message-template",
             "component": "Row",
-            "children": [
-              "msg-avatar",
-              "msg-content"
-            ],
+            "children": ["msg-avatar", "msg-content"],
             "align": "start"
           },
           {
@@ -85,18 +75,12 @@
           {
             "id": "msg-content",
             "component": "Column",
-            "children": [
-              "msg-header",
-              "msg-text"
-            ]
+            "children": ["msg-header", "msg-text"]
           },
           {
             "id": "msg-header",
             "component": "Row",
-            "children": [
-              "msg-username",
-              "msg-time"
-            ],
+            "children": ["msg-username", "msg-time"],
             "align": "center"
           },
           {

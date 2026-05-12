@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class CatalogService {
   public catalogUris: string[] = [];
 }

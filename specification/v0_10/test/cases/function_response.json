@@ -84,12 +84,7 @@
         "functionResponse": {
           "functionCallId": "unique-call-id-131e",
           "call": "someFunction",
-          "value": [
-            "one",
-            2,
-            true,
-            null
-          ]
+          "value": ["one", 2, true, null]
         }
       }
     },
@@ -102,7 +97,7 @@
           "functionCallId": "unique-call-id-131",
           "call": "someFunction",
           "value": {
-            "result": { "nested": "object" }
+            "result": {"nested": "object"}
           }
         }
       }

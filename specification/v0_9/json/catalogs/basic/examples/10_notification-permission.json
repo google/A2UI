@@ -23,12 +23,7 @@
           {
             "id": "main-column",
             "component": "Column",
-            "children": [
-              "icon",
-              "title",
-              "description",
-              "actions"
-            ],
+            "children": ["icon", "title", "description", "actions"],
             "align": "center"
           },
           {
@@ -57,10 +52,7 @@
           {
             "id": "actions",
             "component": "Row",
-            "children": [
-              "yes-btn",
-              "no-btn"
-            ],
+            "children": ["yes-btn", "no-btn"],
             "justify": "center"
           },
           {

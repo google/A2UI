@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RendererEntry } from '@a2a_chat_canvas/a2a-renderer/types';
+import {RendererEntry} from '@a2a_chat_canvas/a2a-renderer/types';
 
 /**
  * Renderer catalog entry for the 'default_text_part' variant.
@@ -29,9 +29,8 @@ import { RendererEntry } from '@a2a_chat_canvas/a2a-renderer/types';
 export const DEFAULT_TEXT_PART_RENDERER_ENTRY: RendererEntry = [
   'default_text_part',
   async () => {
-    const { DefaultTextPart } = await import(
-      '@a2a_chat_canvas/a2a-renderer/catalog/default-text-part/default-text-part'
-    );
+    const {DefaultTextPart} =
+      await import('@a2a_chat_canvas/a2a-renderer/catalog/default-text-part/default-text-part');
     return DefaultTextPart;
   },
 ];

@@ -18,11 +18,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "map-header",
-                  "map-image",
-                  "location-list"
-                ]
+                "explicitList": ["map-header", "map-image", "location-list"]
               },
               "alignment": "stretch"
             }
@@ -76,10 +72,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "location-name",
-                  "location-description"
-                ]
+                "explicitList": ["location-name", "location-description"]
               }
             }
           }

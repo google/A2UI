@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
-import { BasicCatalogComponent } from './basic-catalog-component';
-import { VideoApi } from '@a2ui/web_core/v0_9/basic_catalog';
+import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
+import {BasicCatalogComponent} from './basic-catalog-component';
+import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {AnyDuringSchemaAlignment} from '../types';
 
 /**
  * Angular implementation of the A2UI Video component (v0.9).
@@ -60,5 +61,7 @@ import { VideoApi } from '@a2ui/web_core/v0_9/basic_catalog';
 })
 export class VideoComponent extends BasicCatalogComponent<typeof VideoApi> {
   readonly url = computed(() => this.props()['url']?.value());
-  readonly posterUrl = computed(() => (this.props() as any)['posterUrl']?.value());
+  readonly posterUrl = computed(() =>
+    (this.props() as AnyDuringSchemaAlignment)['posterUrl']?.value(),
+  );
 }
