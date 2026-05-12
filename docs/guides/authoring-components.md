@@ -110,6 +110,8 @@ Implement your component using your client-side framework. For Angular, your com
 
 In the [`rizzcharts`](../../samples/client/angular/projects/rizzcharts/README.md) example, the `Chart` component is defined in [`chart.ts`](../../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/chart.ts).
 
+{% raw %}
+
 ```typescript
 import {DynamicComponent} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
@@ -136,6 +138,8 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
   // ... data resolution logic using super.resolvePrimitive for data paths
 }
 ```
+
+{% endraw %}
 
 Keep these key points in mind when implementing components:
 
