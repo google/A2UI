@@ -100,11 +100,11 @@ export class Modal extends DynamicComponent<ModalNode> {
 
   protected readonly isOpen = signal(false);
 
-  protected openModal() {
+  openModal() {
     this.isOpen.set(true);
   }
 
-  protected closeModal() {
+  closeModal() {
     this.isOpen.set(false);
   }
 }
