@@ -38,20 +38,12 @@ export const clientMcpCatalog = new Catalog(
 
 
 
-// Statically compiled 4th catalog added dynamically by administrator!
-export const clientFloorplanCatalog = new Catalog(
-  'https://a2ui.org/catalogs/v1/floorplan-catalog.json',
-  [
-    ...basicComponents
-  ]
-);
-
 
 export const catalogsRegistry: Record<string, Catalog<any>> = {
   basic: clientBasicCatalog,
   weather: clientWeatherCatalog,
   mcp: clientMcpCatalog,
-  floorplan: clientFloorplanCatalog,
+  
 };
 
-export type CatalogKey = 'basic' | 'weather' | 'mcp' | 'floorplan';
+export type CatalogKey = 'basic' | 'weather' | 'mcp' ;
