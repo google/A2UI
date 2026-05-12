@@ -45,6 +45,8 @@ import type {IconNode, StringValue} from '../types';
 })
 export class Icon extends DynamicComponent<IconNode> {
   readonly name = input<StringValue | null>(null);
+
+  // g-icon uses snake_case for the icon names. We convert camelCase and TitleCase here.
   protected readonly resolvedName = computed(() => {
     const rawName = this.resolvePrimitive(this.name());
     if (!rawName) return '';
