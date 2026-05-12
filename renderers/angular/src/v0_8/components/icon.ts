@@ -48,6 +48,12 @@ export class Icon extends DynamicComponent<IconNode> {
   protected readonly resolvedName = computed(() => {
     const rawName = this.resolvePrimitive(this.name());
     if (!rawName) return '';
-    return rawName.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+    return this.toSnakeCase(rawName);
   });
+
+  private toSnakeCase(str: string): string {
+    return str
+      .replace(/^[A-Z]/, letter => letter.toLowerCase())
+      .replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  }
 }
