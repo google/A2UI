@@ -30,8 +30,16 @@ import type {AnyComponentNode, ModalNode} from '../types';
     </div>
 
     @if (isOpen()) {
-      <div class="a2ui-modal-overlay" [class]="theme.components.Modal.backdrop" (click)="closeModal()">
-        <div class="a2ui-modal-content" [class]="theme.components.Modal.element" (click)="$event.stopPropagation()">
+      <div
+        class="a2ui-modal-overlay"
+        [class]="theme.components.Modal.backdrop"
+        (click)="closeModal()"
+      >
+        <div
+          class="a2ui-modal-content"
+          [class]="theme.components.Modal.element"
+          (click)="$event.stopPropagation()"
+        >
           <button class="a2ui-modal-close" (click)="closeModal()">&times;</button>
           @if (contentChild()) {
             <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="contentChild()!" />
