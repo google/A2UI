@@ -94,7 +94,7 @@ function readExamples(specPath, catalogs, overrideCatalogId, version) {
           if (Array.isArray(data)) {
             example = {
               version: version,
-              name: nameFromFile,
+              name: version === '0.8' ? `${nameFromFile} (${catalog})` : nameFromFile,
               description: `Example from ${catalog} catalog`,
               messages: data,
             };
@@ -102,7 +102,10 @@ function readExamples(specPath, catalogs, overrideCatalogId, version) {
             example = {
               ...data,
               version: version,
-              name: data.name || nameFromFile,
+              name:
+                version === '0.8'
+                  ? `${data.name || nameFromFile} (${catalog})`
+                  : data.name || nameFromFile,
               description: data.description || `Example from ${catalog} catalog`,
               messages: data.messages || [],
             };

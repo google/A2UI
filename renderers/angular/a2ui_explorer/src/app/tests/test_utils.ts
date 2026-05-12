@@ -16,14 +16,14 @@
 
 import {TestBed} from '@angular/core/testing';
 import {DemoComponent} from '../demo.component';
-import {EXAMPLES} from '../generated/examples-bundle';
+import {EXAMPLES_V08, EXAMPLES_V09} from '../generated/examples-bundle';
 import {provideMarkdownRenderer} from '../../../../src/v0_9/core/markdown';
 
 /**
  * Helper function to load an example in the DemoComponent for testing.
  * Resolves after the example is selected and initial async rendering has time to complete.
  */
-export async function loadExample(exampleName: string) {
+export async function loadExample(exampleName: string, version: '0.8' | '0.9' = '0.9') {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
     providers: [provideMarkdownRenderer()],
@@ -33,8 +33,23 @@ export async function loadExample(exampleName: string) {
   const component = fixture.componentInstance;
   fixture.detectChanges();
 
-  const example = EXAMPLES.find(ex => ex.name === exampleName);
+  const examples = version === '0.9' ? EXAMPLES_V09 : EXAMPLES_V08;
+  let example = examples.find(ex => ex.name === exampleName);
+
+  if (version === '0.8') {
+    if (!example) {
+      example = examples.find(ex => ex.name === `${exampleName} (basic)`);
+    }
+    if (!example) {
+      example = examples.find(ex => ex.name === `${exampleName} (minimal)`);
+    }
+  }
+
   expect(example).withContext(`Example not found: ${exampleName}`).toBeTruthy();
+
+  // Set version and trigger change
+  component.version = version;
+  component.onVersionChange({target: {value: version}} as unknown as Event);
 
   component.selectExample(example!);
   fixture.detectChanges();
