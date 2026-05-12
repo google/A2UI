@@ -17,6 +17,7 @@ export const clientBasicCatalog = new Catalog(
   basicComponents
 );
 
+
 export const clientWeatherCatalog = new Catalog(
   'https://a2ui.org/catalogs/v1/weather-catalog.json',
   [
@@ -24,6 +25,8 @@ export const clientWeatherCatalog = new Catalog(
     WeatherWidget as any
   ]
 );
+
+
 
 export const clientMcpCatalog = new Catalog(
   'https://a2ui.org/catalogs/v1/mcp-catalog.json',
@@ -33,10 +36,22 @@ export const clientMcpCatalog = new Catalog(
   ]
 );
 
-export const catalogsRegistry = {
+
+
+// Statically compiled 4th catalog added dynamically by administrator!
+export const clientFloorplanCatalog = new Catalog(
+  'https://a2ui.org/catalogs/v1/floorplan-catalog.json',
+  [
+    ...basicComponents
+  ]
+);
+
+
+export const catalogsRegistry: Record<string, Catalog<any>> = {
   basic: clientBasicCatalog,
   weather: clientWeatherCatalog,
-  mcp: clientMcpCatalog
+  mcp: clientMcpCatalog,
+  floorplan: clientFloorplanCatalog,
 };
 
-export type CatalogKey = 'basic' | 'weather' | 'mcp';
+export type CatalogKey = 'basic' | 'weather' | 'mcp' | 'floorplan';

@@ -118,6 +118,34 @@ function showToast(message: string, type: 'success' | 'info' = 'success') {
 
 // --- Reactive UI Ingesting ---
 
+function renderCatalogSelector() {
+  const container = document.getElementById('catalog-selector-buttons')!;
+  const keys = Object.keys(catalogMap) as CatalogKey[];
+  
+  const template = html`
+    ${keys.map(key => {
+      const isActive = key === activeCatalogKey;
+      const title = key === 'basic' ? 'Basic Catalog (Primitives)'
+                  : key === 'weather' ? 'Weather Catalog (Primitives + Weather)'
+                  : key === 'mcp' ? 'Generative MCP Catalog (Sandbox)'
+                  : `${key.charAt(0).toUpperCase() + key.slice(1)} Dynamic Catalog`;
+      
+      return html`
+        <button 
+          class="btn ${isActive ? 'btn-primary' : 'btn-secondary'}"
+          @click=${() => {
+            log(`[Ingestion] Ingesting ${key} catalog...`, 'info');
+            ingestCatalog(key, false);
+          }}
+        >
+          ${title}
+        </button>
+      `;
+    })}
+  `;
+  render(template, container);
+}
+
 function ingestCatalog(key: CatalogKey, isInitial = false) {
   activeCatalogKey = key;
   localStorage.setItem('active_catalog_key', key);
@@ -125,21 +153,8 @@ function ingestCatalog(key: CatalogKey, isInitial = false) {
 
   log(`[Ingestion] Ingesting catalog: ${catalog.id}`, 'info');
 
-  // 1. Update Selector Button classes
-  const buttons: Record<CatalogKey, HTMLElement> = {
-    basic: document.getElementById('btn-basic-catalog')!,
-    weather: document.getElementById('btn-weather-catalog')!,
-    mcp: document.getElementById('btn-mcp-catalog')!
-  };
-
-  Object.keys(buttons).forEach((k) => {
-    const btn = buttons[k as CatalogKey];
-    if (k === key) {
-      btn.className = 'btn btn-primary';
-    } else {
-      btn.className = 'btn btn-secondary';
-    }
-  });
+  // 1. Update Dynamic Selector Buttons state
+  renderCatalogSelector();
 
   // 2. Resolve selected component default
   const components = Array.from(catalog.components.keys());
@@ -161,7 +176,7 @@ function ingestCatalog(key: CatalogKey, isInitial = false) {
 
   // 6. Show success toast when hot-swapped explicitly by the user!
   if (!isInitial) {
-    const catalogName = key === 'basic' ? 'Basic Primitives' : key === 'weather' ? 'Weather Forecast' : 'MCP App Sandbox';
+    const catalogName = key === 'basic' ? 'Basic Primitives' : key === 'weather' ? 'Weather Forecast' : key === 'mcp' ? 'MCP App Sandbox' : `${key.charAt(0).toUpperCase() + key.slice(1)} Dynamic Catalog`;
     showToast(`${catalogName} Catalog Loaded Successfully`, 'success');
   }
 }
@@ -308,24 +323,4 @@ function renderActiveComponent(name: string, catalog: Catalog<any>) {
 // --- Initial Boot & Restoration ---
 log(`Restoring previous session from localStorage: [${activeCatalogKey}]`, 'info');
 ingestCatalog(activeCatalogKey, true);
-
-// --- Handle Catalog Ingestion Clicks ---
-
-const btnBasic = document.getElementById('btn-basic-catalog') as HTMLButtonElement;
-const btnWeather = document.getElementById('btn-weather-catalog') as HTMLButtonElement;
-const btnMcp = document.getElementById('btn-mcp-catalog') as HTMLButtonElement;
-
-btnBasic.onclick = () => {
-  log('[Ingestion] Ingesting basic primitive catalog...', 'info');
-  ingestCatalog('basic', false);
-};
-
-btnWeather.onclick = () => {
-  log('[Ingestion] Ingesting local custom weather catalog...', 'info');
-  ingestCatalog('weather', false);
-};
-
-btnMcp.onclick = () => {
-  log('[Ingestion] Ingesting generative MCP iframe catalog...', 'info');
-  ingestCatalog('mcp', false);
-};
+renderCatalogSelector();
