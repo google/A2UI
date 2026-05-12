@@ -1,7 +1,12 @@
 ## Unreleased
 
+## 0.10.0
+
 - **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` and update component to correctly render SVG elements.
 - (v0_9) Wire up agent-provided primary color to basic catalog components.
+
+## 0.9.1
+
 - (v0_9) Re-style the v0_9 catalog components using the default theme from
   `web_core`. [#1079](https://github.com/google/A2UI/pull/1079)
 - (v0_9) Add missing features to ChoicePicker and CheckBox. [#1145](https://github.com/google/A2UI/pull/1145)
