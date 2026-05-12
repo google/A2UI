@@ -18,8 +18,8 @@ import {html, css, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {ComponentContext} from '@a2ui/web_core/v0_9';
 
-@customElement('a2ui-local-widget')
-export class A2uiLocalWidget extends LitElement {
+@customElement('a2ui-weather-widget')
+export class A2uiWeatherWidget extends LitElement {
   @property({type: Object}) accessor context!: ComponentContext;
 
   static styles = css`
@@ -168,8 +168,8 @@ export class A2uiLocalWidget extends LitElement {
   }
 }
 
-export const LocalWidget = {
-  name: 'LocalWidget',
-  tagName: 'a2ui-local-widget',
+export const WeatherWidget = {
+  name: 'WeatherWidget',
+  tagName: 'a2ui-weather-widget',
   schema: { parse: (v: any) => v }
 };

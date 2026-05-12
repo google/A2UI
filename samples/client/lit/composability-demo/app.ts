@@ -24,7 +24,7 @@ import {renderA2uiNode, basicCatalog} from '@a2ui/lit/v0_9';
 import {render, html} from 'lit';
 
 // Import local custom elements statically
-import {LocalWidget} from './components/local-widget.js';
+import {WeatherWidget} from './components/weather-widget.js';
 import {McpApp} from './components/mcp-app.js';
 
 // --- Logger helper ---
@@ -47,12 +47,12 @@ const clientBasicCatalog = new Catalog(
   Array.from(basicCatalog.components.values())
 );
 
-// 2. Weather Catalog: all primitives + LocalWeatherWidget
+// 2. Weather Catalog: all primitives + WeatherWidget
 const clientWeatherCatalog = new Catalog(
   'https://a2ui.org/catalogs/v1/weather-catalog.json',
   [
     ...Array.from(basicCatalog.components.values()),
-    LocalWidget as any
+    WeatherWidget as any
   ]
 );
 
@@ -87,7 +87,7 @@ function generateCatalogJson(catalog: Catalog<any>) {
       type: 'object',
       properties: {
         component: { const: name },
-        ...(name === 'LocalWidget' ? {
+        ...(name === 'WeatherWidget' ? {
           // Custom Weather Widget schema
           location: { type: 'string', default: 'San Francisco, CA' }
         } : name === 'McpApp' ? {
@@ -247,7 +247,7 @@ function renderActiveComponent(name: string, catalog: Catalog<any>) {
   } else if (name === 'Button') {
     props = { child: `${compId}-label`, action: { event: { name: 'standard_button_click' } } };
     surfaceModel.componentsModel.addComponent(new ComponentModel(`${compId}-label`, 'Text', { text: 'Playground Button Trigger' }));
-  } else if (name === 'LocalWidget') {
+  } else if (name === 'WeatherWidget') {
     props = {}; 
     isCardFormat = true;
   } else if (name === 'McpApp') {
