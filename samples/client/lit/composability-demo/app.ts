@@ -128,7 +128,7 @@ function renderCatalogSelector() {
       const title = key === 'basic' ? 'Basic Catalog (Primitives)'
                   : key === 'weather' ? 'Weather Catalog (Primitives + Weather)'
                   : key === 'mcp' ? 'Generative MCP Catalog (Sandbox)'
-                  : `${key.charAt(0).toUpperCase() + key.slice(1)} Dynamic Catalog`;
+                  : `${(key as string).charAt(0).toUpperCase() + (key as string).slice(1)} Dynamic Catalog`;
       
       return html`
         <button 
@@ -176,7 +176,7 @@ function ingestCatalog(key: CatalogKey, isInitial = false) {
 
   // 6. Show success toast when hot-swapped explicitly by the user!
   if (!isInitial) {
-    const catalogName = key === 'basic' ? 'Basic Primitives' : key === 'weather' ? 'Weather Forecast' : key === 'mcp' ? 'MCP App Sandbox' : `${key.charAt(0).toUpperCase() + key.slice(1)} Dynamic Catalog`;
+    const catalogName = key === 'basic' ? 'Basic Primitives' : key === 'weather' ? 'Weather Forecast' : key === 'mcp' ? 'MCP App Sandbox' : `${(key as string).charAt(0).toUpperCase() + (key as string).slice(1)} Dynamic Catalog`;
     showToast(`${catalogName} Catalog Loaded Successfully`, 'success');
   }
 }
