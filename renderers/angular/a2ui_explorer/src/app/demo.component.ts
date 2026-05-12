@@ -562,6 +562,7 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
 export class DemoComponent implements OnInit, OnDestroy {
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
+  private actionDispatcher = inject(ActionDispatcher);
   private cdr = inject(ChangeDetectorRef);
   private messageProcessorV08 = inject(MessageProcessorV08);
   private themeV08 = inject(ThemeV08);
@@ -669,7 +670,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.dataModelSub.unsubscribe();
     }
 
-    this.agentStub.initializeDemo(example.messages, this.version);
+    this.agentStub.initializeDemo(example.messages);
 
     // Look for the surfaceId in the first message or use default
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
@@ -711,22 +712,26 @@ export class DemoComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Subscribe to Actions for Events log
-    if (this.version === '0.9' && this.rendererService.surfaceGroup) {
-      if (this.actionSub) {
-        this.actionSub.unsubscribe();
-      }
-      this.actionSub = this.rendererService.surfaceGroup.onAction.subscribe(action => {
+    // Subscribe to Actions for Events log and Handling
+    if (this.actionSub) {
+      this.actionSub.unsubscribe();
+    }
+
+    if (this.version === '0.9') {
+      this.actionSub = this.actionDispatcher.actions.subscribe(action => {
+        this.agentStub.handleAction(action);
         this.eventsLog.unshift({timestamp: new Date(), action});
         this.cdr.detectChanges();
       });
     } else if (this.version === '0.8') {
-      if (this.actionSub) {
-        this.actionSub.unsubscribe();
-      }
       this.actionSub = this.messageProcessorV08.events.subscribe(event => {
-        this.eventsLog.unshift({timestamp: new Date(), action: event.message as any});
-        this.cdr.detectChanges();
+        const message = event.message;
+        if (message.userAction) {
+          const action = message.userAction as unknown as A2uiClientAction;
+          this.agentStub.handleAction(action);
+          this.eventsLog.unshift({timestamp: new Date(), action: {userAction: action} as any});
+          this.cdr.detectChanges();
+        }
       });
     }
   }
