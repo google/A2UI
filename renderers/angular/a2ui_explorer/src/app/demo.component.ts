@@ -18,13 +18,17 @@ import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy} from '@angular/
 import {CommonModule} from '@angular/common';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
 import {AgentStubService} from './agent-stub.service';
-import {SurfaceComponent} from '@a2ui/angular/v0_9';
+import {SurfaceComponent as SurfaceComponentV09} from '@a2ui/angular/v0_9';
+import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8';
 import {AngularCatalog} from '@a2ui/angular/v0_9';
 import {DemoCatalog} from './demo-catalog';
 import {A2uiClientAction, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
-import {EXAMPLES} from './generated/examples-bundle';
-import {Example} from './types';
+import {EXAMPLES_V08, EXAMPLES_V09} from './generated/examples-bundle';
+import {Example, Example_08} from './types';
 import {ActionDispatcher} from './action-dispatcher.service';
+import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
+import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2ui/angular/v0_8';
+import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
 
 /**
  * Main dashboard component for A2UI v0.9 Angular Renderer.
@@ -34,13 +38,20 @@ import {ActionDispatcher} from './action-dispatcher.service';
 @Component({
   selector: 'a2ui-v0-9-demo',
   standalone: true,
-  imports: [CommonModule, SurfaceComponent],
+  imports: [CommonModule, SurfaceComponentV09, SurfaceV08],
   template: `
     <div class="dashboard">
       <!-- Sidebar Navigation -->
       <div class="sidebar">
         <div class="sidebar-header">
           <h3>A2UI Examples</h3>
+          <div class="version-selector">
+            <label for="version">Version:</label>
+            <select id="version" (change)="onVersionChange($event)">
+              <option value="0.9" [selected]="version === '0.9'">0.9</option>
+              <option value="0.8" [selected]="version === '0.8'">0.8</option>
+            </select>
+          </div>
         </div>
         <ul class="example-list">
           <li
@@ -61,8 +72,9 @@ import {ActionDispatcher} from './action-dispatcher.service';
           <p class="subtitle">{{ selectedExample.description }}</p>
         </div>
         <div class="canvas-frame">
-          <div *ngIf="surfaceId" class="rendered-content">
-            <a2ui-v09-surface [surfaceId]="surfaceId"> </a2ui-v09-surface>
+          <div *ngIf="surfaceId" class="rendered-content" [attr.data-version]="version">
+            <a2ui-v09-surface *ngIf="version === '0.9'" [surfaceId]="surfaceId"> </a2ui-v09-surface>
+            <a2ui-surface *ngIf="version === '0.8'" [surfaceId]="surfaceId"></a2ui-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
             Select an example from the sidebar to view.
@@ -232,14 +244,41 @@ import {ActionDispatcher} from './action-dispatcher.service';
         flex-direction: column;
       }
       .sidebar-header {
-        padding: 16px;
-        border-bottom: 1px solid #333;
-        background-color: #1a1a1a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 16px;
+        height: 56px;
+        border-bottom: 1px solid #334155;
+        background-color: #1e293b;
       }
       .sidebar-header h3 {
         margin: 0;
         color: #4dabf7;
-        font-size: 1.1rem;
+        font-size: 1rem;
+      }
+      .version-selector {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .version-selector label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+      .version-selector select {
+        background-color: #0f172a;
+        color: #f8fafc;
+        border: 1px solid #334155;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .version-selector select:focus {
+        border-color: #3b82f6;
       }
       .example-list {
         list-style: none;
@@ -282,18 +321,22 @@ import {ActionDispatcher} from './action-dispatcher.service';
         overflow: hidden;
       }
       .canvas-header {
-        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 16px;
+        height: 56px;
         background-color: #1e293b;
         border-bottom: 1px solid #334155;
       }
       .canvas-header h2 {
         margin: 0;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         color: #f8fafc;
       }
       .subtitle {
-        margin: 4px 0 0;
-        font-size: 0.85rem;
+        margin: 2px 0 0;
+        font-size: 0.75rem;
         color: #94a3b8;
       }
       .canvas-frame {
@@ -311,6 +354,11 @@ import {ActionDispatcher} from './action-dispatcher.service';
         border-radius: 8px;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         padding: 24px;
+      }
+      .rendered-content[data-version='0.8'] {
+        --a2ui-color-surface: #1e1e1e;
+        background-color: var(--a2ui-color-surface);
+        color: #e0e0e0;
       }
       .empty-canvas {
         align-self: center;
@@ -366,7 +414,8 @@ import {ActionDispatcher} from './action-dispatcher.service';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 16px;
+        padding: 0 16px;
+        height: 56px;
         background-color: #1e293b;
         border-bottom: 1px solid #334155;
       }
@@ -496,6 +545,8 @@ import {ActionDispatcher} from './action-dispatcher.service';
   providers: [
     A2uiRendererService,
     {provide: AngularCatalog, useClass: DemoCatalog},
+    {provide: CatalogV08, useValue: DEFAULT_CATALOG_V08},
+    provideMarkdownRenderer(),
     ActionDispatcher,
     AgentStubService,
     {
@@ -512,9 +563,12 @@ export class DemoComponent implements OnInit, OnDestroy {
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
   private cdr = inject(ChangeDetectorRef);
+  private messageProcessorV08 = inject(MessageProcessorV08);
+  private themeV08 = inject(ThemeV08);
 
-  examples = EXAMPLES;
-  selectedExample: Example | undefined = undefined;
+  version: '0.8' | '0.9' = '0.9';
+  examples: Array<Example | Example_08> = EXAMPLES_V09;
+  selectedExample: Example | Example_08 | undefined = undefined;
   surfaceId: string | null = null;
   inspectTab: 'data' | 'events' = 'data';
 
@@ -552,6 +606,16 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.isDataModelFolded = localStorage.getItem('isDataModelFolded') === 'true';
       this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
       this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const versionParam = urlParams.get('version');
+      if (versionParam === '0.8' || versionParam === '0.9') {
+        this.version = versionParam;
+        this.examples = this.version === '0.9' ? EXAMPLES_V09 : EXAMPLES_V08;
+        if (this.version === '0.8') {
+          this.themeV08.update(this.getDefault08Theme());
+        }
+      }
     }
     this.selectExampleFromUrl();
   }
@@ -562,7 +626,36 @@ export class DemoComponent implements OnInit, OnDestroy {
    * - Re-initializes incremental playback state sequence into `AgentStubService`.
    * - Subscribes to path `/` enabling live model inspection updates.
    */
-  selectExample(example: Example) {
+  onVersionChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.version = select.value as '0.8' | '0.9';
+    this.examples = this.version === '0.9' ? EXAMPLES_V09 : EXAMPLES_V08;
+    this.selectedExample = undefined;
+    this.surfaceId = null;
+    this.currentDataModel = {};
+    this.eventsLog = [];
+    this.currentCreateSurfaceMessageJson = '';
+    this.currentDataModelJson = '';
+
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('version', this.version);
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    if (this.version === '0.8') {
+      this.messageProcessorV08.clearSurfaces();
+      this.themeV08.update(this.getDefault08Theme());
+    }
+
+    this.cdr.detectChanges();
+    // Select first example of new version if available
+    if (this.examples.length > 0) {
+      this.selectExample(this.examples[0]);
+    }
+  }
+
+  selectExample(example: Example | Example_08) {
     this.selectedExample = example;
     this.surfaceId = null;
     this.currentDataModel = {};
@@ -576,31 +669,63 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.dataModelSub.unsubscribe();
     }
 
-    this.agentStub.initializeDemo(example.messages);
+    this.agentStub.initializeDemo(example.messages, this.version);
 
     // Look for the surfaceId in the first message or use default
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
+
+    if (this.version === '0.8') {
+      const surfaceUpdate = example.messages.find(m => 'surfaceUpdate' in m);
+      if (surfaceUpdate) {
+        this.surfaceId = (surfaceUpdate as any).surfaceUpdate.surfaceId;
+      }
+    }
+
     this.currentCreateSurfaceMessageJson = createMsg ? JSON.stringify(createMsg, null, 2) : '';
+    if (this.version === '0.8') {
+      this.currentCreateSurfaceMessageJson = JSON.stringify(example.messages, null, 2);
+    }
 
     this.cdr.detectChanges();
 
     // Set initial surface and  data model
     if (this.surfaceId) {
-      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
-      if (surface) {
-        this.currentDataModel = surface.dataModel.get('/');
-        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+      if (this.version === '0.9') {
+        const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
+        if (surface) {
+          this.currentDataModel = surface.dataModel.get('/');
+          this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+        }
+      } else {
+        const surfaces = this.messageProcessorV08.getSurfaces();
+        const surface = surfaces.get(this.surfaceId);
+        if (surface) {
+          this.currentDataModel = this.messageProcessorV08.getData(
+            {id: 'root'} as any,
+            '/',
+            this.surfaceId,
+          ) as Record<string, unknown>;
+          this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
+        }
       }
     }
 
     // Subscribe to Actions for Events log
-    if (this.rendererService.surfaceGroup) {
+    if (this.version === '0.9' && this.rendererService.surfaceGroup) {
       if (this.actionSub) {
         this.actionSub.unsubscribe();
       }
       this.actionSub = this.rendererService.surfaceGroup.onAction.subscribe(action => {
         this.eventsLog.unshift({timestamp: new Date(), action});
+        this.cdr.detectChanges();
+      });
+    } else if (this.version === '0.8') {
+      if (this.actionSub) {
+        this.actionSub.unsubscribe();
+      }
+      this.actionSub = this.messageProcessorV08.events.subscribe(event => {
+        this.eventsLog.unshift({timestamp: new Date(), action: event.message as any});
         this.cdr.detectChanges();
       });
     }
@@ -718,9 +843,80 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   private selectExampleFromUrl(): void {
     const hash = window.location.hash.substring(1) || '';
-    const example: Example | undefined =
+    const example: Example | Example_08 | undefined =
       this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
     if (!example) return;
     this.selectExample(example);
+  }
+
+  private getDefault08Theme() {
+    return {
+      components: {
+        AudioPlayer: {},
+        Text: {all: {}, h1: {}, h2: {}, h3: {}, h4: {}, h5: {}, body: {}, caption: {}},
+        CheckBox: {container: {}, element: {}, label: {}},
+        DateTimeInput: {container: {}, element: {}, label: {}},
+        List: {},
+        Modal: {backdrop: {}, element: {}},
+        MultipleChoice: {container: {}, element: {}, label: {}},
+        Tabs: {
+          container: {},
+          element: {},
+          controls: {
+            all: {},
+            selected: {},
+          },
+        },
+        Slider: {container: {}, element: {}, label: {}},
+        TextField: {container: {}, element: {}, label: {}},
+        Video: {},
+        Card: {},
+        Row: {},
+        Column: {},
+        Image: {
+          all: {},
+          icon: {},
+          avatar: {},
+          smallFeature: {},
+          mediumFeature: {},
+          largeFeature: {},
+          header: {},
+        },
+        Divider: {},
+        Icon: {},
+        Button: {},
+      },
+      elements: {
+        a: {},
+        audio: {},
+        body: {},
+        button: {},
+        h1: {},
+        h2: {},
+        h3: {},
+        h4: {},
+        h5: {},
+        iframe: {},
+        input: {},
+        p: {},
+        pre: {},
+        textarea: {},
+        video: {},
+      },
+      markdown: {
+        p: [],
+        h1: [],
+        h2: [],
+        h3: [],
+        h4: [],
+        h5: [],
+        ul: [],
+        ol: [],
+        li: [],
+        a: [],
+        strong: [],
+        em: [],
+      },
+    };
   }
 }

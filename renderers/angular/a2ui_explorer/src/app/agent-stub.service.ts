@@ -16,9 +16,10 @@
 
 import {Injectable} from '@angular/core';
 import {A2uiRendererService} from '@a2ui/angular/v0_9';
-
+import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
 import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
 import {ActionDispatcher} from './action-dispatcher.service';
+import {ServerToClientMessage} from 'src/v0_8/types';
 
 /**
  * Context for the 'update_property' event.
@@ -47,9 +48,11 @@ interface SubmitFormContext {
 export class AgentStubService {
   /** Log of actions received from the surface. */
   actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
+  version: '0.8' | '0.9' = '0.9';
 
   constructor(
     private rendererService: A2uiRendererService,
+    private messageProcessorV08: MessageProcessorV08,
     private dispatcher: ActionDispatcher,
   ) {
     // Subscribe to actions dispatched by the renderer
@@ -65,75 +68,113 @@ export class AgentStubService {
 
     // Simulate server processing delay
     setTimeout(() => {
-      const {name, context} = action;
-      if (name === 'update_property' && context) {
-        const {path, value, surfaceId} = context as unknown as UpdatePropertyContext;
-        console.log(
-          '[AgentStub] update_property path:',
-          path,
-          'value:',
-          value,
-          'surfaceId:',
-          surfaceId,
-        );
-        this.rendererService.processMessages([
-          {
-            version: 'v0.9',
-            updateDataModel: {
-              surfaceId: surfaceId || action.surfaceId,
-              path: path,
-              value: value,
-            },
-          },
-        ]);
-      } else if (name === 'submit_form' && context) {
-        const formData = context as unknown as SubmitFormContext;
-        const nameValue = formData.name || 'Anonymous';
-
-        // Respond with an update to the data model in v0.9 layout
-        this.rendererService.processMessages([
-          {
-            version: 'v0.9',
-            updateDataModel: {
-              surfaceId: action.surfaceId,
-              path: '/form/submitted',
-              value: true,
-            },
-          },
-          {
-            version: 'v0.9',
-            updateDataModel: {
-              surfaceId: action.surfaceId,
-              path: '/form/responseMessage',
-              value: `Hello, ${nameValue}! Your form has been processed.`,
-            },
-          },
-        ]);
+      if (this.version === '0.9') {
+        this.handleAction09(action);
+      } else {
+        this.handleAction08(action);
       }
     }, 50); // Shorter delay for property updates
+  }
+
+  private handleAction09(action: A2uiClientAction) {
+    const {name, context} = action;
+    if (name === 'update_property' && context) {
+      const {path, value, surfaceId} = context as unknown as UpdatePropertyContext;
+      console.log(
+        '[AgentStub] update_property path:',
+        path,
+        'value:',
+        value,
+        'surfaceId:',
+        surfaceId,
+      );
+      this.rendererService.processMessages([
+        {
+          version: 'v0.9',
+          updateDataModel: {
+            surfaceId: surfaceId || action.surfaceId,
+            path: path,
+            value: value,
+          },
+        },
+      ]);
+    } else if (name === 'submit_form' && context) {
+      const formData = context as unknown as SubmitFormContext;
+      const nameValue = formData.name || 'Anonymous';
+
+      // Respond with an update to the data model in v0.9 layout
+      this.rendererService.processMessages([
+        {
+          version: 'v0.9',
+          updateDataModel: {
+            surfaceId: action.surfaceId,
+            path: '/form/submitted',
+            value: true,
+          },
+        },
+        {
+          version: 'v0.9',
+          updateDataModel: {
+            surfaceId: action.surfaceId,
+            path: '/form/responseMessage',
+            value: `Hello, ${nameValue}! Your form has been processed.`,
+          },
+        },
+      ]);
+    }
+  }
+
+  private handleAction08(action: A2uiClientAction) {
+    const {name, context} = action;
+    if (name === 'update_property' && context) {
+      const {path, value, surfaceId} = context as unknown as UpdatePropertyContext;
+      this.messageProcessorV08.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: surfaceId || action.surfaceId,
+            path: path,
+            contents: [
+              {
+                key: path.substring(1),
+                valueString: String(value),
+              },
+            ],
+          },
+        },
+      ]);
+    }
   }
 
   /**
    * Initializes a demo session with an initial set of messages.
    */
-  initializeDemo(initialMessages: A2uiMessage[]) {
-    // Before replaying initial messages (which contains createSurface),
-    // this ensures any existing surface with the same ID is cleared.
-    if (this.rendererService.surfaceGroup) {
-      for (const msg of initialMessages) {
-        if ('createSurface' in msg) {
-          const createSurface = msg.createSurface;
-          if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
-            this.rendererService.processMessages([
-              {
-                version: 'v0.9',
-                deleteSurface: {surfaceId: createSurface.surfaceId},
-              },
-            ]);
+  initializeDemo(
+    initialMessages: A2uiMessage[] | ServerToClientMessage[],
+    version: '0.8' | '0.9' = '0.9',
+  ) {
+    this.version = version;
+    if (this.version === '0.9') {
+      // Before replaying initial messages (which contains createSurface),
+      // this ensures any existing surface with the same ID is cleared.
+      if (this.rendererService.surfaceGroup) {
+        for (const msg of initialMessages) {
+          if ('createSurface' in msg) {
+            const createSurface = msg.createSurface;
+            if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
+              this.rendererService.processMessages([
+                {
+                  version: 'v0.9',
+                  deleteSurface: {surfaceId: createSurface.surfaceId},
+                },
+              ]);
+            }
           }
         }
       }
+      this.rendererService.processMessages(initialMessages as A2uiMessage[]);
+    } else {
+      // v0.8 logic
+      this.messageProcessorV08.processMessages(initialMessages as ServerToClientMessage[]);
     }
-    this.rendererService.processMessages(initialMessages);
   }
 }
