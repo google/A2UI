@@ -17,7 +17,7 @@
 import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
-import {AgentStubService} from './agent-stub.service';
+import {AgentStubService, AgentStubV08Service, AgentStubV09Service} from './agent-stub.service';
 import {SurfaceComponent as SurfaceComponentV09} from '@a2ui/angular/v0_9';
 import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8';
 import {AngularCatalog} from '@a2ui/angular/v0_9';
@@ -549,6 +549,8 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
     provideMarkdownRenderer(),
     ActionDispatcher,
     AgentStubService,
+    AgentStubV08Service,
+    AgentStubV09Service,
     {
       provide: A2UI_RENDERER_CONFIG,
       useFactory: (catalog: AngularCatalog, dispatcher: ActionDispatcher) => ({
