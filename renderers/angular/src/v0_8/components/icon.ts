@@ -45,5 +45,9 @@ import type {IconNode, StringValue} from '../types';
 })
 export class Icon extends DynamicComponent<IconNode> {
   readonly name = input<StringValue | null>(null);
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const rawName = this.resolvePrimitive(this.name());
+    if (!rawName) return '';
+    return rawName.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  });
 }
