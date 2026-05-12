@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/react",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "license": "Apache-2.0",
   "description": "React renderer for A2UI (Agent-to-User Interface)",
   "homepage": "https://a2ui.org/",
@@ -118,7 +118,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "gts": "^7.0.0",
-    "jsdom": "^28.0.0",
+    "jsdom": "^28.1.0",
     "prettier": "^3.4.0",
     "puppeteer": "^24.39.0",
     "react": "^18.3.0",

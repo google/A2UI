@@ -52,7 +52,7 @@ describe('weight property is honored on basic catalog components', () => {
       const {view} = renderA2uiComponent(impl, 'c1', {...props, weight: 2});
       const root = view.container.firstChild as HTMLElement;
       expect(root.style.flexGrow).toBe('2');
-      expect(root.style.minWidth).toBe('0');
+      expect(root.style.minWidth).toBe('0px');
     });
 
     it(`${name} does not apply flex when weight is unset`, () => {
