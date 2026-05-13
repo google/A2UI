@@ -341,7 +341,7 @@ export const FormatCurrencyImplementation = createFunctionImplementation(
       );
     } catch (e) {
       console.warn('Error formatting currency:', e);
-      return args.value.toFixed(args.decimals || 2);
+      return args.value.toFixed(args.decimals ?? 2);
     }
   },
 );
