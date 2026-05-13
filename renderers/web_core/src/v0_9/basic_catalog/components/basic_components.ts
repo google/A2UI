@@ -38,6 +38,15 @@ const CommonProps = {
     .optional(),
 };
 
+export const CommonPropsApi = {
+  name: 'CommonProps',
+  schema: z
+    .object({
+      ...CommonProps,
+    })
+    .strict(),
+} satisfies ComponentApi;
+
 export const TextApi = {
   name: 'Text',
   schema: z
