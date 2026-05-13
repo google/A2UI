@@ -179,6 +179,76 @@ Key points for registration:
 - **Lazy Loading**: Use `import()` to lazy-load the component code.
 - **Input Bindings**: Use `inputBinding` to map properties from the schema to Angular inputs.
 
+### Registering with the Lit Renderer
+
+#### v0.9 (recommended)
+
+With `@a2ui/lit/v0_9`, catalog registration is handled at the protocol level. Define a `Catalog` object with your components and pass it to the `MessageProcessor`. When the agent sends a `createSurface` message with a matching `catalogId`, the processor automatically resolves and binds your catalog — no client-side flags required.
+
+```typescript
+import {z} from 'zod';
+import {Catalog, MessageProcessor} from '@a2ui/web_core/v0_9';
+import {A2uiLitElement, basicCatalog} from '@a2ui/lit/v0_9';
+import type {LitComponentApi} from '@a2ui/lit/v0_9';
+
+// 1. Define your component's API using a Zod schema
+const MyChartApi = {
+  name: 'MyChart',
+  tagName: 'my-chart',   // your custom element tag
+  schema: z.object({
+    title: z.string().optional(),
+    data: z.array(z.object({label: z.string(), value: z.number()})),
+  }),
+} satisfies LitComponentApi;
+
+// 2. Create a named catalog containing your component(s)
+const myCatalog = new Catalog<LitComponentApi>(
+  'mycompany.com:my-catalog',  // must match what the agent sends in createSurface.catalogId
+  [MyChartApi],
+);
+
+// 3. Register it with the MessageProcessor alongside any other catalogs you support
+const processor = new MessageProcessor<LitComponentApi>([basicCatalog, myCatalog]);
+```
+
+The agent then selects your catalog by referencing its ID in the `createSurface` message:
+
+```json
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "main",
+    "catalogId": "mycompany.com:my-catalog"
+  }
+}
+```
+
+The `A2uiSurface` element in v0.9 receives a fully-resolved `SurfaceModel` (with catalog already bound), so custom components render automatically alongside standard ones.
+
+#### v0.8 (legacy)
+
+When using the `@a2ui/lit` renderer with the v0.8 protocol, register your custom components via the `componentRegistry`, then opt in on the `<a2ui-surface>` element by setting `enableCustomElements = true`.
+
+```typescript
+import {v0_8 as a2uiModule} from '@a2ui/lit';
+
+// Register custom components in the component registry
+a2uiModule.componentRegistry.register('MyChart', MyChartElement);
+```
+
+Then set `enableCustomElements = true` on the surface element **before** assigning `surface` and `processor`, so the flag is active on the first render pass:
+
+```typescript
+const surfaceElement = document.querySelector('a2ui-surface');
+
+surfaceElement.enableCustomElements = true;  // must come first
+surfaceElement.surfaceId = 'main';
+surfaceElement.surface = surface;
+surfaceElement.processor = processor;
+```
+
+> **Note:** Without `enableCustomElements = true`, custom components will not render even if they are properly registered, because the flag defaults to `false`.
+
 ---
 
 ## 4. Invoking from the Agent
