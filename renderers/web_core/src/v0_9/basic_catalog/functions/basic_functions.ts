@@ -269,7 +269,11 @@ export const FormatStringImplementation = createFunctionImplementation(
 );
 const numberFormatCache = new Map<string, Intl.NumberFormat>();
 
-function getNumberFormat(locale: string | undefined, decimals?: number, grouping?: boolean): Intl.NumberFormat {
+function getNumberFormat(
+  locale: string | undefined,
+  decimals?: number,
+  grouping?: boolean,
+): Intl.NumberFormat {
   const key = `${locale ?? 'default'}:${decimals ?? 'undef'}:${grouping ?? 'true'}`;
   let formatter = numberFormatCache.get(key);
   if (!formatter) {
@@ -301,7 +305,12 @@ export const FormatNumberImplementation = createFunctionImplementation(
 );
 const currencyFormatCache = new Map<string, Intl.NumberFormat>();
 
-function getCurrencyFormat(locale: string | undefined, currency: string, decimals?: number, grouping?: boolean): Intl.NumberFormat {
+function getCurrencyFormat(
+  locale: string | undefined,
+  currency: string,
+  decimals?: number,
+  grouping?: boolean,
+): Intl.NumberFormat {
   const key = `${locale ?? 'default'}:${currency}:${decimals ?? 'undef'}:${grouping ?? 'true'}`;
   let formatter = currencyFormatCache.get(key);
   if (!formatter) {
@@ -327,7 +336,9 @@ export const FormatCurrencyImplementation = createFunctionImplementation(
   (args, context) => {
     if (isNaN(args.value)) return '';
     try {
-      return getCurrencyFormat(context.locale, args.currency, args.decimals, args.grouping).format(args.value);
+      return getCurrencyFormat(context.locale, args.currency, args.decimals, args.grouping).format(
+        args.value,
+      );
     } catch (e) {
       console.warn('Error formatting currency:', e);
       return args.value.toFixed(args.decimals || 2);
