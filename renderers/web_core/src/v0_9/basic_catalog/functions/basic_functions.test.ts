@@ -34,11 +34,13 @@ const createTestDataContext = (
   model: DataModel,
   path: string,
   functionInvoker: any = testCatalog.invoker,
+  locale?: string,
 ) => {
   const mockSurface = {
     dataModel: model,
     catalog: {invoker: functionInvoker},
     dispatchError: () => {},
+    locale: locale,
   } as any;
   return new DataContext(mockSurface, path);
 };
@@ -351,6 +353,33 @@ describe('BASIC_FUNCTIONS', () => {
       );
       assert.strictEqual(
         invoke('pluralize', {value: 2, one: 'apple', other: 'apples'}, context),
+        'apples',
+      );
+    });
+
+    it('pluralize with Welsh locale', () => {
+      const cyContext = createTestDataContext(dataModel, '/', testCatalog.invoker, 'cy');
+      // Welsh for various numbers of "cat".  Welsh because all six cases have different rules.
+      const args = {
+        zero: 'cathod',
+        one: 'gath',
+        two: 'gath',
+        few: 'cath',
+        many: 'chath',
+        other: 'cath',
+      };
+
+      assert.strictEqual(invoke('pluralize', {...args, value: 0}, cyContext), 'cathod');
+      assert.strictEqual(invoke('pluralize', {...args, value: 1}, cyContext), 'gath');
+      assert.strictEqual(invoke('pluralize', {...args, value: 2}, cyContext), 'gath');
+      assert.strictEqual(invoke('pluralize', {...args, value: 3}, cyContext), 'cath');
+      assert.strictEqual(invoke('pluralize', {...args, value: 6}, cyContext), 'chath');
+      assert.strictEqual(invoke('pluralize', {...args, value: 4}, cyContext), 'cath');
+    });
+
+    it('pluralize fallback to other', () => {
+      assert.strictEqual(
+        invoke('pluralize', {value: 5, one: 'apple', other: 'apples'}, context),
         'apples',
       );
     });

@@ -271,14 +271,17 @@ export const FormatStringImplementation = createFunctionImplementation(
  * Implementation of the number formatting function.
  * Formats a number using Intl.NumberFormat with specified decimals and grouping.
  */
-export const FormatNumberImplementation = createFunctionImplementation(FormatNumberApi, args => {
-  if (isNaN(args.value)) return '';
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: args.decimals,
-    maximumFractionDigits: args.decimals,
-    useGrouping: args.grouping,
-  }).format(args.value);
-});
+export const FormatNumberImplementation = createFunctionImplementation(
+  FormatNumberApi,
+  (args, context) => {
+    if (isNaN(args.value)) return '';
+    return new Intl.NumberFormat(context.locale, {
+      minimumFractionDigits: args.decimals,
+      maximumFractionDigits: args.decimals,
+      useGrouping: args.grouping,
+    }).format(args.value);
+  },
+);
 /**
  * Implementation of the currency formatting function.
  * Formats a number as currency using Intl.NumberFormat.
@@ -286,10 +289,10 @@ export const FormatNumberImplementation = createFunctionImplementation(FormatNum
  */
 export const FormatCurrencyImplementation = createFunctionImplementation(
   FormatCurrencyApi,
-  args => {
+  (args, context) => {
     if (isNaN(args.value)) return '';
     try {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat(context.locale, {
         style: 'currency',
         currency: args.currency,
         minimumFractionDigits: args.decimals,
@@ -322,10 +325,13 @@ export const FormatDateImplementation = createFunctionImplementation(FormatDateA
  * Implementation of the pluralization function.
  * Selects the appropriate plural form based on the value using Intl.PluralRules.
  */
-export const PluralizeImplementation = createFunctionImplementation(PluralizeApi, args => {
-  const rule = new Intl.PluralRules('en-US').select(args.value);
-  return String((args as Record<string, unknown>)[rule] ?? args.other ?? '');
-});
+export const PluralizeImplementation = createFunctionImplementation(
+  PluralizeApi,
+  (args, context) => {
+    const rule = new Intl.PluralRules(context.locale).select(args.value);
+    return String((args as Record<string, unknown>)[rule] ?? args.other ?? '');
+  },
+);
 
 // Actions
 /**
