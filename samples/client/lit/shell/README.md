@@ -1,6 +1,6 @@
-# A2UI Generator
+# Restaurant finder - Lit UI with Python agent
 
-This is a UI to generate and visualize A2UI responses.
+See the [video](https://github.com/user-attachments/assets/2a406115-3a17-4bea-8000-ac12e0b7b9bd) on how it works.
 
 ## Prerequisites
 
