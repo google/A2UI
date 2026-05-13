@@ -111,8 +111,6 @@ export interface ComponentApi<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
  */
 export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<Api['schema']>;
 
-
-
 /**
  * A collection of available components and functions.
  */
