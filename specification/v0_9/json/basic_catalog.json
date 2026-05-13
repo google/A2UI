@@ -162,12 +162,15 @@
                 {
                   "type": "object",
                   "properties": {
-                    "path": {
+                    "svgPath": {
                       "type": "string"
                     }
                   },
-                  "required": ["path"],
+                  "required": ["svgPath"],
                   "additionalProperties": false
+                },
+                {
+                  "$ref": "common_types.json#/$defs/DataBinding"
                 }
               ]
             }

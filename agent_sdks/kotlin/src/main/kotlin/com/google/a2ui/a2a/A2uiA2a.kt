@@ -55,10 +55,10 @@ object A2uiA2a {
 
     val isSupportRequired = false
     return AgentExtension(
-      A2UI_EXTENSION_URI,
+      "Provides agent driven UI using the A2UI JSON format.",
       params,
       isSupportRequired,
-      "Provides agent driven UI using the A2UI JSON format.",
+      A2UI_EXTENSION_URI,
     )
   }
 

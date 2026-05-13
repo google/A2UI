@@ -28,6 +28,7 @@ import com.google.genai.types.Part
 import io.a2a.spec.Event as A2aEvent
 import io.a2a.spec.Message
 import io.a2a.spec.Message.Role.ROLE_AGENT
+import io.a2a.spec.Part as A2aPart
 import io.a2a.spec.TaskState
 import io.a2a.spec.TaskStatus
 import io.a2a.spec.TaskStatusUpdateEvent
@@ -49,7 +50,7 @@ class A2uiPartConverter(
   // to returning DataParts for A2UI, and omitting standard conversions here.
   // Client applications should adapt this integration logic based on actual available converters.
 
-  fun convert(part: Part): List<io.a2a.spec.Part<*>> {
+  fun convert(part: Part): List<A2aPart<*>> {
     val functionResponse = part.functionResponse().orElse(null)
     val isSendA2uiJsonToClientResponse =
       functionResponse != null &&
@@ -129,7 +130,7 @@ class A2uiEventConverter(
     // 2. Process Content
     val content = event.content().orElse(null)
     if (content != null) {
-      val outputParts = mutableListOf<io.a2a.spec.Part<*>>()
+      val outputParts = mutableListOf<A2aPart<*>>()
 
       val genaiParts = content.parts().orElse(emptyList()) ?: emptyList()
       for (part in genaiParts) {

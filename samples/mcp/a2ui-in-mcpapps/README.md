@@ -6,7 +6,8 @@ This sample demonstrates a Model Context Protocol (MCP) Application Host that is
 
 - **`client/`**: The host container application (Angular). It hosts the outer safe iframe.
 - **`server/`**: The MCP Server (Python/uv) that provides the micro-app resources and tools.
-- **`server/apps/src/`**: The source source code for the server-hosted isolated micro-app.
+- **`server/apps/src/`**: Source code for the **Basic** isolated micro-app.
+- **`server/apps/editor/`**: Source code for the **Editor** isolated micro-app.
 
 ## Communication Flow
 
@@ -50,14 +51,31 @@ sequenceDiagram
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (runs the client and build scripts)
-- [Python 3.10+](https://www.python.org/) with `uv` (runs the MCP server)
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [Python 3.10+](https://www.python.org/) with `uv`
+
+### ⚠️ IMPORTANT: Pre-build Core Dependencies
+
+The sample apps link to local versions of the A2UI SDK. You **must build the core libraries** before attempting to run `npm install` inside any sample subdirectories.
+
+Run the following from the repository root:
+
+```bash
+# 1. Web Core
+cd renderers/web_core && npm install && npm run build && cd ../..
+
+# 2. Markdown Utilities
+cd renderers/markdown/markdown-it && npm install && npm run build && cd ../../..
+
+# 3. Angular Renderer SDK
+cd renderers/angular && npm install && npm run build && cd ../..
+```
 
 ---
 
 ## Build & Regeneration
 
-This sample relies on some generated bundle artifacts. Some are committed for convenience, while others are ignored and must be built.
+This sample relies on generated bundle artifacts.
 
 ### 1. Build Client Sandbox Bridge
 
@@ -71,11 +89,21 @@ npm run build:sandbox
 
 _(Generates `client/public/sandbox_iframe/sandbox.{js,html}`)_
 
-### 2. Rebuild the Server Hosted App (Optional)
+### 2. Rebuild Micro-Apps (Optional)
 
-The server serves a bundled `app.html` artifact located in `server/apps/public/app.html`. If you modify the source code in `server/apps/src/`, you must regenerate this list:
+The server serves single-file HTML artifacts located in `server/apps/public/`. Choose the app you want to build:
 
-Run this in the `server/apps/src/` directory:
+#### Option A: The Editor App
+
+```bash
+cd server/apps/editor
+npm install
+npm run build:all
+```
+
+_(Generates `server/apps/public/editor.html`)_
+
+#### Option B: The Basic App
 
 ```bash
 cd server/apps/src
@@ -83,7 +111,7 @@ npm install
 npm run build:all
 ```
 
-_(Runs Angular compilation and triggers `node inline.js` to single-file inline it into `server/apps/public/app.html`)_
+_(Generates `server/apps/public/app.html`)_
 
 ---
 

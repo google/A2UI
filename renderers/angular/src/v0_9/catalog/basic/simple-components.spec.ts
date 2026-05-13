@@ -284,7 +284,7 @@ describe('Simple Components', () => {
       setComponentProps(fixture, {
         ...defaultProps,
         name: createBoundProperty({
-          path: 'M10 10...',
+          svgPath: 'M10 10...',
         }) as unknown as ComponentToProps<IconComponent>['name'],
       });
       fixture.detectChanges();

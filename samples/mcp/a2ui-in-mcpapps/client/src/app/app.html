@@ -18,8 +18,23 @@
   <div class="header">
     <h1>Simple MCP Apps Host</h1>
     <p>Status: {{ status() }}</p>
+    <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center">
+      <label for="app-selector" style="font-weight: bold">Select App:</label>
+      <select
+        id="app-selector"
+        #appSelector
+        (change)="onAppChange(appSelector.value)"
+        [disabled]="isAppLoading()"
+        style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px"
+      >
+        <option value="editor" [selected]="selectedApp() === 'editor'">
+          Generative Editor App
+        </option>
+        <option value="basic" [selected]="selectedApp() === 'basic'">Basic Counter App</option>
+      </select>
+    </div>
     <button (click)="connectAndLoadApp()" [disabled]="isAppLoading()">
-      {{ isAppLoading() ? 'Loading...' : 'Load MCP App' }}
+      {{ isAppLoading() ? 'Loading...' : 'Load Selected App' }}
     </button>
   </div>
 
