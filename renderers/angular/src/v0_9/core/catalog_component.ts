@@ -17,7 +17,7 @@
 import {ComponentApi} from '@a2ui/web_core/v0_9';
 import {Directive, input} from '@angular/core';
 import {ComponentApiToProps} from './types';
-import {CatalogComponentInstance} from './catalog-component-instance';
+import {CatalogComponentInstance} from './catalog_component_instance';
 
 /**
  * Base class for A2UI catalog component in Angular.
