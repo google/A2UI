@@ -19,11 +19,11 @@ import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentApi} from '@a2ui/web_core/v0_9';
 import {CatalogComponent} from '../../core/catalog_component';
-import {CommonPropsApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {CommonPropsSchema} from '@a2ui/web_core/v0_9/basic_catalog';
 import {z} from 'zod';
 
-type CommonPropsOutput = z.infer<typeof CommonPropsApi.schema>;
-type CommonPropsInput = z.input<typeof CommonPropsApi.schema>;
+type CommonPropsOutput = z.infer<typeof CommonPropsSchema>;
+type CommonPropsInput = z.input<typeof CommonPropsSchema>;
 
 type ComponentApiWithCommonProps = ComponentApi & {
   schema: z.ZodType<
