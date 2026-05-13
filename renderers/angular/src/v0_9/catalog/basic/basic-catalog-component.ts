@@ -28,7 +28,7 @@ type CommonPropsInput = z.input<typeof CommonPropsSchema>;
 type ComponentApiWithCommonProps = ComponentApi & {
   schema: z.ZodType<
     CommonPropsOutput & Record<string, unknown>,
-    any,
+    z.ZodTypeDef,
     CommonPropsInput & Record<string, unknown>
   >;
 };
