@@ -188,7 +188,7 @@ With `@a2ui/lit/v0_9`, catalog registration is handled at the protocol level. De
 ```typescript
 import {z} from 'zod';
 import {Catalog, MessageProcessor} from '@a2ui/web_core/v0_9';
-import {A2uiLitElement, basicCatalog} from '@a2ui/lit/v0_9';
+import {basicCatalog} from '@a2ui/lit/v0_9';
 import type {LitComponentApi} from '@a2ui/lit/v0_9';
 
 // 1. Define your component's API using a Zod schema
@@ -233,6 +233,7 @@ When using the `@a2ui/lit` renderer with the v0.8 protocol, register your custom
 import {v0_8 as a2uiModule} from '@a2ui/lit';
 
 // Register custom components in the component registry
+// MyChartElement is your Lit component class (extends LitElement)
 a2uiModule.componentRegistry.register('MyChart', MyChartElement);
 ```
 
@@ -243,8 +244,8 @@ const surfaceElement = document.querySelector('a2ui-surface');
 
 surfaceElement.enableCustomElements = true;  // must come first
 surfaceElement.surfaceId = 'main';
-surfaceElement.surface = surface;
-surfaceElement.processor = processor;
+surfaceElement.surface = surface;       // the SurfaceModel instance
+surfaceElement.processor = processor;  // the A2uiMessageProcessor instance
 ```
 
 > **Note:** Without `enableCustomElements = true`, custom components will not render even if they are properly registered, because the flag defaults to `false`.
