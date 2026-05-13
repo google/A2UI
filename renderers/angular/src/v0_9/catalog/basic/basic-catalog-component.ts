@@ -25,6 +25,10 @@ import {z} from 'zod';
 type CommonPropsOutput = z.infer<typeof CommonPropsApi.schema>;
 type CommonPropsInput = z.input<typeof CommonPropsApi.schema>;
 
+type ComponentApiWithCommonProps = ComponentApi & {
+  schema: z.ZodType<CommonPropsOutput & Record<string, unknown>, any, CommonPropsInput & Record<string, unknown>>
+};
+
 /**
  * Base class for A2UI basic catalog components in Angular.
  *
@@ -33,9 +37,7 @@ type CommonPropsInput = z.input<typeof CommonPropsApi.schema>;
  */
 @Directive()
 export abstract class BasicCatalogComponent<
-  Api extends ComponentApi & {
-    schema: z.ZodType<CommonPropsOutput & Record<string, unknown>, any, CommonPropsInput & Record<string, unknown>>
-  },
+  Api extends ComponentApiWithCommonProps,
 > extends CatalogComponent<Api> {
   protected rendererService = inject(A2uiRendererService);
 
