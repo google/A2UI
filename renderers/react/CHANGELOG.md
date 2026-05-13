@@ -1,8 +1,13 @@
 ## Unreleased
 
+## 0.10.0
+
 - **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` and update component to correctly render SVG elements.
-- Added license.
 - (v0_8) Exclude SVG elements and descendants from CSS reset to restore SVG rendering. [#1252](https://github.com/google/A2UI/pull/1252)
+- Added license.
+
+## 0.9.1
+
 - **BREAKING CHANGE**: Renamed `createReactComponent` to `createComponentImplementation`.
 - **BREAKING CHANGE**: Renamed `createBinderlessComponent` to `createBinderlessComponentImplementation`.
 - **BREAKING CHANGE**: Removed `minimalCatalog`.
