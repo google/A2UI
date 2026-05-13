@@ -1,1 +1,0 @@
-This PR adds `CommonPropsApi` in `web_core` to expose the schema for common properties, and uses it in Angular's `BasicCatalogComponent` to fix a typing issue where `weight` was not recognized on `props()`.
