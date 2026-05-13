@@ -18,11 +18,12 @@ import {Directive, computed, HostBinding, inject} from '@angular/core';
 import {injectBasicCatalogStyles} from '@a2ui/web_core/v0_9/basic_catalog';
 import {A2uiRendererService} from '../../core/a2ui-renderer.service';
 import {ComponentApi} from '@a2ui/web_core/v0_9';
-import {ComponentApiToProps} from '../../core/types';
 import {CatalogComponent} from '../../core/catalog_component';
 import {CommonPropsApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {z} from 'zod';
 
-type CommonPropsType = ComponentApiToProps<typeof CommonPropsApi>;
+type CommonPropsOutput = z.infer<typeof CommonPropsApi.schema>;
+type CommonPropsInput = z.input<typeof CommonPropsApi.schema>;
 
 /**
  * Base class for A2UI basic catalog components in Angular.
@@ -32,7 +33,9 @@ type CommonPropsType = ComponentApiToProps<typeof CommonPropsApi>;
  */
 @Directive()
 export abstract class BasicCatalogComponent<
-  Api extends ComponentApi,
+  Api extends ComponentApi & {
+    schema: z.ZodType<CommonPropsOutput & Record<string, unknown>, any, CommonPropsInput & Record<string, unknown>>
+  },
 > extends CatalogComponent<Api> {
   protected rendererService = inject(A2uiRendererService);
 
@@ -50,7 +53,7 @@ export abstract class BasicCatalogComponent<
 
   /** Weight is applied as flex css property on the component host HTML element. */
   protected readonly weight = computed(
-    () => (this.props() as CommonPropsType)['weight']?.value() ?? null,
+    () => this.props()['weight']?.value() ?? null,
   );
 
   constructor() {
