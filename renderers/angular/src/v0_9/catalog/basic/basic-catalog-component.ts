@@ -26,7 +26,11 @@ type CommonPropsOutput = z.infer<typeof CommonPropsApi.schema>;
 type CommonPropsInput = z.input<typeof CommonPropsApi.schema>;
 
 type ComponentApiWithCommonProps = ComponentApi & {
-  schema: z.ZodType<CommonPropsOutput & Record<string, unknown>, any, CommonPropsInput & Record<string, unknown>>
+  schema: z.ZodType<
+    CommonPropsOutput & Record<string, unknown>,
+    any,
+    CommonPropsInput & Record<string, unknown>
+  >;
 };
 
 /**
@@ -54,9 +58,7 @@ export abstract class BasicCatalogComponent<
   });
 
   /** Weight is applied as flex css property on the component host HTML element. */
-  protected readonly weight = computed(
-    () => this.props()['weight']?.value() ?? null,
-  );
+  protected readonly weight = computed(() => this.props()['weight']?.value() ?? null);
 
   constructor() {
     super();
