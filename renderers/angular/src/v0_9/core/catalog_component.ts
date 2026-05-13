@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import {ComponentApi, CatalogComponentInstance} from '@a2ui/web_core/v0_9';
-import {Directive, input, Signal} from '@angular/core';
+import {ComponentApi} from '@a2ui/web_core/v0_9';
+import {Directive, input} from '@angular/core';
 import {ComponentApiToProps} from './types';
+import {CatalogComponentInstance} from './catalog-component-instance';
 
 /**
  * Base class for A2UI catalog component in Angular.
@@ -28,7 +29,7 @@ import {ComponentApiToProps} from './types';
 @Directive()
 export abstract class CatalogComponent<
   Api extends ComponentApi,
-> implements CatalogComponentInstance<Signal<ComponentApiToProps<Api>>, Signal<string>> {
+> implements CatalogComponentInstance {
   /**
    * Reactive properties resolved from the A2UI ComponentModel.
    */

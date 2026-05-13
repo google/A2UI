@@ -111,16 +111,7 @@ export interface ComponentApi<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
  */
 export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<Api['schema']>;
 
-/** Describes the properties that a Catalog component needs to implement. */
-export interface CatalogComponentInstance<
-  PropsSignal = Signal<Record<string, unknown>>,
-  StringSignal = Signal<string>,
-> {
-  readonly props: PropsSignal;
-  readonly surfaceId: StringSignal;
-  readonly componentId: StringSignal;
-  readonly dataContextPath: StringSignal;
-}
+
 
 /**
  * A collection of available components and functions.
