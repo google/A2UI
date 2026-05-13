@@ -6,7 +6,7 @@
     "outDir": "../out-tsc/spec",
     "composite": true,
     "declaration": true,
-    "types": ["vitest/globals"]
+    "types": ["jasmine"]
   },
   "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
 }
