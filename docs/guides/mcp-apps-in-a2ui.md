@@ -52,7 +52,7 @@ The complete cycle—including layout tree hierarchy, completely separated backe
 graph TD
     %% 1. Top Tier (Strict vertical hierarchy)
     MCPServer["MCP App Server<br/>(Hosts widget resources & core tools)"]
-    
+
     %% 2. Middle-Top Tier
     Agent["AI Agent<br/>(A2UI Backend Coordinator)"]
 
@@ -60,7 +60,7 @@ graph TD
     subgraph HostApp ["Host Application"]
         direction TB
         Shell["A2UI Rendering Engine & State Manager<br/>(Orchestrates native layout & state bindings)"]
-        
+
         subgraph LayoutTree ["A2UI Component Tree"]
             McpComponent["McpApp Component<br/>(Sandboxed HTML/JS Widget)"]
             SiblingComponent["Other A2UI Components<br/>(e.g., PongScoreBoard)"]
