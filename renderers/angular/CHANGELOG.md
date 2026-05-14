@@ -1,5 +1,7 @@
 ## Unreleased
 
+- (v0_8) Fix Modal component styling and position fixed for overlay.
+
 ## 0.10.0
 
 - **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` to fix type collision and avoid forced casts.
