@@ -10,7 +10,6 @@ This is the registry of examples. If the video is outdated, please, contribute t
 | [Travel App][ta-f-readme]        | Dart   | Flutter  |                 |                          |
 | [Verdure][vr-f-readme]           | Python | Flutter  |                 | [2026-05-11][vr-f-video] |
 
-
 <!-- Travel app, Flutter -->
 
 [ta-f-readme]: https://github.com/flutter/genui/blob/main/examples/travel_app/README.md
