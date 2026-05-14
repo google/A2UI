@@ -15,7 +15,7 @@
  */
 
 import {ComponentFixture} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
+import {DemoComponent} from '../../demo.component';
 import {getCanvas, loadExample} from '../test_utils';
 
 describe('Example: Track List', () => {
