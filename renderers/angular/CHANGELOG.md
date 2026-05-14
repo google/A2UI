@@ -1,5 +1,7 @@
 ## Unreleased
 
+- (v0_8) Fix Icon component to handle camelCase and TitleCase names by converting them to snake_case for `g-icon`.
+
 ## 0.10.0
 
 - **BREAKING CHANGE**: (v0_9) Rename Icon `path` property to `svgPath` to fix type collision and avoid forced casts.
