@@ -67,45 +67,23 @@ const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
 
 export function createDataValueSchema(options: { maxDepth?: number } = {}) {
   const maxDepth = options.maxDepth ?? 5;
-  return z
-    .object({
-      key: z.string(),
-      valueString: z.string().optional(),
-      valueNumber: z.number().optional(),
-      valueBoolean: z.boolean().optional(),
-      valueMap: z.array(DataValueMapItemSchema).optional(),
-    })
-    .strict()
-    .superRefine((val: any, ctx: z.RefinementCtx) => {
-      let count = 0;
-      if (val.valueString !== undefined) count++;
-      if (val.valueNumber !== undefined) count++;
-      if (val.valueBoolean !== undefined) count++;
-      if (val.valueMap !== undefined) count++;
-      if (count !== 1) {
+  return DataValueMapItemSchema.superRefine((val: any, ctx: z.RefinementCtx) => {
+    const checkDepth = (v: any, currentDepth: number) => {
+      if (currentDepth > maxDepth) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Value must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+          message: `valueMap recursion exceeded maximum depth of ${maxDepth}.`,
         });
+        return;
       }
-    })
-    .superRefine((val: any, ctx: z.RefinementCtx) => {
-      const checkDepth = (v: any, currentDepth: number) => {
-        if (currentDepth > maxDepth) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `valueMap recursion exceeded maximum depth of ${maxDepth}.`,
-          });
-          return;
+      if (v.valueMap && Array.isArray(v.valueMap)) {
+        for (const item of v.valueMap) {
+          checkDepth(item, currentDepth + 1);
         }
-        if (v.valueMap && Array.isArray(v.valueMap)) {
-          for (const item of v.valueMap) {
-            checkDepth(item, currentDepth + 1);
-          }
-        }
-      };
-      checkDepth(val, 1);
-    });
+      }
+    };
+    checkDepth(val, 1);
+  });
 }
 
 export const DataValueSchema = createDataValueSchema();
