@@ -21,7 +21,7 @@ import {TextFieldApi} from '@a2ui/web_core/v0_9/basic_catalog';
 /**
  * Angular implementation of the A2UI TextField component (v0.9).
  *
- * Renders a text input field with an optional label and placeholder.
+ * Renders a text input field with an optional label.
  * Updates the bound data model property on every input change.
  *
  * Supported CSS variables:
