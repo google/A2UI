@@ -299,6 +299,121 @@ describe('BASIC_FUNCTIONS', () => {
       });
     });
 
+    it('formatString (object value is JSON-stringified)', (_, done) => {
+      const objModel = new DataModel({user: {name: 'Alice', age: 30}});
+      const objContext = createTestDataContext(objModel, '/');
+
+      const result = invoke(
+        'formatString',
+        {value: 'User: ${user}'},
+        objContext,
+      ) as import('@preact/signals-core').Signal<string>;
+
+      let cleanup: (() => void) | undefined;
+      // eslint-disable-next-line prefer-const
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, 'User: {"name":"Alice","age":30}');
+          if (cleanup) cleanup();
+          done();
+        }
+      });
+    });
+
+    it('formatString (array value is JSON-stringified)', (_, done) => {
+      const arrModel = new DataModel({tags: ['swift', 'ios']});
+      const arrContext = createTestDataContext(arrModel, '/');
+
+      const result = invoke(
+        'formatString',
+        {value: 'Tags: ${tags}'},
+        arrContext,
+      ) as import('@preact/signals-core').Signal<string>;
+
+      let cleanup: (() => void) | undefined;
+      // eslint-disable-next-line prefer-const
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, 'Tags: ["swift","ios"]');
+          if (cleanup) cleanup();
+          done();
+        }
+      });
+    });
+
+    it('formatString (nested array is JSON-stringified)', (_, done) => {
+      const matrixModel = new DataModel({
+        matrix: [
+          [1, 2],
+          [3, 4],
+        ],
+      });
+      const matrixContext = createTestDataContext(matrixModel, '/');
+
+      const result = invoke(
+        'formatString',
+        {value: 'M = ${matrix}'},
+        matrixContext,
+      ) as import('@preact/signals-core').Signal<string>;
+
+      let cleanup: (() => void) | undefined;
+      // eslint-disable-next-line prefer-const
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, 'M = [[1,2],[3,4]]');
+          if (cleanup) cleanup();
+          done();
+        }
+      });
+    });
+
+    it('formatString (array with null is JSON-stringified preserving nulls)', (_, done) => {
+      const nullsModel = new DataModel({vals: [1, null, 3]});
+      const nullsContext = createTestDataContext(nullsModel, '/');
+
+      const result = invoke(
+        'formatString',
+        {value: 'V = ${vals}'},
+        nullsContext,
+      ) as import('@preact/signals-core').Signal<string>;
+
+      let cleanup: (() => void) | undefined;
+      // eslint-disable-next-line prefer-const
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, 'V = [1,null,3]');
+          if (cleanup) cleanup();
+          done();
+        }
+      });
+    });
+
+    it('formatString (null/undefined interpolated as empty string)', (_, done) => {
+      const nullModel = new DataModel({x: null});
+      const nullContext = createTestDataContext(nullModel, '/');
+
+      const result = invoke(
+        'formatString',
+        {value: 'val=${x}end'},
+        nullContext,
+      ) as import('@preact/signals-core').Signal<string>;
+
+      let cleanup: (() => void) | undefined;
+      // eslint-disable-next-line prefer-const
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val !== undefined) {
+          assert.strictEqual(val, 'val=end');
+          if (cleanup) cleanup();
+          done();
+        }
+      });
+    });
+
     it('formatNumber', () => {
       // Test basic output as Intl behavior varies by environment.
       const result = invoke('formatNumber', {value: 1234.56, decimals: 1}, context);
