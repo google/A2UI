@@ -1,5 +1,9 @@
 ## Unreleased
 
+- Add locale support to `SurfaceModel` and `DataContext` in v0.9.
+- Update `pluralize`, `formatNumber`, and `formatCurrency` to use the context locale instead of hardcoding 'en-US'.
+- Remove `.passthrough()` from `PluralizeApi` schema for stricter validation.
+
 ## 0.10.0
 
 - **BREAKING CHANGE**: Rename Icon `path` property to `svgPath` to fix type collision with `DataBindingType`.
