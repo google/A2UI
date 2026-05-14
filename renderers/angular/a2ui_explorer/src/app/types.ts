@@ -15,15 +15,30 @@
  */
 
 import {A2uiMessage} from '@a2ui/web_core/v0_9';
+import {ServerToClientMessage} from 'src/v0_8/types';
 
 /**
  * Represents a demo example configuration.
  */
 export interface Example {
+  version: '0.9';
   /** The name of the example, displayed in the sidebar. */
   name: string;
   /** A short description of what the example demonstrates. */
   description: string;
   /** The sequence of A2UI messages to send to the renderer. */
   messages: A2uiMessage[];
+}
+
+/**
+ * Represents a demo example configuration (v0.8).
+ */
+export interface Example_08 {
+  version: '0.8';
+  /** The name of the example, displayed in the sidebar. */
+  name: string;
+  /** A short description of what the example demonstrates. */
+  description: string;
+  /** The sequence of A2UI messages to send to the renderer. */
+  messages: ServerToClientMessage[];
 }
