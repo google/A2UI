@@ -267,18 +267,65 @@ export const FormatStringImplementation = createFunctionImplementation(
     });
   },
 );
+const numberFormatCache = new Map<string, Intl.NumberFormat>();
+
+function getNumberFormat(
+  locale: string | undefined,
+  decimals?: number,
+  grouping?: boolean,
+): Intl.NumberFormat {
+  const key = `${locale ?? 'default'}:${decimals ?? 'undef'}:${grouping ?? 'true'}`;
+  let formatter = numberFormatCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+      useGrouping: grouping,
+    });
+    numberFormatCache.set(key, formatter);
+  }
+  return formatter;
+}
+
 /**
  * Implementation of the number formatting function.
  * Formats a number using Intl.NumberFormat with specified decimals and grouping.
  */
-export const FormatNumberImplementation = createFunctionImplementation(FormatNumberApi, args => {
-  if (isNaN(args.value)) return '';
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: args.decimals,
-    maximumFractionDigits: args.decimals,
-    useGrouping: args.grouping,
-  }).format(args.value);
-});
+export const FormatNumberImplementation = createFunctionImplementation(
+  FormatNumberApi,
+  (args, context) => {
+    if (isNaN(args.value)) return '';
+    try {
+      return getNumberFormat(context.locale, args.decimals, args.grouping).format(args.value);
+    } catch (e) {
+      console.warn('Error formatting number:', e);
+      return args.decimals !== undefined ? args.value.toFixed(args.decimals) : String(args.value);
+    }
+  },
+);
+const currencyFormatCache = new Map<string, Intl.NumberFormat>();
+
+function getCurrencyFormat(
+  locale: string | undefined,
+  currency: string,
+  decimals?: number,
+  grouping?: boolean,
+): Intl.NumberFormat {
+  const key = `${locale ?? 'default'}:${currency}:${decimals ?? 'undef'}:${grouping ?? 'true'}`;
+  let formatter = currencyFormatCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+      useGrouping: grouping,
+    });
+    currencyFormatCache.set(key, formatter);
+  }
+  return formatter;
+}
+
 /**
  * Implementation of the currency formatting function.
  * Formats a number as currency using Intl.NumberFormat.
@@ -286,18 +333,15 @@ export const FormatNumberImplementation = createFunctionImplementation(FormatNum
  */
 export const FormatCurrencyImplementation = createFunctionImplementation(
   FormatCurrencyApi,
-  args => {
+  (args, context) => {
     if (isNaN(args.value)) return '';
     try {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: args.currency,
-        minimumFractionDigits: args.decimals,
-        maximumFractionDigits: args.decimals,
-        useGrouping: args.grouping,
-      }).format(args.value);
-    } catch {
-      return args.value.toFixed(args.decimals || 2);
+      return getCurrencyFormat(context.locale, args.currency, args.decimals, args.grouping).format(
+        args.value,
+      );
+    } catch (e) {
+      console.warn('Error formatting currency:', e);
+      return args.value.toFixed(args.decimals ?? 2);
     }
   },
 );
@@ -318,14 +362,34 @@ export const FormatDateImplementation = createFunctionImplementation(FormatDateA
     return date.toISOString();
   }
 });
+const pluralRulesCache = new Map<string, Intl.PluralRules>();
+
+function getPluralRules(locale: string | undefined): Intl.PluralRules {
+  const key = locale ?? 'default';
+  let rules = pluralRulesCache.get(key);
+  if (!rules) {
+    rules = new Intl.PluralRules(locale);
+    pluralRulesCache.set(key, rules);
+  }
+  return rules;
+}
+
 /**
  * Implementation of the pluralization function.
  * Selects the appropriate plural form based on the value using Intl.PluralRules.
  */
-export const PluralizeImplementation = createFunctionImplementation(PluralizeApi, args => {
-  const rule = new Intl.PluralRules('en-US').select(args.value);
-  return String((args as Record<string, unknown>)[rule] ?? args.other ?? '');
-});
+export const PluralizeImplementation = createFunctionImplementation(
+  PluralizeApi,
+  (args, context) => {
+    try {
+      const rule = getPluralRules(context.locale).select(args.value);
+      return String((args as Record<string, unknown>)[rule] ?? args.other ?? '');
+    } catch (e) {
+      console.warn('Error in pluralize:', e);
+      return String(args.other ?? '');
+    }
+  },
+);
 
 // Actions
 /**
