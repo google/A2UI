@@ -73,7 +73,7 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
         </div>
         <div class="canvas-frame">
           <div *ngIf="surfaceId" class="rendered-content" [attr.data-version]="version">
-            <a2ui-v09-surface *ngIf="version === '0.9'" [surfaceId]="surfaceId"> </a2ui-v09-surface>
+            <a2ui-v09-surface *ngIf="version === '0.9'" [surfaceId]="surfaceId"></a2ui-v09-surface>
             <a2ui-surface *ngIf="version === '0.8'" [surfaceId]="surfaceId"></a2ui-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
