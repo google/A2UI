@@ -37,6 +37,11 @@ interface SubmitFormContext {
   name?: string;
 }
 
+/**
+ * A stub service that simulates an A2UI agent.
+ * It listens for actions and responds with data model updates or new surfaces.
+ * Supports the v0.9 A2UI spec.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -117,6 +122,11 @@ export class AgentStubV09Service {
   }
 }
 
+/**
+ * A stub service that simulates an A2UI agent.
+ * It listens for actions and responds with data model updates or new surfaces.
+ * Supports the v0.8 A2UI spec.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -156,6 +166,11 @@ export class AgentStubV08Service {
   }
 }
 
+/**
+ * A stub service that simulates an A2UI agent.
+ * It listens for actions and responds with data model updates or new surfaces.
+ * Supports both v0.8 and v0.9 A2UI specs.
+ */
 @Injectable({
   providedIn: 'root',
 })
