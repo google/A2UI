@@ -64,11 +64,11 @@ BODY="The ${LOWER_WORKFLOW_NAME} workflow failed on main for commit ${GITHUB_SHA
 ${PR_LINK}
 See logs: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-echo "Checking for existing open issues with label '$LABEL_NAME'..."
-EXISTING_ISSUE=$(gh issue list --label "$LABEL_NAME" --state open --limit 1 --json url --jq '.[].url')
+echo "Checking for existing open issues with label '$LABEL_NAME' and title '$TITLE'..."
+EXISTING_ISSUE=$(gh issue list --label "$LABEL_NAME" --state open --search "\"$TITLE\" in:title" --json url,title --jq ".[] | select(.title == \"$TITLE\") | .url" | head -n 1)
 
 if [ -n "$EXISTING_ISSUE" ]; then
-  echo "An open issue already exists: $EXISTING_ISSUE"
+  echo "An open issue with the title '$TITLE' and label '$LABEL_NAME' already exists: $EXISTING_ISSUE"
   echo "Skipping issue creation."
   exit 0
 fi
