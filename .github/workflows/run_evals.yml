@@ -28,7 +28,9 @@ on:
       - "specification/v0_9/**"
       - ".github/workflows/run_evals.yml"
       - "agent_sdks/python/**"
-  # Run evals hourly on main, to catch regressions introduced by changes in environment.
+  # Run evals hourly on main, in order to:
+  # - catch regressions introduced by changes in environment
+  # - have more data for observing dynamics of performance degradation
   schedule:
     - cron: "0 * * * *" # hourly
 jobs:

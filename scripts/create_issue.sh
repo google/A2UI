@@ -31,12 +31,12 @@ WORKFLOW_NAME="${1:-Evals}"
 LABEL_NAME="${2:-eval_failure}"
 
 # Check required environment variables
-if [ -z "$GITHUB_REPOSITORY" ] || [ -z "$GITHUB_SHA" ] || [ -z "$GITHUB_SERVER_URL" ] || [ -z "$GITHUB_RUN_ID" ]; then
+if [[ -z "$GITHUB_REPOSITORY" || -z "$GITHUB_SHA" || -z "$GITHUB_SERVER_URL" || -z "$GITHUB_RUN_ID" ]]; then
   echo "Error: Missing required GitHub Actions environment variables."
   exit 1
 fi
 
-if [ -z "$GH_TOKEN" ] && [ -z "$GITHUB_TOKEN" ]; then
+if [[ -z "$GH_TOKEN" && -z "$GITHUB_TOKEN" ]]; then
   echo "Error: GH_TOKEN or GITHUB_TOKEN environment variable is required."
   exit 1
 fi
@@ -49,9 +49,9 @@ PR_NUMBER=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[
 
 SHORT_SHA="${GITHUB_SHA:0:7}"
 
-if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+if [[ -n "$PR_NUMBER" && "$PR_NUMBER" != "null" ]]; then
   PR_LINK="Associated PR: #${PR_NUMBER}"
-  TITLE="${WORKFLOW_NAME} failed on main (PR #${PR_NUMBER})"
+  TITLE="${WORKFLOW_NAME} failed on ${GITHUB_REF_NAME:-main} (PR #${PR_NUMBER})"
 else
   PR_LINK="No associated PR found"
   TITLE="${WORKFLOW_NAME} failed on main for commit ${SHORT_SHA}"
@@ -63,6 +63,15 @@ LOWER_WORKFLOW_NAME=$(echo "$WORKFLOW_NAME" | tr '[:upper:]' '[:lower:]')
 BODY="The ${LOWER_WORKFLOW_NAME} workflow failed on main for commit ${GITHUB_SHA}.
 ${PR_LINK}
 See logs: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+echo "Checking for existing open issues with label '$LABEL_NAME'..."
+EXISTING_ISSUE=$(gh issue list --label "$LABEL_NAME" --state open --limit 1 --json url --jq '.[].url')
+
+if [ -n "$EXISTING_ISSUE" ]; then
+  echo "An open issue already exists: $EXISTING_ISSUE"
+  echo "Skipping issue creation."
+  exit 0
+fi
 
 echo "Creating issue..."
 gh issue create \
