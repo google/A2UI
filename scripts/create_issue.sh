@@ -51,7 +51,7 @@ SHORT_SHA="${GITHUB_SHA:0:7}"
 
 if [[ -n "$PR_NUMBER" && "$PR_NUMBER" != "null" ]]; then
   PR_LINK="Associated PR: #${PR_NUMBER}"
-  TITLE="${WORKFLOW_NAME} failed on main (PR #${PR_NUMBER})"
+  TITLE="${WORKFLOW_NAME} failed on ${GITHUB_REF_NAME:-main} (PR #${PR_NUMBER})"
 else
   PR_LINK="No associated PR found"
   TITLE="${WORKFLOW_NAME} failed on main for commit ${SHORT_SHA}"
