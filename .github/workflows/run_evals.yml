@@ -32,7 +32,7 @@ on:
   # - catch regressions introduced by changes in environment
   # - have more data for observing dynamics of performance degradation
   schedule:
-    - cron: "0 * * * *" # hourly
+    - cron: "0 0 * * *" # daily
 jobs:
   run-evals:
     runs-on: ubuntu-latest

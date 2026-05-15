@@ -6,7 +6,7 @@ name: E2E Tests
 
 on:
   schedule:
-    - cron: "0 * * * *" # hourly
+    - cron: "0 0 * * *" # daily
 
 jobs:
   e2e_test:
