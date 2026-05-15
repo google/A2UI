@@ -31,7 +31,7 @@ WORKFLOW_NAME="${1:-Evals}"
 LABEL_NAME="${2:-eval_failure}"
 
 # Check required environment variables
-if [ -z "$GITHUB_REPOSITORY" ] || [ -z "$GITHUB_SHA" ] || [ -z "$GITHUB_SERVER_URL" ] || [ -z "$GITHUB_RUN_ID" ]; then
+if [[ -z "$GITHUB_REPOSITORY" || -z "$GITHUB_SHA" || -z "$GITHUB_SERVER_URL" || -z "$GITHUB_RUN_ID" ]]; then
   echo "Error: Missing required GitHub Actions environment variables."
   exit 1
 fi
