@@ -37,7 +37,6 @@ const CommonProps = {
     )
     .optional(),
 };
-export const CommonPropsSchema = z.object({...CommonProps}).strict();
 
 export const TextApi = {
   name: 'Text',
