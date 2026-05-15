@@ -170,7 +170,7 @@ export const EXAMPLES_V08: Example_08[] = ${JSON.stringify(examplesV08, null, 2)
 
 export const EXAMPLES_V09: Example[] = ${JSON.stringify(examplesV09, null, 2)};
 
-// Default to v0.9 for backward compatibility
+// Defaults to v0.9
 export const EXAMPLES: Example[] = EXAMPLES_V09;
 `;
 
