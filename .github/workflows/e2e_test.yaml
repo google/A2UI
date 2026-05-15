@@ -12,7 +12,7 @@ jobs:
   e2e_test:
     # Do not run on forked branches,
     # because the test does not have access to secrets in forks.
-    if: github.repository == 'flutter/genui'
+    if: github.repository == 'google/a2ui'
     runs-on: ubuntu-latest
     permissions:
       contents: read
