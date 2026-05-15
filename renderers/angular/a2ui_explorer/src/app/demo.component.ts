@@ -23,8 +23,7 @@ import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8
 import {AngularCatalog} from '@a2ui/angular/v0_9';
 import {DemoCatalog} from './demo-catalog';
 import {A2uiClientAction, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
-import {EXAMPLES_V08, EXAMPLES_V09} from './generated/examples-bundle';
-import {Example, Example_08} from './types';
+import {Example, Example_08, A2UI_VERSION, A2UI_EXAMPLES, Version} from './types';
 import {ActionDispatcher} from './action-dispatcher.service';
 import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
 import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2ui/angular/v0_8';
@@ -48,8 +47,8 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
           <div class="version-selector">
             <label for="version">Version:</label>
             <select id="version" (change)="onVersionChange($event)">
-              <option value="0.9" [selected]="version === '0.9'">0.9</option>
-              <option value="0.8" [selected]="version === '0.8'">0.8</option>
+              <option [value]="Version.V0_9" [selected]="version === Version.V0_9">0.9</option>
+              <option [value]="Version.V0_8" [selected]="version === Version.V0_8">0.8</option>
             </select>
           </div>
         </div>
@@ -73,8 +72,8 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
         </div>
         <div class="canvas-frame">
           <div *ngIf="surfaceId" class="rendered-content" [attr.data-version]="version">
-            <a2ui-v09-surface *ngIf="version === '0.9'" [surfaceId]="surfaceId"></a2ui-v09-surface>
-            <a2ui-surface *ngIf="version === '0.8'" [surfaceId]="surfaceId"></a2ui-surface>
+            <a2ui-v09-surface *ngIf="version === Version.V0_9" [surfaceId]="surfaceId"></a2ui-v09-surface>
+            <a2ui-surface *ngIf="version === Version.V0_8" [surfaceId]="surfaceId"></a2ui-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
             Select an example from the sidebar to view.
@@ -548,7 +547,13 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
     {provide: CatalogV08, useValue: DEFAULT_CATALOG_V08},
     provideMarkdownRenderer(),
     ActionDispatcher,
-    AgentStubService,
+    {
+      provide: AgentStubService,
+      useFactory: (v09: AgentStubV09Service, v08: AgentStubV08Service, version: Version) => {
+        return version === Version.V0_8 ? v08 : v09;
+      },
+      deps: [AgentStubV09Service, AgentStubV08Service, A2UI_VERSION],
+    },
     AgentStubV08Service,
     AgentStubV09Service,
     {
@@ -562,6 +567,7 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
   ],
 })
 export class DemoComponent implements OnInit, OnDestroy {
+  Version = Version;
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
   private actionDispatcher = inject(ActionDispatcher);
@@ -569,8 +575,8 @@ export class DemoComponent implements OnInit, OnDestroy {
   private messageProcessorV08 = inject(MessageProcessorV08);
   private themeV08 = inject(ThemeV08);
 
-  version: '0.8' | '0.9' = '0.9';
-  examples: Array<Example | Example_08> = EXAMPLES_V09;
+  version: Version = inject(A2UI_VERSION);
+  examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
   selectedExample: Example | Example_08 | undefined = undefined;
   surfaceId: string | null = null;
   inspectTab: 'data' | 'events' = 'data';
@@ -610,14 +616,8 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
       this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const versionParam = urlParams.get('version');
-      if (versionParam === '0.8' || versionParam === '0.9') {
-        this.version = versionParam;
-        this.examples = this.version === '0.9' ? EXAMPLES_V09 : EXAMPLES_V08;
-        if (this.version === '0.8') {
-          this.themeV08.update(this.getDefault08Theme());
-        }
+      if (this.version === Version.V0_8) {
+        this.themeV08.update(this.getDefault08Theme());
       }
     }
     this.selectExampleFromUrl();
@@ -631,30 +631,11 @@ export class DemoComponent implements OnInit, OnDestroy {
    */
   onVersionChange(event: Event) {
     const select = event.target as HTMLSelectElement;
-    this.version = select.value as '0.8' | '0.9';
-    this.examples = this.version === '0.9' ? EXAMPLES_V09 : EXAMPLES_V08;
-    this.selectedExample = undefined;
-    this.surfaceId = null;
-    this.currentDataModel = {};
-    this.eventsLog = [];
-    this.currentCreateSurfaceMessageJson = '';
-    this.currentDataModelJson = '';
-
+    const newVersion = select.value;
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
-      url.searchParams.set('version', this.version);
-      window.history.replaceState({}, '', url.toString());
-    }
-
-    if (this.version === '0.8') {
-      this.messageProcessorV08.clearSurfaces();
-      this.themeV08.update(this.getDefault08Theme());
-    }
-
-    this.cdr.detectChanges();
-    // Select first example of new version if available
-    if (this.examples.length > 0) {
-      this.selectExample(this.examples[0]);
+      url.searchParams.set('version', newVersion);
+      window.location.href = url.toString();
     }
   }
 
@@ -678,7 +659,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
 
-    if (this.version === '0.8') {
+    if (this.version === Version.V0_8) {
       const surfaceUpdate = example.messages.find(m => 'surfaceUpdate' in m);
       if (surfaceUpdate) {
         this.surfaceId = (surfaceUpdate as any).surfaceUpdate.surfaceId;
@@ -686,7 +667,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
 
     this.currentCreateSurfaceMessageJson = createMsg ? JSON.stringify(createMsg, null, 2) : '';
-    if (this.version === '0.8') {
+    if (this.version === Version.V0_8) {
       this.currentCreateSurfaceMessageJson = JSON.stringify(example.messages, null, 2);
     }
 
@@ -694,7 +675,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
     // Set initial surface and  data model
     if (this.surfaceId) {
-      if (this.version === '0.9') {
+      if (this.version === Version.V0_9) {
         const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
         if (surface) {
           this.currentDataModel = surface.dataModel.get('/');
@@ -719,13 +700,13 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.actionSub.unsubscribe();
     }
 
-    if (this.version === '0.9') {
+    if (this.version === Version.V0_9) {
       this.actionSub = this.actionDispatcher.actions.subscribe(action => {
         this.agentStub.handleAction(action);
         this.eventsLog.unshift({timestamp: new Date(), action});
         this.cdr.detectChanges();
       });
-    } else if (this.version === '0.8') {
+    } else if (this.version === Version.V0_8) {
       this.actionSub = this.messageProcessorV08.events.subscribe(event => {
         const message = event.message;
         if (message.userAction) {

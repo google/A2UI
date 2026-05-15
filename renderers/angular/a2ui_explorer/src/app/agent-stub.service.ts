@@ -38,6 +38,15 @@ interface SubmitFormContext {
 }
 
 /**
+ * Abstract base class for agent stub services.
+ */
+export abstract class AgentStubService {
+  abstract get actionsLog(): Array<{timestamp: Date; action: A2uiClientAction}>;
+  abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
+  abstract handleAction(action: A2uiClientAction): void;
+}
+
+/**
  * A stub service that simulates an A2UI agent.
  * It listens for actions and responds with data model updates or new surfaces.
  * Supports the v0.9 A2UI spec.
@@ -45,7 +54,7 @@ interface SubmitFormContext {
 @Injectable({
   providedIn: 'root',
 })
-export class AgentStubV09Service {
+export class AgentStubV09Service implements AgentStubService {
   actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
 
   constructor(private rendererService: A2uiRendererService) {}
@@ -130,7 +139,7 @@ export class AgentStubV09Service {
 @Injectable({
   providedIn: 'root',
 })
-export class AgentStubV08Service {
+export class AgentStubV08Service implements AgentStubService {
   actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
 
   constructor(private messageProcessorV08: MessageProcessorV08) {}
@@ -166,53 +175,4 @@ export class AgentStubV08Service {
   }
 }
 
-/**
- * A stub service that simulates an A2UI agent.
- * It listens for actions and responds with data model updates or new surfaces.
- * Supports both v0.8 and v0.9 A2UI specs.
- */
-@Injectable({
-  providedIn: 'root',
-})
-export class AgentStubService {
-  private surfaceVersions = new Map<string, '0.8' | '0.9'>();
 
-  constructor(
-    private v09Service: AgentStubV09Service,
-    private v08Service: AgentStubV08Service,
-  ) {}
-
-  get actionsLog() {
-    return [...this.v09Service.actionsLog, ...this.v08Service.actionsLog].sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
-    );
-  }
-
-  initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]) {
-    const isV09 = initialMessages.some(msg => 'version' in msg && msg.version === 'v0.9');
-    const version = isV09 ? '0.9' : '0.8';
-
-    for (const msg of initialMessages) {
-      if ('createSurface' in msg) {
-        this.surfaceVersions.set(msg.createSurface.surfaceId, version);
-      } else if ('surfaceUpdate' in msg) {
-        this.surfaceVersions.set((msg as any).surfaceUpdate.surfaceId, version);
-      }
-    }
-
-    if (isV09) {
-      this.v09Service.initializeDemo(initialMessages as A2uiMessage[]);
-    } else {
-      this.v08Service.initializeDemo(initialMessages as ServerToClientMessage[]);
-    }
-  }
-
-  handleAction(action: A2uiClientAction) {
-    const version = this.surfaceVersions.get(action.surfaceId) || '0.9';
-    if (version === '0.9') {
-      this.v09Service.handleAction(action);
-    } else {
-      this.v08Service.handleAction(action);
-    }
-  }
-}
