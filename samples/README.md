@@ -7,12 +7,7 @@ This is the registry of examples. If the video is outdated, please, contribute t
 | [Restaurant finder][rf-f-readme] | Python | Flutter  | [yes][rf-f-e2e] | [2026-05-02][rf-f-video] |
 | [Restaurant finder][rf-l-readme] | Python | Lit      |                 | [2026-04-14][rf-l-video] |
 | [Simple Chat][sc-f-readme]       | Dart   | Flutter  | [yes][sc-f-e2e] | [2026-05-11][sc-f-video] |
-| [Travel App][ta-f-readme]        | Dart   | Flutter  |                 |                          |
 | [Verdure][vr-f-readme]           | Python | Flutter  |                 | [2026-05-11][vr-f-video] |
-
-<!-- Travel app, Flutter -->
-
-[ta-f-readme]: https://github.com/flutter/genui/blob/main/examples/travel_app/README.md
 
 <!-- Restaurant finder, Flutter -->
 
