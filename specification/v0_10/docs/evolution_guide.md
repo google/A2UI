@@ -7,7 +7,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 Version 0.10 differs from 0.9 in the following ways:
 
 - **Client-to-Server RPC**: Introduced `actionResponse` enabling synchronous responses to client-initiated actions. Added `actionId` for response correlation.
-- **Video Component**: Added `posterUrl` property to support preview images.
+- <TBD>
 
 ## 2. Changes
 
