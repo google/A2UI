@@ -63,6 +63,6 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   protected readonly children = computed(() => this.props()['children'].value() || []);
 
   protected trackChild(_index: number, child: Child) {
-    return `${child.id}|${child.basePath}`;
+    return `${child.basePath}/${child.id}`;
   }
 }
