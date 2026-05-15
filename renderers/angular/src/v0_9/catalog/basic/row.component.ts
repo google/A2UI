@@ -59,5 +59,4 @@ export class RowComponent extends BasicCatalogComponent<typeof RowApi> {
   });
 
   protected readonly children = computed(() => this.props()['children'].value() || []);
-
 }

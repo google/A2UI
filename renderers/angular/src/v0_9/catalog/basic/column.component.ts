@@ -61,5 +61,4 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   });
 
   protected readonly children = computed(() => this.props()['children'].value() || []);
-
 }
