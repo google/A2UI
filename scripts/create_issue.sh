@@ -36,7 +36,7 @@ if [[ -z "$GITHUB_REPOSITORY" || -z "$GITHUB_SHA" || -z "$GITHUB_SERVER_URL" || 
   exit 1
 fi
 
-if [ -z "$GH_TOKEN" ] && [ -z "$GITHUB_TOKEN" ]; then
+if [[ -z "$GH_TOKEN" && -z "$GITHUB_TOKEN" ]]; then
   echo "Error: GH_TOKEN or GITHUB_TOKEN environment variable is required."
   exit 1
 fi
