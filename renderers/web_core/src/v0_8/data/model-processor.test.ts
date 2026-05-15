@@ -526,7 +526,7 @@ describe('A2uiMessageProcessor', () => {
           },
         },
       ]);
-    }, /Value must have exactly one value property/);
+    }, /must have exactly one value property/);
   });
 
   it('path resolves through primitive objects and arrays', () => {

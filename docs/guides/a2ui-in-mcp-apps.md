@@ -2,6 +2,8 @@
 
 This guide shows you how to serve rich, interactive A2UI interfaces within [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) using Tools and Embedded Resources. By the end, you'll have a working MCP server that returns an MCP App which can render A2UI components and handle A2UI interactions. By supporting native A2UI within MCP Apps, your MCP server can securely collaborate with remote agents while maintaining consistency over UI styling.
 
+![Generative document editor demo — highlighting text and interacting with dynamic A2UI controls to generate and revise content](../assets/editor.gif)
+
 ## Prerequisites
 
 - **[Python 3.10+](https://www.python.org/)**
@@ -19,6 +21,56 @@ The system consists of three main actors interacting through a chain of communic
 1.  **Client Host Application**: The outer container (e.g., an Angular app) that connects to the MCP Server and hosts the secure sandbox for the MCP App.
 2.  **MCP Application (Sandboxed)**: The untrusted third-party web application (e.g., a Lit or Angular micro-app) running inside a double-iframe sandbox. This app contains the A2UI surface.
 3.  **MCP Server**: The backend server providing the application resources and handling tool calls.
+
+```mermaid
+
+flowchart TD
+    %% Style Definitions
+    classDef client fill:#e8f0fe,stroke:#1a73e8,color:#185abc,stroke-width:2px
+    classDef server fill:#f1f3f4,stroke:#3c4043,color:#202124,stroke-width:2px
+    classDef agent fill:#eef3fc,stroke:#74a0f7,color:#185abc,stroke-width:2px
+
+    %% 1. Top: AI Agent Environment
+    subgraph AgentEnv ["Server-Side Environment"]
+        direction LR
+        Agent["Generative A2UI Agent (e.g., Smart Agent)"]:::agent
+        MCPServer["MCP Server"]:::server
+    end
+
+    %% 3. Bottom: Client-Side Environment
+    subgraph ClientEnv ["Client-Side Environment"]
+        Host["Client Host Application"]:::client
+
+        subgraph SandboxBound ["Double-IFrame Sandbox"]
+            subgraph McpApp ["MCP App (e.g., Editor App)"]
+                direction TB
+                %% Added a dedicated node for the app logic to prevent child-to-parent layout collapse
+                AppLogic["Web Native App<br/>(e.g., Editor Panel)"]:::client
+                A2UISurface["A2UI Surface<br/>(e.g., Controls Panel)"]:::client
+                AppBridge["App Bridge"]:::client
+                A2UIRenderer["A2UI Rendering Engine"]:::client
+
+            end
+
+            %% Changed connection to target the node inside, not the subgraph wrapper
+            AppBridge -->|"A2UI JSON"| A2UIRenderer
+            A2UIRenderer -.->|"Mounts & renders dynamic controls inside"| A2UISurface
+            A2UISurface -->|"User Action<br/>(e.g., Generate text)"| AppBridge
+            AppLogic -->|"Context Trigger<br/>(e.g., Highlight text)"| AppBridge
+            AppBridge -->|"Update (e.g., Revised text)"| AppLogic
+            A2UISurface -->|"Update<br/>(e.g., Accept/Reject)"| AppLogic
+        end
+
+        Host <-->|"postMessage Bridge"| AppBridge
+    end
+
+    %% --- Strictly Vertical Stacking Connections ---
+    Agent <==>|"Delegation & Payload"| MCPServer
+    MCPServer <==>|"MCP Protocol"| Host
+
+    %% --- Local Context Flow Indicators ---
+    %% Updated links to point to AppLogic instead of the McpApp subgraph
+```
 
 ## Deep Dive: The Communication Flow
 
@@ -214,6 +266,74 @@ this.processor.events.subscribe(async event => {
 ```
 
 This pattern enables the MCP App to serve as a dynamic interface for the MCP Server's A2UI capabilities while maintaining strict security isolation.
+
+### Inlined MCP App HTML Pseudocode
+
+To put this all together, here is an HTML mockup representing a compiled and inlined MCP Application. It defines the placeholder UI with a native `<a2ui-surface>` element, initializes the `AppBridge` to communicate with the outer host, fetches its dynamic A2UI layout on load, and processes events using the loaded A2UI SDK:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inlined MCP App Surface</title>
+    <!-- Assumes the standard A2UI SDK script is bundled or loaded -->
+  </head>
+  <body>
+    <div>
+      <h3>MCP App (Editor Panel)</h3>
+      <p>This text is native to the sandboxed third-party app.</p>
+
+      <!-- A2UI Surface custom element provided by the A2UI SDK -->
+      <a2ui-surface surfaceId="recipe-card"></a2ui-surface>
+    </div>
+
+    <script>
+      // Note: The pseudocode below assumes AppBridge from @modelcontextprotocol/ext-apps
+      // and a2uiProcessor from the A2UI SDK are preloaded or inlined.
+      const bridge = new AppBridge({name: 'editor-panel', version: '1.0.0'});
+
+      // Helper to extract and process dynamic A2UI responses from tool results
+      function processA2UIResponse(result) {
+        const a2uiResource = result?.content?.find(
+          c => c.type === 'resource' && c.resource?.mimeType === 'application/json+a2ui',
+        );
+        if (a2uiResource?.resource?.text) {
+          const payload = JSON.parse(a2uiResource.resource.text);
+          window.a2uiProcessor.processMessages(payload);
+        }
+      }
+
+      // 1. Initialize AppBridge and fetch initial controls
+      async function initApp() {
+        await bridge.connect();
+
+        // Call server tool to load initial layout controls
+        const result = await bridge.callServerTool({name: 'fetch_controls', arguments: {}});
+        processA2UIResponse(result);
+      }
+
+      // 2. Handle interactive User Actions routed by the A2UI SDK
+      window.a2uiProcessor.events.subscribe(async event => {
+        if (!event.message.userAction) return;
+        const action = event.message.userAction;
+
+        // Route the user action directly via the bridge to the MCP Server tool
+        const result = await bridge.callServerTool({
+          name: action.name,
+          arguments: action.context,
+        });
+
+        // Feed any updated server UI states back to the A2UI processor
+        processA2UIResponse(result);
+      });
+
+      // Initialize the app on startup
+      initApp();
+    </script>
+  </body>
+</html>
+```
 
 ## Security Considerations
 
