@@ -127,8 +127,5 @@
     "date-fns": "^4.1.0",
     "zod": "^3.25.76",
     "zod-to-json-schema": "^3.25.1"
-  },
-  "overrides": {
-    "typescript-eslint": "8.58.2"
   }
 }
