@@ -241,7 +241,13 @@ export const EmailImplementation = createFunctionImplementation(EmailApi, args =
  */
 function coerceToString(value: unknown): string {
   if (value === null || value === undefined) return '';
-  if (typeof value === 'object') return JSON.stringify(value);
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? String(value);
+    } catch {
+      return String(value);
+    }
+  }
   return String(value);
 }
 
