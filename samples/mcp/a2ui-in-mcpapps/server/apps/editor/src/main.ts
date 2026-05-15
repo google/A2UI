@@ -90,7 +90,7 @@ export class McpAppRoot implements OnInit, AfterViewInit {
       tools: {
         paragraph: {
           class: Paragraph as any,
-          inlineToolbar: true,
+          inlineToolbar: false,
           sanitize: {
             mark: {
               class: true,
