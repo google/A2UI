@@ -121,12 +121,16 @@ data class A2uiCatalog(
   /** Renders the catalog and schema as LLM instructions. */
   fun renderAsLlmInstructions(): String = buildString {
     appendLine(A2uiConstants.A2UI_SCHEMA_BLOCK_START)
+    appendLine()
     val jsonFmt = Json
 
     appendLine("### Server To Client Schema:")
     appendLine(jsonFmt.encodeToString(JsonElement.serializer(), serverToClientSchema))
 
-    if (commonTypesSchema.isNotEmpty()) {
+    if (
+      commonTypesSchema.isNotEmpty() &&
+        (commonTypesSchema["\$defs"] as? JsonObject)?.isEmpty() != true
+    ) {
       appendLine("\n### Common Types Schema:")
       appendLine(jsonFmt.encodeToString(JsonElement.serializer(), commonTypesSchema))
     }

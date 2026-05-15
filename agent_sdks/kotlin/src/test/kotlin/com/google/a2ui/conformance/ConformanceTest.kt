@@ -19,6 +19,7 @@ package com.google.a2ui.conformance
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.a2ui.core.parser.PayloadFixer
+import com.google.a2ui.core.parser.StreamingParser
 import com.google.a2ui.core.parser.hasA2uiParts
 import com.google.a2ui.core.parser.parseResponseToParts
 import com.google.a2ui.core.schema.A2uiCatalog
@@ -31,6 +32,7 @@ import com.google.a2ui.core.schema.SchemaModifiers
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.serialization.json.Json
@@ -119,9 +121,16 @@ class ConformanceTest {
     val version =
       if (versionStr == VERSION_0_8_STR) A2uiVersion.VERSION_0_8 else A2uiVersion.VERSION_0_9
 
-    val s2cSchemaFile = catalogMap["s2c_schema"] as? String
+    val s2cSchemaObj = catalogMap["s2c_schema"]
     val s2cSchema =
-      s2cSchemaFile?.let { loadJsonFile(File(conformanceDir, it)) } ?: JsonObject(emptyMap())
+      when (s2cSchemaObj) {
+        is String -> loadJsonFile(File(conformanceDir, s2cSchemaObj))
+        is Map<*, *> -> {
+          val jsonStr = jsonMapper.writeValueAsString(s2cSchemaObj)
+          Json.parseToJsonElement(jsonStr) as JsonObject
+        }
+        else -> JsonObject(emptyMap())
+      }
 
     val catalogSchemaObj = catalogMap["catalog_schema"]
     val schemaMappings = HashMap(baseSchemaMappings)
@@ -152,9 +161,16 @@ class ConformanceTest {
         )
       }
 
-    val commonTypesFile = catalogMap["common_types_schema"] as? String
+    val commonTypesObj = catalogMap["common_types_schema"]
     val commonTypesSchema =
-      commonTypesFile?.let { loadJsonFile(File(conformanceDir, it)) } ?: JsonObject(emptyMap())
+      when (commonTypesObj) {
+        is String -> loadJsonFile(File(conformanceDir, commonTypesObj))
+        is Map<*, *> -> {
+          val jsonStr = jsonMapper.writeValueAsString(commonTypesObj)
+          Json.parseToJsonElement(jsonStr) as JsonObject
+        }
+        else -> JsonObject(emptyMap())
+      }
 
     val catalog =
       A2uiCatalog(
@@ -297,6 +313,12 @@ class ConformanceTest {
             val expectSchema = Json.parseToJsonElement(expectSchemaStr) as JsonObject
             assertEquals(expectSchema, modified)
           }
+          "render" -> {
+            val output = catalog!!.renderAsLlmInstructions()
+            val expectOutput = case["expect_output"] as String
+            assertEquals(expectOutput.trim(), output.trim())
+          }
+          else -> assert(false, { "Unknown action: $action" })
         }
       }
     }
@@ -462,6 +484,7 @@ class ConformanceTest {
               }
             }
           }
+          else -> assert(false, { "Unknown action: $action" })
         }
       }
     }
@@ -504,7 +527,10 @@ class ConformanceTest {
                 if (expA2ui != null) {
                   val expJsonStr = jsonMapper.writeValueAsString(expA2ui)
                   val expJson = Json.parseToJsonElement(expJsonStr) as JsonArray
-                  assertEquals(expJson, part.a2uiJson)
+                  assertEquals(
+                    normalizeA2uiJson(expJson),
+                    normalizeA2uiJson(JsonArray(part.a2uiJson!!)),
+                  )
                 } else {
                   assertNull(part.a2uiJson)
                 }
@@ -523,12 +549,132 @@ class ConformanceTest {
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Boolean
             assertEquals(expect, result)
           }
+          else -> assert(false, { "Unknown action: $action" })
         }
       }
     }
   }
 
+  @TestFactory
+  fun testStreamingParserConformance(): List<DynamicTest> {
+    val conformanceFile = ConformanceTestHelper.getConformanceFile(STREAMING_PARSER_YAML_FILE)
+    val conformanceDir = ConformanceTestHelper.getConformanceDir()
+    val rawList = yamlMapper.readValue(conformanceFile, Any::class.java) as List<*>
+
+    val baseSchemaMappings = mutableMapOf<String, String>()
+    val repoRoot = ConformanceTestHelper.repoRoot
+    val jsonDirs =
+      listOf(
+        conformanceDir to listOf(URL_PREFIX_V09, URL_PREFIX_V08),
+        File(conformanceDir, "test_data") to listOf(URL_PREFIX_V09, URL_PREFIX_V08),
+        File(repoRoot, "specification/v0_9/json") to listOf(URL_PREFIX_V09),
+        File(repoRoot, "specification/v0_8/json") to listOf(URL_PREFIX_V08),
+      )
+
+    jsonDirs.forEach { (dir, prefixes) ->
+      dir
+        .listFiles { _, name -> name.endsWith(".json") }
+        ?.forEach { f ->
+          prefixes.forEach { prefix ->
+            baseSchemaMappings["$prefix${f.name}"] = f.toURI().toString()
+          }
+          baseSchemaMappings[f.name] = f.toURI().toString()
+        }
+    }
+
+    return rawList.mapNotNull { caseObj ->
+      val case = caseObj as Map<*, *>
+      val name = case[ConformanceTestHelper.KEY_NAME] as String
+      val action = case[ConformanceTestHelper.KEY_ACTION] as? String ?: ""
+      if (action != "process_chunk") return@mapNotNull null
+
+      val catalogMap = case[ConformanceTestHelper.KEY_CATALOG] as? Map<*, *>
+      val steps = case[ConformanceTestHelper.KEY_STEPS] as? List<*> ?: emptyList<Any>()
+
+      DynamicTest.dynamicTest(name) {
+        val (catalog, schemaMappings) =
+          catalogMap?.let { buildCatalog(it, conformanceDir, baseSchemaMappings) }
+            ?: (null to emptyMap())
+        val parser = StreamingParser.create(catalog, schemaMappings)
+
+        for ((stepIdx, stepObj) in steps.withIndex()) {
+          val step = stepObj as Map<*, *>
+          val input = step[KEY_INPUT] as String
+          val expectError = step[ConformanceTestHelper.KEY_EXPECT_ERROR] as? String
+
+          if (expectError != null) {
+            val exception =
+              assertFailsWith<Exception>("Expected failure for $name at step $stepIdx") {
+                parser.processChunk(input)
+              }
+            val regex = Regex(expectError)
+            assertTrue(
+              regex.containsMatchIn(exception.message ?: "") ||
+                regex.containsMatchIn(exception.cause?.message ?: "") ||
+                exception.javaClass.simpleName.contains("JsonDecodingException") ||
+                exception.message?.contains("Failed to parse JSON") == true,
+              "Expected error matching '$expectError', but got: ${exception.message} at step $stepIdx",
+            )
+          } else {
+            val parts = parser.processChunk(input)
+            val expect = step[ConformanceTestHelper.KEY_EXPECT] as? List<*> ?: emptyList<Any>()
+            assertEquals(
+              expect.size,
+              parts.size,
+              "Mismatch in response parts size for $name at step $stepIdx",
+            )
+            for (i in expect.indices) {
+              val exp = expect[i] as Map<*, *>
+              val part = parts[i]
+              assertEquals(
+                exp[KEY_TEXT] as? String ?: "",
+                part.text,
+                "Text mismatch in part $i for $name at step $stepIdx",
+              )
+              val expA2ui = exp[KEY_A2UI]
+              if (expA2ui != null) {
+                assertNotNull(
+                  part.a2uiJson,
+                  "Expected non-null a2uiJson in part $i for $name at step $stepIdx",
+                )
+                val expJsonStr = jsonMapper.writeValueAsString(expA2ui)
+                val expJson = Json.parseToJsonElement(expJsonStr) as JsonArray
+                assertEquals(
+                  normalizeA2uiJson(expJson),
+                  normalizeA2uiJson(JsonArray(part.a2uiJson!!)),
+                  "A2UI JSON mismatch in part $i for $name at step $stepIdx",
+                )
+              } else {
+                assertNull(
+                  part.a2uiJson,
+                  "Expected null a2uiJson in part $i for $name at step $stepIdx",
+                )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private fun normalizeA2uiJson(elem: JsonElement): JsonElement {
+    when (elem) {
+      is JsonObject -> {
+        val map = mutableMapOf<String, JsonElement>()
+        for ((k, v) in elem) {
+          map[k] = normalizeA2uiJson(v)
+        }
+        return JsonObject(map)
+      }
+      is JsonArray -> {
+        return JsonArray(elem.map { normalizeA2uiJson(it) })
+      }
+      else -> return elem
+    }
+  }
+
   private companion object {
+    private const val STREAMING_PARSER_YAML_FILE = "suites/streaming_parser.yaml"
     private const val SIMPLIFIED_CATALOG_V09 = "simplified_catalog_v09.json"
     private const val URL_PREFIX_V09 = "https://a2ui.org/specification/v0_9/"
     private const val URL_PREFIX_V08 = "https://a2ui.org/specification/v0_8/"
