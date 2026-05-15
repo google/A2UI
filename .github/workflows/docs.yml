@@ -39,7 +39,7 @@ jobs:
       contents: write
       actions: read
 
-    if: github.repository == 'google/A2UI'
+    if: github.repository == 'flutter/genui'
 
     steps:
       - name: Checkout Code
