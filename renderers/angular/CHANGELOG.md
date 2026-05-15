@@ -1,6 +1,7 @@
 ## Unreleased
 
 - (v0_8) Fix Modal component styling and position fixed for overlay.
+- (v0_9) Remove `placeholder` prop support from the `TextField` component, since it was not part of the v0_9 basic catalog schema. [#1372](https://github.com/google/A2UI/pull/1372)
 
 ## 0.10.0
 
