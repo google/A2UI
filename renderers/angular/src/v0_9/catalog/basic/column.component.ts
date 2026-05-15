@@ -16,7 +16,7 @@
 
 import {Component, computed, ChangeDetectionStrategy} from '@angular/core';
 import {ComponentHostComponent} from '../../core/component-host.component';
-
+import {Child} from '../../core/component-binder.service';
 import {BasicCatalogComponent} from './basic-catalog-component';
 import {JUSTIFY_MAP, ALIGN_MAP} from './utils';
 import {ColumnApi} from '@a2ui/web_core/v0_9/basic_catalog';
@@ -43,7 +43,7 @@ import {ColumnApi} from '@a2ui/web_core/v0_9/basic_catalog';
     '[style.align-items]': 'align()',
   },
   template: `
-    @for (child of children(); track child.id) {
+    @for (child of children(); track trackChild($index, child)) {
       <a2ui-v09-component-host [componentKey]="child" [surfaceId]="surfaceId()">
       </a2ui-v09-component-host>
     }
@@ -61,4 +61,8 @@ export class ColumnComponent extends BasicCatalogComponent<typeof ColumnApi> {
   });
 
   protected readonly children = computed(() => this.props()['children'].value() || []);
+
+  protected trackChild(_index: number, child: Child) {
+    return `${child.id}|${child.basePath}`;
+  }
 }
