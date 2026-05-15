@@ -20,6 +20,7 @@ Community and third-party A2UI renderer implementations.
 | **BBC6BAE9/a2ui-swift**                     | Apple (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅   | ✅   | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swift?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swift?style=flat-square&label=updated)                                   | [GitHub](https://github.com/BBC6BAE9/a2ui-swift)                                                                                                       |
 | **TanXudong-Vivo/A2UI-Android-Renderer**    | Android (Jetpack Compose)                           | ❌   | ✅   | ![Stars](https://img.shields.io/github/stars/TanXudong-Vivo/A2UI-Android-Renderer?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/TanXudong-Vivo/A2UI-Android-Renderer?style=flat-square&label=updated) | [GitHub](https://github.com/TanXudong-Vivo/A2UI-Android-Renderer)                                                                                      |
 | **a2ui-vue**                                | Vue (Web)                                           | ✅   | ❌   | ![Stars](https://img.shields.io/github/stars/shawnwang15/a2ui-vue?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/shawnwang15/a2ui-vue?style=flat-square&label=updated)                                 | [GitHub](https://github.com/shawnwang15/a2ui-vue) · [npm](https://www.npmjs.com/package/a2ui-vue) · [Docs](https://shawnwang15.github.io/a2ui-vue/en/) |
+| **AGenUI/AGenUI** | iOS, Android, HarmoryOS | ❌ | ✅ | ![Stars](https://img.shields.io/github/stars/AGenUI/AGenUI?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/AGenUI/AGenUI?style=flat-square&label=updated) | [GitHub](https://github.com/AGenUI/AGenUI) · [Official Website](https://genui.amap.com/)|
 
 ### Notable Mentions
 
@@ -53,6 +54,11 @@ These projects are not directly A2UI renderers but are closely related and do su
 
 **TanXudong-Vivo/A2UI-Android-Renderer** is a modular Android renderer built with Jetpack Compose and Material 3, and is the first Android implementation to support the A2UI v0.9 protocol. It covers 13 fully implemented components (including Image loading via Coil), streaming rendering from LLM token streams, data binding with `path` expressions and `formatDate`, and a pluggable Custom Catalog for registering additional component types. The demo app includes a live connection to the official `restaurant_finder` ADK agent.
 
+ **AGenUI/AGenUI** is a high-performance, extensible, progressive-rendering A2UI v0.9 renderer for iOS, Android, and HarmonyOS, built on a shared C++ core engine. It provides a complete implementation of the A2UI
+ v0.9 protocol and extends it with a **Styles property** for richer component appearance and layout control. Beyond the Basic Catalog components, it provides 4 built-in extensions (Table, Carousel, Web, RichText)
+ and exposes runtime APIs for registering custom components and custom Function Calls. It also provides a freestanding [Catalog JSON Schema](https://github.com/AGenUI/AGenUI) for agent negotiation and a bundled
+ [A2UI Generation Skill](https://github.com/AGenUI/AGenUI/tree/main/skills/a2ui-generation) for LLM agents. See the [official website](https://genui.amap.com/) for a live demo.
+ 
 ## Submitting a Renderer
 
 If you have built an A2UI renderer, submit it to be listed here.
