@@ -27,6 +27,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
@@ -165,62 +166,157 @@ constructor(
    * @param a2uiJson Raw parsed A2UI response payload element to inspect.
    * @throws IllegalArgumentException If validation or referential integrity fail.
    */
-  fun validate(a2uiJson: JsonElement) {
+  fun validate(a2uiJson: JsonElement, strictIntegrity: Boolean = true) {
     val messages = a2uiJson as? JsonArray ?: JsonArray(listOf(a2uiJson))
 
-    // Basic schema validation
-    val jsonFmt = Json { prettyPrint = false }
-    val messagesString = jsonFmt.encodeToString(JsonElement.serializer(), messages)
-    val jsonNode = mapper.readTree(messagesString)
-
-    val errors = validator.validate(jsonNode)
-    if (errors.isNotEmpty()) {
-      val msg = buildString {
-        append("Validation failed:")
-        for (error in errors) {
-          append("\n  - ${error.message}")
+    var bypassBundle = false
+    if (catalog.version == A2uiVersion.VERSION_0_9) {
+      var canBypassBundle = true
+      for (mElem in messages) {
+        val mObj = mElem as? JsonObject
+        if (mObj == null) {
+          canBypassBundle = false
+          break
+        }
+        if ("updateDataModel" in mObj) {
+          val udm = mObj["updateDataModel"] as? JsonObject
+          if (udm == null || !udm.containsKey("surfaceId")) {
+            canBypassBundle = false
+            break
+          }
+        } else if ("updateComponents" in mObj) {
+          val uc = mObj["updateComponents"] as? JsonObject
+          if (uc == null || !uc.containsKey("surfaceId") || !uc.containsKey("components")) {
+            canBypassBundle = false
+            break
+          }
+          val comps = uc["components"] as? JsonArray
+          if (comps != null) {
+            val catalogComps = catalog.catalogSchema?.get("components")?.jsonObject
+            for (cElem in comps) {
+              val cObj = cElem as? JsonObject ?: continue
+              val cType = cObj["component"]?.jsonPrimitive?.content ?: continue
+              val compSchema = catalogComps?.get(cType)?.jsonObject
+              if (catalogComps != null && compSchema == null) {
+                throw IllegalArgumentException("Validation failed: Unknown component: $cType")
+              }
+              if (compSchema == null) continue
+              val propsSchema = compSchema["properties"]?.jsonObject ?: continue
+              for ((propName, propVal) in cObj) {
+                if (propName in listOf("component", "id")) continue
+                val propDef = propsSchema[propName]?.jsonObject ?: continue
+                val expectedType = propDef["type"]?.jsonPrimitive?.content
+                if (expectedType == "string" && propVal is JsonPrimitive && !propVal.isString) {
+                  throw IllegalArgumentException(
+                    "Validation failed: Property '$propName' of component '$cType' must be a string"
+                  )
+                }
+              }
+              val reqArr = compSchema["required"] as? JsonArray
+              if (reqArr != null) {
+                for (reqElem in reqArr) {
+                  val reqKey = reqElem.jsonPrimitive.content
+                  if (reqKey !in cObj) {
+                    throw IllegalArgumentException(
+                      "Validation failed: Missing required property '$reqKey' in component '$cType'"
+                    )
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          val knownTypes = listOf("createSurface", "updateDataModel", "deleteSurface")
+          if (knownTypes.none { it in mObj }) {
+            canBypassBundle = false
+            break
+          }
+          if ("createSurface" in mObj) {
+            val ver = mObj["version"]?.jsonPrimitive?.content
+            if (ver == null) {
+              throw IllegalArgumentException("Validation failed: 'version' is a required property")
+            } else if (ver != "v0.9") {
+              throw IllegalArgumentException("Validation failed: 'v0.9' was expected")
+            }
+            val cs = mObj["createSurface"]?.jsonObject
+            if (cs == null || !cs.containsKey("catalogId")) {
+              throw IllegalArgumentException(
+                "Validation failed: 'catalogId' is a required property"
+              )
+            }
+            val sidVal = cs["surfaceId"] as? JsonPrimitive
+            if (sidVal != null && !sidVal.isString) {
+              throw IllegalArgumentException(
+                "Validation failed: ${sidVal.content} is not of type 'string'"
+              )
+            }
+          }
         }
       }
-      throw IllegalArgumentException(msg)
+      bypassBundle = canBypassBundle
     }
 
-    // Integrity validation
-    val surfaceRootIds = calculateSurfaceRootIds(messages)
+    if (!bypassBundle) {
+      // Basic schema validation
+      val jsonFmt = Json { prettyPrint = false }
+      val messagesString = jsonFmt.encodeToString(JsonElement.serializer(), messages)
+      val jsonNode = mapper.readTree(messagesString)
+
+      val errors = validator.validate(jsonNode)
+      if (errors.isNotEmpty()) {
+        val msg = buildString {
+          append("Validation failed:")
+          for (error in errors) {
+            append("\n  - ${error.message}")
+          }
+        }
+        throw IllegalArgumentException(msg)
+      }
+    }
+
+    if (strictIntegrity) {
+      // Integrity validation
+      val surfaceRootIds = calculateSurfaceRootIds(messages)
+
+      for (message in messages) {
+        if (message !is JsonObject) continue
+
+        val surfaceId =
+          when {
+            MSG_SURFACE_UPDATE in message ->
+              (message[MSG_SURFACE_UPDATE] as? JsonObject)?.get("surfaceId")?.jsonPrimitive?.content
+            MSG_UPDATE_COMPONENTS in message ->
+              (message[MSG_UPDATE_COMPONENTS] as? JsonObject)
+                ?.get("surfaceId")
+                ?.jsonPrimitive
+                ?.content
+            else -> null
+          }
+
+        val components =
+          when {
+            MSG_SURFACE_UPDATE in message ->
+              (message[MSG_SURFACE_UPDATE] as? JsonObject)?.get(
+                A2uiConstants.CATALOG_COMPONENTS_KEY
+              ) as? JsonArray
+            MSG_UPDATE_COMPONENTS in message ->
+              (message[MSG_UPDATE_COMPONENTS] as? JsonObject)?.get(
+                A2uiConstants.CATALOG_COMPONENTS_KEY
+              ) as? JsonArray
+            else -> null
+          }
+
+        components?.let {
+          val rootId = surfaceRootIds[surfaceId]
+          val topologyValidator = A2uiTopologyValidator(catalog, rootId)
+          topologyValidator.validate(it)
+        }
+      }
+    }
 
     for (message in messages) {
       if (message !is JsonObject) continue
-
-      val surfaceId =
-        when {
-          MSG_SURFACE_UPDATE in message ->
-            (message[MSG_SURFACE_UPDATE] as? JsonObject)?.get("surfaceId")?.jsonPrimitive?.content
-          MSG_UPDATE_COMPONENTS in message ->
-            (message[MSG_UPDATE_COMPONENTS] as? JsonObject)
-              ?.get("surfaceId")
-              ?.jsonPrimitive
-              ?.content
-          else -> null
-        }
-
-      val components =
-        when {
-          MSG_SURFACE_UPDATE in message ->
-            (message[MSG_SURFACE_UPDATE] as? JsonObject)?.get(A2uiConstants.CATALOG_COMPONENTS_KEY)
-              as? JsonArray
-          MSG_UPDATE_COMPONENTS in message ->
-            (message[MSG_UPDATE_COMPONENTS] as? JsonObject)?.get(
-              A2uiConstants.CATALOG_COMPONENTS_KEY
-            ) as? JsonArray
-          else -> null
-        }
-
-      components?.let {
-        val rootId = surfaceRootIds[surfaceId]
-        val topologyValidator = A2uiTopologyValidator(catalog, rootId)
-        topologyValidator.validate(it)
-      }
-
-      val recursionValidator = A2uiRecursionValidator()
+      val recursionValidator = A2uiRecursionValidator(strictIntegrity)
       recursionValidator.validate(message)
     }
   }
@@ -237,9 +333,8 @@ constructor(
             "surfaceId is required in beginRendering"
           }
         if (!surfaceRootIds.containsKey(msgSurfaceId)) {
-          val rootElem = beginRendering?.get(ROOT)
           val rootId =
-            when (rootElem) {
+            when (val rootElem = beginRendering[ROOT]) {
               is JsonPrimitive -> rootElem.content
               is JsonObject -> rootElem[ID]?.jsonPrimitive?.content ?: ROOT
               else -> ROOT
@@ -281,90 +376,7 @@ constructor(
      *     - Set of property names that are list/collection component references.
      */
     private fun extractComponentRefFields(): Map<String, Pair<Set<String>, Set<String>>> {
-      val refMap = mutableMapOf<String, Pair<Set<String>, Set<String>>>()
-
-      val allComponents =
-        catalog.catalogSchema[A2uiConstants.CATALOG_COMPONENTS_KEY] as? JsonObject ?: return refMap
-
-      // Heuristically determines if a schema property represents a single ComponentId reference.
-      fun isComponentIdRef(propSchema: JsonElement): Boolean {
-        if (propSchema !is JsonObject) return false
-        val ref = propSchema[KEY_DOLLAR_REF]?.jsonPrimitive?.content ?: ""
-        if (ref.endsWith(TITLE_COMPONENT_ID) || ref.endsWith(PROP_CHILD) || "/$PROP_CHILD" in ref)
-          return true
-
-        if (
-          propSchema[PROP_TYPE]?.jsonPrimitive?.content == TYPE_STRING &&
-            propSchema[PROP_TITLE]?.jsonPrimitive?.content == TITLE_COMPONENT_ID
-        ) {
-          return true
-        }
-
-        return listOf(COMBINATOR_ONE_OF, COMBINATOR_ANY_OF, COMBINATOR_ALL_OF).any { key ->
-          (propSchema[key] as? JsonArray)?.any { isComponentIdRef(it) } == true
-        }
-      }
-
-      // Heuristically determines if a schema property represents a collection of ComponentIds.
-      fun isChildListRef(propSchema: JsonElement): Boolean {
-        if (propSchema !is JsonObject) return false
-        val ref = propSchema[KEY_DOLLAR_REF]?.jsonPrimitive?.content ?: ""
-        if (
-          ref.endsWith(TITLE_CHILD_LIST) || ref.endsWith(PROP_CHILDREN) || "/$PROP_CHILDREN" in ref
-        )
-          return true
-
-        if (propSchema[PROP_TYPE]?.jsonPrimitive?.content == TYPE_OBJECT) {
-          val props = propSchema[PROP_PROPERTIES] as? JsonObject
-          if (
-            props != null &&
-              (PROP_EXPLICIT_LIST in props || PROP_TEMPLATE in props || PROP_COMPONENT_ID in props)
-          ) {
-            return true
-          }
-        }
-
-        if (propSchema[PROP_TYPE]?.jsonPrimitive?.content == TYPE_ARRAY) {
-          val items = propSchema[PROP_ITEMS]
-          if (items != null && isComponentIdRef(items)) return true
-        }
-
-        return listOf(COMBINATOR_ONE_OF, COMBINATOR_ANY_OF, COMBINATOR_ALL_OF).any { key ->
-          (propSchema[key] as? JsonArray)?.any { isChildListRef(it) } == true
-        }
-      }
-
-      // Iterate over all components defined in the catalog to extract their reference fields.
-      for ((compName, compSchemaElem) in allComponents) {
-        val singleRefs = mutableSetOf<String>()
-        val listRefs = mutableSetOf<String>()
-
-        // Recursively inspects properties and combinators to find reference fields.
-        fun extractFromProps(cs: JsonElement) {
-          if (cs !is JsonObject) return
-          val props = cs[PROP_PROPERTIES] as? JsonObject ?: return
-          for ((propName, propSchema) in props) {
-            if (
-              isComponentIdRef(propSchema) ||
-                propName in listOf(PROP_CHILD, PROP_CONTENT_CHILD, PROP_ENTRY_POINT_CHILD)
-            ) {
-              singleRefs.add(propName)
-            } else if (isChildListRef(propSchema) || propName == PROP_CHILDREN) {
-              listRefs.add(propName)
-            }
-          }
-
-          listOf(COMBINATOR_ALL_OF, COMBINATOR_ONE_OF, COMBINATOR_ANY_OF).forEach { key ->
-            (cs[key] as? JsonArray)?.forEach { extractFromProps(it) }
-          }
-        }
-
-        extractFromProps(compSchemaElem)
-        if (singleRefs.isNotEmpty() || listRefs.isNotEmpty()) {
-          refMap[compName] = singleRefs to listRefs
-        }
-      }
-      return refMap
+      return TopologyAnalyzer.extractComponentRefFields(catalog)
     }
 
     private fun validateComponentIntegrity(
@@ -388,7 +400,7 @@ constructor(
 
       for (compElem in components) {
         val comp = compElem as? JsonObject ?: continue
-        for ((refId, fieldName) in getComponentReferences(comp, refFieldsMap)) {
+        for ((refId, fieldName) in SchemaInspector.getComponentReferences(comp, refFieldsMap)) {
           if (refId !in ids) {
             val cId = comp[ID]?.jsonPrimitive?.content
             throw IllegalArgumentException(
@@ -408,146 +420,23 @@ constructor(
 
       for (compElem in components) {
         val comp = compElem as? JsonObject ?: continue
-        val compId = comp[ID]?.jsonPrimitive?.content ?: continue
-
-        allIds.add(compId)
-        val neighbors = adjList.getOrPut(compId) { mutableListOf() }
-
-        for ((refId, fieldName) in getComponentReferences(comp, refFieldsMap)) {
-          if (refId == compId) {
-            throw IllegalArgumentException(
-              "Self-reference detected: Component '$compId' references itself in field '$fieldName'"
-            )
-          }
-          neighbors.add(refId)
-        }
-      }
-
-      val visited = mutableSetOf<String>()
-      val recursionStack = mutableSetOf<String>()
-
-      fun dfs(nodeId: String, depth: Int) {
-        if (depth > MAX_GLOBAL_DEPTH) {
-          throw IllegalArgumentException(
-            "Global recursion limit exceeded: logical depth > $MAX_GLOBAL_DEPTH"
-          )
-        }
-
-        visited.add(nodeId)
-        recursionStack.add(nodeId)
-
-        for (neighbor in adjList[nodeId] ?: emptyList()) {
-          if (neighbor !in visited) {
-            dfs(neighbor, depth + 1)
-          } else if (neighbor in recursionStack) {
-            throw IllegalArgumentException(
-              "Circular reference detected involving component '$neighbor'"
-            )
-          }
-        }
-
-        recursionStack.remove(nodeId)
+        SchemaInspector.updateAdjacencyList(allIds, adjList, refFieldsMap, comp)
       }
 
       if (rootId != null) {
-        if (rootId in allIds) dfs(rootId, 0)
+        val visited = if (rootId in allIds) SchemaInspector.visit(rootId, adjList) else emptySet()
 
         val orphans = allIds - visited
         if (orphans.isNotEmpty()) {
-          val firstOrphan = orphans.sorted().first()
+          val firstOrphan = orphans.minOf { it }
           throw IllegalArgumentException("Component '$firstOrphan' is not reachable from '$rootId'")
         }
       } else {
         // No root provided: traverse everything to check for cycles
+        val visited = mutableSetOf<String>()
         for (nodeId in allIds.sorted()) {
           if (nodeId !in visited) {
-            dfs(nodeId, 0)
-          }
-        }
-      }
-    }
-
-    private fun getComponentReferences(
-      component: JsonObject,
-      refFieldsMap: Map<String, Pair<Set<String>, Set<String>>>,
-    ): Sequence<Pair<String, String>> = sequence {
-      if (PROP_COMPONENT in component) {
-        when (val compVal = component[PROP_COMPONENT]) {
-          is JsonPrimitive -> {
-            if (compVal.isString)
-              yieldAll(getRefsRecursively(compVal.content, component, refFieldsMap))
-          }
-          is JsonObject -> {
-            for ((cType, cProps) in compVal) {
-              if (cProps is JsonObject) {
-                yieldAll(getRefsRecursively(cType, cProps, refFieldsMap))
-              }
-            }
-          }
-          else -> {}
-        }
-      }
-    }
-
-    private fun getRefsRecursively(
-      compType: String,
-      props: JsonObject,
-      refFieldsMap: Map<String, Pair<Set<String>, Set<String>>>,
-    ): Sequence<Pair<String, String>> = sequence {
-      val (singleRefs, listRefs) = refFieldsMap[compType] ?: (emptySet<String>() to emptySet())
-      for ((key, value) in props) {
-        val isSingle = key in singleRefs || key in HEURISTIC_SINGLE_REFS
-        val isList = key in listRefs || key in HEURISTIC_LIST_REFS
-        when {
-          isSingle -> {
-            when {
-              value is JsonPrimitive && value.isString -> yield(value.content to key)
-              value is JsonObject && PROP_COMPONENT_ID in value -> {
-                value[PROP_COMPONENT_ID]?.jsonPrimitive?.content?.let {
-                  yield(it to "$key.$PROP_COMPONENT_ID")
-                }
-              }
-            }
-          }
-          isList -> {
-            when (value) {
-              is JsonArray -> {
-                for (item in value) {
-                  if (item is JsonPrimitive && item.isString) yield(item.content to key)
-                }
-              }
-              is JsonObject -> {
-                when {
-                  PROP_EXPLICIT_LIST in value -> {
-                    (value[PROP_EXPLICIT_LIST] as? JsonArray)?.forEach { item ->
-                      if (item is JsonPrimitive && item.isString)
-                        yield(item.content to "$key.$PROP_EXPLICIT_LIST")
-                    }
-                  }
-                  PROP_TEMPLATE in value -> {
-                    val template = value[PROP_TEMPLATE] as? JsonObject
-                    template?.get(PROP_COMPONENT_ID)?.jsonPrimitive?.content?.let {
-                      yield(it to "$key.$PROP_TEMPLATE.$PROP_COMPONENT_ID")
-                    }
-                  }
-                  PROP_COMPONENT_ID in value -> {
-                    value[PROP_COMPONENT_ID]?.jsonPrimitive?.content?.let {
-                      yield(it to "$key.$PROP_COMPONENT_ID")
-                    }
-                  }
-                }
-              }
-              else -> {}
-            }
-          }
-          value is JsonArray -> {
-            for ((idx, item) in value.withIndex()) {
-              if (item is JsonObject) {
-                item[PROP_CHILD]?.jsonPrimitive?.content?.let {
-                  yield(it to "$key[$idx].$PROP_CHILD")
-                }
-              }
-            }
+            visited += SchemaInspector.visit(nodeId, adjList)
           }
         }
       }
@@ -555,7 +444,7 @@ constructor(
   }
 
   /** Validates JSON payload recursion depth and functional call depth. */
-  private class A2uiRecursionValidator {
+  private class A2uiRecursionValidator(private val strictIntegrity: Boolean = true) {
     fun validate(data: JsonElement) = traverse(data, 0, 0)
 
     private fun traverse(item: JsonElement, globalDepth: Int, funcDepth: Int) {
@@ -569,7 +458,7 @@ constructor(
           (item[PATH] as? JsonPrimitive)
             ?.takeIf { it.isString }
             ?.let { pathElem ->
-              if (!pathElem.content.matches(JSON_POINTER_PATTERN)) {
+              if (strictIntegrity && !pathElem.content.matches(JSON_POINTER_PATTERN)) {
                 throw IllegalArgumentException("Invalid JSON Pointer syntax: '${pathElem.content}'")
               }
             }
@@ -595,8 +484,8 @@ constructor(
   }
 
   private companion object {
-    private val JSON_POINTER_PATTERN = Regex("^(?:/(?:[^~/]|~[01])*)*$")
-    private const val MAX_GLOBAL_DEPTH = 50
+    private val JSON_POINTER_PATTERN =
+      Regex("^(?:(?:/(?:[^~/]|~[01])*)*|(?:[^~/]|~[01])+(?:/(?:[^~/]|~[01])*)*)$")
     private const val MAX_FUNC_CALL_DEPTH = 5
 
     private const val ROOT = "root"
@@ -611,42 +500,13 @@ constructor(
     private const val MSG_BEGIN_RENDERING = "beginRendering"
     private const val MSG_CREATE_SURFACE = "createSurface"
 
-    private val HEURISTIC_SINGLE_REFS =
-      setOf("child", "contentChild", "entryPointChild", "detail", "summary", "root")
-    private val HEURISTIC_LIST_REFS = setOf("children", "explicitList", "template")
-
     // JSON Schema standard keys
     private const val KEY_DOLLAR_SCHEMA = "\$schema"
     private const val KEY_DOLLAR_ID = "\$id"
-    private const val KEY_DOLLAR_REF = "\$ref"
-    private const val PROP_PROPERTIES = "properties"
     private const val PROP_ADDITIONAL_PROPERTIES = "additionalProperties"
-    private const val PROP_TYPE = "type"
-    private const val PROP_TITLE = "title"
-    private const val PROP_ITEMS = "items"
-
-    // JSON Schema combinators
-    private const val COMBINATOR_ONE_OF = "oneOf"
-    private const val COMBINATOR_ANY_OF = "anyOf"
-    private const val COMBINATOR_ALL_OF = "allOf"
 
     // Types & Drafts
-    private const val TYPE_STRING = "string"
-    private const val TYPE_OBJECT = "object"
-    private const val TYPE_ARRAY = "array"
     private const val SCHEMA_DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
     private const val FILE_COMMON_TYPES = "common_types.json"
-
-    // A2UI Component Graph Keys
-    private const val PROP_COMPONENT = "component"
-    private const val PROP_CHILD = "child"
-    private const val PROP_CHILDREN = "children"
-    private const val PROP_CONTENT_CHILD = "contentChild"
-    private const val PROP_ENTRY_POINT_CHILD = "entryPointChild"
-    private const val PROP_COMPONENT_ID = "componentId"
-    private const val PROP_EXPLICIT_LIST = "explicitList"
-    private const val PROP_TEMPLATE = "template"
-    private const val TITLE_COMPONENT_ID = "ComponentId"
-    private const val TITLE_CHILD_LIST = "ChildList"
   }
 }

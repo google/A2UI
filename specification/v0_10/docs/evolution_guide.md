@@ -13,6 +13,7 @@ Version 0.10 differs from 0.9 in the following ways:
 
 ### 2.1. Catalog Definition Schema
 
+- Added `placeholder` prop to the `TextField` component schema.
 - <TBD>
 
 ### 2.2. Server-to-Client Message List Schema

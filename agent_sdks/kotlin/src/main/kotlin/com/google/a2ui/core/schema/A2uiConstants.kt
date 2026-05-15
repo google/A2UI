@@ -29,6 +29,7 @@ object A2uiConstants {
   // Protocol constants
   const val SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
   const val INLINE_CATALOGS_KEY = "inlineCatalogs"
+  const val ACCEPTS_INLINE_CATALOGS_KEY = "acceptsInlineCatalogs"
 
   const val A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities"
 

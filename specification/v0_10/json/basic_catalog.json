@@ -455,6 +455,10 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The value of the text field."
             },
+            "placeholder": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The placeholder text for the input field."
+            },
             "variant": {
               "type": "string",
               "description": "The type of input field to display.",
