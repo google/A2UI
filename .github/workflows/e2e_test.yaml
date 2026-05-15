@@ -5,8 +5,6 @@
 name: E2E Tests
 
 on:
-  push:
-    # Workflow runs on push to any branch in the repo (not forks).
   schedule:
     - cron: "0 * * * *" # hourly
 

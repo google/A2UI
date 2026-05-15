@@ -3,6 +3,7 @@
 - Add locale support to `SurfaceModel` and `DataContext` in v0.9.
 - Update `pluralize`, `formatNumber`, and `formatCurrency` to use the context locale instead of hardcoding 'en-US'.
 - Remove `.passthrough()` from `PluralizeApi` schema for stricter validation.
+- Allow overriding hard-coded recursion depth in `DataValueSchema` for v0.8 by introducing `createDataValueSchema` factory function.
 
 ## 0.10.0
 
