@@ -49,7 +49,7 @@ PR_NUMBER=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[
 
 SHORT_SHA="${GITHUB_SHA:0:7}"
 
-if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+if [[ -n "$PR_NUMBER" && "$PR_NUMBER" != "null" ]]; then
   PR_LINK="Associated PR: #${PR_NUMBER}"
   TITLE="${WORKFLOW_NAME} failed on main (PR #${PR_NUMBER})"
 else
