@@ -45,10 +45,13 @@ export abstract class BasicCatalogComponent<
     return this.theme()?.primaryColor;
   });
 
-  /** Weight is applied as flex css property on the component host HTML element. */
-  protected readonly weight = computed(
-    () => (this.props()['weight'] as unknown as BoundProperty<number | undefined>)?.value() ?? null,
-  );
+  /**
+   * Weight is applied as flex css property on the component host HTML element.
+   */
+  protected readonly weight = computed(() => {
+    const props = this.props() as {weight?: BoundProperty<number | undefined>};
+    return props['weight']?.value() ?? null;
+  });
 
   constructor() {
     super();
