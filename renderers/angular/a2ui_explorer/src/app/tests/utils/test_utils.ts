@@ -15,9 +15,9 @@
  */
 
 import {TestBed} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
-import {EXAMPLES} from '../generated/examples-bundle';
-import {provideMarkdownRenderer} from '../../../../src/v0_9/core/markdown';
+import {DemoComponent} from '../../demo.component';
+import {EXAMPLES} from '../../generated/examples-bundle';
+import {provideMarkdownRenderer} from '../../../../../src/v0_9/core/markdown';
 
 /**
  * Helper function to load an example in the DemoComponent for testing.
