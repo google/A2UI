@@ -364,6 +364,8 @@ To support continuous evolution without breaking older clients or agents, A2UI c
 
 While standard JSON parsers ignore unknown fields, dropping a component in a Server-Driven UI can drop its entire view tree. To balance safety and flexibility, updates are split into **Breaking** and **Non-Breaking** categories, relying on **Graceful Degradation** to absorb version lags.
 
+<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
+<!-- prettier-ignore -->
 - **Breaking Changes (Major Version Bump Required)**  
   Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
     - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
@@ -387,6 +389,8 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 
 Here is how catalog version mismatches are handled in practice:
 
+<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
+<!-- prettier-ignore -->
 - **An old iOS client is using an older catalog than the agent**
     - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
     - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.

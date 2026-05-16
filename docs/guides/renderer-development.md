@@ -71,6 +71,8 @@ This section details the fundamental mechanics of the A2UI protocol. A compliant
 
 A compliant renderer must implement the following message processing and state management features:
 
+<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
+<!-- prettier-ignore -->
 - **JSONL Stream Parsing**: Implement a parser that can read a streaming response line by line, decoding each line as a distinct JSON object.
 - **Message Dispatcher**: Create a dispatcher to identify the message type (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`, `deleteSurface`) and route it to the correct handler.
 - **Surface Management**:
@@ -88,6 +90,8 @@ A compliant renderer must implement the following message processing and state m
 
 Implement the following rendering logic:
 
+<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
+<!-- prettier-ignore -->
 - **Progressive Rendering Control**:
     - Buffer all incoming `surfaceUpdate` and `dataModelUpdate` messages without rendering immediately.
     - Handle `beginRendering`: This message acts as the explicit signal to perform the initial render of a surface and set the root component ID.
@@ -107,6 +111,8 @@ Implement the following rendering logic:
 
 Implement the following communication features:
 
+<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
+<!-- prettier-ignore -->
 - **Event Handling**:
     - When a user interacts with a component that has an `action` defined, construct a `userAction` payload.
     - Resolve all data bindings within the `action.context` against the data model.
