@@ -72,7 +72,10 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
         </div>
         <div class="canvas-frame">
           <div *ngIf="surfaceId" class="rendered-content" [attr.data-version]="version">
-            <a2ui-v09-surface *ngIf="version === Version.V0_9" [surfaceId]="surfaceId"></a2ui-v09-surface>
+            <a2ui-v09-surface
+              *ngIf="version === Version.V0_9"
+              [surfaceId]="surfaceId"
+            ></a2ui-v09-surface>
             <a2ui-surface *ngIf="version === Version.V0_8" [surfaceId]="surfaceId"></a2ui-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
@@ -204,7 +207,7 @@ import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
               <h4>Events Log</h4>
             </div>
             <div>
-              <button class="clear-btn" (click)="eventsLog = []; $event.stopPropagation()">
+              <button class="clear-btn" (click)="clearEventsLog(); $event.stopPropagation()">
                 Clear
               </button>
             </div>
@@ -570,7 +573,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   Version = Version;
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
-  private actionDispatcher = inject(ActionDispatcher);
   private cdr = inject(ChangeDetectorRef);
   private messageProcessorV08 = inject(MessageProcessorV08);
   private themeV08 = inject(ThemeV08);
@@ -582,7 +584,12 @@ export class DemoComponent implements OnInit, OnDestroy {
   inspectTab: 'data' | 'events' = 'data';
 
   currentDataModel: Record<string, unknown> = {};
-  eventsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
+  get eventsLog() {
+    return this.agentStub.eventsLog();
+  }
+  clearEventsLog() {
+    this.agentStub.eventsLog.set([]);
+  }
   currentCreateSurfaceMessageJson: string = '';
   messageError: string | null = null;
   currentDataModelJson: string = '';
@@ -606,8 +613,6 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.isEventsLogFolded = !this.isEventsLogFolded;
     localStorage.setItem('isEventsLogFolded', String(this.isEventsLogFolded));
   }
-
-  private actionSub?: {unsubscribe: () => void};
   private dataModelSub?: {unsubscribe: () => void};
 
   ngOnInit(): void {
@@ -643,7 +648,6 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.selectedExample = example;
     this.surfaceId = null;
     this.currentDataModel = {};
-    this.eventsLog = [];
     this.cdr.detectChanges();
 
     window.location.hash = this.slugify(example.name);
@@ -654,17 +658,9 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
 
     this.agentStub.initializeDemo(example.messages);
+    this.surfaceId = this.agentStub.getSurfaceId();
 
-    // Look for the surfaceId in the first message or use default
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
-    this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
-
-    if (this.version === Version.V0_8) {
-      const surfaceUpdate = example.messages.find(m => 'surfaceUpdate' in m);
-      if (surfaceUpdate) {
-        this.surfaceId = (surfaceUpdate as any).surfaceUpdate.surfaceId;
-      }
-    }
 
     this.currentCreateSurfaceMessageJson = createMsg ? JSON.stringify(createMsg, null, 2) : '';
     if (this.version === Version.V0_8) {
@@ -693,29 +689,6 @@ export class DemoComponent implements OnInit, OnDestroy {
           this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
         }
       }
-    }
-
-    // Subscribe to Actions for Events log and Handling
-    if (this.actionSub) {
-      this.actionSub.unsubscribe();
-    }
-
-    if (this.version === Version.V0_9) {
-      this.actionSub = this.actionDispatcher.actions.subscribe(action => {
-        this.agentStub.handleAction(action);
-        this.eventsLog.unshift({timestamp: new Date(), action});
-        this.cdr.detectChanges();
-      });
-    } else if (this.version === Version.V0_8) {
-      this.actionSub = this.messageProcessorV08.events.subscribe(event => {
-        const message = event.message;
-        if (message.userAction) {
-          const action = message.userAction as unknown as A2uiClientAction;
-          this.agentStub.handleAction(action);
-          this.eventsLog.unshift({timestamp: new Date(), action: {userAction: action} as any});
-          this.cdr.detectChanges();
-        }
-      });
     }
   }
 
@@ -746,8 +719,6 @@ export class DemoComponent implements OnInit, OnDestroy {
       // Re-initialize the demo with the updated messages
       this.agentStub.initializeDemo(updatedMessages);
 
-      const newSurfaceId = parsed.createSurface.surfaceId;
-
       if (this.dataModelSub) {
         this.dataModelSub.unsubscribe();
       }
@@ -756,7 +727,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.surfaceId = null;
       this.cdr.detectChanges();
 
-      this.surfaceId = newSurfaceId;
+      this.surfaceId = this.agentStub.getSurfaceId();
       const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
       if (surface) {
         this.dataModelSub = surface.dataModel.subscribe('/', data => {
@@ -816,9 +787,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.dataModelSub) {
       this.dataModelSub.unsubscribe();
-    }
-    if (this.actionSub) {
-      this.actionSub.unsubscribe();
     }
   }
 

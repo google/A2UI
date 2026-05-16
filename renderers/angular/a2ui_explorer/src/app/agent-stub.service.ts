@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, signal, WritableSignal} from '@angular/core';
 import {A2uiRendererService} from '@a2ui/angular/v0_9';
 import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
-import {A2uiClientAction, A2uiMessage} from '@a2ui/web_core/v0_9';
+import {A2uiClientAction, A2uiMessage, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
 import {ServerToClientMessage} from 'src/v0_8/types';
+import {ActionDispatcher} from './action-dispatcher.service';
 
 /**
  * Context for the 'update_property' event.
@@ -42,8 +43,10 @@ interface SubmitFormContext {
  */
 export abstract class AgentStubService {
   abstract get actionsLog(): Array<{timestamp: Date; action: A2uiClientAction}>;
+  abstract eventsLog: WritableSignal<Array<{timestamp: Date; action: A2uiClientAction}>>;
   abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
   abstract handleAction(action: A2uiClientAction): void;
+  abstract getSurfaceId(): string;
 }
 
 /**
@@ -56,8 +59,14 @@ export abstract class AgentStubService {
 })
 export class AgentStubV09Service implements AgentStubService {
   actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
+  eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
+  private surfaceId: string = 'demo-surface';
+  private actionSub?: {unsubscribe: () => void};
 
-  constructor(private rendererService: A2uiRendererService) {}
+  constructor(
+    private rendererService: A2uiRendererService,
+    private actionDispatcher: ActionDispatcher,
+  ) {}
 
   handleAction(action: A2uiClientAction) {
     console.log('[AgentStubV09] handleAction action:', action);
@@ -127,7 +136,23 @@ export class AgentStubV09Service implements AgentStubService {
         }
       }
     }
+    const createMsg = initialMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
+    this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
+
+    this.eventsLog.set([]);
+    if (this.actionSub) {
+      this.actionSub.unsubscribe();
+    }
+    this.actionSub = this.actionDispatcher.actions.subscribe(action => {
+      this.handleAction(action);
+      this.eventsLog.update(log => [{timestamp: new Date(), action}, ...log]);
+    });
+
     this.rendererService.processMessages(initialMessages);
+  }
+
+  getSurfaceId(): string {
+    return this.surfaceId;
   }
 }
 
@@ -141,6 +166,9 @@ export class AgentStubV09Service implements AgentStubService {
 })
 export class AgentStubV08Service implements AgentStubService {
   actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
+  eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
+  private surfaceId: string = 'demo-surface';
+  private actionSub?: {unsubscribe: () => void};
 
   constructor(private messageProcessorV08: MessageProcessorV08) {}
 
@@ -171,8 +199,29 @@ export class AgentStubV08Service implements AgentStubService {
   }
 
   initializeDemo(initialMessages: ServerToClientMessage[]) {
+    const surfaceUpdate = initialMessages.find(m => 'surfaceUpdate' in m) as
+      | ServerToClientMessage
+      | undefined;
+    this.surfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
+
+    this.eventsLog.set([]);
+    if (this.actionSub) {
+      this.actionSub.unsubscribe();
+    }
+    this.actionSub = this.messageProcessorV08.events.subscribe(event => {
+      const message = event.message;
+      if (message.userAction) {
+        const action = message.userAction as unknown as A2uiClientAction;
+        this.handleAction(action);
+        this.eventsLog.update(log => [{timestamp: new Date(), action: {userAction: action} as any}, ...log]);
+      }
+    });
+
     this.messageProcessorV08.processMessages(initialMessages);
   }
-}
 
+  getSurfaceId(): string {
+    return this.surfaceId;
+  }
+}
 
