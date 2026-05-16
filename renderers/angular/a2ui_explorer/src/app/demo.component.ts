@@ -355,7 +355,7 @@ import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         padding: 24px;
       }
-      .rendered-content[data-version='0.8'] {
+      .rendered-content[data-version='v0.8'] {
         --a2ui-color-surface: #1e1e1e;
         background-color: var(--a2ui-color-surface);
         color: #e0e0e0;
