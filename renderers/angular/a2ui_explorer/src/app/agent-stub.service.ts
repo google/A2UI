@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {Injectable, signal, WritableSignal} from '@angular/core';
+import {Injectable, signal, WritableSignal, computed, Signal} from '@angular/core';
 import {A2uiRendererService} from '@a2ui/angular/v0_9';
-import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
+import {MessageProcessor as MessageProcessorV08, Theme as ThemeV08} from '@a2ui/angular/v0_8';
 import {A2uiClientAction, A2uiMessage, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
 import {ServerToClientMessage} from 'src/v0_8/types';
 import {ActionDispatcher} from './action-dispatcher.service';
@@ -42,11 +42,12 @@ interface SubmitFormContext {
  * Abstract base class for agent stub services.
  */
 export abstract class AgentStubService {
-  abstract get actionsLog(): Array<{timestamp: Date; action: A2uiClientAction}>;
   abstract eventsLog: WritableSignal<Array<{timestamp: Date; action: A2uiClientAction}>>;
+  abstract dataModel: Signal<Record<string, unknown>>;
+  abstract surfaceId: Signal<string>;
+
   abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
   abstract handleAction(action: A2uiClientAction): void;
-  abstract getSurfaceId(): string;
 }
 
 /**
@@ -58,10 +59,11 @@ export abstract class AgentStubService {
   providedIn: 'root',
 })
 export class AgentStubV09Service implements AgentStubService {
-  actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
+  dataModel = signal<Record<string, unknown>>({});
+  surfaceId = signal<string>('demo-surface');
   eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
-  private surfaceId: string = 'demo-surface';
   private actionSub?: {unsubscribe: () => void};
+  private dataModelSub?: {unsubscribe: () => void};
 
   constructor(
     private rendererService: A2uiRendererService,
@@ -70,7 +72,6 @@ export class AgentStubV09Service implements AgentStubService {
 
   handleAction(action: A2uiClientAction) {
     console.log('[AgentStubV09] handleAction action:', action);
-    this.actionsLog.push({timestamp: new Date(), action});
 
     setTimeout(() => {
       const {name, context} = action;
@@ -137,7 +138,8 @@ export class AgentStubV09Service implements AgentStubService {
       }
     }
     const createMsg = initialMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
-    this.surfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
+    const newSurfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
+    this.surfaceId.set(newSurfaceId);
 
     this.eventsLog.set([]);
     if (this.actionSub) {
@@ -149,10 +151,19 @@ export class AgentStubV09Service implements AgentStubService {
     });
 
     this.rendererService.processMessages(initialMessages);
-  }
 
-  getSurfaceId(): string {
-    return this.surfaceId;
+    if (this.dataModelSub) {
+      this.dataModelSub.unsubscribe();
+    }
+    const surface = this.rendererService.surfaceGroup?.getSurface(newSurfaceId);
+    if (surface && surface.dataModel) {
+      this.dataModelSub = surface.dataModel.subscribe('/', data => {
+        this.dataModel.set(data as Record<string, unknown>);
+      });
+      this.dataModel.set(surface.dataModel.get('/'));
+    } else {
+      this.dataModel.set({});
+    }
   }
 }
 
@@ -165,16 +176,32 @@ export class AgentStubV09Service implements AgentStubService {
   providedIn: 'root',
 })
 export class AgentStubV08Service implements AgentStubService {
-  actionsLog: Array<{timestamp: Date; action: A2uiClientAction}> = [];
   eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
-  private surfaceId: string = 'demo-surface';
+  surfaceId = signal<string>('demo-surface');
   private actionSub?: {unsubscribe: () => void};
 
-  constructor(private messageProcessorV08: MessageProcessorV08) {}
+  dataModel = computed(() => {
+    this.messageProcessorV08.version();
+    const surfaceId = this.surfaceId();
+    if (!surfaceId) return {};
+    const surfaces = this.messageProcessorV08.getSurfaces();
+    const surface = surfaces.get(surfaceId);
+    if (surface) {
+      return this.messageProcessorV08.getData({id: 'root'} as any, '/', surfaceId) as Record<
+        string,
+        unknown
+      >;
+    }
+    return {};
+  });
+
+  constructor(
+    private messageProcessorV08: MessageProcessorV08,
+    private themeV08: ThemeV08,
+  ) {}
 
   handleAction(action: A2uiClientAction) {
     console.log('[AgentStubV08] handleAction action:', action);
-    this.actionsLog.push({timestamp: new Date(), action});
 
     setTimeout(() => {
       const {name, context} = action;
@@ -199,10 +226,13 @@ export class AgentStubV08Service implements AgentStubService {
   }
 
   initializeDemo(initialMessages: ServerToClientMessage[]) {
+    this.themeV08.update(this.getDefault08Theme());
+
     const surfaceUpdate = initialMessages.find(m => 'surfaceUpdate' in m) as
       | ServerToClientMessage
       | undefined;
-    this.surfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
+    const newSurfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
+    this.surfaceId.set(newSurfaceId);
 
     this.eventsLog.set([]);
     if (this.actionSub) {
@@ -213,15 +243,84 @@ export class AgentStubV08Service implements AgentStubService {
       if (message.userAction) {
         const action = message.userAction as unknown as A2uiClientAction;
         this.handleAction(action);
-        this.eventsLog.update(log => [{timestamp: new Date(), action: {userAction: action} as any}, ...log]);
+        this.eventsLog.update(log => [
+          {timestamp: new Date(), action: {userAction: action} as any},
+          ...log,
+        ]);
       }
     });
 
     this.messageProcessorV08.processMessages(initialMessages);
   }
 
-  getSurfaceId(): string {
-    return this.surfaceId;
+  private getDefault08Theme() {
+    return {
+      components: {
+        AudioPlayer: {},
+        Text: {all: {}, h1: {}, h2: {}, h3: {}, h4: {}, h5: {}, body: {}, caption: {}},
+        CheckBox: {container: {}, element: {}, label: {}},
+        DateTimeInput: {container: {}, element: {}, label: {}},
+        List: {},
+        Modal: {backdrop: {}, element: {}},
+        MultipleChoice: {container: {}, element: {}, label: {}},
+        Tabs: {
+          container: {},
+          element: {},
+          controls: {
+            all: {},
+            selected: {},
+          },
+        },
+        Slider: {container: {}, element: {}, label: {}},
+        TextField: {container: {}, element: {}, label: {}},
+        Video: {},
+        Card: {},
+        Row: {},
+        Column: {},
+        Image: {
+          all: {},
+          icon: {},
+          avatar: {},
+          smallFeature: {},
+          mediumFeature: {},
+          largeFeature: {},
+          header: {},
+        },
+        Divider: {},
+        Icon: {},
+        Button: {},
+      },
+      elements: {
+        a: {},
+        audio: {},
+        body: {},
+        button: {},
+        h1: {},
+        h2: {},
+        h3: {},
+        h4: {},
+        h5: {},
+        iframe: {},
+        input: {},
+        p: {},
+        pre: {},
+        textarea: {},
+        video: {},
+      },
+      markdown: {
+        p: [],
+        h1: [],
+        h2: [],
+        h3: [],
+        h4: [],
+        h5: [],
+        ul: [],
+        ol: [],
+        li: [],
+        a: [],
+        strong: [],
+        em: [],
+      },
+    };
   }
 }
-

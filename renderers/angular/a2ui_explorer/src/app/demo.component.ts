@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy, effect} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
 import {AgentStubService, AgentStubV08Service, AgentStubV09Service} from './agent-stub.service';
@@ -25,9 +25,7 @@ import {DemoCatalog} from './demo-catalog';
 import {A2uiClientAction, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
 import {Example, Example_08, A2UI_VERSION, A2UI_EXAMPLES, Version} from './types';
 import {ActionDispatcher} from './action-dispatcher.service';
-import {MessageProcessor as MessageProcessorV08} from '@a2ui/angular/v0_8';
 import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2ui/angular/v0_8';
-import {Theme as ThemeV08} from '@a2ui/angular/v0_8';
 
 /**
  * Main dashboard component for A2UI v0.9 Angular Renderer.
@@ -574,8 +572,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
   private cdr = inject(ChangeDetectorRef);
-  private messageProcessorV08 = inject(MessageProcessorV08);
-  private themeV08 = inject(ThemeV08);
 
   version: Version = inject(A2UI_VERSION);
   examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
@@ -583,7 +579,9 @@ export class DemoComponent implements OnInit, OnDestroy {
   surfaceId: string | null = null;
   inspectTab: 'data' | 'events' = 'data';
 
-  currentDataModel: Record<string, unknown> = {};
+  get currentDataModel() {
+    return this.agentStub.dataModel();
+  }
   get eventsLog() {
     return this.agentStub.eventsLog();
   }
@@ -594,6 +592,14 @@ export class DemoComponent implements OnInit, OnDestroy {
   messageError: string | null = null;
   currentDataModelJson: string = '';
   dataModelError: string | null = null;
+
+  constructor() {
+    effect(() => {
+      const data = this.agentStub.dataModel();
+      this.currentDataModelJson = JSON.stringify(data, null, 2);
+      this.cdr.detectChanges();
+    });
+  }
 
   isDataModelFolded = false;
   isSurfaceMessageFolded = false;
@@ -613,17 +619,12 @@ export class DemoComponent implements OnInit, OnDestroy {
     this.isEventsLogFolded = !this.isEventsLogFolded;
     localStorage.setItem('isEventsLogFolded', String(this.isEventsLogFolded));
   }
-  private dataModelSub?: {unsubscribe: () => void};
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
       this.isDataModelFolded = localStorage.getItem('isDataModelFolded') === 'true';
       this.isSurfaceMessageFolded = localStorage.getItem('isSurfaceMessageFolded') === 'true';
       this.isEventsLogFolded = localStorage.getItem('isEventsLogFolded') === 'true';
-
-      if (this.version === Version.V0_8) {
-        this.themeV08.update(this.getDefault08Theme());
-      }
     }
     this.selectExampleFromUrl();
   }
@@ -647,18 +648,12 @@ export class DemoComponent implements OnInit, OnDestroy {
   selectExample(example: Example | Example_08) {
     this.selectedExample = example;
     this.surfaceId = null;
-    this.currentDataModel = {};
     this.cdr.detectChanges();
 
     window.location.hash = this.slugify(example.name);
 
-    // Clean up previous subscriptions
-    if (this.dataModelSub) {
-      this.dataModelSub.unsubscribe();
-    }
-
     this.agentStub.initializeDemo(example.messages);
-    this.surfaceId = this.agentStub.getSurfaceId();
+    this.surfaceId = this.agentStub.surfaceId();
 
     const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
 
@@ -668,28 +663,6 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
 
     this.cdr.detectChanges();
-
-    // Set initial surface and  data model
-    if (this.surfaceId) {
-      if (this.version === Version.V0_9) {
-        const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
-        if (surface) {
-          this.currentDataModel = surface.dataModel.get('/');
-          this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
-        }
-      } else {
-        const surfaces = this.messageProcessorV08.getSurfaces();
-        const surface = surfaces.get(this.surfaceId);
-        if (surface) {
-          this.currentDataModel = this.messageProcessorV08.getData(
-            {id: 'root'} as any,
-            '/',
-            this.surfaceId,
-          ) as Record<string, unknown>;
-          this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
-        }
-      }
-    }
   }
 
   /** Gets a display string for the action type. */
@@ -719,26 +692,11 @@ export class DemoComponent implements OnInit, OnDestroy {
       // Re-initialize the demo with the updated messages
       this.agentStub.initializeDemo(updatedMessages);
 
-      if (this.dataModelSub) {
-        this.dataModelSub.unsubscribe();
-      }
-
       // Force recreation of the surface component by nulling the ID temporarily
       this.surfaceId = null;
       this.cdr.detectChanges();
 
-      this.surfaceId = this.agentStub.getSurfaceId();
-      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
-      if (surface) {
-        this.dataModelSub = surface.dataModel.subscribe('/', data => {
-          this.currentDataModel = data as Record<string, unknown>;
-          this.currentDataModelJson = JSON.stringify(data, null, 2);
-          this.cdr.detectChanges();
-        });
-        this.currentDataModel = surface.dataModel.get('/');
-        this.currentDataModelJson = JSON.stringify(this.currentDataModel, null, 2);
-      }
-
+      this.surfaceId = this.agentStub.surfaceId();
       this.cdr.detectChanges();
     } catch (e) {
       this.messageError = e instanceof Error ? e.message : 'Invalid JSON';
@@ -785,9 +743,6 @@ export class DemoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.dataModelSub) {
-      this.dataModelSub.unsubscribe();
-    }
   }
 
   private slugify(text: string): string {
@@ -803,76 +758,5 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
     if (!example) return;
     this.selectExample(example);
-  }
-
-  private getDefault08Theme() {
-    return {
-      components: {
-        AudioPlayer: {},
-        Text: {all: {}, h1: {}, h2: {}, h3: {}, h4: {}, h5: {}, body: {}, caption: {}},
-        CheckBox: {container: {}, element: {}, label: {}},
-        DateTimeInput: {container: {}, element: {}, label: {}},
-        List: {},
-        Modal: {backdrop: {}, element: {}},
-        MultipleChoice: {container: {}, element: {}, label: {}},
-        Tabs: {
-          container: {},
-          element: {},
-          controls: {
-            all: {},
-            selected: {},
-          },
-        },
-        Slider: {container: {}, element: {}, label: {}},
-        TextField: {container: {}, element: {}, label: {}},
-        Video: {},
-        Card: {},
-        Row: {},
-        Column: {},
-        Image: {
-          all: {},
-          icon: {},
-          avatar: {},
-          smallFeature: {},
-          mediumFeature: {},
-          largeFeature: {},
-          header: {},
-        },
-        Divider: {},
-        Icon: {},
-        Button: {},
-      },
-      elements: {
-        a: {},
-        audio: {},
-        body: {},
-        button: {},
-        h1: {},
-        h2: {},
-        h3: {},
-        h4: {},
-        h5: {},
-        iframe: {},
-        input: {},
-        p: {},
-        pre: {},
-        textarea: {},
-        video: {},
-      },
-      markdown: {
-        p: [],
-        h1: [],
-        h2: [],
-        h3: [],
-        h4: [],
-        h5: [],
-        ul: [],
-        ol: [],
-        li: [],
-        a: [],
-        strong: [],
-        em: [],
-      },
-    };
   }
 }
