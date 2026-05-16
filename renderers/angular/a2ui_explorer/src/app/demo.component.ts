@@ -568,7 +568,7 @@ import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2
   ],
 })
 export class DemoComponent implements OnInit, OnDestroy {
-  Version = Version;
+  readonly Version = Version;
   private rendererService = inject(A2uiRendererService);
   private agentStub = inject(AgentStubService);
   private cdr = inject(ChangeDetectorRef);
@@ -576,12 +576,9 @@ export class DemoComponent implements OnInit, OnDestroy {
   readonly version: Version = inject(A2UI_VERSION);
   readonly examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
   selectedExample: Example | Example_08 | undefined = undefined;
-  surfaceId = this.agentStub.surfaceId;
+  readonly surfaceId = this.agentStub.surfaceId;
   inspectTab: 'data' | 'events' = 'data';
 
-  get currentDataModel() {
-    return this.agentStub.dataModel();
-  }
   get eventsLog() {
     return this.agentStub.eventsLog();
   }
