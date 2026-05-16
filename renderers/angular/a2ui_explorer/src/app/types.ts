@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {InjectionToken, inject} from '@angular/core';
 import {A2uiMessage} from '@a2ui/web_core/v0_9';
 import {ServerToClientMessage} from 'src/v0_8/types';
-import {EXAMPLES_V08, EXAMPLES_V09} from './generated/examples-bundle';
 
 /**
  * Supported A2UI protocol versions.
@@ -27,33 +25,8 @@ export enum Version {
   V0_9 = 'v0.9',
 }
 
-/**
- * Dependency injection token for the active A2UI protocol version.
- */
-export const A2UI_VERSION = new InjectionToken<Version>('A2UI_VERSION', {
-  providedIn: 'root',
-  factory: () => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const version = urlParams.get('version');
-      if (version === Version.V0_8 || version === Version.V0_9) {
-        return version as Version;
-      }
-    }
-    return Version.V0_9;
-  },
-});
-
-/**
- * Dependency injection token for the active A2UI examples list.
- */
-export const A2UI_EXAMPLES = new InjectionToken<Array<Example | Example_08>>('A2UI_EXAMPLES', {
-  providedIn: 'root',
-  factory: () => {
-    const version = inject(A2UI_VERSION);
-    return version === Version.V0_9 ? EXAMPLES_V09 : EXAMPLES_V08;
-  },
-});
+export {A2UI_VERSION} from './version_injector';
+export {A2UI_EXAMPLES} from './examples_injector';
 
 /**
  * Represents a demo example configuration.
