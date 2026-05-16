@@ -45,6 +45,9 @@ export abstract class AgentStubService {
   abstract eventsLog: WritableSignal<Array<{timestamp: Date; action: A2uiClientAction}>>;
   abstract dataModel: Signal<Record<string, unknown>>;
   abstract surfaceId: Signal<string>;
+  abstract currentCreateSurfaceMessage: Signal<
+    CreateSurfaceMessage | ServerToClientMessage[] | null
+  >;
 
   abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
   abstract handleAction(action: A2uiClientAction): void;
@@ -62,6 +65,7 @@ export class AgentStubV09Service implements AgentStubService {
   dataModel = signal<Record<string, unknown>>({});
   surfaceId = signal<string>('demo-surface');
   eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
+  currentCreateSurfaceMessage = signal<CreateSurfaceMessage | null>(null);
   private actionSub?: {unsubscribe: () => void};
   private dataModelSub?: {unsubscribe: () => void};
 
@@ -140,6 +144,7 @@ export class AgentStubV09Service implements AgentStubService {
     const createMsg = initialMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     const newSurfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
     this.surfaceId.set(newSurfaceId);
+    this.currentCreateSurfaceMessage.set(createMsg || null);
 
     this.eventsLog.set([]);
     if (this.actionSub) {
@@ -178,6 +183,7 @@ export class AgentStubV09Service implements AgentStubService {
 export class AgentStubV08Service implements AgentStubService {
   eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
   surfaceId = signal<string>('demo-surface');
+  currentCreateSurfaceMessage = signal<ServerToClientMessage[] | null>(null);
   private actionSub?: {unsubscribe: () => void};
 
   dataModel = computed(() => {
@@ -233,6 +239,7 @@ export class AgentStubV08Service implements AgentStubService {
       | undefined;
     const newSurfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
     this.surfaceId.set(newSurfaceId);
+    this.currentCreateSurfaceMessage.set(initialMessages);
 
     this.eventsLog.set([]);
     if (this.actionSub) {
@@ -324,3 +331,4 @@ export class AgentStubV08Service implements AgentStubService {
     };
   }
 }
+

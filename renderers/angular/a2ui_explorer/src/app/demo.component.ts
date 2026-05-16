@@ -22,7 +22,7 @@ import {SurfaceComponent as SurfaceComponentV09} from '@a2ui/angular/v0_9';
 import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8';
 import {AngularCatalog} from '@a2ui/angular/v0_9';
 import {DemoCatalog} from './demo-catalog';
-import {A2uiClientAction, CreateSurfaceMessage} from '@a2ui/web_core/v0_9';
+import {A2uiClientAction} from '@a2ui/web_core/v0_9';
 import {Example, Example_08, A2UI_VERSION, A2UI_EXAMPLES, Version} from './types';
 import {ActionDispatcher} from './action-dispatcher.service';
 import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2ui/angular/v0_8';
@@ -573,8 +573,8 @@ export class DemoComponent implements OnInit, OnDestroy {
   private agentStub = inject(AgentStubService);
   private cdr = inject(ChangeDetectorRef);
 
-  version: Version = inject(A2UI_VERSION);
-  examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
+  readonly version: Version = inject(A2UI_VERSION);
+  readonly examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
   selectedExample: Example | Example_08 | undefined = undefined;
   surfaceId: string | null = null;
   inspectTab: 'data' | 'events' = 'data';
@@ -597,6 +597,12 @@ export class DemoComponent implements OnInit, OnDestroy {
     effect(() => {
       const data = this.agentStub.dataModel();
       this.currentDataModelJson = JSON.stringify(data, null, 2);
+      this.cdr.detectChanges();
+    });
+
+    effect(() => {
+      const msg = this.agentStub.currentCreateSurfaceMessage();
+      this.currentCreateSurfaceMessageJson = msg ? JSON.stringify(msg, null, 2) : '';
       this.cdr.detectChanges();
     });
   }
@@ -654,14 +660,6 @@ export class DemoComponent implements OnInit, OnDestroy {
 
     this.agentStub.initializeDemo(example.messages);
     this.surfaceId = this.agentStub.surfaceId();
-
-    const createMsg = example.messages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
-
-    this.currentCreateSurfaceMessageJson = createMsg ? JSON.stringify(createMsg, null, 2) : '';
-    if (this.version === Version.V0_8) {
-      this.currentCreateSurfaceMessageJson = JSON.stringify(example.messages, null, 2);
-    }
-
     this.cdr.detectChanges();
   }
 
@@ -742,8 +740,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 
   private slugify(text: string): string {
     return text
