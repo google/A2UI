@@ -143,7 +143,6 @@ export class AgentStubV09Service implements AgentStubService {
     }
     const createMsg = initialMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     const newSurfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
-    this.surfaceId.set(newSurfaceId);
     this.currentCreateSurfaceMessage.set(createMsg || null);
 
     this.eventsLog.set([]);
@@ -169,6 +168,12 @@ export class AgentStubV09Service implements AgentStubService {
     } else {
       this.dataModel.set({});
     }
+
+    // Angular change detection workaround to force recreation of the surface.
+    this.surfaceId.set('');
+    setTimeout(() => {
+      this.surfaceId.set(newSurfaceId);
+    }, 0);
   }
 }
 
@@ -238,7 +243,6 @@ export class AgentStubV08Service implements AgentStubService {
       | ServerToClientMessage
       | undefined;
     const newSurfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
-    this.surfaceId.set(newSurfaceId);
     this.currentCreateSurfaceMessage.set(initialMessages);
 
     this.eventsLog.set([]);
@@ -258,6 +262,12 @@ export class AgentStubV08Service implements AgentStubService {
     });
 
     this.messageProcessorV08.processMessages(initialMessages);
+
+    // Angular change detection workaround to force recreation of the surface.
+    this.surfaceId.set('');
+    setTimeout(() => {
+      this.surfaceId.set(newSurfaceId);
+    }, 0);
   }
 
   private getDefault08Theme() {
@@ -331,4 +341,3 @@ export class AgentStubV08Service implements AgentStubService {
     };
   }
 }
-

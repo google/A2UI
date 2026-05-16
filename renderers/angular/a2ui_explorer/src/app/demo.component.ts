@@ -69,14 +69,14 @@ import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2
           <p class="subtitle">{{ selectedExample.description }}</p>
         </div>
         <div class="canvas-frame">
-          <div *ngIf="surfaceId" class="rendered-content" [attr.data-version]="version">
+          <div *ngIf="surfaceId()" class="rendered-content" [attr.data-version]="version">
             <a2ui-v09-surface
               *ngIf="version === Version.V0_9"
-              [surfaceId]="surfaceId"
+              [surfaceId]="surfaceId()"
             ></a2ui-v09-surface>
-            <a2ui-surface *ngIf="version === Version.V0_8" [surfaceId]="surfaceId"></a2ui-surface>
+            <a2ui-surface *ngIf="version === Version.V0_8" [surfaceId]="surfaceId()"></a2ui-surface>
           </div>
-          <div *ngIf="!surfaceId" class="empty-canvas">
+          <div *ngIf="!surfaceId()" class="empty-canvas">
             Select an example from the sidebar to view.
           </div>
         </div>
@@ -576,7 +576,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   readonly version: Version = inject(A2UI_VERSION);
   readonly examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
   selectedExample: Example | Example_08 | undefined = undefined;
-  surfaceId: string | null = null;
+  surfaceId = this.agentStub.surfaceId;
   inspectTab: 'data' | 'events' = 'data';
 
   get currentDataModel() {
@@ -636,10 +636,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads a selected example configuration into the dashboard canvas dashboard workspace.
-   * - Resets surface identifiers and data payloads triggers.
-   * - Re-initializes incremental playback state sequence into `AgentStubService`.
-   * - Subscribes to path `/` enabling live model inspection updates.
+   * Reloads the page with the selected version.
    */
   onVersionChange(event: Event) {
     const select = event.target as HTMLSelectElement;
@@ -653,13 +650,9 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   selectExample(example: Example | Example_08) {
     this.selectedExample = example;
-    this.surfaceId = null;
-    this.cdr.detectChanges();
-
     window.location.hash = this.slugify(example.name);
 
     this.agentStub.initializeDemo(example.messages);
-    this.surfaceId = this.agentStub.surfaceId();
     this.cdr.detectChanges();
   }
 
@@ -689,12 +682,6 @@ export class DemoComponent implements OnInit, OnDestroy {
 
       // Re-initialize the demo with the updated messages
       this.agentStub.initializeDemo(updatedMessages);
-
-      // Force recreation of the surface component by nulling the ID temporarily
-      this.surfaceId = null;
-      this.cdr.detectChanges();
-
-      this.surfaceId = this.agentStub.surfaceId();
       this.cdr.detectChanges();
     } catch (e) {
       this.messageError = e instanceof Error ? e.message : 'Invalid JSON';
@@ -723,7 +710,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     try {
       const parsed = JSON.parse(newValue);
       this.dataModelError = null;
-      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId!);
+      const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
       surface?.dataModel.set('/', parsed);
     } catch (e) {
       this.dataModelError = e instanceof Error ? e.message : 'Invalid JSON';
