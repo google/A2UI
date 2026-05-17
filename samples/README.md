@@ -37,8 +37,6 @@ If the video is outdated, please, contribute the update.
 
 ## Dev tools
 
-| Tool                             | Language  | Renderer | e2e             | Video                    |
-| -------------------------------- | ------ | -------- | --------------- | ------------------------ |
-| [Dev UI generate][d-gen]           | Dart   | Flutter  | [yes][d-gen-e2e] | [2026-05-11][d-gen-video] |
-| [Dev UI test][d-test]           | Dart   | Flutter  | [yes][d-test-e2e] | [2026-05-11][d-test-video] |
-| [Dev UI debug][d-debug]           | Dart   | Flutter  | [yes][d-debug-e2e] | [2026-05-11][d-debug-video] |
+| Tool | Language | Video |
+| ---- | -------- | ----- |
+
