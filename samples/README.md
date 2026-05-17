@@ -1,6 +1,10 @@
-# A2UI Samples
+# A2UI samples and dev tools.
 
-This is the registry of examples. If the video is outdated, please, contribute the update:
+This is the registry of examples and dev tools for A2UI. 
+
+If the video is outdated, please, contribute the update.
+
+## Samples
 
 | Demo                             | Agent  | Renderer | e2e             | Video                    |
 | -------------------------------- | ------ | -------- | --------------- | ------------------------ |
@@ -30,3 +34,11 @@ This is the registry of examples. If the video is outdated, please, contribute t
 
 [vr-f-video]: https://github.com/user-attachments/assets/0a4b1160-0a35-4f1b-ac6d-dd8afb183279
 [vr-f-readme]: https://github.com/flutter/genui/blob/main/examples/verdure/README.md
+
+## Dev tools
+
+| Tool                             | Language  | Renderer | e2e             | Video                    |
+| -------------------------------- | ------ | -------- | --------------- | ------------------------ |
+| [Dev UI generate][d-gen]           | Dart   | Flutter  | [yes][d-gen-e2e] | [2026-05-11][d-gen-video] |
+| [Dev UI test][d-test]           | Dart   | Flutter  | [yes][d-test-e2e] | [2026-05-11][d-test-video] |
+| [Dev UI debug][d-debug]           | Dart   | Flutter  | [yes][d-debug-e2e] | [2026-05-11][d-debug-video] |
