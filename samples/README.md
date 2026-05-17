@@ -35,7 +35,7 @@ If the video is outdated, please, contribute the update.
 [vr-f-video]: https://github.com/user-attachments/assets/0a4b1160-0a35-4f1b-ac6d-dd8afb183279
 [vr-f-readme]: https://github.com/flutter/genui/blob/main/examples/verdure/README.md
 
-## Dev tools
+## Dev Tools
 
 | Tool                                      | Language | Video |
 | ----------------------------------------- | -------- | ----- |
