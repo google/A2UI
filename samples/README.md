@@ -1,4 +1,4 @@
-# A2UI samples and dev tools.
+# A2UI Samples and Dev Tools
 
 This is the registry of examples and dev tools for A2UI.
 
