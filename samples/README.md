@@ -1,6 +1,6 @@
 # A2UI samples and dev tools.
 
-This is the registry of examples and dev tools for A2UI. 
+This is the registry of examples and dev tools for A2UI.
 
 If the video is outdated, please, contribute the update.
 
@@ -37,11 +37,10 @@ If the video is outdated, please, contribute the update.
 
 ## Dev tools
 
-| Tool                                  | Language | Video |
-| ------------------------------------- | -------- | ----- |
+| Tool                                      | Language | Video |
+| ----------------------------------------- | -------- | ----- |
 | [Catalog Gallery][catalog-gallery-readme] | Flutter  |       |
 | [Composer][composer-readme]               | Flutter  |       |
 
 [catalog-gallery-readme]: https://github.com/flutter/genui/blob/main/dev_tools/catalog_gallery/README.md
 [composer-readme]: https://github.com/flutter/genui/blob/main/dev_tools/composer/README.md
-
