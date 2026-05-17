@@ -37,6 +37,11 @@ If the video is outdated, please, contribute the update.
 
 ## Dev tools
 
-| Tool | Language | Video |
-| ---- | -------- | ----- |
+| Tool                                  | Language | Video |
+| ------------------------------------- | -------- | ----- |
+| [Catalog Gallery][catalog-gallery-readme] | Flutter  |       |
+| [Composer][composer-readme]               | Flutter  |       |
+
+[catalog-gallery-readme]: https://github.com/flutter/genui/blob/main/dev_tools/catalog_gallery/README.md
+[composer-readme]: https://github.com/flutter/genui/blob/main/dev_tools/composer/README.md
 
