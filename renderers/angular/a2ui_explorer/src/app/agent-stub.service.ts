@@ -30,7 +30,6 @@ export abstract class AgentStubService {
   >;
 
   abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
-  abstract handleAction(action: A2uiClientAction): void;
 }
 
 export {AgentStubV09Service} from './agent-stub-v09.service';

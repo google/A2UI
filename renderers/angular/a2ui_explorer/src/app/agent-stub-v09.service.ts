@@ -58,7 +58,7 @@ export class AgentStubV09Service implements AgentStubService {
     private actionDispatcher: ActionDispatcher,
   ) {}
 
-  handleAction(action: A2uiClientAction) {
+  private handleAction(action: A2uiClientAction) {
     console.log('[AgentStubV09] handleAction action:', action);
 
     setTimeout(() => {

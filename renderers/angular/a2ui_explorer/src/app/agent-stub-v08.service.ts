@@ -19,6 +19,7 @@ import {MessageProcessor as MessageProcessorV08, Theme as ThemeV08} from '@a2ui/
 import {A2uiClientAction} from '@a2ui/web_core/v0_9';
 import {ServerToClientMessage} from 'src/v0_8/types';
 import {AgentStubService} from './agent-stub.service';
+import {UserAction} from '@a2ui/web_core/types/client-event';
 
 /**
  * Context for the 'update_property' event.
@@ -63,17 +64,17 @@ export class AgentStubV08Service implements AgentStubService {
     private themeV08: ThemeV08,
   ) {}
 
-  handleAction(action: A2uiClientAction) {
+  private handleAction(action: UserAction) {
     console.log('[AgentStubV08] handleAction action:', action);
 
     setTimeout(() => {
-      const {name, context} = action;
-      if (name === 'update_property' && context) {
+      const {context} = action;
+      if (action.name === 'update_property' && action.context) {
         const {path, value, surfaceId} = context as unknown as UpdatePropertyContext;
         this.messageProcessorV08.processMessages([
           {
             dataModelUpdate: {
-              surfaceId: surfaceId || action.surfaceId,
+              surfaceId: surfaceId || this.surfaceId(),
               path: path,
               contents: [
                 {
@@ -104,10 +105,10 @@ export class AgentStubV08Service implements AgentStubService {
     this.actionSub = this.messageProcessorV08.events.subscribe(event => {
       const message = event.message;
       if (message.userAction) {
-        const action = message.userAction as unknown as A2uiClientAction;
+        const action = message.userAction;
         this.handleAction(action);
         this.eventsLog.update(log => [
-          {timestamp: new Date(), action: {userAction: action} as any},
+          {timestamp: new Date(), action: this.userActionToClientAction(action)},
           ...log,
         ]);
       }
@@ -119,6 +120,16 @@ export class AgentStubV08Service implements AgentStubService {
     setTimeout(() => {
       this.surfaceId.set(newSurfaceId);
     }, 0);
+  }
+
+  private userActionToClientAction(action: UserAction): A2uiClientAction {
+    return {
+      name: action.name,
+      surfaceId: action.surfaceId,
+      sourceComponentId: action.sourceComponentId,
+      timestamp: action.timestamp,
+      context: action.context ?? {},
+    };
   }
 
   private getDefault08Theme() {
