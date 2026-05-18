@@ -27,10 +27,7 @@ import {A2UI_VERSION, Version} from '../../types';
 export async function loadExample(exampleName: string) {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
-    providers: [
-      provideMarkdownRenderer(),
-      {provide: A2UI_VERSION, useValue: Version.V0_9},
-    ],
+    providers: [provideMarkdownRenderer(), {provide: A2UI_VERSION, useValue: Version.V0_9}],
   });
 
   const fixture = TestBed.createComponent(DemoComponent);
