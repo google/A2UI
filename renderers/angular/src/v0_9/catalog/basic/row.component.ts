@@ -83,7 +83,7 @@ export class RowComponent extends BasicCatalogComponent<typeof RowApi> {
 
   protected readonly normalizedChildren = computed(() => {
     if (this.isRepeating()) return [];
-    return this.children().map((child: any) => {
+    return this.children().map(child => {
       if (typeof child === 'object' && child !== null && 'id' in child) {
         return child as {id: string; basePath: string};
       }
