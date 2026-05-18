@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-import {ChangeDetectorRef, Component, OnInit, inject, OnDestroy, effect} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+  OnDestroy,
+  effect,
+  signal,
+} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
 import {AgentStubService, AgentStubV08Service, AgentStubV09Service} from './agent-stub.service';
@@ -126,6 +134,7 @@ import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2
               [value]="currentCreateSurfaceMessageJson"
               (input)="onSurfaceMessageChange($event)"
               (blur)="onSurfaceMessageBlur()"
+              (focus)="onSurfaceMessageFocus()"
             ></textarea>
           </div>
         </div>
@@ -172,6 +181,7 @@ import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2
               [value]="currentDataModelJson"
               (input)="onDataModelChange($event)"
               (blur)="onDataModelBlur()"
+              (focus)="onDataModelFocus()"
             ></textarea>
           </div>
         </div>
@@ -589,15 +599,22 @@ export class DemoComponent implements OnInit, OnDestroy {
   messageError: string | null = null;
   currentDataModelJson: string = '';
   dataModelError: string | null = null;
+  jsonInputFocused = signal(false);
 
   constructor() {
     effect(() => {
+      if (this.jsonInputFocused()) {
+        return;
+      }
       const data = this.agentStub.dataModel();
       this.currentDataModelJson = JSON.stringify(data, null, 2);
       this.cdr.detectChanges();
     });
 
     effect(() => {
+      if (this.jsonInputFocused()) {
+        return;
+      }
       const msg = this.agentStub.currentCreateSurfaceMessage();
       this.currentCreateSurfaceMessageJson = msg ? JSON.stringify(msg, null, 2) : '';
       this.cdr.detectChanges();
@@ -686,7 +703,12 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSurfaceMessageFocus() {
+    this.jsonInputFocused.set(true);
+  }
+
   onSurfaceMessageBlur() {
+    this.jsonInputFocused.set(false);
     try {
       const parsed = JSON.parse(this.currentCreateSurfaceMessageJson);
       this.currentCreateSurfaceMessageJson = JSON.stringify(parsed, null, 2);
@@ -714,8 +736,12 @@ export class DemoComponent implements OnInit, OnDestroy {
       console.error(e);
     }
   }
+  onDataModelFocus() {
+    this.jsonInputFocused.set(true);
+  }
 
   onDataModelBlur() {
+    this.jsonInputFocused.set(false);
     try {
       const parsed = JSON.parse(this.currentDataModelJson);
       this.currentDataModelJson = JSON.stringify(parsed, null, 2);
