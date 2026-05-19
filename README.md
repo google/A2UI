@@ -12,6 +12,8 @@ Added some test text here (updated!!!) in PR 1
 Added text in PR 1
 Added some text here in PR 2!!!
 
+Third PR text
+
 _A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve._
 
 ## ⚠️ Status: Early stage public preview
