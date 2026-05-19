@@ -10,6 +10,7 @@ Added some test text here (updated!!!) in PR 1
 <img src="docs/assets/a2ui_gallery_examples.png" alt="Gallery of A2UI components" height="400">
 
 Added text in PR 1
+Added some text here in PR 2!!!
 
 _A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve._
 
