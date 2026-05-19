@@ -40,7 +40,7 @@ function copySchemas(version) {
 
   try {
     cpSync(srcCatalogsDir, join(destDir, 'catalogs'), {recursive: true});
-  } catch (e) {
+  } catch {
     // No catalogs directory, which is expected for v0_8
   }
 }
