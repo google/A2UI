@@ -471,6 +471,31 @@
       }
     },
     {
+      "description": "openUrl: Valid call with dynamic binding URL",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "btn1",
+              "component": "Button",
+              "child": "txt1",
+              "action": {
+                "functionCall": {
+                  "call": "openUrl",
+                  "args": {"url": {"path": "/targetUrl"}},
+                  "returnType": "void"
+                }
+              }
+            },
+            {"id": "txt1", "component": "Text", "text": "Go"}
+          ]
+        }
+      }
+    },
+    {
       "description": "openUrl: Invalid args (string instead of object)",
       "valid": false,
       "data": {

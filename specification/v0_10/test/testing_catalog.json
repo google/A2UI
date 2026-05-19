@@ -37,13 +37,24 @@
           "type": "object",
           "properties": {
             "url": {
-              "type": "string",
-              "format": "uri",
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "format": "uri"
+                  }
+                }
+              ],
               "description": "The URL to open."
             }
           },
           "required": ["url"],
-          "additionalProperties": false
+          "unevaluatedProperties": false
         },
         "returnType": {
           "const": "void"

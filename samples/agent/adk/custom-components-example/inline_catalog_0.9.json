@@ -1319,10 +1319,24 @@
           "type": "object",
           "properties": {
             "url": {
-              "type": "string"
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "format": "uri"
+                  }
+                }
+              ],
+              "description": "The URL to open."
             }
           },
-          "required": ["url"]
+          "required": ["url"],
+          "unevaluatedProperties": false
         },
         "returnType": {
           "const": "void"
