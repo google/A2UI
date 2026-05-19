@@ -48,7 +48,7 @@ It is observed that depending on use case, catalog components may be more or les
 
 A catalog maintained by the A2UI team to get up and running quickly with A2UI.
 
-See the [basic catalog](../specification/v0_10/json/basic_catalog.json).
+See the [basic catalog](../specification/v0_10/catalogs/basic/catalog.json).
 
 ### Surface
 
@@ -99,7 +99,7 @@ Functionality of A2UI renderer consists of layers that can be developed separate
 
   Definition of catalog in the form of JSON.
 
-  For example, see the [basic catalog schema](../specification/v0_10/json/basic_catalog.json).
+  For example, see the [basic catalog schema](../specification/v0_10/catalogs/basic/catalog.json).
 
 - **Framework adapter**:<a id="fw-adapter"></a>
 
@@ -150,7 +150,7 @@ See the [data binding guide](concepts/data-binding.md).
 
 In component definition, a reference to a data element, resolvable either by path in the data model or by value.
 
-See the [example in the basic catalog](../specification/v0_10/json/basic_catalog.json#L18).
+See the [example in the basic catalog](../specification/v0_10/catalogs/basic/catalog.json#L18).
 
 ### Client function
 

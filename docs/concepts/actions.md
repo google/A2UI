@@ -237,7 +237,7 @@ Renderers include an `a2uiClientCapabilities` object in the **metadata** of thei
 {
   "v0.9": {
     "supportedCatalogIds": [
-      "https://a2ui.org/specification/v0_9/basic_catalog.json",
+      "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
       "https://my-company.com/catalogs/v1/custom.json"
     ],
     "inlineCatalogs": []
