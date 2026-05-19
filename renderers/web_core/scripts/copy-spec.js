@@ -38,11 +38,7 @@ function copySchemas(version) {
       .forEach(file => cpSync(join(srcJsonDir, file), join(destDir, file)));
   }
 
-  if (version === 'v0_8') {
-    if (existsSync(srcCatalogsDir)) {
-      cpSync(srcCatalogsDir, join(destDir, 'catalogs'), {recursive: true});
-    }
-  } else {
+  if (version !== 'v0_8') {
     cpSync(srcCatalogsDir, join(destDir, 'catalogs'), {recursive: true});
   }
 }
