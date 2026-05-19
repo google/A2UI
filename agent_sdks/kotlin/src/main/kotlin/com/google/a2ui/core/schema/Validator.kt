@@ -27,7 +27,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
@@ -47,6 +46,17 @@ constructor(
 ) {
   private val validator: JsonSchema = buildValidator()
   private val mapper = ObjectMapper()
+  private val shared0_9Factory: JsonSchemaFactory by lazy {
+    JsonSchemaFactory.builder(JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012))
+      .schemaMappers { schemaMappers ->
+        schemaMappings.forEach { (prefix, target) -> schemaMappers.mapPrefix(prefix, target) }
+      }
+      .build()
+  }
+  private val sharedConfig: SchemaValidatorsConfig by lazy {
+    SchemaValidatorsConfig.builder().build()
+  }
+  private val subValidators = mutableMapOf<String, JsonSchema>()
 
   private fun buildValidator(): JsonSchema =
     if (catalog.version == A2uiVersion.VERSION_0_8) build0_8Validator() else build0_9Validator()
@@ -169,94 +179,9 @@ constructor(
   fun validate(a2uiJson: JsonElement, strictIntegrity: Boolean = true) {
     val messages = a2uiJson as? JsonArray ?: JsonArray(listOf(a2uiJson))
 
-    var bypassBundle = false
     if (catalog.version == A2uiVersion.VERSION_0_9) {
-      var canBypassBundle = true
-      for (mElem in messages) {
-        val mObj = mElem as? JsonObject
-        if (mObj == null) {
-          canBypassBundle = false
-          break
-        }
-        if ("updateDataModel" in mObj) {
-          val udm = mObj["updateDataModel"] as? JsonObject
-          if (udm == null || !udm.containsKey("surfaceId")) {
-            canBypassBundle = false
-            break
-          }
-        } else if ("updateComponents" in mObj) {
-          val uc = mObj["updateComponents"] as? JsonObject
-          if (uc == null || !uc.containsKey("surfaceId") || !uc.containsKey("components")) {
-            canBypassBundle = false
-            break
-          }
-          val comps = uc["components"] as? JsonArray
-          if (comps != null) {
-            val catalogComps = catalog.catalogSchema?.get("components")?.jsonObject
-            for (cElem in comps) {
-              val cObj = cElem as? JsonObject ?: continue
-              val cType = cObj["component"]?.jsonPrimitive?.content ?: continue
-              val compSchema = catalogComps?.get(cType)?.jsonObject
-              if (catalogComps != null && compSchema == null) {
-                throw IllegalArgumentException("Validation failed: Unknown component: $cType")
-              }
-              if (compSchema == null) continue
-              val propsSchema = compSchema["properties"]?.jsonObject ?: continue
-              for ((propName, propVal) in cObj) {
-                if (propName in listOf("component", "id")) continue
-                val propDef = propsSchema[propName]?.jsonObject ?: continue
-                val expectedType = propDef["type"]?.jsonPrimitive?.content
-                if (expectedType == "string" && propVal is JsonPrimitive && !propVal.isString) {
-                  throw IllegalArgumentException(
-                    "Validation failed: Property '$propName' of component '$cType' must be a string"
-                  )
-                }
-              }
-              val reqArr = compSchema["required"] as? JsonArray
-              if (reqArr != null) {
-                for (reqElem in reqArr) {
-                  val reqKey = reqElem.jsonPrimitive.content
-                  if (reqKey !in cObj) {
-                    throw IllegalArgumentException(
-                      "Validation failed: Missing required property '$reqKey' in component '$cType'"
-                    )
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          val knownTypes = listOf("createSurface", "updateDataModel", "deleteSurface")
-          if (knownTypes.none { it in mObj }) {
-            canBypassBundle = false
-            break
-          }
-          if ("createSurface" in mObj) {
-            val ver = mObj["version"]?.jsonPrimitive?.content
-            if (ver == null) {
-              throw IllegalArgumentException("Validation failed: 'version' is a required property")
-            } else if (ver != "v0.9") {
-              throw IllegalArgumentException("Validation failed: 'v0.9' was expected")
-            }
-            val cs = mObj["createSurface"]?.jsonObject
-            if (cs == null || !cs.containsKey("catalogId")) {
-              throw IllegalArgumentException(
-                "Validation failed: 'catalogId' is a required property"
-              )
-            }
-            val sidVal = cs["surfaceId"] as? JsonPrimitive
-            if (sidVal != null && !sidVal.isString) {
-              throw IllegalArgumentException(
-                "Validation failed: ${sidVal.content} is not of type 'string'"
-              )
-            }
-          }
-        }
-      }
-      bypassBundle = canBypassBundle
-    }
-
-    if (!bypassBundle) {
+      validate0_9Custom(messages, strictIntegrity)
+    } else {
       // Basic schema validation
       val jsonFmt = Json { prettyPrint = false }
       val messagesString = jsonFmt.encodeToString(JsonElement.serializer(), messages)
@@ -319,6 +244,185 @@ constructor(
       val recursionValidator = A2uiRecursionValidator(strictIntegrity)
       recursionValidator.validate(message)
     }
+  }
+
+  private fun validate0_9Custom(messages: JsonArray, strictIntegrity: Boolean) {
+    val allErrors = mutableListOf<String>()
+
+    for ((idx, messageElem) in messages.withIndex()) {
+      val basePath = "messages[$idx]"
+      if (messageElem !is JsonObject) {
+        allErrors.add("$basePath: Is not an object")
+        continue
+      }
+
+      when {
+        "createSurface" in messageElem -> {
+          val valSchema = getSubValidator("CreateSurfaceMessage")
+          allErrors.addAll(getFormattedErrors(valSchema, messageElem, basePath))
+        }
+        "updateComponents" in messageElem -> {
+          allErrors.addAll(getUpdateComponentsErrors(messageElem, basePath))
+        }
+        "updateDataModel" in messageElem -> {
+          val valSchema = getSubValidator("UpdateDataModelMessage")
+          allErrors.addAll(getFormattedErrors(valSchema, messageElem, basePath))
+        }
+        "deleteSurface" in messageElem -> {
+          val valSchema = getSubValidator("DeleteSurfaceMessage")
+          allErrors.addAll(getFormattedErrors(valSchema, messageElem, basePath))
+        }
+        else -> {
+          val keys = messageElem.keys.toList()
+          allErrors.add("$basePath: Unknown message type with keys $keys")
+        }
+      }
+    }
+
+    if (allErrors.isNotEmpty()) {
+      val msg = buildString {
+        append("Validation failed:")
+        for (err in allErrors) {
+          append("\n  - $err")
+        }
+      }
+      throw IllegalArgumentException(msg)
+    }
+  }
+
+  private fun getSubValidator(defName: String): JsonSchema {
+    return subValidators.getOrPut(defName) {
+      val defs =
+        catalog.serverToClientSchema["\$defs"] as? JsonObject
+          ?: throw IllegalArgumentException("No \$defs found in schema")
+      val subSchema =
+        defs[defName] as? JsonObject
+          ?: throw IllegalArgumentException("Definition $defName not found in schema")
+
+      val tempSchema =
+        JsonObject(
+          mapOf(
+            "\$schema" to JsonPrimitive(SCHEMA_DRAFT_2020_12),
+            "\$defs" to defs,
+            "\$ref" to JsonPrimitive("#/\$defs/$defName"),
+          )
+        )
+
+      val jsonFmt = Json { prettyPrint = false }
+      val schemaString = jsonFmt.encodeToString(JsonElement.serializer(), tempSchema)
+      shared0_9Factory.getSchema(schemaString, sharedConfig)
+    }
+  }
+
+  private fun getFormattedErrors(
+    validator: JsonSchema,
+    instance: JsonElement,
+    basePath: String,
+  ): List<String> {
+    val jsonFmt = Json { prettyPrint = false }
+    val instanceStr = jsonFmt.encodeToString(JsonElement.serializer(), instance)
+    val jsonNode = mapper.readTree(instanceStr)
+    val errors = validator.validate(jsonNode)
+
+    return errors.map { err ->
+      val msg = err.message ?: ""
+      val unexpectedRegex =
+        Regex(
+          "property '(.*?)' is not defined in the schema and the schema does not allow additional properties"
+        )
+      val match = unexpectedRegex.find(msg)
+      if (match != null) {
+        val prop = match.groupValues[1]
+        "$basePath: '$prop' was unexpected"
+      } else {
+        val cleanMsg = msg.removePrefix(": ").removePrefix("$.").removePrefix("$")
+        if (cleanMsg.startsWith("/")) {
+          "$basePath: $cleanMsg"
+        } else {
+          "$basePath: $cleanMsg"
+        }
+      }
+    }
+  }
+
+  private fun getUpdateComponentsErrors(message: JsonObject, path: String): List<String> {
+    val errors = mutableListOf<String>()
+
+    val version = message["version"]?.jsonPrimitive?.content
+    if (version != "v0.9") {
+      errors.add("$path: Invalid version, expected 'v0.9'")
+    }
+
+    val ucElem = message["updateComponents"]
+    if (ucElem !is JsonObject) {
+      errors.add("$path: Expected updateComponents to be an object")
+      return errors
+    }
+
+    val surfaceIdElem = ucElem["surfaceId"]
+    if (surfaceIdElem == null || !(surfaceIdElem is JsonPrimitive && surfaceIdElem.isString)) {
+      errors.add("$path.updateComponents: Invalid or missing surfaceId")
+    }
+
+    val componentsElem = ucElem["components"]
+    if (componentsElem !is JsonArray) {
+      errors.add("$path.updateComponents: Expected components to be an array")
+      return errors
+    }
+
+    val componentIds =
+      componentsElem.mapNotNull { (it as? JsonObject)?.get("id")?.jsonPrimitive?.content }
+    val duplicateIds = componentIds.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
+    if (duplicateIds.isNotEmpty()) {
+      errors.add(
+        "$path.updateComponents: Duplicate component IDs found: ${duplicateIds.joinToString()}"
+      )
+    }
+    for ((idx, compElem) in componentsElem.withIndex()) {
+      if (compElem !is JsonObject) {
+        errors.add("$path.updateComponents.components[$idx]: Component is not an object")
+        continue
+      }
+      val compId = (compElem["id"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+      val compPath =
+        if (compId != null) {
+          "$path.updateComponents.components[id='$compId']"
+        } else {
+          "$path.updateComponents.components[$idx]"
+        }
+      errors.addAll(getSingleComponentErrors(compElem, compPath))
+    }
+
+    return errors
+  }
+
+  private fun getSingleComponentErrors(comp: JsonObject, path: String): List<String> {
+    val compType =
+      comp["component"]?.jsonPrimitive?.content ?: return listOf("$path: Missing 'component' field")
+
+    val catalogSchema = catalog.catalogSchema
+    val componentsObj =
+      catalogSchema[A2uiConstants.CATALOG_COMPONENTS_KEY] as? JsonObject
+        ?: return listOf("$path: Catalog schema or components missing")
+
+    val compSchema = componentsObj[compType] ?: return listOf("$path: Unknown component: $compType")
+
+    val validator =
+      subValidators.getOrPut("comp_$compType") {
+        val tempSchema =
+          JsonObject(
+            catalogSchema.toMutableMap() +
+              mapOf(
+                "\$schema" to JsonPrimitive(SCHEMA_DRAFT_2020_12),
+                "\$ref" to JsonPrimitive("#/${A2uiConstants.CATALOG_COMPONENTS_KEY}/$compType"),
+              )
+          )
+        val jsonFmt = Json { prettyPrint = false }
+        val schemaString = jsonFmt.encodeToString(JsonElement.serializer(), tempSchema)
+        shared0_9Factory.getSchema(schemaString, sharedConfig)
+      }
+
+    return getFormattedErrors(validator, comp, path)
   }
 
   private fun calculateSurfaceRootIds(messages: JsonArray): Map<String, String> {
@@ -458,8 +562,8 @@ constructor(
           (item[PATH] as? JsonPrimitive)
             ?.takeIf { it.isString }
             ?.let { pathElem ->
-              if (strictIntegrity && !pathElem.content.matches(JSON_POINTER_PATTERN)) {
-                throw IllegalArgumentException("Invalid JSON Pointer syntax: '${pathElem.content}'")
+              if (!pathElem.content.matches(JSON_POINTER_PATTERN)) {
+                throw IllegalArgumentException("Invalid path syntax: '${pathElem.content}'")
               }
             }
 
