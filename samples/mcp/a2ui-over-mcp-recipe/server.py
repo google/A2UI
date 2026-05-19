@@ -20,10 +20,13 @@ import jsonschema
 import json
 import mcp.types as types
 from mcp.server.lowlevel import Server
+from mcp.server.lowlevel.helper_types import ReadResourceContents
 from starlette.requests import Request
 from a2ui.schema.manager import A2uiSchemaManager
 from a2ui.schema.constants import VERSION_0_9
 from a2ui.basic_catalog.provider import BasicCatalog
+
+A2UI_MIME_TYPE = "application/json+a2ui"
 
 
 
@@ -45,7 +48,34 @@ def main(port: int, transport: str) -> int:
   )
   selected_catalog.validator.validate(recipe_a2ui_json)
 
+  recipe_form_json = json.loads(
+      (pathlib.Path(__file__).resolve().parent / "recipe_form.json").read_text()
+  )
+  selected_catalog.validator.validate(recipe_form_json)
+
   app = Server("a2ui-mcp-recipe-demo")
+
+  @app.list_resources()
+  async def list_resources() -> list[types.Resource]:
+    return [
+        types.Resource(
+            uri="a2ui://recipe-form",
+            name="Recipe Form",
+            mimeType=A2UI_MIME_TYPE,
+            description="Form allowing users to pick cuisine and protein.",
+        )
+    ]
+
+  @app.read_resource()
+  async def read_resource(uri: str) -> list[ReadResourceContents]:
+    if str(uri) == "a2ui://recipe-form":
+      return [
+          ReadResourceContents(
+              content=json.dumps(recipe_form_json),
+              mime_type=A2UI_MIME_TYPE,
+          )
+      ]
+    raise ValueError(f"Unknown resource: {uri}")
 
   @app.call_tool()
   async def handle_call_tool(name: str, arguments: dict[str, Any]) -> types.CallToolResult:
@@ -59,7 +89,7 @@ def main(port: int, transport: str) -> int:
           type="resource",
           resource=types.TextResourceContents(
               uri="a2ui://recipe-card",
-              mimeType="application/json+a2ui",
+              mimeType=A2UI_MIME_TYPE,
               text=json.dumps(recipe_a2ui_json),
             )
       )])
