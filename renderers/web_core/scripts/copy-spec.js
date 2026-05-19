@@ -18,7 +18,7 @@
  * Cross-platform script to copy JSON schemas.
  * Uses Node.js fs/path modules for Windows/Unix compatibility.
  */
-import {mkdirSync, cpSync, readdirSync} from 'node:fs';
+import {mkdirSync, cpSync, readdirSync, existsSync} from 'node:fs';
 import {join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -32,7 +32,7 @@ function copySchemas(version) {
 
   mkdirSync(destDir, {recursive: true});
 
-  if (readdirSync(srcJsonDir)) {
+  if (existsSync(srcJsonDir)) {
     readdirSync(srcJsonDir)
       .filter(file => file.endsWith('.json'))
       .forEach(file => cpSync(join(srcJsonDir, file), join(destDir, file)));
