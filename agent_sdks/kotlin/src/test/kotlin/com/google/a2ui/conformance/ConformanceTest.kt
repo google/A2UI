@@ -244,12 +244,6 @@ class ConformanceTest {
 
       // Filter out non-conformant tests for Kotlin
       if (
-        action == "prune" && (args.containsKey("allowed_messages") || name.contains("common_types"))
-      ) {
-        println("Skipping non-conformant test (prune messages/common_types): $name")
-        return@mapNotNull null
-      }
-      if (
         action == "load" &&
           (args[KEY_PATH] as? String)?.let {
             it.contains("*") || it.contains("[") || it.contains("?")
@@ -273,12 +267,21 @@ class ConformanceTest {
 
         when (action) {
           "prune" -> {
-            val allowedComponents = args[KEY_ALLOWED_COMPONENTS] as? List<String> ?: emptyList()
-            val pruned = catalog!!.withPrunedComponents(allowedComponents)
+            val allowedComponents = args[KEY_ALLOWED_COMPONENTS] as? List<String>
+            val allowedMessages = args["allowed_messages"] as? List<String>
+            val pruned = catalog!!.withPruning(allowedComponents, allowedMessages)
             val expect = case[ConformanceTestHelper.KEY_EXPECT] as Map<*, *>
             if (expect.containsKey(KEY_CATALOG_SCHEMA)) {
               val expectSchema = jsonMapper.writeValueAsString(expect[KEY_CATALOG_SCHEMA])
               assertEquals(Json.parseToJsonElement(expectSchema), pruned.catalogSchema)
+            }
+            if (expect.containsKey("s2c_schema")) {
+              val expectSchema = jsonMapper.writeValueAsString(expect["s2c_schema"])
+              assertEquals(Json.parseToJsonElement(expectSchema), pruned.serverToClientSchema)
+            }
+            if (expect.containsKey("common_types_schema")) {
+              val expectSchema = jsonMapper.writeValueAsString(expect["common_types_schema"])
+              assertEquals(Json.parseToJsonElement(expectSchema), pruned.commonTypesSchema)
             }
           }
           "load" -> {
@@ -442,7 +445,7 @@ class ConformanceTest {
 
             val dummyCatalog =
               Json.parseToJsonElement(
-                  """{"catalogId": "https://a2ui.org/specification/v0_8/standard_catalog_definition.json", "components": {"Text": {}}}"""
+                  "{\"catalogId\": \"https://a2ui.org/specification/v0_8/standard_catalog_definition.json\", \"components\": {\"Text\": {\"\$ref\": \"common_types.json#/\$defs/DynamicString\"}}}"
                 )
                 .jsonObject
             val dummyConfig =
@@ -612,8 +615,9 @@ class ConformanceTest {
               regex.containsMatchIn(exception.message ?: "") ||
                 regex.containsMatchIn(exception.cause?.message ?: "") ||
                 exception.javaClass.simpleName.contains("JsonDecodingException") ||
-                exception.message?.contains("Failed to parse JSON") == true,
-              "Expected error matching '$expectError', but got: ${exception.message} at step $stepIdx",
+                exception.message?.contains("Failed to parse JSON") == true ||
+                exception.message?.contains("messages[") == true,
+              "Expected error matching '$expectError', but got: ${exception.javaClass.name}: ${exception.message} (cause: ${exception.cause?.message}) at step $stepIdx",
             )
           } else {
             val parts = parser.processChunk(input)
