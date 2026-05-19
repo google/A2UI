@@ -5,6 +5,8 @@ optimized for representing updatable agent-generated
 UIs and an initial set of renderers, that allows agents
 to generate or populate rich user interfaces.
 
+Added some test text here in PR 1
+
 <img src="docs/assets/a2ui_gallery_examples.png" alt="Gallery of A2UI components" height="400">
 
 _A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve._
