@@ -301,45 +301,114 @@ data class A2uiCatalog(
     append("\n${A2uiConstants.A2UI_SCHEMA_BLOCK_END}")
   }
 
-  /** Loads and validates examples from a directory. */
+  /** Loads and validates examples from a directory or a glob pattern. */
   @JvmOverloads
   fun loadExamples(path: String?, validate: Boolean = false): String {
     if (path.isNullOrEmpty()) return ""
-    val dir = File(path)
-    if (!dir.isDirectory) {
-      logger.warning("Example path $path is not a directory")
+
+    val isDir = File(path).isDirectory
+    val pattern =
+      if (isDir) {
+        val sep = if (path.endsWith("/") || path.endsWith(File.separator)) "" else "/"
+        "$path$sep*.json"
+      } else {
+        path
+      }
+
+    // Extract the base directory to avoid walking the entire filesystem.
+    val firstWildcard = pattern.indexOfFirst { it == '*' || it == '?' || it == '[' }
+    val baseDirPath =
+      if (firstWildcard != -1) {
+        val lastSlash = pattern.lastIndexOfAny(charArrayOf('/', '\\'), firstWildcard)
+        if (lastSlash != -1) {
+          pattern.substring(startIndex = 0, endIndex = lastSlash)
+        } else {
+          ""
+        }
+      } else {
+        if (isDir) {
+          path
+        } else {
+          val parent = File(path).parent
+          parent ?: ""
+        }
+      }
+
+    val baseDirFile = if (baseDirPath.isEmpty()) File(".") else File(baseDirPath)
+    val matchedFiles = mutableListOf<File>()
+
+    if (baseDirFile.exists() && baseDirFile.isDirectory) {
+      try {
+        val matcher = java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$pattern")
+        // To support globstar matching where ** matches zero directories, create an alternate
+        // matcher.
+        val altPattern =
+          pattern
+            .replace(oldValue = "/**/", newValue = "/")
+            .replace(regex = "^\\*\\*/".toRegex(), replacement = "")
+        val altMatcher =
+          if (altPattern != pattern) {
+            java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$altPattern")
+          } else {
+            null
+          }
+
+        val startPath =
+          if (baseDirPath.isEmpty()) {
+            java.nio.file.Paths.get("")
+          } else {
+            java.nio.file.Paths.get(baseDirPath)
+          }
+
+        java.nio.file.Files.walk(startPath).use { stream ->
+          stream.forEach { p ->
+            if (java.nio.file.Files.isRegularFile(p)) {
+              if (matcher.matches(p) || altMatcher?.matches(p) == true) {
+                matchedFiles.add(p.toFile())
+              }
+            }
+          }
+        }
+      } catch (e: Exception) {
+        logger.warning("Error walking files for pattern $pattern: ${e.message}")
+      }
+    }
+
+    if (matchedFiles.isEmpty()) {
+      if (!isDir && !path.any { it == '*' || it == '?' || it == '[' }) {
+        logger.warning("Example path $path is neither a directory nor a valid glob pattern")
+      }
       return ""
     }
 
-    // Sort files by name to ensure deterministic output order for tests.
-    val files =
-      dir.listFiles { _, name -> name.endsWith(".json") }?.sortedBy { it.name } ?: emptyList<File>()
+    // Sort files alphabetically by path to ensure deterministic output order and logical grouping.
+    val files = matchedFiles.sortedBy { it.path }
 
     return files
       .mapNotNull { file ->
         val basename = file.nameWithoutExtension
-        try {
-          val content = file.readText()
-          if (validate && !validateExample(file.path, content)) {
-            null
-          } else {
-            "---BEGIN $basename---\n$content\n---END $basename---"
+        val content =
+          try {
+            file.readText()
+          } catch (e: Exception) {
+            logger.warning("Failed to read example ${file.path}: ${e.message}")
+            return@mapNotNull null
           }
-        } catch (e: Exception) {
-          logger.warning("Failed to load example ${file.path}: ${e.message}")
-          null
+
+        if (validate) {
+          validateExample(file.path, content)
         }
+        "---BEGIN $basename---\n$content\n---END $basename---"
       }
-      .joinToString("\n\n")
+      .joinToString(separator = "\n\n")
   }
 
-  private fun validateExample(fullPath: String, content: String): Boolean =
+  private fun validateExample(fullPath: String, content: String) {
     try {
       val jsonElement = Json.parseToJsonElement(content)
       validator.validate(jsonElement)
-      true
     } catch (e: Exception) {
-      logger.warning("Failed to validate example $fullPath: ${e.message}")
-      false
+      throw IllegalArgumentException("Failed to validate example $fullPath: ${e.message}", e)
     }
+  }
 }
