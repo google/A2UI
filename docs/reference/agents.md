@@ -21,8 +21,6 @@ User interactions from the client can be treated as new user input.
 
 The A2UI repository includes sample agents you can learn from:
 
-<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
-<!-- prettier-ignore -->
 - [Restaurant Finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder)
     - Table reservations with forms.
     - Written with the ADK.

@@ -165,8 +165,6 @@ The A2UI community is building exciting projects:
 
 ### Open Source Examples
 
-<!-- MkDocs/Python-Markdown requires 4-space indentation for nested lists. -->
-<!-- prettier-ignore -->
 - **Restaurant Finder** ([samples/agent/adk/restaurant_finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder))
     - Table reservation with dynamic forms
     - Gemini-powered agent
