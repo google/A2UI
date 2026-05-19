@@ -165,7 +165,7 @@ class AdkExtensionsConformanceTest {
                 .jsonObject
             val dummyCatalog =
               A2uiCatalog(
-                version = A2uiVersion.VERSION_0_9,
+                version = A2uiVersion.VERSION_0_8,
                 name = "dummy",
                 serverToClientSchema = serverToClientSchema,
                 commonTypesSchema = JsonObject(emptyMap()),

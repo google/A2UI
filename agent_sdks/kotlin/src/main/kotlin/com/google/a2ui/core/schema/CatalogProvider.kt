@@ -32,7 +32,7 @@ interface A2uiCatalogProvider {
 }
 
 /** Loads catalog definition from the local filesystem. */
-class FileSystemCatalogProvider(private val path: String) : A2uiCatalogProvider {
+class FileSystemCatalogProvider(val path: String) : A2uiCatalogProvider {
   override fun load(): JsonObject {
     try {
       val file = File(path)

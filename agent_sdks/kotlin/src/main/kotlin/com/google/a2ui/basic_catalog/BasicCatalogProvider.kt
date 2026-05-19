@@ -23,6 +23,7 @@ import com.google.a2ui.core.schema.A2uiConstants
 import com.google.a2ui.core.schema.A2uiVersion
 import com.google.a2ui.core.schema.CatalogConfig
 import com.google.a2ui.core.schema.SchemaResourceLoader
+import com.google.a2ui.core.schema.resolveExamplesPath
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -91,6 +92,6 @@ object BasicCatalog {
     CatalogConfig(
       name = BASIC_CATALOG_NAME,
       provider = BundledCatalogProvider(version),
-      examplesPath = examplesPath,
+      examplesPath = resolveExamplesPath(examplesPath),
     )
 }
