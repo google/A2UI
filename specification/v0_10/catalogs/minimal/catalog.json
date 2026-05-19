@@ -14,7 +14,9 @@
           "type": "object",
           "properties": {
             "component": {"const": "Text"},
-            "text": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"},
+            "text": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            },
             "variant": {
               "type": "string",
               "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
@@ -34,7 +36,9 @@
           "type": "object",
           "properties": {
             "component": {"const": "Row"},
-            "children": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ChildList"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ChildList"
+            },
             "justify": {
               "type": "string",
               "enum": [
@@ -66,7 +70,9 @@
           "type": "object",
           "properties": {
             "component": {"const": "Column"},
-            "children": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ChildList"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ChildList"
+            },
             "justify": {
               "type": "string",
               "enum": [
@@ -99,12 +105,16 @@
           "type": "object",
           "properties": {
             "component": {"const": "Button"},
-            "child": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ComponentId"},
+            "child": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/ComponentId"
+            },
             "variant": {
               "type": "string",
               "enum": ["primary", "borderless"]
             },
-            "action": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/Action"}
+            "action": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/Action"
+            }
           },
           "required": ["component", "child", "action"]
         }
@@ -121,8 +131,12 @@
           "type": "object",
           "properties": {
             "component": {"const": "TextField"},
-            "label": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"},
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"},
+            "label": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            },
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            },
             "variant": {
               "type": "string",
               "enum": ["longText", "number", "shortText", "obscured"]
@@ -144,7 +158,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"}
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            }
           },
           "required": ["value"],
           "unevaluatedProperties": false

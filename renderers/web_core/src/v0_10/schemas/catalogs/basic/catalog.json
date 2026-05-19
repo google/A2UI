@@ -715,7 +715,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"},
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            },
             "pattern": {
               "type": "string",
               "description": "The regex pattern to match against."
@@ -741,7 +743,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"},
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            },
             "min": {
               "type": "integer",
               "minimum": 0,
@@ -774,7 +778,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicNumber"},
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicNumber"
+            },
             "min": {
               "type": "number",
               "description": "The minimum allowed value."
@@ -805,7 +811,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"}
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            }
           },
           "required": ["value"],
           "unevaluatedProperties": false
@@ -827,7 +835,9 @@
         "args": {
           "type": "object",
           "properties": {
-            "value": {"$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"}
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            }
           },
           "required": ["value"],
           "unevaluatedProperties": false

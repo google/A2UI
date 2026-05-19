@@ -21,7 +21,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 | **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                             |
 | **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                   |
 | **Button Variant**       | Boolean (`primary: true`)                | Enum (`variant: "primary"`)                            |
-| **Catalog**              | Separate component and function catalogs | Unified Catalog (`catalogs/basic/catalog.json`)                 |
+| **Catalog**              | Separate component and function catalogs | Unified Catalog (`catalogs/basic/catalog.json`)        |
 | **Auxiliary Rules**      | N/A                                      | `basic_catalog_rules.txt`                              |
 | **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop                |
 | **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`sendDataModel`) |
