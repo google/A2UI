@@ -423,11 +423,11 @@ To ensure a stable user experience, A2UI employs a two-phase validation strategy
 ### Two-Phase Validation
 
 1. **Agent-Side (Pre-Send):** Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.
-   - Purpose: To catch hallucinated properties or malformed structures at the source.
-   - Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.
+    - Purpose: To catch hallucinated properties or malformed structures at the source.
+    - Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.
 2. **Client-Side:** Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.
-   - Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.
-   - Outcome: Failures here are reported back to the agent using the “error” client message
+    - Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.
+    - Outcome: Failures here are reported back to the agent using the “error” client message
 
 ### Graceful Degradation
 
