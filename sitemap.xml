@@ -153,6 +153,10 @@
          <lastmod>2026-05-19</lastmod>
     </url>
     <url>
+         <loc>https://a2ui.org/specification/v0_10/catalogs/minimal/</loc>
+         <lastmod>2026-05-19</lastmod>
+    </url>
+    <url>
          <loc>https://a2ui.org/specification/v0_10/docs/a2ui_custom_functions/</loc>
          <lastmod>2026-05-19</lastmod>
     </url>
@@ -213,6 +217,10 @@
          <lastmod>2026-05-19</lastmod>
     </url>
     <url>
+         <loc>https://a2ui.org/specification/v0_9/catalogs/minimal/</loc>
+         <lastmod>2026-05-19</lastmod>
+    </url>
+    <url>
          <loc>https://a2ui.org/specification/v0_9/docs/a2ui_custom_functions/</loc>
          <lastmod>2026-05-19</lastmod>
     </url>
@@ -238,10 +246,6 @@
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/eval/</loc>
-         <lastmod>2026-05-19</lastmod>
-    </url>
-    <url>
-         <loc>https://a2ui.org/specification/v0_9/json/catalogs/minimal/</loc>
          <lastmod>2026-05-19</lastmod>
     </url>
     <url>

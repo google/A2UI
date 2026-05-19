@@ -2772,11 +2772,11 @@
 <p>Every A2UI surface is driven by a Catalog. A catalog is simply a JSON Schema file that tells the agent which components, functions, and themes are available for it to use.</p>
 <p>Whether you are building a simple prototype or a complex production application, the requirement is the same: you must provide a catalog definition that the agent uses to express UI.</p>
 <h3 id="the-basic-catalog">The Basic Catalog<a class="headerlink" href="#the-basic-catalog" title="Permanent link">&para;</a></h3>
-<p>To help developers get started quickly, the A2UI team maintains the <a href="https://github.com/google/A2UI/blob/main/specification/v0_9/json/basic_catalog.json">Basic Catalog</a>.</p>
+<p>To help developers get started quickly, the A2UI team maintains the <a href="https://github.com/google/A2UI/blob/main/specification/v0_9/catalogs/basic/catalog.json">Basic Catalog</a>.</p>
 <p>This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.</p>
 <p>The basic catalog allows you to bootstrap an application or validate A2UI concepts without needing to write your own schema from scratch. It is intentionally sparse to remain easily implementable by different renderers.</p>
 <p>Since A2UI is designed for LLMs to generate the UI at either design time or runtime, we do not think portability requires a standardized catalog across multiple clients; the LLM can interpret the catalog for each individual frontend.</p>
-<p><a href="https://github.com/google/A2UI/blob/main/specification/v0_9/json/basic_catalog.json">See the A2UI v0.9 basic catalog</a></p>
+<p><a href="https://github.com/google/A2UI/blob/main/specification/v0_9/catalogs/basic/catalog.json">See the A2UI v0.9 basic catalog</a></p>
 <h3 id="defining-your-own-catalog">Defining Your Own Catalog<a class="headerlink" href="#defining-your-own-catalog" title="Permanent link">&para;</a></h3>
 <p>While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system.</p>
 <p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons. This catalog can be built entirely from scratch, or it can import definitions from the Basic Catalog to save time (e.g., using the Basic text definitions while defining your own unique Card component).</p>
@@ -2869,7 +2869,7 @@
 <li><code>--version</code>: The A2UI specification version to use for official catalog
   fallbacks. Choices are <code>0.9</code> or <code>0.10</code>. Defaults to <code>0.9</code>.</li>
 <li><code>--extend-basic-catalog</code>: If passed, automatically includes the entirety of
-  <code>basic_catalog.json</code> in the root output regardless of whether the input
+  <code>catalogs/basic/catalog.json</code> in the root output regardless of whether the input
   catalogs explicitly reference it.</li>
 <li><code>--out-dir</code>, <code>-o</code>: The directory where the assembled catalog will be saved. Defaults to <code>dist</code>.</li>
 <li><code>--verbose</code>, <code>-v</code>: If passed, enables verbose debug logging to help diagnose issues.</li>
@@ -2907,7 +2907,7 @@
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/.../hello_world_with_some_basic/v1/catalog.json&quot;</span><span class="p">,</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span><span class="p">{</span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;basic_catalog.json#/components/Text&quot;</span><span class="p">},</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span><span class="p">{</span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;catalogs/basic/catalog.json#/components/Text&quot;</span><span class="p">},</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">      </span><span class="p">{</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="nt">&quot;Popup&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
@@ -2976,7 +2976,7 @@
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Provides agent driven UI using the A2UI JSON format.&quot;</span><span class="p">,</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">          </span><span class="nt">&quot;supportedCatalogIds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">            </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span><span class="p">,</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">            </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json&quot;</span><span class="p">,</span>
 </span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">            </span><span class="s2">&quot;https://github.com/.../rizzcharts_catalog_definition.json&quot;</span>
 </span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">          </span><span class="p">]</span>
 </span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">        </span><span class="p">}</span>
@@ -2997,7 +2997,7 @@
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">&quot;a2uiClientCapabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">      </span><span class="nt">&quot;supportedCatalogIds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">        </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span><span class="p">,</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">        </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json&quot;</span><span class="p">,</span>
 </span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="s2">&quot;https://github.com/.../rizzcharts_catalog_definition.json&quot;</span>
 </span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">      </span><span class="p">]</span>
 </span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">    </span><span class="p">}</span>
@@ -3010,7 +3010,7 @@
 <div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;createSurface&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;salesDashboard&quot;</span><span class="p">,</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">&quot;catalogId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="nt">&quot;catalogId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json&quot;</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">}</span>
 </span></code></pre></div>
