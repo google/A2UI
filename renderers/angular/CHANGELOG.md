@@ -1,6 +1,5 @@
 ## Unreleased
 
-- (v0_9) Fix template metadata leak in `ComponentBinder` by localizing the template variable declaration to the property loop.
 - (v0_9) Fix null de-referencing TypeError in `ComponentBinder` when `children` property is null or undefined.
 - (v0_8) Fix Icon component to handle camelCase and TitleCase names by converting them to snake_case for `g-icon`.
 - (v0_8) Fix Modal component styling and position fixed for overlay.
