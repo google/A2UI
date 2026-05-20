@@ -26,7 +26,7 @@ describe('ComponentBinder', () => {
 
   beforeEach(() => {
     mockDestroyRef = jasmine.createSpyObj('DestroyRef', ['onDestroy']);
-    mockDestroyRef.onDestroy.and.callFake((callback: () => void) => {
+    mockDestroyRef.onDestroy.and.callFake(() => {
       return () => {}; // Return unregister function
     });
 

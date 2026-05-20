@@ -128,7 +128,8 @@
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.0.0",
     "vite": "^7.3.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@stylistic/eslint-plugin": "^3.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

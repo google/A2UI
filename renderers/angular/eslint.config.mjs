@@ -3,7 +3,16 @@ import stylistic from '@stylistic/eslint-plugin';
 
 const customConfig = [
   {
-    ignores: ['dist', 'node_modules', '.wireit', '**/*.d.ts'],
+    ignores: [
+      'dist',
+      'node_modules',
+      '.wireit',
+      '**/*.d.ts',
+      '**/generated/**',
+      '*.js',
+      '*.mjs',
+      '*.conf.js',
+    ],
   },
   {
     plugins: {

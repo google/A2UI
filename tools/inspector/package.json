@@ -74,7 +74,8 @@
     "typescript": "^5.8.3",
     "vite": "^7.1.11",
     "wireit": "^0.15.0-pre.2",
-    "gts": "^7.0.0"
+    "gts": "^7.0.0",
+    "@stylistic/eslint-plugin": "^3.0.0"
   },
   "dependencies": {
     "@a2ui/lit": "file:../../renderers/lit",

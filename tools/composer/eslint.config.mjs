@@ -23,6 +23,7 @@ import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginReact from 'eslint-plugin-react';
 import globals from 'globals';
 import pluginNext from '@next/eslint-plugin-next';
+import stylistic from '@stylistic/eslint-plugin';
 
 /**
  * ESLint configuration for widget-builder (Next.js app)
@@ -77,9 +78,20 @@ export default [
     },
   },
   {
+    plugins: {
+      '@stylistic': stylistic,
+    },
     rules: {
-      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
-      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
+      '@stylistic/lines-between-class-members': [
+        'error',
+        'always',
+        {exceptAfterSingleLine: true},
+      ],
+      'quotes': [
+        'error',
+        'single',
+        {avoidEscape: true, allowTemplateLiterals: true},
+      ],
     },
   },
   {

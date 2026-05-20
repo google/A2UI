@@ -15,6 +15,7 @@
  */
 
 import gts from 'gts';
+import stylistic from '@stylistic/eslint-plugin';
 
 const customConfig = [
   {
@@ -30,6 +31,9 @@ const customConfig = [
     ],
   },
   {
+    plugins: {
+      '@stylistic': stylistic,
+    },
     rules: {
       // any is often the best we can do for a generic library.
       '@typescript-eslint/no-explicit-any': 'off',
@@ -38,8 +42,16 @@ const customConfig = [
       '@typescript-eslint/no-unsafe-function-type': 'off',
       // Not a terribly useful check at time of writing - perhaps enable later.
       '@typescript-eslint/no-floating-promises': 'off',
-      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
-      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
+      '@stylistic/lines-between-class-members': [
+        'error',
+        'always',
+        {exceptAfterSingleLine: true},
+      ],
+      'quotes': [
+        'error',
+        'single',
+        {avoidEscape: true, allowTemplateLiterals: true},
+      ],
     },
   },
 ];

@@ -72,6 +72,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "^8.40.0",
     "vitest": "^4.0.18",
-    "wrangler": "^4.73.0"
+    "wrangler": "^4.73.0",
+    "@stylistic/eslint-plugin": "^3.0.0"
   }
 }

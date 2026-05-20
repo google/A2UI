@@ -20,6 +20,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import prettierConfig from 'eslint-config-prettier';
 import gts from 'gts';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default tseslint.config(
   // Google TypeScript style guide plugin.
@@ -94,9 +95,20 @@ export default tseslint.config(
 
   // Custom rules overrides
   {
+    plugins: {
+      '@stylistic': stylistic,
+    },
     rules: {
-      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
-      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
+      '@stylistic/lines-between-class-members': [
+        'error',
+        'always',
+        {exceptAfterSingleLine: true},
+      ],
+      'quotes': [
+        'error',
+        'single',
+        {avoidEscape: true, allowTemplateLiterals: true},
+      ],
     },
   },
 
