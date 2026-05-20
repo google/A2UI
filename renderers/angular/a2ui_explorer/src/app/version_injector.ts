@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import {getCanvas, loadExample} from '../utils';
+import {InjectionToken} from '@angular/core';
+import {Version} from './types';
 
-describe('Example: Stats Card', () => {
-  let textContent: string;
-
-  beforeEach(async () => {
-    await loadExample('Stats Card');
-    textContent = getCanvas().textContent;
-  });
-
-  it('should render text content and icons', async () => {
-    expect(textContent).toContain(`trending_up`);
-    expect(textContent).toContain(`Monthly Revenue`);
-    expect(textContent).toContain(`arrow_upward`);
-  });
+/**
+ * Dependency injection token for the active A2UI protocol version.
+ */
+export const A2UI_VERSION = new InjectionToken<Version>('A2UI_VERSION', {
+  providedIn: 'root',
+  factory: () => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const version = urlParams.get('version');
+      if (version === Version.V0_8 || version === Version.V0_9) {
+        return version as Version;
+      }
+    }
+    return Version.V0_9;
+  },
 });

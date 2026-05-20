@@ -15,9 +15,10 @@
  */
 
 import {TestBed} from '@angular/core/testing';
-import {DemoComponent} from '../demo.component';
-import {EXAMPLES} from '../generated/examples-bundle';
-import {provideMarkdownRenderer} from '../../../../src/v0_9/core/markdown';
+import {DemoComponent} from '../../demo.component';
+import {EXAMPLES} from '../../generated/examples-bundle';
+import {provideMarkdownRenderer} from '../../../../../src/v0_9/core/markdown';
+import {A2UI_VERSION, Version} from '../../types';
 
 /**
  * Helper function to load an example in the DemoComponent for testing.
@@ -26,7 +27,7 @@ import {provideMarkdownRenderer} from '../../../../src/v0_9/core/markdown';
 export async function loadExample(exampleName: string) {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
-    providers: [provideMarkdownRenderer()],
+    providers: [provideMarkdownRenderer(), {provide: A2UI_VERSION, useValue: Version.V0_9}],
   });
 
   const fixture = TestBed.createComponent(DemoComponent);
