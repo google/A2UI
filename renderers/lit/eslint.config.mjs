@@ -22,6 +22,14 @@ const customConfig = [
     ignores: ['dist', 'node_modules', '.wireit', '**/*.d.ts'],
   },
   {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.json', './a2ui_explorer/tsconfig.json'],
+      },
+    },
+  },
+  {
     plugins: {
       '@stylistic': stylistic,
     },

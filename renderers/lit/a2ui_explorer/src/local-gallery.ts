@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {LitElement, html, css, nothing} from 'lit';
+import {LitElement, html, nothing} from 'lit';
 import {provide} from '@lit/context';
 import {customElement, state} from 'lit/decorators.js';
 import {MessageProcessor, A2uiMessage} from '@a2ui/web_core/v0_9';
