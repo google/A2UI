@@ -16,25 +16,41 @@
 
 import {TestBed} from '@angular/core/testing';
 import {DemoComponent} from '../../demo.component';
-import {EXAMPLES} from '../../generated/examples-bundle';
+import {EXAMPLES_V08, EXAMPLES_V09} from '../../generated/examples-bundle';
 import {provideMarkdownRenderer} from '../../../../../src/v0_9/core/markdown';
 import {A2UI_VERSION, Version} from '../../types';
+
+export {Version};
 
 /**
  * Helper function to load an example in the DemoComponent for testing.
  * Resolves after the example is selected and initial async rendering has time to complete.
  */
-export async function loadExample(exampleName: string) {
+export async function loadExample(exampleName: string, version: Version = Version.V0_9) {
   await TestBed.configureTestingModule({
     imports: [DemoComponent],
-    providers: [provideMarkdownRenderer(), {provide: A2UI_VERSION, useValue: Version.V0_9}],
+    providers: [
+      provideMarkdownRenderer(),
+      {
+        provide: A2UI_VERSION,
+        useValue: version,
+      },
+    ],
   });
 
   const fixture = TestBed.createComponent(DemoComponent);
   const component = fixture.componentInstance;
   fixture.detectChanges();
 
-  const example = EXAMPLES.find(ex => ex.name === exampleName);
+  const examples = version === Version.V0_9 ? EXAMPLES_V09 : EXAMPLES_V08;
+  let example = examples.find(ex => ex.name === exampleName);
+
+  if (version === Version.V0_8 && !example) {
+    example =
+      examples.find(ex => ex.name === `${exampleName} (basic)`) ||
+      examples.find(ex => ex.name === `${exampleName} (minimal)`);
+  }
+
   expect(example).withContext(`Example not found: ${exampleName}`).toBeTruthy();
 
   component.selectExample(example!);
