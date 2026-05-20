@@ -137,7 +137,7 @@ function getSortedExampleEntries(): [string, ExampleModule][] {
   // pass it as a parameter because Vite needs to statically analyze it at build
   // time.
   const exampleModules = import.meta.glob<ExampleModule>(
-    '../../../../specification/v0_9/json/catalogs/basic/examples/*.json',
+    '../../../../specification/v0_9/catalogs/basic/examples/*.json',
     {eager: true},
   );
 

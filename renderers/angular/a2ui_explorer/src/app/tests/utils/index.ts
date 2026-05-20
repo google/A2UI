@@ -14,19 +14,4 @@
  * limitations under the License.
  */
 
-import {getCanvas, loadExample} from '../utils';
-
-describe('Example: Stats Card', () => {
-  let textContent: string;
-
-  beforeEach(async () => {
-    await loadExample('Stats Card');
-    textContent = getCanvas().textContent;
-  });
-
-  it('should render text content and icons', async () => {
-    expect(textContent).toContain(`trending_up`);
-    expect(textContent).toContain(`Monthly Revenue`);
-    expect(textContent).toContain(`arrow_upward`);
-  });
-});
+export * from './test_utils';

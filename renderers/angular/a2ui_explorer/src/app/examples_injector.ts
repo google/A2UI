@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-import {getCanvas, loadExample} from '../utils';
+import {InjectionToken, inject} from '@angular/core';
+import {EXAMPLES_V08, EXAMPLES_V09} from './generated/examples-bundle';
+import {Version, A2uiExample} from './types';
+import {A2UI_VERSION} from './version_injector';
 
-describe('Example: Stats Card', () => {
-  let textContent: string;
-
-  beforeEach(async () => {
-    await loadExample('Stats Card');
-    textContent = getCanvas().textContent;
-  });
-
-  it('should render text content and icons', async () => {
-    expect(textContent).toContain(`trending_up`);
-    expect(textContent).toContain(`Monthly Revenue`);
-    expect(textContent).toContain(`arrow_upward`);
-  });
+/**
+ * Dependency injection token for the active A2UI examples list.
+ */
+export const A2UI_EXAMPLES = new InjectionToken<Array<A2uiExample>>('A2UI_EXAMPLES', {
+  providedIn: 'root',
+  factory: () => {
+    const version = inject(A2UI_VERSION);
+    return version === Version.V0_9 ? EXAMPLES_V09 : EXAMPLES_V08;
+  },
 });
