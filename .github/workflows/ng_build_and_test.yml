@@ -53,7 +53,7 @@ jobs:
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular
-        run: npm i
+        run: npm i --legacy-peer-deps
 
       - name: Run task
         run: |
