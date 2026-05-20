@@ -64,3 +64,15 @@ The generated response MUST follow these rules:
     - Parent components MUST appear before their child components.
     This specific ordering allows the streaming parser to yield and render the UI incrementally as it arrives.
 """
+
+TOOL_WORKFLOW_RULES = """
+The generated response MUST follow these rules:
+- To send UI to the user, call the `send_a2ui_json_to_client` tool with valid A2UI JSON.
+- Each response SHOULD include at least one tool call to render UI components.
+- You may include brief conversational text alongside tool calls for context.
+- The JSON payload passed to the tool MUST be a single, raw JSON object (usually a list of A2UI messages) and MUST validate against the provided A2UI JSON SCHEMA.
+- Top-Down Component Ordering: Within the `components` list of a message:
+    - The 'root' component MUST be the FIRST element.
+    - Parent components MUST appear before their child components.
+    This specific ordering allows the streaming parser to yield and render the UI incrementally as it arrives.
+"""
