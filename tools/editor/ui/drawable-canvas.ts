@@ -162,6 +162,7 @@ export class DrawableCanvas extends LitElement {
     this.#mode = mode;
     localStorage.setItem('drawable-mode', mode);
   }
+
   get mode() {
     return this.#mode;
   }

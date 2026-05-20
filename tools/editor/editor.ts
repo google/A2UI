@@ -423,9 +423,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     this.#userMode = userMode;
     localStorage.setItem(USER_MODE_KEY, userMode);
   }
+
   get userMode() {
     return this.#userMode;
   }
+
   #userMode: UserMode = 'upload';
 
   @state()
@@ -433,9 +435,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     this.#renderMode = renderMode;
     localStorage.setItem(RENDER_MODE_KEY, renderMode);
   }
+
   get renderMode() {
     return this.#renderMode;
   }
+
   #renderMode: RenderMode = 'surfaces';
 
   #processor = v0_8.Data.createSignalA2uiMessageProcessor();

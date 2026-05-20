@@ -56,6 +56,7 @@ export class ItemSelect extends LitElement {
       this.#highlighted = 0;
     }
   }
+
   get values() {
     return this.#values;
   }
@@ -74,6 +75,7 @@ export class ItemSelect extends LitElement {
     }
     this.#highlighted = this.#selected;
   }
+
   get value() {
     return this.#values[this.#selected]?.id ?? '';
   }
