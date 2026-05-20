@@ -1,5 +1,7 @@
 ## Unreleased
 
+- (v0_9) Fix template metadata leak in `ComponentBinder` by localizing the template variable declaration to the property loop.
+- (v0_9) Fix null de-referencing TypeError in `ComponentBinder` when `children` property is null or undefined.
 - (v0_8) Fix Icon component to handle camelCase and TitleCase names by converting them to snake_case for `g-icon`.
 - (v0_8) Fix Modal component styling and position fixed for overlay.
 - (v0_9) Remove `placeholder` prop support from the `TextField` component, since it was not part of the v0_9 basic catalog schema. [#1372](https://github.com/google/A2UI/pull/1372)
