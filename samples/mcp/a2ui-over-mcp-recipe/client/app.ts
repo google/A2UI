@@ -316,10 +316,13 @@ export class A2uiRecipeApp extends LitElement {
 
   private async connectMcp() {
     this.connectionStatus = 'connecting';
-    
+
     const urlParams = new URLSearchParams(window.location.search);
-    const sseUrl = urlParams.get('sse_url') || (import.meta as any).env?.VITE_SSE_URL || 'http://127.0.0.1:8000/sse';
-    
+    const sseUrl =
+      urlParams.get('sse_url') ||
+      (import.meta as any).env?.VITE_SSE_URL ||
+      'http://127.0.0.1:8000/sse';
+
     this.statusMessage = `Connecting to MCP server at ${sseUrl}...`;
 
     try {
