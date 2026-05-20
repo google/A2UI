@@ -112,8 +112,9 @@ export class AgentStubV09Service extends AgentStubService {
   }
 
   override initializeDemo(initialMessages: A2uiMessage[]) {
+    const clonedMessages = JSON.parse(JSON.stringify(initialMessages)) as A2uiMessage[];
     if (this.rendererService.surfaceGroup) {
-      for (const msg of initialMessages) {
+      for (const msg of clonedMessages) {
         if ('createSurface' in msg) {
           const createSurface = msg.createSurface;
           if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
@@ -127,7 +128,7 @@ export class AgentStubV09Service extends AgentStubService {
         }
       }
     }
-    const createMsg = initialMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
+    const createMsg = clonedMessages.find((m): m is CreateSurfaceMessage => 'createSurface' in m);
     const newSurfaceId = createMsg ? createMsg.createSurface.surfaceId : 'demo-surface';
     this.currentCreateSurfaceMessage.set(createMsg || null);
 
@@ -140,7 +141,7 @@ export class AgentStubV09Service extends AgentStubService {
       this.eventsLog.update(log => [{timestamp: new Date(), action}, ...log]);
     });
 
-    this.rendererService.processMessages(initialMessages);
+    this.rendererService.processMessages(clonedMessages);
 
     if (this.dataModelSub) {
       this.dataModelSub.unsubscribe();

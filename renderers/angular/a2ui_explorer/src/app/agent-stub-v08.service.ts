@@ -92,13 +92,14 @@ export class AgentStubV08Service extends AgentStubService {
   }
 
   override initializeDemo(initialMessages: ServerToClientMessage[]) {
+    const clonedMessages = JSON.parse(JSON.stringify(initialMessages)) as ServerToClientMessage[];
     this.themeV08.update(this.getDefault08Theme());
 
-    const surfaceUpdate = initialMessages.find(m => 'surfaceUpdate' in m) as
+    const surfaceUpdate = clonedMessages.find(m => 'surfaceUpdate' in m) as
       | ServerToClientMessage
       | undefined;
     const newSurfaceId = surfaceUpdate?.surfaceUpdate?.surfaceId ?? 'demo-surface';
-    this.currentCreateSurfaceMessage.set(initialMessages);
+    this.currentCreateSurfaceMessage.set(clonedMessages);
 
     this.eventsLog.set([]);
     if (this.actionSub) {
@@ -116,7 +117,7 @@ export class AgentStubV08Service extends AgentStubService {
       }
     });
 
-    this.messageProcessorV08.processMessages(initialMessages);
+    this.messageProcessorV08.processMessages(clonedMessages);
 
     this.surfaceId.set('');
     setTimeout(() => {
