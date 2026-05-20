@@ -27,10 +27,10 @@ function createComponentContext({
   componentType = 'TestComponent',
   data = {},
 }: {
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   componentId?: string;
   componentType?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }): {context: ComponentContext; surface: SurfaceModel} {
   const catalog = new Catalog('test-catalog', []);
   const surface = new SurfaceModel('test-surface', catalog);
