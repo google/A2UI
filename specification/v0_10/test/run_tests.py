@@ -44,9 +44,6 @@ def setup_catalog_alias(catalog_file="basic_catalog.json"):
     """
     basic_catalog_path = os.path.join(SCHEMA_DIR, catalog_file)
     if not os.path.exists(basic_catalog_path):
-        if catalog_file == "basic_catalog.json":
-            basic_catalog_path = os.path.abspath(os.path.join(TEST_DIR, "../catalogs/basic/catalog.json"))
-    if not os.path.exists(basic_catalog_path):
         # Fallback to current directory for relative paths like 'testing_catalog.json'
         basic_catalog_path = os.path.join(TEST_DIR, catalog_file)
         if not os.path.exists(basic_catalog_path):
@@ -64,12 +61,9 @@ def setup_catalog_alias(catalog_file="basic_catalog.json"):
     # This allows server_to_client.json to refer to "catalog.json"
     # and have it resolve to this schema content.
     if "$id" in catalog:
-        if "specification/v0_10" in catalog["$id"]:
-            catalog["$id"] = "https://a2ui.org/specification/v0_10/catalog.json"
-        else:
-            # Extract the base URL and append catalog.json
-            base_url = catalog["$id"].rsplit("/", 1)[0]
-            catalog["$id"] = f"{base_url}/catalog.json"
+        # Extract the base URL and append catalog.json
+        base_url = catalog["$id"].rsplit("/", 1)[0]
+        catalog["$id"] = f"{base_url}/catalog.json"
 
 
     with open(TEMP_CATALOG_FILE, 'w') as f:
@@ -85,7 +79,7 @@ def validate_ajv(schema_path, data_path, all_schemas):
     if os.path.exists(local_ajv):
         cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
     else:
-        cmd = ["pnpm", "dlx", "--package=ajv-cli", "--package=ajv-formats", "ajv", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
+        cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
 
     # Add all other schemas as references
     for name, path in all_schemas.items():
