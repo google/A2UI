@@ -20,12 +20,12 @@ import {z} from 'zod';
  * Base primitives
  */
 
-const exactlyOneKey = (val: any, ctx: z.RefinementCtx) => {
+const atLeastOneKey = (val: any, ctx: z.RefinementCtx) => {
   const keys = Object.keys(val).filter(k => val[k] !== undefined);
-  if (keys.length !== 1) {
+  if (keys.length < 1) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: `Must define exactly one property, found ${keys.length} (${keys.join(', ')}).`,
+      message: `Must define at least one property, found ${keys.length} (${keys.join(', ')}).`,
     });
   }
 };
@@ -37,7 +37,7 @@ export const StringValueSchema = z
     literal: z.string().optional(),
   })
   .strict()
-  .superRefine(exactlyOneKey);
+  .superRefine(atLeastOneKey);
 export type StringValue = z.infer<typeof StringValueSchema>;
 
 const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
@@ -59,7 +59,7 @@ const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
       if (count !== 1) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Value map item must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+          message: `Value map item must have at least one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
         });
       }
     }),
@@ -95,7 +95,7 @@ export const NumberValueSchema = z
     literal: z.number().optional(),
   })
   .strict()
-  .superRefine(exactlyOneKey);
+  .superRefine(atLeastOneKey);
 export type NumberValue = z.infer<typeof NumberValueSchema>;
 
 export const BooleanValueSchema = z
@@ -105,7 +105,7 @@ export const BooleanValueSchema = z
     literal: z.boolean().optional(),
   })
   .strict()
-  .superRefine(exactlyOneKey);
+  .superRefine(atLeastOneKey);
 export type BooleanValue = z.infer<typeof BooleanValueSchema>;
 
 /**
@@ -131,7 +131,7 @@ export const ActionSchema = z.object({
           })
           .describe('The dynamic value. Define EXACTLY ONE of the nested properties.')
           .strict()
-          .superRefine(exactlyOneKey),
+          .superRefine(atLeastOneKey),
       }),
     )
     .describe('A key-value map of data bindings to be resolved when the action is triggered.')
@@ -200,7 +200,7 @@ export const TabsSchema = z.object({
             });
           }
           if (val.title) {
-            exactlyOneKey(val.title, ctx);
+            atLeastOneKey(val.title, ctx);
           }
         }),
     )
@@ -243,7 +243,7 @@ export const CheckboxSchema = z.object({
       literalBoolean: z.boolean().optional(),
     })
     .strict()
-    .superRefine(exactlyOneKey),
+    .superRefine(atLeastOneKey),
 });
 
 export const TextFieldSchema = z.object({
@@ -273,7 +273,7 @@ export const MultipleChoiceSchema = z.object({
       literalArray: z.array(z.string()).optional(),
     })
     .strict()
-    .superRefine(exactlyOneKey),
+    .superRefine(atLeastOneKey),
   options: z
     .array(
       z.object({
@@ -288,7 +288,7 @@ export const MultipleChoiceSchema = z.object({
             literalString: z.string().describe('A fixed, hardcoded string value.').optional(),
           })
           .strict()
-          .superRefine(exactlyOneKey),
+          .superRefine(atLeastOneKey),
         value: z.string(),
       }),
     )
@@ -308,7 +308,7 @@ export const SliderSchema = z.object({
       literalNumber: z.number().optional(),
     })
     .strict()
-    .superRefine(exactlyOneKey),
+    .superRefine(atLeastOneKey),
   minValue: z.number().optional(),
   maxValue: z.number().optional(),
   label: StringValueSchema.optional(),
@@ -327,7 +327,7 @@ export const ComponentArrayReferenceSchema = z
     ).optional(),
   })
   .strict()
-  .superRefine(exactlyOneKey);
+  .superRefine(atLeastOneKey);
 
 export const RowSchema = z.object({
   children: ComponentArrayReferenceSchema,
