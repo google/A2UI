@@ -34,7 +34,7 @@ class A2uiSchemaManager(InferenceStrategy):
       catalogs: Optional[list[CatalogConfig]] = None,
       accepts_inline_catalogs: bool = False,
       schema_modifiers: Optional[
-          list[Callable[[dict[str, Any]], dict[str, Any]]]]
+          list[Callable[[dict[str, Any]], dict[str, Any]]]
       ] = None,
   ):
     self._version = version
