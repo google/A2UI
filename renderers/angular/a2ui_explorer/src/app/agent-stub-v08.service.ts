@@ -38,13 +38,13 @@ interface UpdatePropertyContext {
 @Injectable({
   providedIn: 'root',
 })
-export class AgentStubV08Service implements AgentStubService {
-  eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
-  surfaceId = signal<string>('demo-surface', {equal: () => false});
-  currentCreateSurfaceMessage = signal<ServerToClientMessage[] | null>(null);
+export class AgentStubV08Service extends AgentStubService {
+  override eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
+  override surfaceId = signal<string>('demo-surface', {equal: () => false});
+  override currentCreateSurfaceMessage = signal<ServerToClientMessage[] | null>(null);
   private actionSub?: {unsubscribe: () => void};
 
-  dataModel = computed(() => {
+  override dataModel = computed(() => {
     this.messageProcessorV08.version();
     const surfaceId = this.surfaceId();
     if (!surfaceId) return {};
@@ -62,7 +62,9 @@ export class AgentStubV08Service implements AgentStubService {
   constructor(
     private messageProcessorV08: MessageProcessorV08,
     private themeV08: ThemeV08,
-  ) {}
+  ) {
+    super();
+  }
 
   private handleAction(action: UserAction) {
     console.log('[AgentStubV08] handleAction action:', action);
@@ -89,7 +91,7 @@ export class AgentStubV08Service implements AgentStubService {
     }, 50);
   }
 
-  initializeDemo(initialMessages: ServerToClientMessage[]) {
+  override initializeDemo(initialMessages: ServerToClientMessage[]) {
     this.themeV08.update(this.getDefault08Theme());
 
     const surfaceUpdate = initialMessages.find(m => 'surfaceUpdate' in m) as

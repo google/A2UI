@@ -25,7 +25,9 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '@a2ui/angular/v0_9';
-import {AgentStubService, AgentStubV08Service, AgentStubV09Service} from './agent-stub.service';
+import {AgentStubService} from './agent-stub.service';
+import {AgentStubV08Service} from './agent-stub-v08.service';
+import {AgentStubV09Service} from './agent-stub-v09.service';
 import {SurfaceComponent as SurfaceComponentV09} from '@a2ui/angular/v0_9';
 import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8';
 import {AngularCatalog} from '@a2ui/angular/v0_9';

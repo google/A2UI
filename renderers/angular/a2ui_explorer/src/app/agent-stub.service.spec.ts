@@ -15,7 +15,8 @@
  */
 
 import {TestBed} from '@angular/core/testing';
-import {AgentStubService, AgentStubV09Service} from './agent-stub.service';
+import {AgentStubService} from './agent-stub.service';
+import {AgentStubV09Service} from './agent-stub-v09.service';
 import {A2uiRendererService} from '@a2ui/angular/v0_9';
 import {ActionDispatcher} from './action-dispatcher.service';
 import {Subject} from 'rxjs';

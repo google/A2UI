@@ -32,5 +32,3 @@ export abstract class AgentStubService {
   abstract initializeDemo(initialMessages: A2uiMessage[] | ServerToClientMessage[]): void;
 }
 
-export {AgentStubV09Service} from './agent-stub-v09.service';
-export {AgentStubV08Service} from './agent-stub-v08.service';

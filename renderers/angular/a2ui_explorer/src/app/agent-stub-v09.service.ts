@@ -45,18 +45,20 @@ interface SubmitFormContext {
 @Injectable({
   providedIn: 'root',
 })
-export class AgentStubV09Service implements AgentStubService {
-  dataModel = signal<Record<string, unknown>>({});
-  surfaceId = signal<string>('demo-surface', {equal: () => false});
-  eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
-  currentCreateSurfaceMessage = signal<CreateSurfaceMessage | null>(null);
+export class AgentStubV09Service extends AgentStubService {
+  override dataModel = signal<Record<string, unknown>>({});
+  override surfaceId = signal<string>('demo-surface', {equal: () => false});
+  override eventsLog = signal<Array<{timestamp: Date; action: A2uiClientAction}>>([]);
+  override currentCreateSurfaceMessage = signal<CreateSurfaceMessage | null>(null);
   private actionSub?: {unsubscribe: () => void};
   private dataModelSub?: {unsubscribe: () => void};
 
   constructor(
     private rendererService: A2uiRendererService,
     private actionDispatcher: ActionDispatcher,
-  ) {}
+  ) {
+    super();
+  }
 
   private handleAction(action: A2uiClientAction) {
     console.log('[AgentStubV09] handleAction action:', action);
@@ -109,7 +111,7 @@ export class AgentStubV09Service implements AgentStubService {
     }, 50);
   }
 
-  initializeDemo(initialMessages: A2uiMessage[]) {
+  override initializeDemo(initialMessages: A2uiMessage[]) {
     if (this.rendererService.surfaceGroup) {
       for (const msg of initialMessages) {
         if ('createSurface' in msg) {
