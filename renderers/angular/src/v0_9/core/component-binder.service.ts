@@ -87,8 +87,8 @@ export class ComponentBinder {
         });
       } else if (key === 'children') {
         const originalSig = preactSig;
-        const id = value.componentId;
-        const path = value.path;
+        const id = value?.componentId;
+        const path = value?.path;
         if (id && path) {
           template = {id, path};
         }
