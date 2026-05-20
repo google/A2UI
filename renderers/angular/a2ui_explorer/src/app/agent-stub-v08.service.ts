@@ -45,7 +45,6 @@ export class AgentStubV08Service extends AgentStubService {
   private actionSub?: {unsubscribe: () => void};
 
   override dataModel = computed(() => {
-    this.messageProcessorV08.version();
     const surfaceId = this.surfaceId();
     if (!surfaceId) return {};
     const surfaces = this.messageProcessorV08.getSurfaces();
