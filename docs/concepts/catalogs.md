@@ -57,7 +57,7 @@ Whether you are building a simple prototype or a complex production application,
 
 ### The Basic Catalog
 
-To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/json/basic_catalog.json).
+To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../../specification/v0_9/catalogs/basic/catalog.json).
 
 This is a pre-defined catalog file that contains a basic set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.
 
@@ -65,7 +65,7 @@ The basic catalog allows you to bootstrap an application or validate A2UI concep
 
 Since A2UI is designed for LLMs to generate the UI at either design time or runtime, we do not think portability requires a standardized catalog across multiple clients; the LLM can interpret the catalog for each individual frontend.
 
-[See the A2UI v0.9 basic catalog](../../specification/v0_9/json/basic_catalog.json)
+[See the A2UI v0.9 basic catalog](../../specification/v0_9/catalogs/basic/catalog.json)
 
 ### Defining Your Own Catalog
 
@@ -163,7 +163,7 @@ where:
 - `--version`: The A2UI specification version to use for official catalog
   fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
 - `--extend-basic-catalog`: If passed, automatically includes the entirety of
-  `basic_catalog.json` in the root output regardless of whether the input
+  `catalogs/basic/catalog.json` in the root output regardless of whether the input
   catalogs explicitly reference it.
 - `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
 - `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
@@ -211,7 +211,7 @@ This catalog imports only `Text` from the Basic Catalog to build a simple Popup 
   "$id": "https://github.com/.../hello_world_with_some_basic/v1/catalog.json",
   "components": {
     "allOf": [
-      {"$ref": "basic_catalog.json#/components/Text"},
+      {"$ref": "catalogs/basic/catalog.json#/components/Text"},
       {
         "Popup": {
           "type": "object",
@@ -297,7 +297,7 @@ Example of an A2A AgentCard advertising that the agent supports the basic and ri
         "description": "Provides agent driven UI using the A2UI JSON format.",
         "params": {
           "supportedCatalogIds": [
-            "https://a2ui.org/specification/v0_9/basic_catalog.json",
+            "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
             "https://github.com/.../rizzcharts_catalog_definition.json"
           ]
         }
@@ -323,7 +323,7 @@ Example of A2A message containing the supportedCatalogIds in metadata
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "https://a2ui.org/specification/v0_9/basic_catalog.json",
+        "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
         "https://github.com/.../rizzcharts_catalog_definition.json"
       ]
     }
@@ -341,7 +341,7 @@ Example A2UI Message from the agent defining the catalog_id used in a surface
 {
   "createSurface": {
     "surfaceId": "salesDashboard",
-    "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   }
 }
 ```
@@ -366,18 +366,18 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 
 - **Breaking Changes (Major Version Bump Required)**  
   Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
-  - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
-  - **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
-  - **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
-  - **Adding a required property:** without a default value, as older agents won't know to send it.
+    - **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
+    - **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
+    - **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
+    - **Adding a required property:** without a default value, as older agents won't know to send it.
 
 - **Non-Breaking Changes (Allowable under Major Version)**  
   Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
-  - **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
-  - **Adding an optional property:** e.g., adding `subtitle` to a Card.
-  - **Removing a property:** Safe for the client to ignore if the agent stops sending it.
-  - **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
-  - **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
+    - **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
+    - **Adding an optional property:** e.g., adding `subtitle` to a Card.
+    - **Removing a property:** Safe for the client to ignore if the agent stops sending it.
+    - **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
+    - **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
 
 ### Graceful Degradation
 
@@ -388,14 +388,14 @@ While standard JSON parsers ignore unknown fields, dropping a component in a Ser
 Here is how catalog version mismatches are handled in practice:
 
 - **An old iOS client is using an older catalog than the agent**
-  - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
-  - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the basic button.
-  - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
+    - The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
+    - The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
+    - The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
 
 - **A web client rolls out a new catalog version ahead of the agent**
-  - The web client supports the new `Badge` component, but the agent doesn't know about it yet.
-  - The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
-  - The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
+    - The web client supports the new `Badge` component, but the agent doesn't know about it yet.
+    - The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
+    - The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
 
 ### Versioning with CatalogId
 
@@ -423,11 +423,11 @@ To ensure a stable user experience, A2UI employs a two-phase validation strategy
 ### Two-Phase Validation
 
 1. **Agent-Side (Pre-Send):** Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.
-   - Purpose: To catch hallucinated properties or malformed structures at the source.
-   - Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.
+    - Purpose: To catch hallucinated properties or malformed structures at the source.
+    - Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.
 2. **Client-Side:** Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.
-   - Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.
-   - Outcome: Failures here are reported back to the agent using the “error” client message
+    - Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.
+    - Outcome: Failures here are reported back to the agent using the “error” client message
 
 ### Graceful Degradation
 

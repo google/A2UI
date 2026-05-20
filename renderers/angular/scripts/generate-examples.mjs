@@ -56,7 +56,7 @@ Options:
  */
 function overrideMessagesCatalogId(messages) {
   const overrideCatalogId = catalogId => {
-    return catalogId.replace('catalogs/minimal/minimal_catalog.json', 'basic_catalog.json');
+    return catalogId.replace('catalogs/minimal/catalog.json', 'catalogs/basic/catalog.json');
   };
   for (const msg of messages) {
     if (msg.createSurface && msg.createSurface.catalogId) {

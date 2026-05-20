@@ -166,19 +166,19 @@ The A2UI community is building exciting projects:
 ### Open Source Examples
 
 - **Restaurant Finder** ([samples/agent/adk/restaurant_finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder))
-  - Table reservation with dynamic forms
-  - Gemini-powered agent
-  - Full source code available
+    - Table reservation with dynamic forms
+    - Gemini-powered agent
+    - Full source code available
 
 - **Contact Lookup** ([samples/agent/adk/contact_lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup))
-  - Search interface with results list
-  - A2A agent example
-  - Demonstrates data binding
+    - Search interface with results list
+    - A2A agent example
+    - Demonstrates data binding
 
 - **Component Gallery** ([samples/client/angular - gallery mode](https://github.com/google/A2UI/tree/main/samples/client/angular))
-  - Interactive showcase of all components
-  - Live examples with code
-  - Great for learning
+    - Interactive showcase of all components
+    - Live examples with code
+    - Great for learning
 
 ### Third-Party Integrations
 
