@@ -58,24 +58,22 @@ In the Inspector:
 For a fully rendered interactive experience that visually demonstrates A2UI over MCP, run the included web application:
 
 1. In a new terminal window, navigate to the client directory:
-   ```bash
-   cd client
-   ```
+    ```bash
+    cd client
+    ```
 2. Install Node.js dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-4. Open your browser to the URL displayed in your terminal (usually `http://localhost:5173`). 
+    ```bash
+    npm run dev
+    ```
+4. Open your browser to the URL displayed in your terminal (usually `http://localhost:5173`).
 
 You will see a premium, responsive dual-column interface where the left column renders the Selection Form from MCP Resource (`a2ui://recipe-form`). Picking options and clicking **"Get Recipe"** executes the MCP Tool (`get_recipe_a2ui`), dynamically rendering the returned custom A2UI recipe card in the right column.
 
 ![Dynamic Recipe Studio demo showing selection form on the left and dynamic recipe card generation on the right](../assets/recipe_sample.gif)
-
-
 
 See all samples at [`samples/mcp/`](https://github.com/google/A2UI/tree/main/samples/mcp).
 
@@ -176,14 +174,14 @@ async def handle_call_tool(name: str, arguments: dict[str, Any]) -> types.CallTo
         # Resolve dynamic selections from client parameters
         style = arguments.get("cookingStyle", "Baked")
         protein = arguments.get("protein", "Salmon")
-        
+
         # Retrieve customized recipe database entry
         recipe_data = RECIPES.get((style, protein))
-        
+
         # Customize base A2UI schema dynamically
         custom_recipe_json = copy.deepcopy(recipe_a2ui_json)
         custom_recipe_json[1]["updateComponents"]["components"][0]["text"] = recipe_data["title"]
-        
+
         # Return customized recipe card as EmbeddedResource
         return types.CallToolResult(content=[
             types.EmbeddedResource(
@@ -260,6 +258,7 @@ If your server must remain stateless, the client can pass A2UI capabilities in t
   }
 }
 ```
+
 ## Handling User Actions
 
 Interactive components like `Button` can trigger actions that are sent back to the server as MCP tool calls.

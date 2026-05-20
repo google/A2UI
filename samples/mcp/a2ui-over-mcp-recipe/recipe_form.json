@@ -19,12 +19,7 @@
         {
           "id": "main-column",
           "component": "Column",
-          "children": [
-            "title",
-            "cooking-style-picker",
-            "protein-picker",
-            "submit-button"
-          ]
+          "children": ["title", "cooking-style-picker", "protein-picker", "submit-button"]
         },
         {
           "id": "title",

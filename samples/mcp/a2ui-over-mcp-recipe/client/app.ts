@@ -33,7 +33,11 @@ export class A2uiRecipeApp extends LitElement {
     return Promise.resolve(renderMarkdown(value, options));
   };
 
-  @state() private accessor connectionStatus: 'disconnected' | 'connecting' | 'connected' | 'error' = 'disconnected';
+  @state() private accessor connectionStatus:
+    | 'disconnected'
+    | 'connecting'
+    | 'connected'
+    | 'error' = 'disconnected';
   @state() private accessor statusMessage = 'Ready';
   @state() private accessor recipeLoading = false;
 
@@ -138,7 +142,9 @@ export class A2uiRecipeApp extends LitElement {
       -webkit-backdrop-filter: blur(20px);
       border-radius: 24px;
       padding: 32px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -257,17 +263,28 @@ export class A2uiRecipeApp extends LitElement {
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   `;
 
@@ -278,23 +295,17 @@ export class A2uiRecipeApp extends LitElement {
 
   private initializeA2UI() {
     // 1. Form Processor Setup
-    this.formProcessor = new MessageProcessor(
-      [basicCatalog],
-      async (action) => {
-        console.log('Form Action Received:', action);
-        if (action.name === 'generate_recipe') {
-          await this.generateRecipe(action.context);
-        }
+    this.formProcessor = new MessageProcessor([basicCatalog], async action => {
+      console.log('Form Action Received:', action);
+      if (action.name === 'generate_recipe') {
+        await this.generateRecipe(action.context);
       }
-    );
+    });
 
     // 2. Recipe Card Processor Setup
-    this.recipeProcessor = new MessageProcessor(
-      [basicCatalog],
-      async (action) => {
-        console.log('Recipe Card Action:', action);
-      }
-    );
+    this.recipeProcessor = new MessageProcessor([basicCatalog], async action => {
+      console.log('Recipe Card Action:', action);
+    });
   }
 
   protected async firstUpdated() {
@@ -308,7 +319,7 @@ export class A2uiRecipeApp extends LitElement {
     try {
       // Establish SSE client transport
       const transport = new SSEClientTransport(new URL('http://127.0.0.1:8000/sse'));
-      
+
       this.mcpClient = new Client(
         {
           name: 'a2ui-recipe-app-client',
@@ -319,14 +330,12 @@ export class A2uiRecipeApp extends LitElement {
             a2ui: {
               clientCapabilities: {
                 'v0.9': {
-                  supportedCatalogIds: [
-                    'https://a2ui.org/specification/v0_9/basic_catalog.json'
-                  ]
-                }
-              }
-            }
+                  supportedCatalogIds: ['https://a2ui.org/specification/v0_9/basic_catalog.json'],
+                },
+              },
+            },
           } as any,
-        }
+        },
       );
 
       await this.mcpClient.connect(transport);
@@ -350,16 +359,14 @@ export class A2uiRecipeApp extends LitElement {
         uri: 'a2ui://recipe-form',
       });
 
-      const a2uiContent = result.contents.find(
-        (c: any) => c.mimeType === 'application/json+a2ui'
-      );
+      const a2uiContent = result.contents.find((c: any) => c.mimeType === 'application/json+a2ui');
 
       if (!a2uiContent || !('text' in a2uiContent)) {
         throw new Error('Resource does not contain valid A2UI JSON data.');
       }
 
       const parsed = JSON.parse(a2uiContent.text);
-      
+
       // Process form messages into the surface model
       this.formProcessor.processMessages(parsed);
       this.formSurface = this.formProcessor.model.getSurface('recipe-form');
@@ -441,7 +448,7 @@ export class A2uiRecipeApp extends LitElement {
         <!-- Right Column: The Generated Recipe Card -->
         <section class="section-card">
           <div class="section-title">Generated Recipe Card</div>
-          
+
           ${this.recipeSurface
             ? html`<a2ui-surface .surface=${this.recipeSurface}></a2ui-surface>`
             : html`
@@ -452,12 +459,12 @@ export class A2uiRecipeApp extends LitElement {
                   <div class="placeholder-text">
                     <h3>Your recipe card will appear here</h3>
                     <p>
-                      Select your preferred cooking style and protein option on the left, then click <strong>"Get Recipe"</strong> to execute the MCP Tool.
+                      Select your preferred cooking style and protein option on the left, then click
+                      <strong>"Get Recipe"</strong> to execute the MCP Tool.
                     </p>
                   </div>
                 </div>
               `}
-
           ${this.recipeLoading
             ? html`
                 <div class="loading-overlay">
