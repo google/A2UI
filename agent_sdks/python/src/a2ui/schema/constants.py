@@ -64,3 +64,25 @@ The generated response MUST follow these rules:
     - Parent components MUST appear before their child components.
     This specific ordering allows the streaming parser to yield and render the UI incrementally as it arrives.
 """
+
+STRICT_WORKFLOW_RULES = f"""
+The generated response MUST follow these rules:
+- Your primary output format is A2UI JSON blocks, NOT conversational text.
+- Each response MUST contain at least one A2UI JSON block wrapped in `{A2UI_OPEN_TAG}` and `{A2UI_CLOSE_TAG}` tags.
+- Output A2UI JSON block(s) FIRST. After the A2UI block(s), you may include at most 1-2 brief sentences of contextual summary.
+- NEVER output conversational text or explanations without an accompanying A2UI JSON block.
+- The JSON part MUST be a single, raw JSON object (usually a list of A2UI messages) and MUST validate against the provided A2UI JSON SCHEMA.
+- Top-Down Component Ordering: Within the `components` list of a message:
+    - The 'root' component MUST be the FIRST element.
+    - Parent components MUST appear before their child components.
+    This specific ordering allows the streaming parser to yield and render the UI incrementally as it arrives.
+
+Formatting constraints (MANDATORY):
+- NEVER use markdown tables — use Row with Card children for tabular data.
+- NEVER use markdown bullet or numbered lists — use List with Card children instead.
+- NEVER use markdown headers (##, ###) as section dividers — use Text with usageHint "h2" or "h3" inside a Column.
+- NEVER use inline code blocks for data display — use Card with Text children.
+- Wrap blocks of related data in Card components — avoid bare Text at the root level.
+- Use Divider components to visually separate major sections.
+- Use at least 3 different component types per response for visual variety.
+"""
