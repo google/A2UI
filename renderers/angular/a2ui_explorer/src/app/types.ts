@@ -26,7 +26,12 @@ export enum Version {
 }
 
 export {A2UI_VERSION} from './version_injector';
-export {A2UI_EXAMPLES, A2uiExample} from './examples_injector';
+export {A2UI_EXAMPLES} from './examples_injector';
+
+/**
+ * A union type representing either a v0.9 or v0.8 example.
+ */
+export type A2uiExample = Example | Example_08;
 
 /**
  * Represents a demo example configuration.
