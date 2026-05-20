@@ -77,6 +77,12 @@ export default [
     },
   },
   {
+    rules: {
+      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
+      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
+    },
+  },
+  {
     ignores: ['dist/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
   },
 ];

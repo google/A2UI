@@ -26,7 +26,9 @@
     "publish:package": "npm run build && npm publish dist/ --access public",
     "demo": "npm run generate-examples && NODE_PRESERVE_SYMLINKS=1 ng serve a2ui_explorer",
     "test": "npm run generate-examples && ng test lib --browsers=ChromeHeadless",
-    "test:ci": "npm run generate-examples && ng test lib --watch=false --browsers=ChromeHeadless"
+    "test:ci": "npm run generate-examples && ng test lib --watch=false --browsers=ChromeHeadless",
+    "lint": "gts lint",
+    "fix": "gts fix"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
@@ -72,7 +74,8 @@
     "sass": "^1.93.2",
     "tslib": "^2.8.1",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.15",
+    "gts": "^7.0.0"
   },
   "sideEffects": false,
   "overrides": {

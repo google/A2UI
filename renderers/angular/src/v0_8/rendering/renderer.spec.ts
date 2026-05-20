@@ -208,6 +208,7 @@ describe('v0.8 Renderer Regression Tests', () => {
       @Input() set children(v: any) {
         setCapture.children = v;
       }
+
       @Input() set child(v: any) {
         setCapture.child = v;
       }

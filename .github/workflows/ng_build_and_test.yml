@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [test, restaurant, rizzcharts, orchestrator, explorer]
+        task: [test, restaurant, rizzcharts, orchestrator, explorer, lint]
 
     steps:
       - uses: actions/checkout@v6
@@ -60,6 +60,9 @@ jobs:
           case "${{ matrix.task }}" in
             test)
               cd ./renderers/angular && npm run test:ci
+              ;;
+            lint)
+              cd ./renderers/angular && npm run lint
               ;;
             explorer)
               cd ./renderers/angular && npx ng test a2ui_explorer --watch=false --browsers=ChromeHeadless

@@ -92,6 +92,14 @@ export default tseslint.config(
   // Prettier config (must be last to override conflicting rules)
   prettierConfig,
 
+  // Custom rules overrides
+  {
+    rules: {
+      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
+      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
+    },
+  },
+
   // Ignored paths
   {
     ignores: ['dist/**', 'node_modules/**', 'visual-parity/**', '**/*.d.ts'],

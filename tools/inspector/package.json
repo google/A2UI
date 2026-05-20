@@ -12,7 +12,9 @@
     "build:tsc": "wireit",
     "dev": "npm run serve --watch",
     "test": "wireit",
-    "serve": "wireit"
+    "serve": "wireit",
+    "lint": "gts lint",
+    "fix": "gts fix"
   },
   "wireit": {
     "serve": {
@@ -71,7 +73,8 @@
     "dotenv": "^17.2.3",
     "typescript": "^5.8.3",
     "vite": "^7.1.11",
-    "wireit": "^0.15.0-pre.2"
+    "wireit": "^0.15.0-pre.2",
+    "gts": "^7.0.0"
   },
   "dependencies": {
     "@a2ui/lit": "file:../../renderers/lit",

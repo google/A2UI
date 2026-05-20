@@ -49,6 +49,7 @@ export class A2uiLitModal extends BasicCatalogA2uiLitElement<typeof ModalApi> {
   protected createController() {
     return new A2uiController(this, ModalApi);
   }
+
   @query('dialog') accessor dialog!: HTMLDialogElement;
 
   render() {

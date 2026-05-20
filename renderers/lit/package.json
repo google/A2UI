@@ -52,7 +52,9 @@
     "build": "wireit",
     "build:tsc": "wireit",
     "test": "wireit",
-    "demo": "cd a2ui_explorer && npm run dev"
+    "demo": "cd a2ui_explorer && npm run dev",
+    "lint": "gts lint",
+    "fix": "gts fix"
   },
   "wireit": {
     "test": {
@@ -92,7 +94,8 @@
     "google-artifactregistry-auth": "^3.5.0",
     "jsdom": "^25.0.0",
     "typescript": "^5.8.3",
-    "wireit": "^0.15.0-pre.2"
+    "wireit": "^0.15.0-pre.2",
+    "gts": "^7.0.0"
   },
   "peerDependencies": {
     "@a2ui/markdown-it": "file:../markdown/markdown-it"

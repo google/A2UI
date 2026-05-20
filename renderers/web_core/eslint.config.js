@@ -38,6 +38,8 @@ const customConfig = [
       '@typescript-eslint/no-unsafe-function-type': 'off',
       // Not a terribly useful check at time of writing - perhaps enable later.
       '@typescript-eslint/no-floating-promises': 'off',
+      'lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
+      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     },
   },
 ];

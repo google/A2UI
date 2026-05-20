@@ -66,6 +66,7 @@ export class RowComponent extends BasicCatalogComponent<typeof RowApi> {
     const val = this.props()['justify']?.value();
     return val ? JUSTIFY_MAP[val] || val : undefined;
   });
+
   protected readonly align = computed(() => {
     const val = this.props()['align']?.value();
     return val ? ALIGN_MAP[val] || val : undefined;

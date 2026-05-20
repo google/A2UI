@@ -37,6 +37,7 @@ export class Theme {
     strong: [],
     em: [],
   };
+
   additionalStyles?: ThemeType['additionalStyles'];
 
   update(theme: ThemeType) {
