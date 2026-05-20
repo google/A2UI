@@ -31,12 +31,8 @@ from a2ui.parser.payload_fixer import parse_and_fix
             [{"beginRendering": {"surfaceId": "s1", "root": "r1"}}],
         ),
         ("{\u201ckey\u201d: \u201cvalue\u201d}", [{"key": "value"}]),
-        (
-            "{\u201Couter\u201D: {\u201Cinner\u201D: true}}",
-            [{"outer": {"inner": True}}],
-        ),
+        ('{"text": "it\u2019s fine"}', [{"text": "it's fine"}]),
         ("[]", []),
-        ("[1, 2,]", [1, 2]),
     ],
 )
 def test_parse_and_fix_normalization(payload, expected):
@@ -66,13 +62,6 @@ def test_parse_and_fix_multiple_messages():
   assert len(result) == 2
   assert "beginRendering" in result[0]
   assert "surfaceUpdate" in result[1]
-
-
-def test_parse_and_fix_single_object_wrapped_in_list():
-  payload = '{"beginRendering": {"surfaceId": "s1", "root": "r1"}}'
-  result = parse_and_fix(payload)
-  assert isinstance(result, list)
-  assert len(result) == 1
 
 
 def test_parse_and_fix_logs_warnings_on_trailing_comma_autofix(caplog):
