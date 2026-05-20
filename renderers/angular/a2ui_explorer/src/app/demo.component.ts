@@ -33,7 +33,7 @@ import {provideMarkdownRenderer, Surface as SurfaceV08} from '@a2ui/angular/v0_8
 import {AngularCatalog} from '@a2ui/angular/v0_9';
 import {DemoCatalog} from './demo-catalog';
 import {A2uiClientAction} from '@a2ui/web_core/v0_9';
-import {Example, Example_08, A2UI_VERSION, A2UI_EXAMPLES, Version} from './types';
+import {A2uiExample, A2UI_VERSION, A2UI_EXAMPLES, Version} from './types';
 import {ActionDispatcher} from './action-dispatcher.service';
 import {Catalog as CatalogV08, DEFAULT_CATALOG as DEFAULT_CATALOG_V08} from '@a2ui/angular/v0_8';
 
@@ -590,8 +590,8 @@ export class DemoComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   readonly version: Version = inject(A2UI_VERSION);
-  readonly examples: Array<Example | Example_08> = inject(A2UI_EXAMPLES);
-  selectedExample: Example | Example_08 | undefined = undefined;
+  readonly examples: Array<A2uiExample> = inject(A2UI_EXAMPLES);
+  selectedExample: A2uiExample | undefined = undefined;
   readonly surfaceId = this.agentStub.surfaceId;
   inspectTab: 'data' | 'events' = 'data';
 
@@ -668,7 +668,7 @@ export class DemoComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectExample(example: Example | Example_08) {
+  selectExample(example: A2uiExample) {
     this.selectedExample = example;
     window.location.hash = this.slugify(example.name);
 
@@ -767,7 +767,7 @@ export class DemoComponent implements OnInit, OnDestroy {
 
   private selectExampleFromUrl(): void {
     const hash = window.location.hash.substring(1) || '';
-    const example: Example | Example_08 | undefined =
+    const example: A2uiExample | undefined =
       this.examples.find(ex => this.slugify(ex.name) === hash) || this.examples[0];
     if (!example) return;
     this.selectExample(example);

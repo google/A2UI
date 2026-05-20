@@ -26,7 +26,7 @@ export enum Version {
 }
 
 export {A2UI_VERSION} from './version_injector';
-export {A2UI_EXAMPLES} from './examples_injector';
+export {A2UI_EXAMPLES, A2uiExample} from './examples_injector';
 
 /**
  * Represents a demo example configuration.

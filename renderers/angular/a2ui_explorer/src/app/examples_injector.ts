@@ -19,10 +19,12 @@ import {EXAMPLES_V08, EXAMPLES_V09} from './generated/examples-bundle';
 import {Version, Example, Example_08} from './types';
 import {A2UI_VERSION} from './version_injector';
 
+export type A2uiExample = Example | Example_08;
+
 /**
  * Dependency injection token for the active A2UI examples list.
  */
-export const A2UI_EXAMPLES = new InjectionToken<Array<Example | Example_08>>('A2UI_EXAMPLES', {
+export const A2UI_EXAMPLES = new InjectionToken<Array<A2uiExample>>('A2UI_EXAMPLES', {
   providedIn: 'root',
   factory: () => {
     const version = inject(A2UI_VERSION);
