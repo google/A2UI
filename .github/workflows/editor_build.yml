@@ -67,6 +67,3 @@ jobs:
         working-directory: ./tools/editor
         run: npm run build
 
-      - name: Lint editor
-        working-directory: ./tools/editor
-        run: npm run lint

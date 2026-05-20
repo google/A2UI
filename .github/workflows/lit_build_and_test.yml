@@ -62,14 +62,6 @@ jobs:
         working-directory: ./renderers/lit
         run: npm test
 
-      - name: Lint Lit renderer
-        working-directory: ./renderers/lit
-        run: npm run lint
-
       - name: Install markdown-it dependencies
         working-directory: ./renderers/markdown/markdown-it
         run: npm i
-
-      - name: Lint markdown-it
-        working-directory: ./renderers/markdown/markdown-it
-        run: npm run lint

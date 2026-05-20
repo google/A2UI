@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [test, demo, lint]
+        task: [test, demo]
       fail-fast: false
 
     steps:
@@ -85,8 +85,5 @@ jobs:
             demo)
               npm run build:demo
               npm run test:demo
-              ;;
-            lint)
-              npm run lint
               ;;
           esac

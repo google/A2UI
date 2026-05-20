@@ -60,4 +60,39 @@ else
   echo "Warning: dart command not found. Skipping Dart formatting."
 fi
 
+echo "Running JS/TS Linting..."
+JS_TS_DIRS=(
+  "renderers/web_core"
+  "renderers/markdown/markdown-it"
+  "renderers/angular"
+  "renderers/lit"
+  "renderers/react"
+  "tools/composer"
+  "tools/editor"
+  "tools/inspector"
+)
+
+for dir in "${JS_TS_DIRS[@]}"; do
+  if [ -d "$REPO_ROOT/$dir" ]; then
+    echo "Linting $dir..."
+    cd "$REPO_ROOT/$dir"
+    if [ ! -d "node_modules" ]; then
+      echo "node_modules not found in $dir. Auto-installing dependencies..."
+      npm install
+    fi
+    if [ "$CHECK_ONLY" = true ]; then
+      npm run lint
+    else
+      if grep -q '"fix":' package.json; then
+        npm run fix
+      else
+        npm run lint -- --fix
+      fi
+    fi
+  else
+    echo "Warning: Directory $dir not found, skipping."
+  fi
+done
+
+cd "$REPO_ROOT"
 echo "Done."

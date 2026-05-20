@@ -68,6 +68,3 @@ jobs:
         working-directory: ./tools/inspector
         run: npm run build
 
-      - name: Lint inspector
-        working-directory: ./tools/inspector
-        run: npm run lint
