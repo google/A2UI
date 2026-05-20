@@ -16,7 +16,7 @@
 
 import {TestBed} from '@angular/core/testing';
 import {ComponentBinder} from './component-binder.service';
-import {ComponentContext, ComponentModel, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {Catalog, ComponentContext, ComponentModel, SurfaceModel} from '@a2ui/web_core/v0_9';
 
 /**
  * Helper to construct instances of SurfaceModel, ComponentModel, and ComponentContext.
@@ -32,9 +32,8 @@ function createComponentContext({
   componentType?: string;
   data?: Record<string, any>;
 }): {context: ComponentContext; surface: SurfaceModel} {
-  const surface = new SurfaceModel('test-surface', {
-    invoker: () => undefined,
-  } as any);
+  const catalog = new Catalog('test-catalog', []);
+  const surface = new SurfaceModel('test-surface', catalog);
 
   for (const [path, val] of Object.entries(data)) {
     surface.dataModel.set(path, val);
