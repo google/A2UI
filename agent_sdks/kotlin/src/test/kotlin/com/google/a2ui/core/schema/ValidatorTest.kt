@@ -124,7 +124,7 @@ class ValidatorTest {
           """
       {
         "${"\$schema"}": "https://json-schema.org/draft/2020-12/schema",
-        "${"\$id"}": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+        "${"\$id"}": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
         "catalogId": "basic",
         "components": {
           "Text": {
