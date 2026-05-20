@@ -78,7 +78,9 @@
     "typescript": "~5.9.2",
     "vitest": "^4.0.15",
     "gts": "^7.0.0",
-    "@stylistic/eslint-plugin": "^3.0.0"
+    "@stylistic/eslint-plugin": "^3.0.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0"
   },
   "sideEffects": false,
   "overrides": {
