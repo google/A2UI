@@ -138,7 +138,7 @@ async function main() {
           }
 
           // In the Angular Demo we only load the basic catalog (a superset of the minimal one).
-          // Rewrite the catalogId for minimal examples to use basic_catalog.json
+          // Rewrite the catalogId for minimal examples to use catalogs/basic/catalog.json
           if (catalog === 'minimal' && overrideCatalogId) {
             overrideMessagesCatalogId(example.messages);
           }

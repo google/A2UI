@@ -22,13 +22,14 @@ import sys
 
 # Constants
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-SCHEMA_DIR = os.path.abspath(os.path.join(TEST_DIR, "../json"))
+SPEC_DIR = os.path.abspath(os.path.join(TEST_DIR, ".."))
+SCHEMA_DIR = os.path.join(SPEC_DIR, "json")
 CASES_DIR = os.path.join(TEST_DIR, "cases")
 TEMP_FILE = os.path.join(TEST_DIR, "temp_data.json")
 TEMP_CATALOG_FILE = os.path.join(TEST_DIR, "catalog.json")
 
 # Map of schema filenames to their full paths
-# Note: catalog.json is dynamically created from basic_catalog.json
+# Note: catalog.json is dynamically created from catalogs/basic/catalog.json
 SCHEMAS = {
     "server_to_client.json": os.path.join(SCHEMA_DIR, "server_to_client.json"),
     "common_types.json": os.path.join(SCHEMA_DIR, "common_types.json"),
@@ -36,34 +37,33 @@ SCHEMAS = {
     "client_to_server.json": os.path.join(SCHEMA_DIR, "client_to_server.json"),
 }
 
-def setup_catalog_alias(catalog_file="basic_catalog.json"):
+def setup_catalog_alias(catalog_file="catalogs/basic/catalog.json"):
     """
-    Creates a temporary catalog.json from basic_catalog.json (or the
-    specified file)  with the $id modified to match what server_to_client.json
+    Creates a temporary catalog.json from catalogs/basic/catalog.json (or the
+    specified file) with the $id modified to match what server_to_client.json
     expects.
     """
-    basic_catalog_path = os.path.join(SCHEMA_DIR, catalog_file)
+    basic_catalog_path = os.path.join(SPEC_DIR, catalog_file)
     if not os.path.exists(basic_catalog_path):
-        # Fallback to current directory for relative paths like 'testing_catalog.json'
         basic_catalog_path = os.path.join(TEST_DIR, catalog_file)
-        if not os.path.exists(basic_catalog_path):
-            print(f"Error: Catalog file not found: {catalog_file}")
-            sys.exit(1)
+
+    if not os.path.exists(basic_catalog_path):
+        print(f"Error: Catalog file not found: {catalog_file} (resolved to {basic_catalog_path})")
+        sys.exit(1)
 
     with open(basic_catalog_path, 'r') as f:
         try:
             catalog = json.load(f)
         except json.JSONDecodeError as e:
-            print(f"Error parsing basic_catalog.json: {e}")
+            print(f"Error parsing catalog.json: {e}")
             sys.exit(1)
 
     # Modify the $id to be the generic catalog reference
     # This allows server_to_client.json to refer to "catalog.json"
     # and have it resolve to this schema content.
     if "$id" in catalog:
-        # Extract the base URL and append catalog.json
-        base_url = catalog["$id"].rsplit("/", 1)[0]
-        catalog["$id"] = f"{base_url}/catalog.json"
+        import re
+        catalog["$id"] = re.sub(r"catalogs/basic/catalog\.json$", "catalog.json", catalog["$id"])
 
 
     with open(TEMP_CATALOG_FILE, 'w') as f:
@@ -101,7 +101,7 @@ def run_suite(suite_path):
             print(f"Error parsing JSON in {suite_path}: {e}")
             return 0, 0
 
-    catalog_file = suite.get("catalog", "basic_catalog.json")
+    catalog_file = suite.get("catalog", "catalogs/basic/catalog.json")
     setup_catalog_alias(catalog_file)
 
     try:
