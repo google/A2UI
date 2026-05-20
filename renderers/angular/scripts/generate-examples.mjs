@@ -60,8 +60,14 @@ function overrideMessagesCatalogId(messages) {
   };
   for (const msg of messages) {
     if (msg.createSurface && msg.createSurface.catalogId) {
+      // For v0.9 (and up?)
       msg.createSurface.catalogId = overrideCatalogId(msg.createSurface.catalogId);
     }
+    // The minimal catalog examples in 0.8 contain a catalogId (but not the basic
+    // catalog ones). That's probably copy-pasta from when catalogIds were
+    // introduced later, as the v0.8 renderers didn't use catalogIds. We don't
+    // need to handle the overrides of the catalogId for the beginRendering
+    // messages from the v0.8 spec.
   }
 }
 
@@ -127,6 +133,7 @@ function readExamples(specPath, catalogs, overrideCatalogId, version) {
 
 /**
  * Main execution function for the script.
+ * Parses arguments, reads catalog examples, and generates the TypeScript bundle.
  */
 async function main() {
   const {values} = parseArgs({options, allowNegative: true});
