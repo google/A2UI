@@ -222,11 +222,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'hello world');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'hello world');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -283,11 +281,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'Result: 12');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'Result: 12');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -301,11 +297,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'User: {"name":"Alice","age":30}');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'User: {"name":"Alice","age":30}');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -319,11 +313,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'Tags: ["swift","ios"]');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'Tags: ["swift","ios"]');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -346,11 +338,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'M = [[1,2],[3,4]]');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'M = [[1,2],[3,4]]');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -364,11 +354,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val) {
-          assert.strictEqual(val, 'V = [1,null,3]');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'V = [1,null,3]');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
@@ -382,11 +370,9 @@ describe('BASIC_FUNCTIONS', () => {
       // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
-        if (val !== undefined) {
-          assert.strictEqual(val, 'val=end');
-          if (cleanup) cleanup();
-          done();
-        }
+        assert.strictEqual(val, 'val=end');
+        if (cleanup) cleanup();
+        done();
       });
     });
 
