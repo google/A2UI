@@ -1,0 +1,282 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "store-comparison",
+      "root": "root"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "store-comparison",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["title", "stores-row", "divider", "insight"]
+              }
+            }
+          }
+        },
+        {
+          "id": "title",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Store Performance Comparison**"
+              },
+              "usageHint": "h2"
+            }
+          }
+        },
+        {
+          "id": "stores-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["store-1", "store-2", "store-3"]
+              }
+            }
+          }
+        },
+        {
+          "id": "store-1",
+          "component": {
+            "Card": {
+              "child": "s1-col"
+            }
+          }
+        },
+        {
+          "id": "s1-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["s1-icon-row", "s1-rev", "s1-detail"]
+              }
+            }
+          }
+        },
+        {
+          "id": "s1-icon-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["s1-icon", "s1-name"]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "s1-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "trending_up"
+              }
+            }
+          }
+        },
+        {
+          "id": "s1-name",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Downtown Market**"
+              },
+              "usageHint": "h3"
+            }
+          }
+        },
+        {
+          "id": "s1-rev",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Revenue: **$112,400** (+12.3%)"
+              }
+            }
+          }
+        },
+        {
+          "id": "s1-detail",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "5,100 transactions · $22.04 avg basket"
+              }
+            }
+          }
+        },
+        {
+          "id": "store-2",
+          "component": {
+            "Card": {
+              "child": "s2-col"
+            }
+          }
+        },
+        {
+          "id": "s2-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["s2-icon-row", "s2-rev", "s2-detail"]
+              }
+            }
+          }
+        },
+        {
+          "id": "s2-icon-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["s2-icon", "s2-name"]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "s2-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "trending_up"
+              }
+            }
+          }
+        },
+        {
+          "id": "s2-name",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Westside Market**"
+              },
+              "usageHint": "h3"
+            }
+          }
+        },
+        {
+          "id": "s2-rev",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Revenue: **$95,200** (+6.1%)"
+              }
+            }
+          }
+        },
+        {
+          "id": "s2-detail",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "4,200 transactions · $22.67 avg basket"
+              }
+            }
+          }
+        },
+        {
+          "id": "store-3",
+          "component": {
+            "Card": {
+              "child": "s3-col"
+            }
+          }
+        },
+        {
+          "id": "s3-col",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["s3-icon-row", "s3-rev", "s3-detail"]
+              }
+            }
+          }
+        },
+        {
+          "id": "s3-icon-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["s3-icon", "s3-name"]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "s3-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "trending_up"
+              }
+            }
+          }
+        },
+        {
+          "id": "s3-name",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Lakefront Market**"
+              },
+              "usageHint": "h3"
+            }
+          }
+        },
+        {
+          "id": "s3-rev",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Revenue: **$76,900** (+3.8%)"
+              }
+            }
+          }
+        },
+        {
+          "id": "s3-detail",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "3,150 transactions · $24.41 avg basket"
+              }
+            }
+          }
+        },
+        {
+          "id": "divider",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "insight",
+          "component": {
+            "Card": {
+              "child": "insight-text"
+            }
+          }
+        },
+        {
+          "id": "insight-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Downtown leads by **$17,200** (+18.1%) · Lakefront has the highest basket value at **$24.41**"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,165 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "kpi-dashboard",
+      "root": "root"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "kpi-dashboard",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["header", "metrics-row", "divider", "summary"]
+              }
+            }
+          }
+        },
+        {
+          "id": "header",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["header-icon", "header-title"]
+              },
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "header-icon",
+          "component": {
+            "Icon": {
+              "name": {
+                "literalString": "star"
+              }
+            }
+          }
+        },
+        {
+          "id": "header-title",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Weekly Performance Dashboard**"
+              },
+              "usageHint": "h2"
+            }
+          }
+        },
+        {
+          "id": "metrics-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["revenue-card", "txn-card", "aov-card", "csat-card"]
+              }
+            }
+          }
+        },
+        {
+          "id": "revenue-card",
+          "component": {
+            "Card": {
+              "child": "revenue-text"
+            }
+          }
+        },
+        {
+          "id": "revenue-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Revenue**\n\n**$284,500**\n\n+8.3% vs last week"
+              }
+            }
+          }
+        },
+        {
+          "id": "txn-card",
+          "component": {
+            "Card": {
+              "child": "txn-text"
+            }
+          }
+        },
+        {
+          "id": "txn-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Transactions**\n\n**12,450**\n\n+5.1% vs last week"
+              }
+            }
+          }
+        },
+        {
+          "id": "aov-card",
+          "component": {
+            "Card": {
+              "child": "aov-text"
+            }
+          }
+        },
+        {
+          "id": "aov-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Avg Order**\n\n**$22.85**\n\n-1.2% vs last week"
+              }
+            }
+          }
+        },
+        {
+          "id": "csat-card",
+          "component": {
+            "Card": {
+              "child": "csat-text"
+            }
+          }
+        },
+        {
+          "id": "csat-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Satisfaction**\n\n**4.6/5**\n\n+0.2 vs last week"
+              }
+            }
+          }
+        },
+        {
+          "id": "divider",
+          "component": {
+            "Divider": {
+              "axis": "horizontal"
+            }
+          }
+        },
+        {
+          "id": "summary",
+          "component": {
+            "Card": {
+              "child": "summary-text"
+            }
+          }
+        },
+        {
+          "id": "summary-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "**Top Store:** Downtown Market ($112,400) · **Top Product:** Organic Apples (1,240 units)"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
