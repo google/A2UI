@@ -63,7 +63,9 @@ def setup_catalog_alias(catalog_file="catalogs/basic/catalog.json"):
     # and have it resolve to this schema content.
     if "$id" in catalog:
         import re
-        catalog["$id"] = re.sub(r"catalogs/basic/catalog\.json$", "catalog.json", catalog["$id"])
+        match = re.match(r"^(https://a2ui\.org/specification/v0_\d+/)", catalog["$id"])
+        if match:
+            catalog["$id"] = match.group(1) + "catalog.json"
 
 
     with open(TEMP_CATALOG_FILE, 'w') as f:
