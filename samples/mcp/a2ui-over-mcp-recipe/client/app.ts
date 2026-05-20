@@ -26,6 +26,8 @@ import {renderMarkdown} from '@a2ui/markdown-it';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {SSEClientTransport} from '@modelcontextprotocol/sdk/client/sse.js';
 
+const BASIC_CATALOG_ID = 'https://a2ui.org/specification/v0_9/basic_catalog.json';
+
 @customElement('a2ui-recipe-app')
 export class A2uiRecipeApp extends LitElement {
   @provide({context: Context.markdown})
@@ -314,11 +316,15 @@ export class A2uiRecipeApp extends LitElement {
 
   private async connectMcp() {
     this.connectionStatus = 'connecting';
-    this.statusMessage = 'Connecting to MCP server...';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const sseUrl = urlParams.get('sse_url') || (import.meta as any).env?.VITE_SSE_URL || 'http://127.0.0.1:8000/sse';
+    
+    this.statusMessage = `Connecting to MCP server at ${sseUrl}...`;
 
     try {
       // Establish SSE client transport
-      const transport = new SSEClientTransport(new URL('http://127.0.0.1:8000/sse'));
+      const transport = new SSEClientTransport(new URL(sseUrl));
 
       this.mcpClient = new Client(
         {
@@ -330,7 +336,7 @@ export class A2uiRecipeApp extends LitElement {
             a2ui: {
               clientCapabilities: {
                 'v0.9': {
-                  supportedCatalogIds: ['https://a2ui.org/specification/v0_9/basic_catalog.json'],
+                  supportedCatalogIds: [BASIC_CATALOG_ID],
                 },
               },
             },
@@ -340,7 +346,7 @@ export class A2uiRecipeApp extends LitElement {
 
       await this.mcpClient.connect(transport);
       this.connectionStatus = 'connected';
-      this.statusMessage = 'Connected to MCP Server';
+      this.statusMessage = `Connected to MCP Server (${sseUrl})`;
 
       await this.loadFormResource();
     } catch (error: any) {

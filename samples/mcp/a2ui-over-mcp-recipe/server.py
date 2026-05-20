@@ -30,6 +30,7 @@ from starlette.requests import Request
 from recipes import RECIPES
 
 A2UI_MIME_TYPE = "application/json+a2ui"
+BASIC_CATALOG_ID = "https://a2ui.org/specification/v0_9/basic_catalog.json"
 
 
 
@@ -80,7 +81,7 @@ def main(port: int, transport: str, bypass_verification: bool) -> int:
       v0_9_caps = client_caps.get("v0.9", {})
       supported_catalogs = v0_9_caps.get("supportedCatalogIds", [])
       
-      return "https://a2ui.org/specification/v0_9/basic_catalog.json" in supported_catalogs
+      return BASIC_CATALOG_ID in supported_catalogs
     except LookupError:
       return False
 
