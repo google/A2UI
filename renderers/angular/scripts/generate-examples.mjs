@@ -26,7 +26,7 @@ const DEFAULT_OUT_FILE = 'a2ui_explorer/src/app/generated/examples-bundle.ts';
 /**
  * The default path to the directory containing the JSON specification catalogs.
  */
-const DEFAULT_SPEC_PATH = '../../specification/v0_9/json/catalogs';
+const DEFAULT_SPEC_PATH = '../../specification/v0_9/catalogs';
 
 /**
  * The default catalogs to generate examples for if none are specified.
@@ -63,7 +63,7 @@ Options:
  */
 function overrideMessagesCatalogId(messages) {
   const overrideCatalogId = catalogId => {
-    return catalogId.replace('catalogs/minimal/minimal_catalog.json', 'basic_catalog.json');
+    return catalogId.replace('catalogs/minimal/catalog.json', 'catalogs/basic/catalog.json');
   };
   for (const msg of messages) {
     // For v0.9 (and up?)

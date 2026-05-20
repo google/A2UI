@@ -109,7 +109,7 @@ Signals the client to initialize and render a surface.
       "version": "v0.9",
       "createSurface": {
         "surfaceId": "main",
-        "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+        "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
       }
     }
     ```
@@ -665,7 +665,7 @@ Message ordering must satisfy the following requirements:
     Validate against:
 
     - **[server_to_client.json](../../specification/v0_9/json/server_to_client.json)**: Message envelope schema.
-    - **[basic_catalog.json](../../specification/v0_9/json/basic_catalog.json)**: Component schemas.
+    - **[catalogs/basic/catalog.json](../../specification/v0_9/catalogs/basic/catalog.json)**: Component schemas.
 
 ## Further Reading
 

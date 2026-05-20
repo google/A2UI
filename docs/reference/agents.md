@@ -22,17 +22,17 @@ User interactions from the client can be treated as new user input.
 The A2UI repository includes sample agents you can learn from:
 
 - [Restaurant Finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder)
-  - Table reservations with forms.
-  - Written with the ADK.
+    - Table reservations with forms.
+    - Written with the ADK.
 - [Contact Lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup)
-  - Search with result lists.
-  - Written with the ADK.
+    - Search with result lists.
+    - Written with the ADK.
 - [Rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts/python)
-  - A2UI Custom components demo.
-  - Written with the ADK.
+    - A2UI Custom components demo.
+    - Written with the ADK.
 - [Orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator)
-  - Passes A2UI messages from remote subagents.
-  - Written with the ADK.
+    - Passes A2UI messages from remote subagents.
+    - Written with the ADK.
 
 ## Agent Types in A2A
 
