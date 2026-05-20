@@ -449,9 +449,7 @@ class TestValidator:
             "version": "v0.9",
             "createSurface": {
                 "surfaceId": "recipe-card",
-                "catalogId": (
-                    "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
-                ),
+                "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
             },
         },
         {
