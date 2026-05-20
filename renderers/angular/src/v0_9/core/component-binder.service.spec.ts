@@ -228,6 +228,23 @@ describe('ComponentBinder', () => {
         path: '/items',
       });
     });
+
+    it('should not leak template to subsequent properties', () => {
+      const {context} = createComponentContext({
+        properties: {
+          children: {componentId: 'item-card', path: '/items'},
+          anotherProp: 'some-literal',
+        },
+        data: {'/items': ['item1']},
+      });
+      const bound = binder.bind(context);
+
+      expect(bound['children'].template).toEqual({
+        id: 'item-card',
+        path: '/items',
+      });
+      expect(bound['anotherProp'].template).toBeUndefined();
+    });
   });
 
   describe('validation checks (checks)', () => {
