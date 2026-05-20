@@ -82,16 +82,8 @@ export default [
       '@stylistic': stylistic,
     },
     rules: {
-      '@stylistic/lines-between-class-members': [
-        'error',
-        'always',
-        {exceptAfterSingleLine: true},
-      ],
-      'quotes': [
-        'error',
-        'single',
-        {avoidEscape: true, allowTemplateLiterals: true},
-      ],
+      '@stylistic/lines-between-class-members': ['error', 'always', {exceptAfterSingleLine: true}],
+      quotes: ['error', 'single', {avoidEscape: true, allowTemplateLiterals: true}],
     },
   },
   {
