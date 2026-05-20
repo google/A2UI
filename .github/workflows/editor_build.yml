@@ -66,4 +66,3 @@ jobs:
       - name: Build editor
         working-directory: ./tools/editor
         run: npm run build
-

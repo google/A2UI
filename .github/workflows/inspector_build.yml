@@ -67,4 +67,3 @@ jobs:
       - name: Build inspector
         working-directory: ./tools/inspector
         run: npm run build
-
