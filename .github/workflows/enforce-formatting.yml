@@ -34,6 +34,16 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Cache Node modules and Wireit
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+            **/.wireit
+          key: ${{ runner.os }}-node-and-wireit-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-and-wireit-
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:

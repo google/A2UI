@@ -61,7 +61,3 @@ jobs:
       - name: Run Lit renderer tests
         working-directory: ./renderers/lit
         run: npm test
-
-      - name: Install markdown-it dependencies
-        working-directory: ./renderers/markdown/markdown-it
-        run: npm i
