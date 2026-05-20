@@ -153,7 +153,7 @@ async function main() {
     '0.8',
   );
   const examplesV09 = readExamples(
-    '../../specification/v0_9/json/catalogs',
+    '../../specification/v0_9/catalogs',
     catalogs,
     overrideCatalogId,
     '0.9',
