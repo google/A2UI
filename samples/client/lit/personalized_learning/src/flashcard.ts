@@ -21,34 +21,32 @@
  * This is a custom component for the personalized learning demo.
  */
 
-import { html, css, nothing, LitElement } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
-import { v0_8 } from "@a2ui/web-lib";
-import type { StringValue } from "./types.js";
+import {html, css, nothing, LitElement} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {v0_8} from '@a2ui/web-lib';
+import type {StringValue} from './types.js';
 
-type A2UIModelProcessorInstance = InstanceType<
-  typeof v0_8.Data.A2uiMessageProcessor
->;
+type A2UIModelProcessorInstance = InstanceType<typeof v0_8.Data.A2uiMessageProcessor>;
 
-@customElement("a2ui-flashcard")
+@customElement('a2ui-flashcard')
 export class Flashcard extends LitElement {
-  @property({ attribute: false })
+  @property({attribute: false})
   front: StringValue | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   back: StringValue | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   category: StringValue | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   processor: A2UIModelProcessorInstance | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   component: v0_8.Types.AnyComponentNode | null = null;
 
-  @property({ attribute: false })
+  @property({attribute: false})
   surfaceId: string | null = null;
 
   @state()
@@ -120,7 +118,7 @@ export class Flashcard extends LitElement {
     }
 
     .flashcard-category::before {
-      content: "";
+      content: '';
       width: 8px;
       height: 8px;
       background: currentColor;
@@ -195,27 +193,31 @@ export class Flashcard extends LitElement {
   `;
 
   private resolveStringValue(value: StringValue | null): string {
-    if (!value) return "";
+    if (!value) return '';
 
-    if (typeof value === "object") {
-      if ("literalString" in value && value.literalString !== undefined && value.literalString !== null) {
+    if (typeof value === 'object') {
+      if (
+        'literalString' in value &&
+        value.literalString !== undefined &&
+        value.literalString !== null
+      ) {
         return value.literalString as string;
-      } else if ("literal" in value && value.literal !== undefined && value.literal !== null) {
+      } else if ('literal' in value && value.literal !== undefined && value.literal !== null) {
         return String(value.literal);
-      } else if ("path" in value && value.path) {
+      } else if ('path' in value && value.path) {
         if (!this.processor || !this.component) {
-          return "(no processor)";
+          return '(no processor)';
         }
         const resolved = this.processor.getData(
           this.component,
           value.path,
-          this.surfaceId ?? "default"
+          this.surfaceId ?? 'default',
         );
-        return typeof resolved === "string" ? resolved : "";
+        return typeof resolved === 'string' ? resolved : '';
       }
     }
 
-    return "";
+    return '';
   }
 
   private handleClick() {
@@ -230,16 +232,14 @@ export class Flashcard extends LitElement {
     return html`
       <div
         class=${classMap({
-          "flashcard-container": true,
+          'flashcard-container': true,
           flipped: this._flipped,
         })}
         @click=${this.handleClick}
       >
         <div class="flashcard-face flashcard-front">
           <span class="label-front">Q</span>
-          ${categoryText
-            ? html`<div class="flashcard-category">${categoryText}</div>`
-            : nothing}
+          ${categoryText ? html`<div class="flashcard-category">${categoryText}</div>` : nothing}
           <div class="flashcard-content">${frontText}</div>
           <div class="flashcard-hint">
             <span class="icon">↻</span>
@@ -248,9 +248,7 @@ export class Flashcard extends LitElement {
         </div>
         <div class="flashcard-face flashcard-back">
           <span class="label-back">A</span>
-          ${categoryText
-            ? html`<div class="flashcard-category">${categoryText}</div>`
-            : nothing}
+          ${categoryText ? html`<div class="flashcard-category">${categoryText}</div>` : nothing}
           <div class="flashcard-content">${backText}</div>
           <div class="flashcard-hint">
             <span class="icon">↻</span>
@@ -264,6 +262,6 @@ export class Flashcard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "a2ui-flashcard": Flashcard;
+    'a2ui-flashcard': Flashcard;
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DataPart, Part, TextPart } from '@a2a-js/sdk';
+import {DataPart, Part, TextPart} from '@a2a-js/sdk';
 
 /**
  * Type guard to check if an A2A Part is a TextPart.

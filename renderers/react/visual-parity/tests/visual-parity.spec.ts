@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { test, expect } from '@playwright/test';
-import { PNG } from 'pngjs';
+import {test, expect} from '@playwright/test';
+import {PNG} from 'pngjs';
 import pixelmatch from 'pixelmatch';
-import { allFixtures, fixtureNames, type FixtureName } from '../fixtures';
-import { themeNames, type ThemeName } from '../fixtures/themes';
+import {allFixtures, fixtureNames, type FixtureName} from '../fixtures';
+import {themeNames, type ThemeName} from '../fixtures/themes';
 
 /**
  * Visual parity tests for A2UI React vs Lit renderers.
@@ -53,9 +53,7 @@ const skippedFixtures: FixtureName[] = [];
 /**
  * Get fixtures to test (excluding skipped ones).
  */
-const fixturesToTest = fixtureNames.filter(
-  (name) => !skippedFixtures.includes(name)
-);
+const fixturesToTest = fixtureNames.filter(name => !skippedFixtures.includes(name));
 
 /**
  * Themes to test for visual parity.
@@ -73,8 +71,8 @@ const themesToTest: ThemeName[] = ['lit', 'visualParity', 'minimal'];
  */
 function compareImages(
   img1Buffer: Buffer,
-  img2Buffer: Buffer
-): { diffPixels: number; totalPixels: number; diffPercent: number } {
+  img2Buffer: Buffer,
+): {diffPixels: number; totalPixels: number; diffPercent: number} {
   const img1 = PNG.sync.read(img1Buffer);
   const img2 = PNG.sync.read(img2Buffer);
 
@@ -94,7 +92,7 @@ function compareImages(
     null, // Don't generate diff image
     img1.width,
     img1.height,
-    { threshold: PIXEL_DIFF_THRESHOLD }
+    {threshold: PIXEL_DIFF_THRESHOLD},
   );
 
   return {
@@ -108,7 +106,7 @@ function compareImages(
  * Build URL with fixture and optional theme parameters.
  */
 function buildUrl(baseUrl: string, fixture: string, theme?: string): string {
-  const params = new URLSearchParams({ fixture });
+  const params = new URLSearchParams({fixture});
   if (theme && theme !== 'default') {
     params.set('theme', theme);
   }
@@ -123,7 +121,7 @@ test.describe('Visual Parity: React vs Lit', () => {
   for (const theme of themesToTest) {
     test.describe(`Theme: ${theme}`, () => {
       for (const fixture of fixturesToTest) {
-        test(`${fixture}`, async ({ browser }) => {
+        test(`${fixture}`, async ({browser}) => {
           // Use separate contexts to avoid any state leakage between renderers
           const litContext = await browser.newContext();
           const reactContext = await browser.newContext();
@@ -138,7 +136,7 @@ test.describe('Visual Parity: React vs Lit', () => {
 
             // Screenshot Lit (reference)
             await litPage.goto(litUrl);
-            await litPage.waitForSelector('.fixture-container', { state: 'visible' });
+            await litPage.waitForSelector('.fixture-container', {state: 'visible'});
             await litPage.waitForLoadState('networkidle');
             // Wait for fonts to load (important for text rendering parity)
             await litPage.evaluate(() => document.fonts.ready);
@@ -147,7 +145,7 @@ test.describe('Visual Parity: React vs Lit', () => {
 
             // Screenshot React (test subject)
             await reactPage.goto(reactUrl);
-            await reactPage.waitForSelector('.fixture-container', { state: 'visible' });
+            await reactPage.waitForSelector('.fixture-container', {state: 'visible'});
             await reactPage.waitForLoadState('networkidle');
             // Wait for fonts to load
             await reactPage.evaluate(() => document.fonts.ready);
@@ -155,21 +153,21 @@ test.describe('Visual Parity: React vs Lit', () => {
             const reactScreenshot = await reactContainer.screenshot();
 
             // Direct comparison: React vs Lit
-            const { diffPixels, totalPixels, diffPercent } = compareImages(
+            const {diffPixels, totalPixels, diffPercent} = compareImages(
               reactScreenshot,
-              litScreenshot
+              litScreenshot,
             );
 
             // Report the difference
             console.log(
-              `[${theme}] ${fixture}: ${diffPixels}/${totalPixels} pixels differ (${diffPercent.toFixed(2)}%)`
+              `[${theme}] ${fixture}: ${diffPixels}/${totalPixels} pixels differ (${diffPercent.toFixed(2)}%)`,
             );
 
             // Fail if difference exceeds threshold
             expect(
               diffPercent,
               `[Theme: ${theme}] React and Lit differ by ${diffPercent.toFixed(2)}% (${diffPixels} pixels). ` +
-                `Max allowed: ${MAX_DIFF_PERCENT}%`
+                `Max allowed: ${MAX_DIFF_PERCENT}%`,
             ).toBeLessThanOrEqual(MAX_DIFF_PERCENT);
           } finally {
             await litContext.close();
@@ -186,7 +184,7 @@ test.describe('Visual Parity: React vs Lit', () => {
 // =============================================================================
 
 test.describe('DOM Structure Debug', () => {
-  test('debug - compare dimensions', async ({ browser }) => {
+  test('debug - compare dimensions', async ({browser}) => {
     const fixture = 'buttonPrimary'; // Change this to test different fixtures
     const theme = 'lit';
     const litContext = await browser.newContext();
@@ -199,7 +197,7 @@ test.describe('DOM Structure Debug', () => {
       // Get Lit dimensions
       const litUrl = buildUrl(LIT_BASE_URL, fixture, theme);
       await litPage.goto(litUrl);
-      await litPage.waitForSelector('.fixture-container', { state: 'visible' });
+      await litPage.waitForSelector('.fixture-container', {state: 'visible'});
       await litPage.waitForLoadState('networkidle');
       await litPage.evaluate(() => document.fonts.ready);
 
@@ -228,7 +226,9 @@ test.describe('DOM Structure Debug', () => {
         const pStyle = pEl ? window.getComputedStyle(pEl) : null;
 
         // Check CSS variable value at themed-surface level
-        const cssVarP100 = themedSurface ? getComputedStyle(themedSurface).getPropertyValue('--p-100') : 'N/A';
+        const cssVarP100 = themedSurface
+          ? getComputedStyle(themedSurface).getPropertyValue('--p-100')
+          : 'N/A';
 
         // Check CSS variable values at different levels
         const pComputedStyle = pEl ? getComputedStyle(pEl) : null;
@@ -251,7 +251,7 @@ test.describe('DOM Structure Debug', () => {
       // Get React dimensions
       const reactUrl = buildUrl(REACT_BASE_URL, fixture, theme);
       await reactPage.goto(reactUrl);
-      await reactPage.waitForSelector('.fixture-container', { state: 'visible' });
+      await reactPage.waitForSelector('.fixture-container', {state: 'visible'});
       await reactPage.waitForLoadState('networkidle');
       await reactPage.evaluate(() => document.fonts.ready);
 
@@ -338,25 +338,25 @@ test.describe('DOM Structure Debug', () => {
     }
   });
 
-  test('debug - compare DOM', async ({ page }) => {
+  test('debug - compare DOM', async ({page}) => {
     const fixture = 'dividerHorizontal';
     const theme = 'lit';
 
     // Capture console errors
     const errors: string[] = [];
-    page.on('console', (msg) => {
+    page.on('console', msg => {
       if (msg.type() === 'error') {
         errors.push(msg.text());
       }
     });
-    page.on('pageerror', (err) => {
+    page.on('pageerror', err => {
       errors.push(err.message);
     });
 
     // Get Lit DOM - also check shadow DOM
     const litUrl = buildUrl(LIT_BASE_URL, fixture, theme);
     await page.goto(litUrl);
-    await page.waitForSelector('.fixture-container', { state: 'attached' });
+    await page.waitForSelector('.fixture-container', {state: 'attached'});
     await page.waitForTimeout(1000);
     const litHtml = await page.locator('.fixture-container').innerHTML();
 
@@ -391,13 +391,13 @@ test.describe('DOM Structure Debug', () => {
         containerHeight: containerComputed?.height,
       };
 
-      return { surfaceShadow, rootShadow, dividerShadow, litStyles };
+      return {surfaceShadow, rootShadow, dividerShadow, litStyles};
     });
 
     // Get React DOM
     const reactUrl = buildUrl(REACT_BASE_URL, fixture, theme);
     await page.goto(reactUrl);
-    await page.waitForSelector('.fixture-container', { state: 'visible' });
+    await page.waitForSelector('.fixture-container', {state: 'visible'});
     await page.waitForTimeout(500);
     const reactHtml = await page.locator('.fixture-container').innerHTML();
 
@@ -451,10 +451,12 @@ test.describe('DOM Structure Debug', () => {
     });
     console.log('\n=== Themes ===');
     console.log(`Testing: ${themesToTest.length} themes`);
-    themesToTest.forEach((theme) => {
+    themesToTest.forEach(theme => {
       console.log(`  - ${theme}`);
     });
-    console.log(`\nTotal test cases: ${fixturesToTest.length} fixtures x ${themesToTest.length} themes = ${fixturesToTest.length * themesToTest.length}`);
+    console.log(
+      `\nTotal test cases: ${fixturesToTest.length} fixtures x ${themesToTest.length} themes = ${fixturesToTest.length * themesToTest.length}`,
+    );
     expect(true).toBe(true);
   });
 });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Injectable, OnDestroy, InjectionToken, Inject } from '@angular/core';
+import {Injectable, OnDestroy, InjectionToken, Inject} from '@angular/core';
 import {
   MessageProcessor,
   SurfaceGroupModel,
@@ -22,7 +22,7 @@ import {
   A2uiMessage,
   A2uiClientAction as Action,
 } from '@a2ui/web_core/v0_9';
-import { AngularComponentImplementation, AngularCatalog } from '../catalog/types';
+import {AngularComponentImplementation, AngularCatalog} from '../catalog/types';
 
 /**
  * Configuration for the A2UI renderer.

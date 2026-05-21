@@ -5,6 +5,7 @@ This is the reference Gallery Application for the A2UI React renderer. It allows
 ## Prerequisites
 
 This application depends on the following local libraries in this repository:
+
 1. `@a2ui/web_core` (located in `renderers/web_core`)
 2. `@a2ui/react` (located in `renderers/react`)
 
@@ -21,7 +22,7 @@ npm install
 npm run build
 ```
 
-*Note: Ensure `@a2ui/web_core` is also built if you have made changes to the core logic.*
+_Note: Ensure `@a2ui/web_core` is also built if you have made changes to the core logic._
 
 ## Setup and Development
 

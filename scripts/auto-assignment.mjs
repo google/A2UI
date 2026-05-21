@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export default async function autoAssign({ github, context }) {
+export default async function autoAssign({github, context}) {
   console.log('A2UI Issue Auto-assignment script started');
 
   let issueNumber;

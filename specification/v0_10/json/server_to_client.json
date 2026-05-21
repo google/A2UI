@@ -5,12 +5,12 @@
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces.",
   "type": "object",
   "oneOf": [
-    { "$ref": "#/$defs/CreateSurfaceMessage" },
-    { "$ref": "#/$defs/UpdateComponentsMessage" },
-    { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" },
-    { "$ref": "#/$defs/CallFunctionMessage" },
-    { "$ref": "#/$defs/ActionResponseMessage" }
+    {"$ref": "#/$defs/CreateSurfaceMessage"},
+    {"$ref": "#/$defs/UpdateComponentsMessage"},
+    {"$ref": "#/$defs/UpdateDataModelMessage"},
+    {"$ref": "#/$defs/DeleteSurfaceMessage"},
+    {"$ref": "#/$defs/CallFunctionMessage"},
+    {"$ref": "#/$defs/ActionResponseMessage"}
   ],
   "$defs": {
     "CreateSurfaceMessage": {
@@ -153,10 +153,7 @@
               "properties": {
                 "callableFrom": {
                   "description": "Specifies where this function can be invoked from.",
-                  "enum": [
-                    "remoteOnly",
-                    "clientOrRemote"
-                  ]
+                  "enum": ["remoteOnly", "clientOrRemote"]
                 }
               }
             }
@@ -184,26 +181,23 @@
           "properties": {
             "value": {
               "description": "The return value of the action.",
-              "type": [ "string", "number", "boolean", "array", "object", "null" ]
+              "type": ["string", "number", "boolean", "array", "object", "null"]
             },
             "error": {
               "type": "object",
               "properties": {
-                "code": { "type": "string" },
-                "message": { "type": "string" }
+                "code": {"type": "string"},
+                "message": {"type": "string"}
               },
-              "required": [ "code", "message" ],
+              "required": ["code", "message"],
               "additionalProperties": false
             }
           },
-          "oneOf": [
-            { "required": [ "value" ] },
-            { "required": [ "error" ] }
-          ],
+          "oneOf": [{"required": ["value"]}, {"required": ["error"]}],
           "additionalProperties": false
         }
       },
-      "required": [ "version", "actionResponse", "actionId" ],
+      "required": ["version", "actionResponse", "actionId"],
       "additionalProperties": false
     }
   }

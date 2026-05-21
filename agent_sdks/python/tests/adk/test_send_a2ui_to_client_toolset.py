@@ -357,69 +357,6 @@ def test_converter_class_convert_function_call_ignores():
   assert len(a2a_parts) == 0
 
 
-def test_converter_class_convert_text_with_a2ui():
-  catalog_mock = MagicMock(spec=A2uiCatalog)
-  converter = A2uiPartConverter(catalog_mock)
-
-  valid_a2ui = [{"type": "Text", "text": "Hello"}]
-  catalog_mock.validator.validate.return_value = None
-
-  text = f"Here is the UI:\n{A2UI_OPEN_TAG}\n{json.dumps(valid_a2ui)}\n{A2UI_CLOSE_TAG}"
-  part = genai_types.Part(text=text)
-
-  a2a_parts = converter.convert(part)
-
-  # Expect 2 parts: TextPart and A2UI DataPart
-  assert len(a2a_parts) == 2
-  assert a2a_parts[0].root.text == "Here is the UI:"
-  assert a2a_parts[1] == create_a2ui_part(valid_a2ui[0])
-  catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
-
-
-def test_converter_class_convert_text_empty_leading():
-  catalog_mock = MagicMock(spec=A2uiCatalog)
-  converter = A2uiPartConverter(catalog_mock)
-
-  ui = [{"type": "Text", "text": "Top"}]
-  catalog_mock.validator.validate.return_value = None
-
-  text = f"\n{A2UI_OPEN_TAG}\n{json.dumps(ui)}\n{A2UI_CLOSE_TAG}"
-  part = genai_types.Part(text=text)
-  a2a_parts = converter.convert(part)
-
-  assert len(a2a_parts) == 1
-  assert a2a_parts[0] == create_a2ui_part(ui[0])
-
-
-def test_converter_class_convert_text_markdown_wrapped():
-  catalog_mock = MagicMock(spec=A2uiCatalog)
-  converter = A2uiPartConverter(catalog_mock)
-
-  ui = [{"type": "Text", "text": "Inside Markdown"}]
-  catalog_mock.validator.validate.return_value = None
-
-  # Text containing JSON wrapped in markdown tags
-  text = f"Behold:\n{A2UI_OPEN_TAG}\n```json\n{json.dumps(ui)}\n```\n{A2UI_CLOSE_TAG}"
-  part = genai_types.Part(text=text)
-  a2a_parts = converter.convert(part)
-
-  assert len(a2a_parts) == 2
-  assert a2a_parts[0].root.text == "Behold:"
-  assert a2a_parts[1] == create_a2ui_part(ui[0])
-  catalog_mock.validator.validate.assert_called_once_with(ui)
-
-
-def test_converter_class_convert_text_with_invalid_a2ui():
-  catalog_mock = MagicMock(spec=A2uiCatalog)
-  converter = A2uiPartConverter(catalog_mock)
-
-  text = f"Here is the UI:\n{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
-  part = genai_types.Part(text=text)
-
-  a2a_parts = converter.convert(part)
-  assert len(a2a_parts) == 0
-
-
 def test_converter_class_convert_other_part():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   converter = A2uiPartConverter(catalog_mock)

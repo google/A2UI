@@ -28,14 +28,7 @@ export interface FunctionDefinition {
   name: string;
   description?: string;
   parameters: JsonSchema;
-  returnType:
-    | 'string'
-    | 'number'
-    | 'boolean'
-    | 'array'
-    | 'object'
-    | 'any'
-    | 'void';
+  returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
 }
 
 /**

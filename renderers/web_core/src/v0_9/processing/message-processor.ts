@@ -29,10 +29,7 @@ import {
   DeleteSurfaceMessage,
   A2uiMessageListWrapper,
 } from '../schema/server-to-client.js';
-import {
-  A2uiClientCapabilities,
-  InlineCatalog,
-} from '../schema/client-capabilities.js';
+import {A2uiClientCapabilities, InlineCatalog} from '../schema/client-capabilities.js';
 import {A2uiClientDataModel} from '../schema/client-to-server.js';
 import {A2uiStateError, A2uiValidationError} from '../errors.js';
 
@@ -81,9 +78,7 @@ export class MessageProcessor<T extends ComponentApi> {
     };
 
     if (options?.includeInlineCatalogs) {
-      capabilities['v0.9'].inlineCatalogs = this.catalogs.map(c =>
-        this.generateInlineCatalog(c),
-      );
+      capabilities['v0.9'].inlineCatalogs = this.catalogs.map(c => this.generateInlineCatalog(c));
     }
 
     return capabilities;
@@ -153,10 +148,7 @@ export class MessageProcessor<T extends ComponentApi> {
     if (typeof node !== 'object' || node === null) return;
 
     // If the node itself is a REF target, transform it and stop recursion.
-    if (
-      typeof node.description === 'string' &&
-      node.description.startsWith('REF:')
-    ) {
+    if (typeof node.description === 'string' && node.description.startsWith('REF:')) {
       const parts = node.description.substring(4).split('|');
       const ref = parts[0];
       const desc = parts[1] || '';
@@ -283,12 +275,7 @@ export class MessageProcessor<T extends ComponentApi> {
       throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
     }
 
-    const surface = new SurfaceModel<T>(
-      surfaceId,
-      catalog,
-      theme,
-      sendDataModel ?? false,
-    );
+    const surface = new SurfaceModel<T>(surfaceId, catalog, theme, sendDataModel ?? false);
     this.model.addSurface(surface);
   }
 
@@ -298,26 +285,20 @@ export class MessageProcessor<T extends ComponentApi> {
     this.model.deleteSurface(payload.surfaceId);
   }
 
-  private processUpdateComponentsMessage(
-    message: UpdateComponentsMessage,
-  ): void {
+  private processUpdateComponentsMessage(message: UpdateComponentsMessage): void {
     const payload = message.updateComponents;
     if (!payload.surfaceId) return;
 
     const surface = this.model.getSurface(payload.surfaceId);
     if (!surface) {
-      throw new A2uiStateError(
-        `Surface not found for message: ${payload.surfaceId}`,
-      );
+      throw new A2uiStateError(`Surface not found for message: ${payload.surfaceId}`);
     }
 
     for (const comp of payload.components) {
       const {id, component, ...properties} = comp;
 
       if (!id) {
-        throw new A2uiValidationError(
-          `Component '${component}' is missing an 'id'.`,
-        );
+        throw new A2uiValidationError(`Component '${component}' is missing an 'id'.`);
       }
 
       const existing = surface.componentsModel.get(id);
@@ -332,9 +313,7 @@ export class MessageProcessor<T extends ComponentApi> {
         }
       } else {
         if (!component) {
-          throw new A2uiValidationError(
-            `Cannot create component ${id} without a type.`,
-          );
+          throw new A2uiValidationError(`Cannot create component ${id} without a type.`);
         }
         const newComponent = new ComponentModel(id, component, properties);
         surface.componentsModel.addComponent(newComponent);
@@ -348,9 +327,7 @@ export class MessageProcessor<T extends ComponentApi> {
 
     const surface = this.model.getSurface(payload.surfaceId);
     if (!surface) {
-      throw new A2uiStateError(
-        `Surface not found for message: ${payload.surfaceId}`,
-      );
+      throw new A2uiStateError(`Surface not found for message: ${payload.surfaceId}`);
     }
 
     const path = payload.path || '/';

@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
- 
+
 <section class="block-gallery">
   @for (block of blocks; track block.name) {
     <article class="block-card" (click)="openDialog(block)" animate.enter="fade-in">
@@ -40,7 +40,7 @@
           />
         </section>
         <section class="json-pane">
-            <pre>{{ getJson(selectedBlock.surface) }}</pre>
+          <pre>{{ getJson(selectedBlock.surface) }}</pre>
         </section>
       </div>
     } @else {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { html, nothing, LitElement, PropertyValues } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { SurfaceModel, ComponentContext } from "@a2ui/web_core/v0_9";
-import { renderA2uiNode } from "./render-a2ui-node.js";
-import { LitComponentApi } from "@a2ui/lit/v0_9";
+import {html, nothing, LitElement, PropertyValues} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
+import {SurfaceModel, ComponentContext} from '@a2ui/web_core/v0_9';
+import {renderA2uiNode} from './render-a2ui-node.js';
+import {LitComponentApi} from '@a2ui/lit/v0_9';
 
 /**
  * A Lit component that renders an A2UI Surface.
@@ -29,14 +29,12 @@ import { LitComponentApi } from "@a2ui/lit/v0_9";
  *
  * @element a2ui-surface
  */
-@customElement("a2ui-surface")
+@customElement('a2ui-surface')
 export class A2uiSurface extends LitElement {
   /**
    * The surface model containing the component tree and catalog.
    */
-  @property({ type: Object }) accessor surface:
-    | SurfaceModel<LitComponentApi>
-    | undefined;
+  @property({type: Object}) accessor surface: SurfaceModel<LitComponentApi> | undefined;
 
   /**
    * Internal state indicating whether the root component exists.
@@ -58,16 +56,16 @@ export class A2uiSurface extends LitElement {
    * @param changedProperties Map of changed properties.
    */
   protected willUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.has("surface")) {
+    if (changedProperties.has('surface')) {
       if (this.unsubscribe) {
         this.unsubscribe();
         this.unsubscribe = undefined;
       }
-      this._hasRoot = !!this.surface?.componentsModel.get("root");
+      this._hasRoot = !!this.surface?.componentsModel.get('root');
 
       if (this.surface && !this._hasRoot) {
-        const sub = this.surface.componentsModel.onCreated.subscribe((comp) => {
-          if (comp.id === "root") {
+        const sub = this.surface.componentsModel.onCreated.subscribe(comp => {
+          if (comp.id === 'root') {
             this._hasRoot = true;
             this.requestUpdate();
             this.unsubscribe?.();
@@ -104,10 +102,10 @@ export class A2uiSurface extends LitElement {
     }
 
     try {
-      const rootContext = new ComponentContext(this.surface, "root", "/");
+      const rootContext = new ComponentContext(this.surface, 'root', '/');
       return html`${renderA2uiNode(rootContext, this.surface.catalog)}`;
     } catch (e) {
-      console.error("Error creating root context:", e);
+      console.error('Error creating root context:', e);
       return html`<div>Error rendering surface</div>`;
     }
   }

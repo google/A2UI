@@ -7,6 +7,7 @@ Terms, required by A2UI protocol.
 ### A2UI agent and A2UI renderer
 
 The A2UI protocol enables conversation between **agent** and **renderer**:
+
 1. **Renderer** provides **UI capabilities** in the form of A2UI catalog and **instructions** on how to use it.
 2. **Agent** iterates on the loop:
     - Provides **UI** and **functions** to call, taking into account the received catalog
@@ -19,7 +20,7 @@ While the protocol is designed for **AI-empowered agents**, it can work with det
 
 In case the agent is stateless or does not guarantee to preserve the catalog, the renderer should provide the catalog with every message.
 
-And, sometimes, an agent is using a predefined catalog, thus forcing the renderers to either support this catalog or use an adapter. 
+And, sometimes, an agent is using a predefined catalog, thus forcing the renderers to either support this catalog or use an adapter.
 
 ### GenUI Component
 
@@ -37,17 +38,17 @@ It is observed that depending on use case, catalog components may be more or les
 
 - **Less specific**:
 
-  Basic UI primitives like buttons, labels, rows, columns, option-selectors and so on. 
+    Basic UI primitives like buttons, labels, rows, columns, option-selectors and so on.
 
 - **More specific**:
 
-  Components like HotelCheckout or FlightSelector.
+    Components like HotelCheckout or FlightSelector.
 
 ### Basic Catalog
 
 A catalog maintained by the A2UI team to get up and running quickly with A2UI.
 
-See the [basic catalog](../specification/v0_10/json/basic_catalog.json).
+See the [basic catalog](../specification/v0_10/catalogs/basic/catalog.json).
 
 ### Surface
 
@@ -60,63 +61,60 @@ There are options for A2UI agent:
 
 - **Same-process or server-side**:
 
-  Agent and renderer may reside in one process of a client side application. Example: desktop Flutter application.
+    Agent and renderer may reside in one process of a client side application. Example: desktop Flutter application.
 
-  Or, renderer may reside on the box that displays UI, and agent may reside on another box (server).
+    Or, renderer may reside on the box that displays UI, and agent may reside on another box (server).
 
 - **Orchestrator agent**:
 
-  The central orchestrator manages interactions between a user and several specialized sub-agents. The orchestrator can be in the same process or on the server.
+    The central orchestrator manages interactions between a user and several specialized sub-agents. The orchestrator can be in the same process or on the server.
 
 - **Pulling / pushing**:
 
-  An agent can wait for messages/requests from the renderer, or push messages/requests to it.
+    An agent can wait for messages/requests from the renderer, or push messages/requests to it.
 
 - **Stateful / stateless**:
 
-  Agents can preserve state or be stateless.
+    Agents can preserve state or be stateless.
 
 - **Mixed with other protocols**:
 
-  A2UI can be used in combination with other protocols. For example, an agent may be an MCP and/or A2A server.
+    A2UI can be used in combination with other protocols. For example, an agent may be an MCP and/or A2A server.
 
 - **Something else**:
 
-  In addition to the above options, there is possibility for any custom variation.
+    In addition to the above options, there is possibility for any custom variation.
 
 ### Renderer stack
 
 Functionality of A2UI renderer consists of layers that can be developed separately and reused:
 
 - **Core Library**:
-  
-  Set of primitives, needed to describe catalog and to interact with the agent.
 
-  For example, see the [JavaScript web core library](../renderers/web_core/README.md).
+    Set of primitives, needed to describe catalog and to interact with the agent.
+
+    For example, see the [JavaScript web core library](../renderers/web_core/README.md).
 
 - **Catalog Schema**:
-  
-  Definition of catalog in the form of JSON.
 
-  For example, see the [basic catalog schema](../specification/v0_10/json/basic_catalog.json).
+    Definition of catalog in the form of JSON.
+
+    For example, see the [basic catalog schema](../specification/v0_10/catalogs/basic/catalog.json).
 
 - **Framework adapter**:<a id="fw-adapter"></a>
-  
-  Code that implements the execution of the agent’s instructions in a concrete framework. For example:
-  
-  - JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.
-  - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
 
-  See the [Angular adapter](../renderers/angular/README.md).
+    Code that implements the execution of the agent’s instructions in a concrete framework. For example:
+    - JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.
+    - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
+
+    See the [Angular adapter](../renderers/angular/README.md).
 
 - **Catalog Implementation**:
-  
-  Implementation of the catalog schema for a framework.
 
-  For example:
-  
-  - See the [Angular implementation of the basic catalog](../renderers/angular/src/v0_9/catalog/basic)
-  
+    Implementation of the catalog schema for a framework.
+
+    For example:
+    - See the [Angular implementation of the basic catalog](../renderers/angular/src/v0_9/catalog/basic)
 
 ```mermaid
 flowchart TD;
@@ -152,7 +150,7 @@ See the [data binding guide](concepts/data-binding.md).
 
 In component definition, a reference to a data element, resolvable either by path in the data model or by value.
 
-See the [example in the basic catalog](../specification/v0_10/json/basic_catalog.json#L18).
+See the [example in the basic catalog](../specification/v0_10/catalogs/basic/catalog.json#L18).
 
 ### Client function
 
@@ -173,6 +171,7 @@ See the [example in common types](../specification/v0_9/json/common_types.json#L
 ### Action
 
 A container for an interaction triggered by the user in the UI. Actions come in two types:
+
 - **Event**: Dispatched to the agent for processing (e.g., clicking "Submit").
 - **Function**: Executed locally on the renderer (e.g., opening a URL).
 
@@ -186,19 +185,19 @@ Terms, not required by A2UI protocol, but commonly used in the context of genera
 
 - **Chat**:
 
-  Pieces of generated UI appear one by one, sorted by time, in a vertically scrollable area, mixed with user input.
+    Pieces of generated UI appear one by one, sorted by time, in a vertically scrollable area, mixed with user input.
 
 - **Canvas**:
 
-  Space for collaboration with an agent.
+    Space for collaboration with an agent.
 
 - **Dashboard**:
 
-  Pieces of generated UI are organized not by time, but by their meaning and stay reliably (a.k.a. pinned) where the user expects to see them.
+    Pieces of generated UI are organized not by time, but by their meaning and stay reliably (a.k.a. pinned) where the user expects to see them.
 
 - **Wizard**:
 
-  Pieces of generated UI are shown one by one, with the goal to collect necessary information for a certain task.
+    Pieces of generated UI are shown one by one, with the goal to collect necessary information for a certain task.
 
 ### NoAI information
 

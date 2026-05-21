@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <!--
  Copyright 2026 Google LLC
 
@@ -55,7 +55,12 @@
       }
 
       body {
-        font-family: "Google Sans Text", "Google Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family:
+          'Google Sans Text',
+          'Google Sans',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
         background: var(--main-bg);
         color: var(--text-primary);
         height: 100vh;
@@ -440,7 +445,7 @@
 
       .message-text br {
         display: block;
-        content: "";
+        content: '';
         margin-top: 4px;
       }
 
@@ -727,7 +732,11 @@
       .a2ui-badge-icon {
         display: inline-block;
         padding: 3px 8px;
-        background: linear-gradient(135deg, rgba(197, 138, 249, 0.2) 0%, rgba(138, 180, 248, 0.2) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(197, 138, 249, 0.2) 0%,
+          rgba(138, 180, 248, 0.2) 100%
+        );
         border: 1px solid rgba(197, 138, 249, 0.4);
         border-radius: 4px;
         font-size: 10px;
@@ -848,7 +857,9 @@
         font-weight: 500;
         color: #1f1f1f;
         cursor: pointer;
-        transition: background 0.2s, box-shadow 0.2s;
+        transition:
+          background 0.2s,
+          box-shadow 0.2s;
         font-family: inherit;
       }
 
@@ -887,7 +898,7 @@
     </style>
   </head>
   <body>
-    <div class="app-container" id="app-container" style="display: none;">
+    <div class="app-container" id="app-container" style="display: none">
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -1004,14 +1015,18 @@
             </div>
             <h1 class="welcome-title">Hello, Maria</h1>
             <p class="welcome-subtitle">
-              Personalized learning chat: Bite-sized smart study tools right in the chat, based on your specific learning journey
+              Personalized learning chat: Bite-sized smart study tools right in the chat, based on
+              your specific learning journey
             </p>
             <div class="suggestion-chips">
               <div class="suggestion-chip" data-prompt="Help me understand why ATP releases energy">
                 <span class="material-symbols-outlined">lightbulb</span>
                 <span>ATP energy concepts</span>
               </div>
-              <div class="suggestion-chip" data-prompt="Create flashcards for bond energy misconceptions">
+              <div
+                class="suggestion-chip"
+                data-prompt="Create flashcards for bond energy misconceptions"
+              >
                 <span class="material-symbols-outlined">style</span>
                 <span>Bond energy flashcards</span>
               </div>
@@ -1049,7 +1064,10 @@
               </button>
             </div>
             <div class="input-footer">
-              <span>Gemini may display inaccurate info, including about people, so double-check its responses.</span>
+              <span
+                >Gemini may display inaccurate info, including about people, so double-check its
+                responses.</span
+              >
             </div>
           </div>
         </div>

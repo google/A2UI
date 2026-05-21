@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { html, nothing, css, PropertyValues } from "lit";
-import { customElement } from "lit/decorators.js";
-import { map } from "lit/directives/map.js";
-import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css, PropertyValues} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {map} from 'lit/directives/map.js';
+import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
-@customElement("a2ui-list")
+@customElement('a2ui-list')
 export class A2uiListElement extends BasicCatalogA2uiLitElement<typeof ListApi> {
   static styles = css`
     :host {
@@ -40,7 +40,7 @@ export class A2uiListElement extends BasicCatalogA2uiLitElement<typeof ListApi> 
     super.updated(changedProperties);
     const props = this.controller.props;
     if (props) {
-      this.style.flexDirection = props.direction === "horizontal" ? "row" : "column";
+      this.style.flexDirection = props.direction === 'horizontal' ? 'row' : 'column';
     }
   }
 
@@ -55,5 +55,5 @@ export class A2uiListElement extends BasicCatalogA2uiLitElement<typeof ListApi> 
 
 export const A2uiList = {
   ...ListApi,
-  tagName: "a2ui-list",
+  tagName: 'a2ui-list',
 };

@@ -24,7 +24,7 @@ import {resetStyles} from './reset';
  */
 export const structuralStyles: string = Styles.structuralStyles.replace(
   /:host\s*\{/g,
-  '.a2ui-surface {'
+  '.a2ui-surface {',
 );
 
 /**

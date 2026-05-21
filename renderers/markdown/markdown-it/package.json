@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/markdown-it",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Markdown renderer using markdown-it and dompurify.",
   "repository": {
     "directory": "renderers/markdown/markdown-it",
@@ -41,7 +41,7 @@
     "test": "wireit"
   },
   "dependencies": {
-    "dompurify": "^3.3.1",
+    "dompurify": "3.3.1",
     "markdown-it": "^14.1.0"
   },
   "devDependencies": {

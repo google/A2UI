@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <!--
  Copyright 2026 Google LLC
 
@@ -16,68 +16,80 @@
 -->
 
 <html>
-<head>
+  <head>
     <title>MCP Sample App</title>
     <style>
-        body { font-family: sans-serif; padding: 10px; }
-        button { padding: 8px 16px; background: #137fec; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        #status { margin-top: 10px; color: green; }
+      body {
+        font-family: sans-serif;
+        padding: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        background: #137fec;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      #status {
+        margin-top: 10px;
+        color: green;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h3>MCP Sandboxed App</h3>
     <div id="data">Initial Data: <span id="val">None</span></div>
-    <br/>
+    <br />
     <button id="actionBtn">Call Agent Tool</button>
     <div id="status"></div>
 
     <script type="importmap">
-    {
-      "imports": {
-        "@modelcontextprotocol/sdk/types.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js",
-        "@modelcontextprotocol/sdk/shared/protocol.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js"
+      {
+        "imports": {
+          "@modelcontextprotocol/sdk/types.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js",
+          "@modelcontextprotocol/sdk/shared/protocol.js": "../../lit/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js"
+        }
       }
-    }
     </script>
     <script type="module">
-        import { App as AppBridge } from '../../lit/node_modules/@modelcontextprotocol/ext-apps/dist/src/app-with-deps.js';
+      import {App as AppBridge} from '../../lit/node_modules/@modelcontextprotocol/ext-apps/dist/src/app-with-deps.js';
 
-        const bridge = new AppBridge({ name: "mcp-apps-in-a2ui-sample", version: "1.0.0" });
+      const bridge = new AppBridge({name: 'mcp-apps-in-a2ui-sample', version: '1.0.0'});
 
-        async function init() {
-            const statusEl = document.getElementById('status');
-            console.log("[MCP App Iframe] init() started");
-            statusEl.innerText = "Initializing bridge...";
+      async function init() {
+        const statusEl = document.getElementById('status');
+        console.log('[MCP App Iframe] init() started');
+        statusEl.innerText = 'Initializing bridge...';
+        try {
+          console.log('[MCP App Iframe] Calling bridge.connect()...');
+          await bridge.connect();
+          console.log('[MCP App Iframe] bridge.connect() resolved!');
+          statusEl.innerText = 'Connected to host!';
+
+          document.getElementById('actionBtn').addEventListener('click', async () => {
+            console.log('[MCP App Iframe] Button clicked!');
+            statusEl.innerText = 'Calling tool...';
             try {
-                console.log("[MCP App Iframe] Calling bridge.connect()...");
-                await bridge.connect();
-                console.log("[MCP App Iframe] bridge.connect() resolved!");
-                statusEl.innerText = "Connected to host!";
-
-                document.getElementById('actionBtn').addEventListener('click', async () => {
-                    console.log("[MCP App Iframe] Button clicked!");
-                    statusEl.innerText = "Calling tool...";
-                    try {
-                        console.log("[MCP App Iframe] Calling bridge.callServerTool...");
-                        const res = await bridge.callServerTool({
-                            name: "trigger_agent_action",
-                            arguments: { foo: 'bar' }
-                        });
-                        console.log("[MCP App Iframe] Tool response:", res);
-                        statusEl.innerText = "Tool response received!";
-                    } catch (err) {
-                        console.error("[MCP App Iframe] Tool error:", err);
-                        statusEl.innerText = "Error: " + err.message;
-                    }
-                });
-
+              console.log('[MCP App Iframe] Calling bridge.callServerTool...');
+              const res = await bridge.callServerTool({
+                name: 'trigger_agent_action',
+                arguments: {foo: 'bar'},
+              });
+              console.log('[MCP App Iframe] Tool response:', res);
+              statusEl.innerText = 'Tool response received!';
             } catch (err) {
-                console.error("[MCP App Iframe] Connection failed:", err);
-                statusEl.innerText = "Connection failed: " + err.message;
+              console.error('[MCP App Iframe] Tool error:', err);
+              statusEl.innerText = 'Error: ' + err.message;
             }
+          });
+        } catch (err) {
+          console.error('[MCP App Iframe] Connection failed:', err);
+          statusEl.innerText = 'Connection failed: ' + err.message;
         }
+      }
 
-        init();
+      init();
     </script>
-</body>
+  </body>
 </html>

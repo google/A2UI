@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import { html, nothing, css } from "lit";
-import { customElement } from "lit/decorators.js";
-import { DateTimeInputApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {DateTimeInputApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
-@customElement("a2ui-datetimeinput")
-export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
-  typeof DateTimeInputApi
-> {
+@customElement('a2ui-datetimeinput')
+export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<typeof DateTimeInputApi> {
   /**
    * The styles of the datetime input can be customized by redefining the following
    * CSS variables:
@@ -45,7 +43,10 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
       padding: var(--a2ui-datetimeinput-padding, var(--a2ui-spacing-s));
     }
     label {
-      font-size: var(--a2ui-datetimeinput-label-font-size, var(--a2ui-label-font-size, var(--a2ui-font-size-s)));
+      font-size: var(
+        --a2ui-datetimeinput-label-font-size,
+        var(--a2ui-label-font-size, var(--a2ui-font-size-s))
+      );
       font-weight: var(--a2ui-datetimeinput-label-font-weight, var(--a2ui-label-font-weight, bold));
     }
   `;
@@ -59,18 +60,13 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
     if (!props) return nothing;
 
     const type =
-      props.enableDate && props.enableTime
-        ? "datetime-local"
-        : props.enableDate
-          ? "date"
-          : "time";
+      props.enableDate && props.enableTime ? 'datetime-local' : props.enableDate ? 'date' : 'time';
     return html`
       ${props.label ? html`<label>${props.label}</label>` : nothing}
       <input
         type=${type}
-        .value=${props.value || ""}
-        @input=${(e: Event) =>
-          props.setValue?.((e.target as HTMLInputElement).value)}
+        .value=${props.value || ''}
+        @input=${(e: Event) => props.setValue?.((e.target as HTMLInputElement).value)}
       />
     `;
   }
@@ -78,5 +74,5 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<
 
 export const A2uiDateTimeInput = {
   ...DateTimeInputApi,
-  tagName: "a2ui-datetimeinput",
+  tagName: 'a2ui-datetimeinput',
 };

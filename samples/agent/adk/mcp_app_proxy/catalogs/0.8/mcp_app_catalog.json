@@ -39,19 +39,17 @@
           }
         }
       },
-      "required": [
-        "content"
-      ]
+      "required": ["content"]
     },
     "Column": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "alignment": { "type": "string" },
-        "distribution": { "type": "string" },
+        "alignment": {"type": "string"},
+        "distribution": {"type": "string"},
         "children": {
           "type": "array",
-          "items": { "type": "object" }
+          "items": {"type": "object"}
         }
       }
     },
@@ -64,9 +62,9 @@
           "description": "Player score value or path.",
           "additionalProperties": false,
           "properties": {
-            "literalNumber": { "type": "number" },
-            "literalString": { "type": "string" },
-            "path": { "type": "string" }
+            "literalNumber": {"type": "number"},
+            "literalString": {"type": "string"},
+            "path": {"type": "string"}
           }
         },
         "cpuScore": {
@@ -74,9 +72,9 @@
           "description": "CPU score value or path.",
           "additionalProperties": false,
           "properties": {
-            "literalNumber": { "type": "number" },
-            "literalString": { "type": "string" },
-            "path": { "type": "string" }
+            "literalNumber": {"type": "number"},
+            "literalString": {"type": "string"},
+            "path": {"type": "string"}
           }
         }
       }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Artifact, Message, Part, SendMessageSuccessResponse, Task } from '@a2a-js/sdk';
+import {Artifact, Message, Part, SendMessageSuccessResponse, Task} from '@a2a-js/sdk';
 
 const ADK_A2A_THOUGHT_KEY = 'adk_thought';
 

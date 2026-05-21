@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { signal as preactSignal } from '@preact/signals-core';
-import { DestroyRef } from '@angular/core';
-import { toAngularSignal, getNormalizedPath } from './utils';
+import {signal as preactSignal} from '@preact/signals-core';
+import {DestroyRef} from '@angular/core';
+import {toAngularSignal, getNormalizedPath} from './utils';
 
 describe('toAngularSignal', () => {
   let mockDestroyRef: jasmine.SpyObj<DestroyRef>;

@@ -15,7 +15,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import {vi} from 'vitest';
 
 // Mock matchMedia if needed (common for some Radix/UI components)
 Object.defineProperty(window, 'matchMedia', {

@@ -42,9 +42,47 @@ data class CatalogConfig(
     /** Create a [CatalogConfig] using a [FileSystemCatalogProvider]. */
     @JvmStatic
     @JvmOverloads
-    fun fromPath(name: String, catalogPath: String, examplesPath: String? = null): CatalogConfig =
-      CatalogConfig(name, FileSystemCatalogProvider(catalogPath), examplesPath)
+    fun fromPath(name: String, catalogPath: String, examplesPath: String? = null): CatalogConfig {
+      val uri =
+        try {
+          java.net.URI(catalogPath)
+        } catch (e: Exception) {
+          null
+        }
+      val scheme = uri?.scheme?.lowercase()
+
+      val provider =
+        when {
+          scheme == null || scheme == "file" -> {
+            val path =
+              if (scheme == "file") java.nio.file.Paths.get(uri).toString() else catalogPath
+            FileSystemCatalogProvider(path)
+          }
+          scheme == "http" || scheme == "https" ->
+            throw NotImplementedError("HTTP support is coming soon.")
+          else -> throw IllegalArgumentException("Unsupported catalog URL scheme: $catalogPath")
+        }
+
+      return CatalogConfig(name, provider, resolveExamplesPath(examplesPath))
+    }
   }
+}
+
+internal fun resolveExamplesPath(path: String?): String? {
+  if (path != null) {
+    val uri =
+      try {
+        java.net.URI(path)
+      } catch (e: Exception) {
+        null
+      }
+    val scheme = uri?.scheme?.lowercase()
+    if (scheme == null || scheme == "file") {
+      return if (scheme == "file") java.nio.file.Paths.get(uri).toString() else path
+    }
+    throw IllegalArgumentException("Unsupported examples URL scheme: $path")
+  }
+  return null
 }
 
 /** Represents a processed component catalog with its schema. */
@@ -56,7 +94,9 @@ data class A2uiCatalog(
   @JvmField val catalogSchema: JsonObject,
 ) {
 
-  private val logger = Logger.getLogger(A2uiCatalog::class.java.name)
+  companion object {
+    private val logger = Logger.getLogger(A2uiCatalog::class.java.name)
+  }
 
   val validator: A2uiValidator by lazy { A2uiValidator(this) }
 
@@ -70,12 +110,27 @@ data class A2uiCatalog(
     }
 
   /**
-   * Returns a new catalog with only allowed components.
+   * Returns a new catalog with pruned components and messages.
    *
    * @param allowedComponents List of component names to include.
-   * @return A copy of the catalog with only allowed components.
+   * @param allowedMessages List of message names to include in serverToClientSchema.
+   * @return A copy of the catalog with pruned components and messages.
    */
-  fun withPrunedComponents(allowedComponents: List<String>): A2uiCatalog {
+  fun withPruning(
+    allowedComponents: List<String>? = null,
+    allowedMessages: List<String>? = null,
+  ): A2uiCatalog {
+    var catalog = this
+    if (allowedComponents != null) {
+      catalog = catalog.withPrunedComponentsInternal(allowedComponents)
+    }
+    if (allowedMessages != null) {
+      catalog = catalog.withPrunedMessages(allowedMessages)
+    }
+    return catalog.withPrunedCommonTypes()
+  }
+
+  private fun withPrunedComponentsInternal(allowedComponents: List<String>): A2uiCatalog {
     if (allowedComponents.isEmpty()) return this
 
     val schemaCopy = catalogSchema.toMutableMap()
@@ -96,6 +151,113 @@ data class A2uiCatalog(
     }
 
     return copy(catalogSchema = JsonObject(schemaCopy))
+  }
+
+  private fun withPrunedMessages(allowedMessages: List<String>): A2uiCatalog {
+    if (allowedMessages.isEmpty()) return this
+
+    val s2cCopy = serverToClientSchema.toMutableMap()
+
+    if (version == A2uiVersion.VERSION_0_8) {
+      (s2cCopy["properties"] as? JsonObject)?.let { props ->
+        s2cCopy["properties"] =
+          pruneDefsByReachability(
+            defs = props,
+            rootDefNames = allowedMessages,
+            internalRefPrefix = "#/properties/",
+          )
+      }
+    } else {
+      (s2cCopy["oneOf"] as? JsonArray)?.let { oneOf ->
+        val filteredOneOf =
+          oneOf.filter { item ->
+            val ref = (item as? JsonObject)?.get("\$ref")?.jsonPrimitive?.content
+            ref != null && ref.startsWith("#/\$defs/") && ref.split("/").last() in allowedMessages
+          }
+        s2cCopy["oneOf"] = JsonArray(filteredOneOf)
+      }
+
+      (s2cCopy["\$defs"] as? JsonObject)?.let { defs ->
+        s2cCopy["\$defs"] =
+          pruneDefsByReachability(
+            defs = defs,
+            rootDefNames = allowedMessages,
+            internalRefPrefix = "#/\$defs/",
+          )
+      }
+    }
+
+    return copy(serverToClientSchema = JsonObject(s2cCopy))
+  }
+
+  /** Returns a new catalog with unused common types pruned from the schema. */
+  private fun withPrunedCommonTypes(): A2uiCatalog {
+    val defs = commonTypesSchema["\$defs"] as? JsonObject ?: return this
+    if (defs.isEmpty()) return this
+
+    val externalRefs = mutableSetOf<String>()
+    collectRefs(catalogSchema, externalRefs)
+    collectRefs(serverToClientSchema, externalRefs)
+
+    val prefix = "common_types.json#/\$defs/"
+    val rootDefs =
+      externalRefs.mapNotNull { if (it.startsWith(prefix)) it.substring(prefix.length) else null }
+
+    val newDefs = pruneDefsByReachability(defs, rootDefs)
+    val newCommonTypes =
+      JsonObject(commonTypesSchema.toMutableMap().apply { put("\$defs", newDefs) })
+
+    return copy(commonTypesSchema = newCommonTypes)
+  }
+
+  private fun collectRefs(rootElement: JsonElement, refs: MutableSet<String>) {
+    val stack = ArrayDeque<JsonElement>()
+    stack.addLast(rootElement)
+
+    while (stack.isNotEmpty()) {
+      when (val element = stack.removeLast()) {
+        is JsonObject -> {
+          for ((k, v) in element) {
+            if (k == "\$ref" && v is JsonPrimitive && v.isString) {
+              refs.add(v.content)
+            } else {
+              stack.addLast(v)
+            }
+          }
+        }
+        is JsonArray -> {
+          for (item in element) {
+            stack.addLast(item)
+          }
+        }
+        else -> {}
+      }
+    }
+  }
+
+  private fun pruneDefsByReachability(
+    defs: JsonObject,
+    rootDefNames: List<String>,
+    internalRefPrefix: String = "#/\$defs/",
+  ): JsonObject {
+    val visitedDefs = mutableSetOf<String>()
+    val queue = ArrayDeque(rootDefNames)
+
+    while (queue.isNotEmpty()) {
+      val defName = queue.removeFirst()
+      if (defs.containsKey(defName) && visitedDefs.add(defName)) {
+        val defElement = defs[defName]!!
+        val internalRefs = mutableSetOf<String>()
+        collectRefs(defElement, internalRefs)
+        for (ref in internalRefs) {
+          if (ref.startsWith(internalRefPrefix)) {
+            queue.add(ref.substring(internalRefPrefix.length))
+          }
+        }
+      }
+    }
+
+    return JsonObject(defs.filterKeys { it in visitedDefs })
   }
 
   private fun pruneAnyComponentOneOf(
@@ -121,12 +283,14 @@ data class A2uiCatalog(
   /** Renders the catalog and schema as LLM instructions. */
   fun renderAsLlmInstructions(): String = buildString {
     appendLine(A2uiConstants.A2UI_SCHEMA_BLOCK_START)
+    appendLine()
     val jsonFmt = Json
 
     appendLine("### Server To Client Schema:")
     appendLine(jsonFmt.encodeToString(JsonElement.serializer(), serverToClientSchema))
 
-    if (commonTypesSchema.isNotEmpty()) {
+    val defs = commonTypesSchema["\$defs"] as? JsonObject
+    if (!defs.isNullOrEmpty()) {
       appendLine("\n### Common Types Schema:")
       appendLine(jsonFmt.encodeToString(JsonElement.serializer(), commonTypesSchema))
     }
@@ -137,43 +301,114 @@ data class A2uiCatalog(
     append("\n${A2uiConstants.A2UI_SCHEMA_BLOCK_END}")
   }
 
-  /** Loads and validates examples from a directory. */
+  /** Loads and validates examples from a directory or a glob pattern. */
   @JvmOverloads
   fun loadExamples(path: String?, validate: Boolean = false): String {
     if (path.isNullOrEmpty()) return ""
-    val dir = File(path)
-    if (!dir.isDirectory) {
-      logger.warning("Example path $path is not a directory")
+
+    val isDir = File(path).isDirectory
+    val pattern =
+      if (isDir) {
+        val sep = if (path.endsWith("/") || path.endsWith(File.separator)) "" else "/"
+        "$path$sep*.json"
+      } else {
+        path
+      }
+
+    // Extract the base directory to avoid walking the entire filesystem.
+    val firstWildcard = pattern.indexOfFirst { it == '*' || it == '?' || it == '[' }
+    val baseDirPath =
+      if (firstWildcard != -1) {
+        val lastSlash = pattern.lastIndexOfAny(charArrayOf('/', '\\'), firstWildcard)
+        if (lastSlash != -1) {
+          pattern.substring(startIndex = 0, endIndex = lastSlash)
+        } else {
+          ""
+        }
+      } else {
+        if (isDir) {
+          path
+        } else {
+          val parent = File(path).parent
+          parent ?: ""
+        }
+      }
+
+    val baseDirFile = if (baseDirPath.isEmpty()) File(".") else File(baseDirPath)
+    val matchedFiles = mutableListOf<File>()
+
+    if (baseDirFile.exists() && baseDirFile.isDirectory) {
+      try {
+        val matcher = java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$pattern")
+        // To support globstar matching where ** matches zero directories, create an alternate
+        // matcher.
+        val altPattern =
+          pattern
+            .replace(oldValue = "/**/", newValue = "/")
+            .replace(regex = "^\\*\\*/".toRegex(), replacement = "")
+        val altMatcher =
+          if (altPattern != pattern) {
+            java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$altPattern")
+          } else {
+            null
+          }
+
+        val startPath =
+          if (baseDirPath.isEmpty()) {
+            java.nio.file.Paths.get("")
+          } else {
+            java.nio.file.Paths.get(baseDirPath)
+          }
+
+        java.nio.file.Files.walk(startPath).use { stream ->
+          stream.forEach { p ->
+            if (java.nio.file.Files.isRegularFile(p)) {
+              if (matcher.matches(p) || altMatcher?.matches(p) == true) {
+                matchedFiles.add(p.toFile())
+              }
+            }
+          }
+        }
+      } catch (e: Exception) {
+        logger.warning("Error walking files for pattern $pattern: ${e.message}")
+      }
+    }
+
+    if (matchedFiles.isEmpty()) {
+      if (!isDir && !path.any { it == '*' || it == '?' || it == '[' }) {
+        logger.warning("Example path $path is neither a directory nor a valid glob pattern")
+      }
       return ""
     }
 
-    val files = dir.listFiles { _, name -> name.endsWith(".json") } ?: emptyArray()
+    // Sort files alphabetically by path to ensure deterministic output order and logical grouping.
+    val files = matchedFiles.sortedBy { it.path }
 
     return files
       .mapNotNull { file ->
         val basename = file.nameWithoutExtension
-        try {
-          val content = file.readText()
-          if (validate && !validateExample(file.path, content)) {
-            null
-          } else {
-            "---BEGIN $basename---\n$content\n---END $basename---"
+        val content =
+          try {
+            file.readText()
+          } catch (e: Exception) {
+            logger.warning("Failed to read example ${file.path}: ${e.message}")
+            return@mapNotNull null
           }
-        } catch (e: Exception) {
-          logger.warning("Failed to load example ${file.path}: ${e.message}")
-          null
+
+        if (validate) {
+          validateExample(file.path, content)
         }
+        "---BEGIN $basename---\n$content\n---END $basename---"
       }
-      .joinToString("\n\n")
+      .joinToString(separator = "\n\n")
   }
 
-  private fun validateExample(fullPath: String, content: String): Boolean =
+  private fun validateExample(fullPath: String, content: String) {
     try {
       val jsonElement = Json.parseToJsonElement(content)
       validator.validate(jsonElement)
-      true
     } catch (e: Exception) {
-      logger.warning("Failed to validate example $fullPath: ${e.message}")
-      false
+      throw IllegalArgumentException("Failed to validate example $fullPath: ${e.message}", e)
     }
+  }
 }

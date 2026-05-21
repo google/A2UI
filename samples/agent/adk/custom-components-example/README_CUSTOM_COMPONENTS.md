@@ -14,39 +14,47 @@ Unlike standard A2UI agents that rely solely on the core component library, this
 ## Key Features
 
 ### 1. Multiple Surfaces
+
 The agent manages multiple distinct UI areas ("surfaces") simultaneously:
--   **`contact-card`**: The main profile view validation.
--   **`org-chart-view`**: A side-by-side organizational chart.
--   **`location-surface`**: A transient modal/overlay for map views.
+
+- **`contact-card`**: The main profile view validation.
+- **`org-chart-view`**: A side-by-side organizational chart.
+- **`location-surface`**: A transient modal/overlay for map views.
 
 ### 2. Custom Components
 
 #### `OrgChart`
+
 A custom LitElement component created in the client that renders a hierarchical view.
--   **Schema**: Defined in `samples/client/lit/contact/ui/custom-components`.
--   **Usage**: The agent sends a JSON structure matching the schema, and the client renders it natively.
+
+- **Schema**: Defined in `samples/client/lit/contact/ui/custom-components`.
+- **Usage**: The agent sends a JSON structure matching the schema, and the client renders it natively.
 
 #### `WebFrame` (Iframe Component)
+
 A powerful component that allows embedding external web content or local static HTML files within the A2UI interface.
--   **Usage in Sample**: Used to render the "Office Floor Plan".
--   **Security**: Uses standard iframe sequencing and sandbox attributes.
--   **Interactivity**: Can communicate back to the parent A2UI application (e.g., clicking a desk on the map triggers an A2UI action `chart_node_click`).
+
+- **Usage in Sample**: Used to render the "Office Floor Plan".
+- **Security**: Uses standard iframe sequencing and sandbox attributes.
+- **Interactivity**: Can communicate back to the parent A2UI application (e.g., clicking a desk on the map triggers an A2UI action `chart_node_click`).
 
 ## How to Run in Tandem
 
 1.  **Start the Agent**:
+
     ```bash
     cd samples/agent/adk/custom-components-example
     uv run .
     ```
-    *Runs on port 10004.*
+
+    _Runs on port 10004._
 
 2.  **Start the Client**:
     ```bash
     cd samples/client/lit/contact
     npm run dev
     ```
-    *Configured to connect to localhost:10004.*
+    _Configured to connect to localhost:10004._
 
 ## Flow Example: "View Location"
 

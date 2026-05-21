@@ -30,6 +30,7 @@ interface InferenceStrategy {
    * @param uiDescription Optional UI context or descriptive instruction.
    * @param clientUiCapabilities Capabilities reported by the client for targeted schema pruning.
    * @param allowedComponents A specific list of component IDs allowed for rendering.
+   * @param allowedMessages A specific list of message IDs allowed for rendering.
    * @param includeSchema Whether to embed the A2UI JSON schema directly in the instructions.
    * @param includeExamples Whether to embed few-shot examples in the instructions.
    * @param validateExamples Whether to preemptively validate loaded examples against the schema.
@@ -41,6 +42,7 @@ interface InferenceStrategy {
     uiDescription: String = "",
     clientUiCapabilities: kotlinx.serialization.json.JsonObject? = null,
     allowedComponents: List<String> = emptyList(),
+    allowedMessages: List<String> = emptyList(),
     includeSchema: Boolean = false,
     includeExamples: Boolean = false,
     validateExamples: Boolean = false,

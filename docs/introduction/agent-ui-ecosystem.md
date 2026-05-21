@@ -4,16 +4,16 @@ The agentic UI space is evolving rapidly. Here's how A2UI relates to the other m
 
 ## At a Glance
 
-| | **A2UI** | **MCP Apps** | **AG UI** |
-|---|---|---|---|
-| **Approach** | Declarative component blueprints | Pre-built HTML via `ui://` URIs | High-bandwidth protocol connecting backends to frontends |
-| **Rendering** | Native components (Angular, Flutter, Lit, etc.) | Sandboxed `iframe` | Developer-defined (any framework) |
-| **Styling** | Host app controls — inherits design system | Isolated — remote server controls appearance | Developer controls — part of the host app |
-| **Security** | Declarative data, no code execution | Sandboxed iframe isolation | Trusted code within your own app |
-| **Multi-agent** | ✅ Across trust boundaries | ✅ Multiple MCP servers | ⚠️ Primarily single-agent |
-| **Cross-platform** | ✅ Web, mobile, desktop, native | ⚠️ Web-focused (iframe) | ✅ Protocol is framework-agnostic |
-| **LLM generation** | ✅ Designed for streaming output | ❌ Pre-built by server | ✅ Via A2UI integration |
-| **Spec** | Open protocol (Apache 2.0) | [MCP extension](https://modelcontextprotocol.io/docs/extensions/apps) (SEP-1865) | Open source (by CopilotKit) |
+|                    | **A2UI**                                        | **MCP Apps**                                                                     | **AG UI**                                                |
+| ------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Approach**       | Declarative component blueprints                | Pre-built HTML via `ui://` URIs                                                  | High-bandwidth protocol connecting backends to frontends |
+| **Rendering**      | Native components (Angular, Flutter, Lit, etc.) | Sandboxed `iframe`                                                               | Developer-defined (any framework)                        |
+| **Styling**        | Host app controls — inherits design system      | Isolated — remote server controls appearance                                     | Developer controls — part of the host app                |
+| **Security**       | Declarative data, no code execution             | Sandboxed iframe isolation                                                       | Trusted code within your own app                         |
+| **Multi-agent**    | ✅ Across trust boundaries                      | ✅ Multiple MCP servers                                                          | ⚠️ Primarily single-agent                                |
+| **Cross-platform** | ✅ Web, mobile, desktop, native                 | ⚠️ Web-focused (iframe)                                                          | ✅ Protocol is framework-agnostic                        |
+| **LLM generation** | ✅ Designed for streaming output                | ❌ Pre-built by server                                                           | ✅ Via A2UI integration                                  |
+| **Spec**           | Open protocol (Apache 2.0)                      | [MCP extension](https://modelcontextprotocol.io/docs/extensions/apps) (SEP-1865) | Open source (by CopilotKit)                              |
 
 ## A2UI vs MCP Apps
 

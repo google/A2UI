@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Root } from '@a2ui/lit/ui';
-import { v0_8 } from '@a2ui/lit';
-import { html, css, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { map } from 'lit/directives/map.js';
+import {Root} from '@a2ui/lit/ui';
+import {v0_8} from '@a2ui/lit';
+import {html, css, TemplateResult} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {map} from 'lit/directives/map.js';
 
 // Use aliases for convenience
 const StateEvent = v0_8.Events.StateEvent;
@@ -31,76 +31,79 @@ export interface OrgChartNode {
 
 @customElement('org-chart')
 export class OrgChart extends Root {
-  @property({ type: Array }) accessor chain: OrgChartNode[] = [];
-  @property({ type: Object }) accessor action: Action | null = null;
+  @property({type: Array}) accessor chain: OrgChartNode[] = [];
+  @property({type: Object}) accessor action: Action | null = null;
 
   static styles = [
     ...Root.styles,
     css`
-    :host {
-      display: block;
-      padding: 16px;
-      font-family: 'Roboto', sans-serif;
-    }
+      :host {
+        display: block;
+        padding: 16px;
+        font-family: 'Roboto', sans-serif;
+      }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
 
-    .node {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 24px;
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      min-width: 200px;
-      position: relative;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-    }
+      .node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 24px;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        min-width: 200px;
+        position: relative;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
 
-    .node:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+      .node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-    .node:focus {
-      outline: 2px solid #1a73e8;
-      outline-offset: 2px;
-    }
+      .node:focus {
+        outline: 2px solid #1a73e8;
+        outline-offset: 2px;
+      }
 
-    .node.current {
-      background: #e8f0fe;
-      border-color: #1a73e8;
-      border-width: 2px;
-    }
+      .node.current {
+        background: #e8f0fe;
+        border-color: #1a73e8;
+        border-width: 2px;
+      }
 
-    .title {
-      font-size: 0.85rem;
-      color: #5f6368;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
+      .title {
+        font-size: 0.85rem;
+        color: #5f6368;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
 
-    .name {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #202124;
-    }
+      .name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #202124;
+      }
 
-    .arrow {
-      color: #9aa0a6;
-      font-size: 24px;
-      line-height: 1;
-    }
-  `];
+      .arrow {
+        color: #9aa0a6;
+        font-size: 24px;
+        line-height: 1;
+      }
+    `,
+  ];
 
   render() {
     let chainData: OrgChartNode[] | null = null;
@@ -110,7 +113,11 @@ export class OrgChart extends Root {
     const chainAsAny = this.chain as any;
     if (chainAsAny && typeof chainAsAny === 'object' && 'path' in chainAsAny && chainAsAny.path) {
       if (this.processor) {
-        const resolved = this.processor.getData(this.component, chainAsAny.path, this.surfaceId ?? 'default');
+        const resolved = this.processor.getData(
+          this.component,
+          chainAsAny.path,
+          this.surfaceId ?? 'default',
+        );
         if (resolved) {
           unresolvedChain = resolved;
         }
@@ -175,21 +182,21 @@ export class OrgChart extends Root {
       ...(this.action.context || []),
       {
         key: 'clickedNodeTitle',
-        value: { literalString: node.title }
+        value: {literalString: node.title},
       },
       {
         key: 'clickedNodeName',
-        value: { literalString: node.name }
-      }
+        value: {literalString: node.name},
+      },
     ];
 
     const actionWithContext: Action = {
       ...this.action,
-      context: newContext as Action['context']
+      context: newContext as Action['context'],
     };
 
-    const evt = new StateEvent<"a2ui.action">({
-      eventType: "a2ui.action",
+    const evt = new StateEvent<'a2ui.action'>({
+      eventType: 'a2ui.action',
       action: actionWithContext,
       dataContextPath: this.dataContextPath,
       sourceComponentId: this.id,

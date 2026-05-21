@@ -101,7 +101,6 @@ The A2UI protocol is composed of a server-to-client stream describing UI and ind
 
 1.  **Server Stream:** The server begins sending the JSONL stream over an SSE connection.
 2.  **Client-Side Buffering:** The client receives messages and buffers them:
-
     - `surfaceUpdate`: Component definitions are stored in a `Map<String, Component>`, organized by `surfaceId`. If a surface doesn't exist, it is created.
     - `dataModelUpdate`: The client's internal JSON data model is built or updated.
 
@@ -183,6 +182,7 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
 - `acceptsInlineCatalogs` (boolean, optional): If `true`, the server can process `inlineCatalogs` sent by the client. Defaults to `false`.
 
 **Example Server Agent Card Snippet:**
+
 ```json
 {
   "name": "Restaurant Finder",
@@ -213,6 +213,7 @@ In **every** message sent to the server, the client includes an `a2uiClientCapab
 - `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs, typically for use in local development workflows where it is faster to update a catalog in one place on the client. This may only be provided if the server has advertised `acceptsInlineCatalogs: true`.
 
 **Example A2A Message with Client Capabilities:**
+
 ```json
 {
   "metadata": {
@@ -227,7 +228,7 @@ In **every** message sent to the server, the client includes an `a2uiClientCapab
           "components": {
             "SignaturePad": {
               "type": "object",
-              "properties": { "penColor": { "type": "string" } }
+              "properties": {"penColor": {"type": "string"}}
             }
           },
           "styles": {}
@@ -252,6 +253,7 @@ The server receives the client's capabilities and chooses a catalog to use for a
 If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`https://a2ui.org/specification/v0_8/standard_catalog_definition.json`).
 
 **Example `beginRendering` Message:**
+
 ```json
 {
   "beginRendering": {
@@ -406,7 +408,7 @@ Container components (`Row`, `Column`, `List`) define their children using a `ch
       "type": "object",
       "description": "Defines a template for rendering dynamic lists of children.",
       "properties": {
-        "dataBinding": { "$ref": "#/definitions/DataPath" },
+        "dataBinding": {"$ref": "#/definitions/DataPath"},
         "componentId": {
           "type": "string",
           "description": "The ID of the component to use as a template for each item in the data-bound list."
@@ -451,13 +453,13 @@ This message is the only way to modify the client's data model.
     "surfaceId": "main_content_area",
     "path": "user",
     "contents": [
-      { "key": "name", "valueString": "Bob" },
-      { "key": "isVerified", "valueBoolean": true },
+      {"key": "name", "valueString": "Bob"},
+      {"key": "isVerified", "valueBoolean": true},
       {
         "key": "address",
         "valueMap": [
-          { "key": "street", "valueString": "123 Main St" },
-          { "key": "city", "valueString": "Anytown" }
+          {"key": "street", "valueString": "123 Main St"},
+          {"key": "city", "valueString": "Anytown"}
         ]
       }
     ]
@@ -480,7 +482,7 @@ From the catalog schema, a bound `text` property looks like this:
       "type": "string",
       "description": "A static string value."
     },
-    "path": { "$ref": "#/definitions/DataPath" }
+    "path": {"$ref": "#/definitions/DataPath"}
   },
   "minProperties": 1,
   "additionalProperties": false
@@ -502,7 +504,6 @@ A component can also bind to numbers (`literalNumber`), booleans (`literalBoolea
   ```
 
 - **Path and Literal Value (Initialization Shorthand)**: If **both** `path` and a `literal*` value are provided, it serves as a shorthand for data model initialization. The client MUST:
-
   1.  Update the data model at the specified `path` with the provided `literal*` value. This is an implicit `dataModelUpdate`.
   2.  Bind the component property to that `path` for rendering and future updates.
 
@@ -554,7 +555,7 @@ This message provides a feedback mechanism for the server. It is sent when the c
             "id": "submit_btn_text",
             "component": {
               "Text": {
-                "text": { "literalString": "Submit" }
+                "text": {"literalString": "Submit"}
               }
             }
           },
@@ -568,9 +569,9 @@ This message provides a feedback mechanism for the server. It is sent when the c
                   "context": [
                     {
                       "key": "userInput",
-                      "value": { "path": "/form/textField" }
+                      "value": {"path": "/form/textField"}
                     },
-                    { "key": "formId", "value": { "literalString": "f-123" } }
+                    {"key": "formId", "value": {"literalString": "f-123"}}
                   ]
                 }
               }
@@ -588,7 +589,7 @@ This message provides a feedback mechanism for the server. It is sent when the c
       "dataModelUpdate": {
         "surfaceId": "main_content_area",
         "path": "form",
-        "contents": [{ "key": "textField", "valueString": "User input text" }]
+        "contents": [{"key": "textField", "valueString": "User input text"}]
       }
     }
     ```

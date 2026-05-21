@@ -25,6 +25,7 @@ python3 specification/v0_9/test/run_tests.py
 ```
 
 The script will:
+
 1. Load all schemas from `specification/v0_9/json`.
 2. Execute all test suites defined in `specification/v0_9/test/cases/*.json`.
 3. Report pass/fail status for each test case.

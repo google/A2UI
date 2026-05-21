@@ -27,7 +27,7 @@ export function extractJsonFromMarkdown(markdown: string): any[] {
         results.push(JSON.parse(content));
       } catch (error) {
         // If that fails, try parsing as JSONL (line by line)
-        const lines = content.split("\n");
+        const lines = content.split('\n');
         for (const line of lines) {
           if (line.trim()) {
             try {

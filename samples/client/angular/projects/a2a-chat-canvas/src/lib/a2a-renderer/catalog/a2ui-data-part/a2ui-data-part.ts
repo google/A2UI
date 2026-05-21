@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Part } from '@a2a-js/sdk';
-import { RendererComponent } from '@a2a_chat_canvas/a2a-renderer/types';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
-import { Surface } from '@a2ui/angular';
+import {Part} from '@a2a-js/sdk';
+import {RendererComponent} from '@a2a_chat_canvas/a2a-renderer/types';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+import {isA2aDataPart} from '@a2a_chat_canvas/utils/type-guards';
+import {Surface} from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 
 /**
  * Component responsible for rendering an A2UI surface embedded within an A2A message part.

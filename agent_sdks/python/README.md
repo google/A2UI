@@ -9,29 +9,29 @@ The following directories contain the base protocol logic, parsing, and schema o
 
 ### Schema Management (`src/a2ui/schema`)
 
-* **`manager.py`**: The `A2uiSchemaManager` handles loading specification
+- **`manager.py`**: The `A2uiSchemaManager` handles loading specification
   schemas, managing catalogs, and generating system prompts for LLMs.
-* **`validator.py`**: Implements `A2uiValidator` for validating A2UI messages
+- **`validator.py`**: Implements `A2uiValidator` for validating A2UI messages
   against JSON schemas and protocol rules.
-* **`catalog.py`**: Defines `A2uiCatalog` and `CatalogConfig` for handling
+- **`catalog.py`**: Defines `A2uiCatalog` and `CatalogConfig` for handling
   component libraries.
 
 ### Parser (`src/a2ui/parser`)
 
-* **`parser.py`**: Implementation of `parse_response` for synchronous parsing.
-* **`streaming.py`**: Incremental streaming parsers with automatic JSON healing and validation.
-* **`payload_fixer.py`**: Utilities to automatically correct common LLM output
+- **`parser.py`**: Implementation of `parse_response` for synchronous parsing.
+- **`streaming.py`**: Incremental streaming parsers with automatic JSON healing and validation.
+- **`payload_fixer.py`**: Utilities to automatically correct common LLM output
   issues in A2UI payloads.
 
 ## Basic Catalog (`src/a2ui/basic_catalog`)
 
-* **`provider.py`**: Implementation of `BasicCatalog` for handling the basic
+- **`provider.py`**: Implementation of `BasicCatalog` for handling the basic
   A2UI components.
 
 ## A2A (`src/a2ui/a2a`)
 
-* **`extension.py`**: Utilities for managing the A2UI extension URI and activation logic.
-* **`parts.py`**: Utilities for creating A2A Parts with A2UI data and helpers for response parsing.
+- **`extension.py`**: Utilities for managing the A2UI extension URI and activation logic.
+- **`parts.py`**: Utilities for creating A2A Parts with A2UI data and helpers for response parsing.
 
 ## ADK Extensions (`src/a2ui/adk`)
 
@@ -39,7 +39,7 @@ Support for
 the [Agent Development Kit (ADK)](https://github.com/google/adk-python) and A2A
 protocol.
 
-* **`send_a2ui_to_client_toolset.py`**: Implementation of
+- **`send_a2ui_to_client_toolset.py`**: Implementation of
   `SendA2uiToClientToolset` to enable agents to send UI to clients via tool
   calls.
 

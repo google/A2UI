@@ -6,40 +6,40 @@ This document serves as a guide for using the Gemini agent within the A2UI repos
 
 The A2UI repository is organized into several key directories:
 
--   `specification/`: Contains the A2UI protocol specifications.
-    -   `v0_8/`: The stable protocol version.
-        -   `docs/`: Human-readable documentation.
-        -   `json/`: JSON schema definitions.
-        -   `eval/`: Genkit-based evaluation framework.
-    -   `v0_9/`: The draft protocol version (in development).
-        -   `docs/`: Human-readable documentation.
-        -   `json/`: JSON schema definitions.
-        -   `eval/`: Genkit-based evaluation framework.
-    -   `v0_10/`: The proposed protocol version (next version).
-        -   `docs/`: Human-readable documentation.
-        -   `json/`: JSON schema definitions.
-        -   `eval/`: Genkit-based evaluation framework.
--   `samples/`: Contains sample implementations.
-    -   `agent/`:
-        -   `adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
-        -   `mcp/`: MCP server sample (A2UI over MCP).
-    -   `client/`: Web client implementations.
-        -   `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
-        -   `angular/`: Clients using Angular (e.g., `contact`, `orchestrator`).
-    -   `personalized_learning/`: Personalized learning sample implementation.
--   `agent_sdks/`: Contains source code for Agent integrations.
-    -   `python/`: Python implementation of the A2UI agent library.
-    -   `java/`: Java implementation of the A2UI agent library.
--   `renderers/`: Contains renderer libraries.
-    -   `lit/`: The shared Lit renderer library used by the Lit clients.
-    -   `angular/`: The shared Angular renderer library used by the Angular clients.
-    -   `web_core/`: The shared core library used by web renderers.
-    -   `markdown/`: Markdown rendering utilities.
--   `tools/`: Helper tools for development.
-    -   `editor/`: A web-based editor for generating and visualizing A2UI.
-    -   `inspector/`: A web-based inspector for A2UI responses.
-    -   `composer/`: Visual composer tool.
-    -   `build_catalog/`: Catalog building utility.
+- `specification/`: Contains the A2UI protocol specifications.
+  - `v0_8/`: The stable protocol version.
+    - `docs/`: Human-readable documentation.
+    - `json/`: JSON schema definitions.
+    - `eval/`: Genkit-based evaluation framework.
+  - `v0_9/`: The draft protocol version (in development).
+    - `docs/`: Human-readable documentation.
+    - `json/`: JSON schema definitions.
+    - `eval/`: Genkit-based evaluation framework.
+  - `v0_10/`: The proposed protocol version (next version).
+    - `docs/`: Human-readable documentation.
+    - `json/`: JSON schema definitions.
+    - `eval/`: Genkit-based evaluation framework.
+- `samples/`: Contains sample implementations.
+  - `agent/`:
+    - `adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
+    - `mcp/`: MCP server sample (A2UI over MCP).
+  - `client/`: Web client implementations.
+    - `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
+    - `angular/`: Clients using Angular (e.g., `contact`, `orchestrator`).
+  - `personalized_learning/`: Personalized learning sample implementation.
+- `agent_sdks/`: Contains source code for Agent integrations.
+  - `python/`: Python implementation of the A2UI agent library.
+  - `kotlin/`: Kotlin implementation of the A2UI agent library.
+- `renderers/`: Contains renderer libraries.
+  - `lit/`: The shared Lit renderer library used by the Lit clients.
+  - `angular/`: The shared Angular renderer library used by the Angular clients.
+  - `web_core/`: The shared core library used by web renderers.
+  - `markdown/`: Markdown rendering utilities.
+- `tools/`: Helper tools for development.
+  - `editor/`: A web-based editor for generating and visualizing A2UI.
+  - `inspector/`: A web-based inspector for A2UI responses.
+  - `composer/`: Visual composer tool.
+  - `build_catalog/`: Catalog building utility.
 
 ## A2UI Specification Overview
 
@@ -49,7 +49,7 @@ The A2UI protocol is a JSONL-based, streaming UI protocol designed to be easily 
 
 The core concepts of the A2UI protocol are detailed in the main specification document. Refer to the authoritative source for the current version (0.9):
 
--   **A2UI Protocol Specification**: `@specification/v0_9/docs/a2ui_protocol.md`
+- **A2UI Protocol Specification**: `@specification/v0_9/docs/a2ui_protocol.md`
 
 This document covers the design philosophy, architecture, data flow, and core concepts of the protocol.
 
@@ -57,9 +57,9 @@ This document covers the design philosophy, architecture, data flow, and core co
 
 The formal, machine-readable definitions of the protocol are maintained as JSON schemas. For version 0.9:
 
--   **Server-to-Client Schema**: `@specification/v0_9/json/server_to_client.json`
--   **Client-to-Server Schema**: `@specification/v0_9/json/client_to_server.json`
--   **Basic Catalog**: `@specification/v0_9/json/basic_catalog.json`
+- **Server-to-Client Schema**: `@specification/v0_9/json/server_to_client.json`
+- **Client-to-Server Schema**: `@specification/v0_9/json/client_to_server.json`
+- **Basic Catalog**: `@specification/v0_9/json/basic_catalog.json`
 
 ## Running the Demos
 
@@ -82,6 +82,7 @@ The Lit clients are located in `samples/client/lit/`.
 
 1.  **Build the Renderer**:
     First, ensure the shared renderers are built:
+
     ```bash
     cd renderers/markdown/markdown-it
     npm install
@@ -109,6 +110,7 @@ The Lit clients are located in `samples/client/lit/`.
 The Angular clients are located in `samples/client/angular/`.
 
 First, ensure the shared renderers are built (if not already done):
+
 ```bash
 cd renderers/markdown/markdown-it
 npm install
@@ -124,6 +126,7 @@ npm run build
 ```
 
 Then run the Angular client:
+
 ```bash
 cd samples/client/angular
 npm install
@@ -132,25 +135,25 @@ npm start -- contact  # Replace 'contact' with the desired project name (e.g., r
 
 ### Running Tools
 
--   **Editor**: Located in `tools/editor`. Run with `npm install && npm run dev`.
-    -   Requires a Gemini API key in `.env` (`GEMINI_API_KEY=<key>`).
--   **Inspector**: Located in `tools/inspector`. Run with `npm install && npm run dev`.
+- **Editor**: Located in `tools/editor`. Run with `npm install && npm run dev`.
+  - Requires a Gemini API key in `.env` (`GEMINI_API_KEY=<key>`).
+- **Inspector**: Located in `tools/inspector`. Run with `npm install && npm run dev`.
 
 ## Renderers
 
 There are three renderers available for A2UI:
 
--   **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
--   **Angular**: Located in `renderers/angular`, this is an alternative web renderer for Angular applications.
--   **Flutter**: The Flutter renderer is in a separate repository: [https://github.com/flutter/genui](https://github.com/flutter/genui). There is a placeholder renderer folder with a README.md file at `renderers/flutter`.
+- **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
+- **Angular**: Located in `renderers/angular`, this is an alternative web renderer for Angular applications.
+- **Flutter**: The Flutter renderer is in a separate repository: [https://github.com/flutter/genui](https://github.com/flutter/genui). There is a placeholder renderer folder with a README.md file at `renderers/flutter`.
 
 ## Keeping This Guide Updated
 
 This document is intended to be a living guide for the repository. As the repository evolves, it's important to keep this file up-to-date. When making changes to the repository, please consider the following:
 
--   **New Demos or Clients**: If you add a new demo or client in `samples/`, add it to the "Running the Demos" section.
--   **Specification Changes**: If you make significant changes to the A2UI protocol, ensure that the "A2UI Specification Overview" section is updated.
--   **Repository Structure Changes**: If you change the directory structure of the repository, update the "Repository Structure" section.
+- **New Demos or Clients**: If you add a new demo or client in `samples/`, add it to the "Running the Demos" section.
+- **Specification Changes**: If you make significant changes to the A2UI protocol, ensure that the "A2UI Specification Overview" section is updated.
+- **Repository Structure Changes**: If you change the directory structure of the repository, update the "Repository Structure" section.
 
 To get this file back in sync, you can run the following commands:
 
@@ -160,4 +163,4 @@ To get this file back in sync, you can run the following commands:
 
 ## Change descriptions
 
-If you (the agent) are generating a pull request summary, pull request description, or change description, avoid flowery or hyperbolic terms (e.g. "significantly improves", "greatly enhances", "is an incredible improvement").  Be factual and avoid marketing language: you're not selling the PR, you're describing it.
+If you (the agent) are generating a pull request summary, pull request description, or change description, avoid flowery or hyperbolic terms (e.g. "significantly improves", "greatly enhances", "is an incredible improvement"). Be factual and avoid marketing language: you're not selling the PR, you're describing it.

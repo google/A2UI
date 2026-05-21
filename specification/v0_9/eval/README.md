@@ -70,11 +70,13 @@ By default, the script prints a progress bar and the final summary table to the 
 ### Examples
 
 Run with debug output in console:
+
 ```bash
 pnpm run eval -- --log-level=debug
 ```
 
 Run 5 times per prompt and clean previous results:
+
 ```bash
 pnpm run eval -- --runs-per-prompt=5 --clean-results
 ```
@@ -82,5 +84,6 @@ pnpm run eval -- --runs-per-prompt=5 --clean-results
 ## Rate Limiting
 
 The framework includes a two-tiered rate limiting system:
+
 1. **Proactive Limiting**: Locally tracks token and request usage to stay within configured limits (defined in `src/models.ts`).
 2. **Reactive Circuit Breaker**: Automatically pauses requests to a model if a `RESOURCE_EXHAUSTED` (429) error is received, resuming only after the requested retry duration.

@@ -14,7 +14,10 @@
  limitations under the License.
 -->
 
-<chat [emptyHistoryTemplate]="emptyHistoryTemplate()" [messageDecorator]="messageDecorator()"></chat>
+<chat
+  [emptyHistoryTemplate]="emptyHistoryTemplate()"
+  [messageDecorator]="messageDecorator()"
+></chat>
 
 @if (isCanvasOpened()) {
   <app-canvas></app-canvas>

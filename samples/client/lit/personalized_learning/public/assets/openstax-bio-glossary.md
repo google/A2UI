@@ -5,9 +5,9 @@
 **5' UTR** [16.5 Eukaryotic Post-transcriptional Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-5-eukaryotic-post-transcriptional-gene-regulation#term-00005)  
 **60S ribosomal subunit** [16.6 Eukaryotic Translational and Post-translational Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-6-eukaryotic-translational-and-post-translational-gene-regulation#term-00006)  
 **7-methylguanosine cap** [15.4 RNA Processing in Eukaryotes](https://openstax.org/books/biology-ap-courses/pages/15-4-rna-processing-in-eukaryotes#term-00002)  
-***α*****\-helix** [3.4 Proteins](https://openstax.org/books/biology-ap-courses/pages/3-4-proteins#term-00009)  
-***β*****\-pleated sheet** [3.4 Proteins](https://openstax.org/books/biology-ap-courses/pages/3-4-proteins#term-00010)  
-**A**  
+**\*α\*\*\***\-helix** [3.4 Proteins](https://openstax.org/books/biology-ap-courses/pages/3-4-proteins#term-00009)  
+\***β**\***\-pleated sheet** [3.4 Proteins](https://openstax.org/books/biology-ap-courses/pages/3-4-proteins#term-00010)  
+**A\**  
 **absorption spectrum** [8.2 The Light-Dependent Reaction of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-2-the-light-dependent-reaction-of-photosynthesis#term-00006)  
 **abstract** [1.1 The Science of Biology](https://openstax.org/books/biology-ap-courses/pages/1-1-the-science-of-biology#term-00020)  
 **acetyl CoA** [7.3 Oxidation of Pyruvate and the Citric Acid Cycle](https://openstax.org/books/biology-ap-courses/pages/7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle#term-00001)  
@@ -107,8 +107,8 @@
 **chiasmata** [11.1 The Process of Meiosis](https://openstax.org/books/biology-ap-courses/pages/11-1-the-process-of-meiosis#term-00009)  
 **chitin** [3.2 Carbohydrates](https://openstax.org/books/biology-ap-courses/pages/3-2-carbohydrates#term-00009)  
 **chlorophyll** [4.3 Eukaryotic Cells](https://openstax.org/books/biology-ap-courses/pages/4-3-eukaryotic-cells#term-00021)  
-**Chlorophyll *a*** [8.2 The Light-Dependent Reaction of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-2-the-light-dependent-reaction-of-photosynthesis#term-00003)  
-**chlorophyll *b*** [8.2 The Light-Dependent Reaction of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-2-the-light-dependent-reaction-of-photosynthesis#term-00004)  
+\*\*Chlorophyll *a**\* [8.2 The Light-Dependent Reaction of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-2-the-light-dependent-reaction-of-photosynthesis#term-00003)  
+**chlorophyll \*b**\* [8.2 The Light-Dependent Reaction of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-2-the-light-dependent-reaction-of-photosynthesis#term-00004)  
 **chloroplast** [8.1 Overview of Photosynthesis](https://openstax.org/books/biology-ap-courses/pages/8-1-overview-of-photosynthesis#term-00006)  
 **Chloroplasts** [4.3 Eukaryotic Cells](https://openstax.org/books/biology-ap-courses/pages/4-3-eukaryotic-cells#term-00020)  
 **chromatids** [10.1 Cell Division](https://openstax.org/books/biology-ap-courses/pages/10-1-cell-division#term-00011)  
@@ -117,7 +117,7 @@
 **chromosome inversion** [13.2 Chromosomal Basis of Inherited Disorders](https://openstax.org/books/biology-ap-courses/pages/13-2-chromosomal-basis-of-inherited-disorders#term-00012)  
 **Chromosomes** [4.3 Eukaryotic Cells](https://openstax.org/books/biology-ap-courses/pages/4-3-eukaryotic-cells#term-00009), [10.1 Cell Division](https://openstax.org/books/biology-ap-courses/pages/10-1-cell-division#term-00006)  
 **cilia** [4.5 Cytoskeleton](https://openstax.org/books/biology-ap-courses/pages/4-5-cytoskeleton#term-00006)  
-***cis*****\-acting element** [16.4 Eukaryotic Transcriptional Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-4-eukaryotic-transcriptional-gene-regulation#term-00001)  
+\***cis**\***\-acting element** [16.4 Eukaryotic Transcriptional Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-4-eukaryotic-transcriptional-gene-regulation#term-00001)  
 **citric acid cycle** [7.3 Oxidation of Pyruvate and the Citric Acid Cycle](https://openstax.org/books/biology-ap-courses/pages/7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle#term-00002)  
 **clathrin** [5.4 Bulk Transport](https://openstax.org/books/biology-ap-courses/pages/5-4-bulk-transport#term-00002)  
 **cleavage furrow** [10.2 The Cell Cycle](https://openstax.org/books/biology-ap-courses/pages/10-2-the-cell-cycle#term-00020)  
@@ -153,7 +153,7 @@
 **cytoplasm** [4.3 Eukaryotic Cells](https://openstax.org/books/biology-ap-courses/pages/4-3-eukaryotic-cells#term-00004)  
 **cytoskeleton** [4.5 Cytoskeleton](https://openstax.org/books/biology-ap-courses/pages/4-5-cytoskeleton#term-00001)  
 **cytosol** [4.3 Eukaryotic Cells](https://openstax.org/books/biology-ap-courses/pages/4-3-eukaryotic-cells#term-00005)  
-**D**  
+**D\*\*  
 **Deductive reasoning** [1.1 The Science of Biology](https://openstax.org/books/biology-ap-courses/pages/1-1-the-science-of-biology#term-00002)  
 **degenerate** [15.1 The Genetic Code](https://openstax.org/books/biology-ap-courses/pages/15-1-the-genetic-code#term-00003)  
 **dehydration synthesis** [3.1 Synthesis of Biological Macromolecules](https://openstax.org/books/biology-ap-courses/pages/3-1-synthesis-of-biological-macromolecules#term-00004)  
@@ -368,7 +368,7 @@
 **Kozak’s rules** [15.5 Ribosomes and Protein Synthesis](https://openstax.org/books/biology-ap-courses/pages/15-5-ribosomes-and-protein-synthesis#term-00006)  
 **Krebs cycle** [7.3 Oxidation of Pyruvate and the Citric Acid Cycle](https://openstax.org/books/biology-ap-courses/pages/7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle#term-00004)  
 **L**  
-***lac*** **operon** [16.2 Prokaryotic Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-2-prokaryotic-gene-regulation#term-00012)  
+**_lac_** **operon** [16.2 Prokaryotic Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-2-prokaryotic-gene-regulation#term-00012)  
 **lagging strand** [14.4 DNA Replication in Prokaryotes](https://openstax.org/books/biology-ap-courses/pages/14-4-dna-replication-in-prokaryotes#term-00008)  
 **law of dominance** [12.3 Laws of Inheritance](https://openstax.org/books/biology-ap-courses/pages/12-3-laws-of-inheritance#term-00001)  
 **law of independent assortment** [12.3 Laws of Inheritance](https://openstax.org/books/biology-ap-courses/pages/12-3-laws-of-inheritance#term-00003)  
@@ -709,7 +709,7 @@
 **triglycerides** [3.3 Lipids](https://openstax.org/books/biology-ap-courses/pages/3-3-lipids#term-00003)  
 **trisomy** [13.2 Chromosomal Basis of Inherited Disorders](https://openstax.org/books/biology-ap-courses/pages/13-2-chromosomal-basis-of-inherited-disorders#term-00009)  
 **Tryptophan** [16.2 Prokaryotic Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-2-prokaryotic-gene-regulation#term-00004)  
-**tryptophan (*trp*) operon** [16.2 Prokaryotic Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-2-prokaryotic-gene-regulation#term-00005)  
+**tryptophan (_trp_) operon** [16.2 Prokaryotic Gene Regulation](https://openstax.org/books/biology-ap-courses/pages/16-2-prokaryotic-gene-regulation#term-00005)  
 **Tumor suppressor genes** [10.4 Cancer and the Cell Cycle](https://openstax.org/books/biology-ap-courses/pages/10-4-cancer-and-the-cell-cycle#term-00003)  
 **U**  
 **ubiquinone** [7.4 Oxidative Phosphorylation](https://openstax.org/books/biology-ap-courses/pages/7-4-oxidative-phosphorylation#term-00002)  
@@ -734,4 +734,4 @@
 **X inactivation** [13.2 Chromosomal Basis of Inherited Disorders](https://openstax.org/books/biology-ap-courses/pages/13-2-chromosomal-basis-of-inherited-disorders#term-00011)  
 **X-linked** [12.2 Characteristics and Traits](https://openstax.org/books/biology-ap-courses/pages/12-2-characteristics-and-traits#term-00015)  
 **Z**  
-**Zoology** [1.2 Themes and Concepts of Biology](https://openstax.org/books/biology-ap-courses/pages/1-2-themes-and-concepts-of-biology#term-00024)  
+**Zoology** [1.2 Themes and Concepts of Biology](https://openstax.org/books/biology-ap-courses/pages/1-2-themes-and-concepts-of-biology#term-00024)

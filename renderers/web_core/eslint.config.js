@@ -14,35 +14,32 @@
  * limitations under the License.
  */
 
-import gts from "gts";
+import gts from 'gts';
 
 const customConfig = [
   {
     ignores: [
-      ".prettierrc.js",
-      "eslint.config.js",
-      "dist",
-      "node_modules",
-      ".wireit",
-      "**/*.d.ts",
+      '.prettierrc.js',
+      'eslint.config.js',
+      'dist',
+      'node_modules',
+      '.wireit',
+      '**/*.d.ts',
       // Old library version.
-      "src/v0_8",
+      'src/v0_8',
     ],
   },
   {
     rules: {
       // any is often the best we can do for a generic library.
-      "@typescript-eslint/no-explicit-any": "off",
+      '@typescript-eslint/no-explicit-any': 'off',
       // Also needed for generic library functionality, though perhaps we could
       // make these more precise in the future.
-      "@typescript-eslint/no-unsafe-function-type": "off",
+      '@typescript-eslint/no-unsafe-function-type': 'off',
       // Not a terribly useful check at time of writing - perhaps enable later.
-      "@typescript-eslint/no-floating-promises": "off",
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
 ];
 
-export default [
-  ...gts,
-  ...customConfig,
-];
+export default [...gts, ...customConfig];

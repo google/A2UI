@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import { html, css, PropertyValues, nothing } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
-import { Root } from "@a2ui/lit/ui";
-import { v0_8 } from "@a2ui/lit";
-
+import {html, css, PropertyValues, nothing} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {Root} from '@a2ui/lit/ui';
+import {v0_8} from '@a2ui/lit';
 
 interface WebFrameConfig {
   [key: string]: unknown;
 }
 
-@customElement("a2ui-web-frame")
+@customElement('a2ui-web-frame')
 export class WebFrame extends Root {
   static override styles = [
     ...Root.styles,
@@ -62,7 +61,7 @@ export class WebFrame extends Root {
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       .controls button:hover {
         background: #f0f0f0;
@@ -72,33 +71,33 @@ export class WebFrame extends Root {
 
   /* --- Properties (Server Contract) --- */
 
-  @property({ type: String })
-  accessor url: string = "";
+  @property({type: String})
+  accessor url: string = '';
 
-  @property({ type: String })
-  accessor html: string = "";
+  @property({type: String})
+  accessor html: string = '';
 
-  @property({ type: Number })
+  @property({type: Number})
   accessor height: number | undefined = undefined;
 
-  @property({ type: String })
-  accessor interactionMode: "readOnly" | "interactive" = "readOnly";
+  @property({type: String})
+  accessor interactionMode: 'readOnly' | 'interactive' = 'readOnly';
 
-  @property({ type: Array })
+  @property({type: Array})
   accessor allowedEvents: string[] = [];
 
   // --- Internal State ---
 
-  @query("iframe")
+  @query('iframe')
   accessor iframe!: HTMLIFrameElement;
 
   // --- Security Constants ---
   static readonly TRUSTED_DOMAINS = [
-    "localhost",
-    "127.0.0.1",
-    "openstreetmap.org",
-    "youtube.com",
-    "maps.google.com"
+    'localhost',
+    '127.0.0.1',
+    'openstreetmap.org',
+    'youtube.com',
+    'maps.google.com',
   ];
 
   override render() {
@@ -131,9 +130,9 @@ export class WebFrame extends Root {
     // 1. If HTML is provided, it's treated as Trusted (but isolated)
     if (this.html) {
       if (this.interactionMode === 'interactive') {
-        return "allow-scripts allow-forms allow-popups allow-modals";
+        return 'allow-scripts allow-forms allow-popups allow-modals';
       }
-      return "allow-scripts"; // ReadOnly but scripts allowed for rendering
+      return 'allow-scripts'; // ReadOnly but scripts allowed for rendering
     }
 
     // 2. Parse Domain from URL
@@ -141,35 +140,36 @@ export class WebFrame extends Root {
       const urlObj = new URL(this.url, window.location.href); // Handle relative URLs too
       const hostname = urlObj.hostname;
 
-      const isTrusted = WebFrame.TRUSTED_DOMAINS.some(d => hostname === d || hostname.endsWith(`.${d}`));
+      const isTrusted = WebFrame.TRUSTED_DOMAINS.some(
+        d => hostname === d || hostname.endsWith(`.${d}`),
+      );
 
       if (!isTrusted) {
         // Untrusted: Strict Lockdown
-        return "";
+        return '';
       }
 
       // Trusted
       // Always allow same-origin for trusted domains to avoid issues with local assets or CORS checks
       if (this.interactionMode === 'interactive') {
-        return "allow-scripts allow-forms allow-popups allow-modals allow-same-origin";
+        return 'allow-scripts allow-forms allow-popups allow-modals allow-same-origin';
       } else {
-        return "allow-scripts allow-same-origin";
+        return 'allow-scripts allow-same-origin';
       }
-
     } catch (e) {
       // Invalid URL -> Lockdown
-      return "";
+      return '';
     }
   }
 
   // --- Event Bridge ---
 
   firstUpdated() {
-    window.addEventListener("message", this.#onMessage);
+    window.addEventListener('message', this.#onMessage);
   }
 
   disconnectedCallback() {
-    window.removeEventListener("message", this.#onMessage);
+    window.removeEventListener('message', this.#onMessage);
     super.disconnectedCallback();
   }
 
@@ -179,14 +179,17 @@ export class WebFrame extends Root {
 
     // Spec Protocol: { type: 'a2ui_action', action: '...', data: ... }
     if (data && data.type === 'a2ui_action') {
-      const { action, data: actionData } = data; // 'data' property in message payload
+      const {action, data: actionData} = data; // 'data' property in message payload
 
       // 1. Validate Action
       if (this.allowedEvents.includes(action)) {
         // 2. Dispatch
         this.#dispatchAgentAction(action, actionData);
       } else {
-        console.warn(`[WebFrame] Action '${action}' blocked. Not in allowedEvents:`, this.allowedEvents);
+        console.warn(
+          `[WebFrame] Action '${action}' blocked. Not in allowedEvents:`,
+          this.allowedEvents,
+        );
       }
     }
     // Legacy support for 'emit' temporarily if we want to be safe, but spec implies replacement.
@@ -194,15 +197,15 @@ export class WebFrame extends Root {
   };
 
   #dispatchAgentAction(actionName: string, params: any) {
-    const context: v0_8.Types.Action["context"] = [];
+    const context: v0_8.Types.Action['context'] = [];
     if (params && typeof params === 'object') {
       for (const [key, value] of Object.entries(params)) {
-        if (typeof value === "string") {
-          context.push({ key, value: { literalString: value } });
-        } else if (typeof value === "number") {
-          context.push({ key, value: { literalNumber: value } });
-        } else if (typeof value === "boolean") {
-          context.push({ key, value: { literalBoolean: value } });
+        if (typeof value === 'string') {
+          context.push({key, value: {literalString: value}});
+        } else if (typeof value === 'number') {
+          context.push({key, value: {literalNumber: value}});
+        } else if (typeof value === 'boolean') {
+          context.push({key, value: {literalBoolean: value}});
         }
       }
     }
@@ -212,8 +215,8 @@ export class WebFrame extends Root {
       context,
     };
 
-    const eventPayload: v0_8.Events.StateEventDetailMap["a2ui.action"] = {
-      eventType: "a2ui.action",
+    const eventPayload: v0_8.Events.StateEventDetailMap['a2ui.action'] = {
+      eventType: 'a2ui.action',
       action,
       sourceComponentId: this.id,
       dataContextPath: this.dataContextPath,
@@ -228,7 +231,7 @@ export class WebFrame extends Root {
   // We assume the iframe content knows how to handle 'zoom' message if it supports it.
   #zoom(factor: number) {
     if (this.iframe && this.iframe.contentWindow) {
-      this.iframe.contentWindow.postMessage({ type: 'zoom', payload: { factor } }, '*');
+      this.iframe.contentWindow.postMessage({type: 'zoom', payload: {factor}}, '*');
     }
   }
 }

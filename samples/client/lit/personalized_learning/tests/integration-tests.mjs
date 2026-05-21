@@ -21,11 +21,11 @@
  * API-dependent tests are skipped but documented for manual verification.
  */
 
-import { strict as assert } from 'assert';
+import {strict as assert} from 'assert';
 
-console.log("=".repeat(60));
-console.log("Personalized Learning Demo - Integration Tests");
-console.log("=".repeat(60));
+console.log('='.repeat(60));
+console.log('Personalized Learning Demo - Integration Tests');
+console.log('='.repeat(60));
 
 let passed = 0;
 let failed = 0;
@@ -52,29 +52,29 @@ function skipTest(name, reason) {
 // Chat Flow Integration Tests
 // =============================================================================
 
-console.log("\n--- Chat Flow Integration Tests ---\n");
+console.log('\n--- Chat Flow Integration Tests ---\n');
 
 // Simulate the full chat flow from message to A2UI rendering
 function simulateChatFlow(userMessage) {
   // Step 1: Intent detection
   const lower = userMessage.toLowerCase();
-  let format = "general";
+  let format = 'general';
 
-  if (lower.includes("flashcard")) format = "flashcards";
-  else if (lower.includes("podcast") || lower.includes("audio")) format = "audio";
-  else if (lower.includes("video")) format = "video";
-  else if (lower.includes("quiz")) format = "quiz";
-  else if (lower.match(/^(hi|hello|hey)/i)) format = "greeting";
-  else if (lower.includes("explain") || lower.includes("atp")) format = "flashcards";
+  if (lower.includes('flashcard')) format = 'flashcards';
+  else if (lower.includes('podcast') || lower.includes('audio')) format = 'audio';
+  else if (lower.includes('video')) format = 'video';
+  else if (lower.includes('quiz')) format = 'quiz';
+  else if (lower.match(/^(hi|hello|hey)/i)) format = 'greeting';
+  else if (lower.includes('explain') || lower.includes('atp')) format = 'flashcards';
 
   // Step 2: Get content (simulated)
   let content;
-  if (format === "greeting") {
-    content = { format: "greeting", response: "Hello! How can I help you?" };
-  } else if (["flashcards", "audio", "video"].includes(format)) {
+  if (format === 'greeting') {
+    content = {format: 'greeting', response: 'Hello! How can I help you?'};
+  } else if (['flashcards', 'audio', 'video'].includes(format)) {
     content = getFallbackContent(format);
   } else {
-    content = { format: "general", response: "I understand. Let me help you." };
+    content = {format: 'general', response: 'I understand. Let me help you.'};
   }
 
   // Step 3: Prepare for rendering
@@ -96,52 +96,66 @@ function simulateChatFlow(userMessage) {
 }
 
 function getFallbackContent(format) {
-  const surfaceId = "learningContent";
+  const surfaceId = 'learningContent';
 
   const contents = {
     flashcards: {
-      format: "flashcards",
+      format: 'flashcards',
       surfaceId,
       a2ui: [
-        { beginRendering: { surfaceId, root: "mainColumn" } },
+        {beginRendering: {surfaceId, root: 'mainColumn'}},
         {
           surfaceUpdate: {
             surfaceId,
             components: [
-              { id: "mainColumn", component: { Column: { children: { explicitList: ["card1"] } } } },
-              { id: "card1", component: { Flashcard: { front: { literalString: "Q?" }, back: { literalString: "A!" } } } },
+              {
+                id: 'mainColumn',
+                component: {Column: {children: {explicitList: ['card1']}}},
+              },
+              {
+                id: 'card1',
+                component: {
+                  Flashcard: {front: {literalString: 'Q?'}, back: {literalString: 'A!'}},
+                },
+              },
             ],
           },
         },
       ],
     },
     audio: {
-      format: "audio",
+      format: 'audio',
       surfaceId,
       a2ui: [
-        { beginRendering: { surfaceId, root: "audioCard" } },
+        {beginRendering: {surfaceId, root: 'audioCard'}},
         {
           surfaceUpdate: {
             surfaceId,
             components: [
-              { id: "audioCard", component: { Card: { child: "audioPlayer" } } },
-              { id: "audioPlayer", component: { Audio: { src: { literalString: "/assets/podcast.m4a" } } } },
+              {id: 'audioCard', component: {Card: {child: 'audioPlayer'}}},
+              {
+                id: 'audioPlayer',
+                component: {Audio: {src: {literalString: '/assets/podcast.m4a'}}},
+              },
             ],
           },
         },
       ],
     },
     video: {
-      format: "video",
+      format: 'video',
       surfaceId,
       a2ui: [
-        { beginRendering: { surfaceId, root: "videoCard" } },
+        {beginRendering: {surfaceId, root: 'videoCard'}},
         {
           surfaceUpdate: {
             surfaceId,
             components: [
-              { id: "videoCard", component: { Card: { child: "videoPlayer" } } },
-              { id: "videoPlayer", component: { Video: { src: { literalString: "/assets/video.mp4" } } } },
+              {id: 'videoCard', component: {Card: {child: 'videoPlayer'}}},
+              {
+                id: 'videoPlayer',
+                component: {Video: {src: {literalString: '/assets/video.mp4'}}},
+              },
             ],
           },
         },
@@ -149,41 +163,41 @@ function getFallbackContent(format) {
     },
   };
 
-  return contents[format] || { format: "unknown", a2ui: [] };
+  return contents[format] || {format: 'unknown', a2ui: []};
 }
 
-test("chat flow handles flashcard request end-to-end", () => {
-  const result = simulateChatFlow("Create some flashcards about ATP");
-  assert.equal(result.detectedFormat, "flashcards");
+test('chat flow handles flashcard request end-to-end', () => {
+  const result = simulateChatFlow('Create some flashcards about ATP');
+  assert.equal(result.detectedFormat, 'flashcards');
   assert.ok(result.hasA2UI);
-  assert.equal(result.contentType, "flashcards");
+  assert.equal(result.contentType, 'flashcards');
   assert.equal(result.a2uiMessageCount, 2);
 });
 
-test("chat flow handles audio request end-to-end", () => {
-  const result = simulateChatFlow("I want to listen to the podcast");
-  assert.equal(result.detectedFormat, "audio");
+test('chat flow handles audio request end-to-end', () => {
+  const result = simulateChatFlow('I want to listen to the podcast');
+  assert.equal(result.detectedFormat, 'audio');
   assert.ok(result.hasA2UI);
-  assert.equal(result.contentType, "audio");
+  assert.equal(result.contentType, 'audio');
 });
 
-test("chat flow handles video request end-to-end", () => {
-  const result = simulateChatFlow("Show me a video about this");
-  assert.equal(result.detectedFormat, "video");
+test('chat flow handles video request end-to-end', () => {
+  const result = simulateChatFlow('Show me a video about this');
+  assert.equal(result.detectedFormat, 'video');
   assert.ok(result.hasA2UI);
-  assert.equal(result.contentType, "video");
+  assert.equal(result.contentType, 'video');
 });
 
-test("chat flow handles greeting without A2UI", () => {
-  const result = simulateChatFlow("Hello there!");
-  assert.equal(result.detectedFormat, "greeting");
+test('chat flow handles greeting without A2UI', () => {
+  const result = simulateChatFlow('Hello there!');
+  assert.equal(result.detectedFormat, 'greeting');
   assert.ok(!result.hasA2UI);
-  assert.equal(result.contentType, "greeting");
+  assert.equal(result.contentType, 'greeting');
 });
 
-test("chat flow handles general question", () => {
+test('chat flow handles general question', () => {
   const result = simulateChatFlow("What's the weather like?");
-  assert.equal(result.detectedFormat, "general");
+  assert.equal(result.detectedFormat, 'general');
   assert.ok(!result.hasA2UI);
 });
 
@@ -191,11 +205,11 @@ test("chat flow handles general question", () => {
 // A2UI Component Hierarchy Tests
 // =============================================================================
 
-console.log("\n--- A2UI Component Hierarchy Tests ---\n");
+console.log('\n--- A2UI Component Hierarchy Tests ---\n');
 
 function buildComponentTree(components) {
   const componentMap = new Map(components.map(c => [c.id, c]));
-  const tree = { roots: [], orphans: [] };
+  const tree = {roots: [], orphans: []};
   const referenced = new Set();
 
   for (const comp of components) {
@@ -220,30 +234,30 @@ function buildComponentTree(components) {
   return tree;
 }
 
-test("component tree identifies root components", () => {
+test('component tree identifies root components', () => {
   const components = [
-    { id: "root", component: { Column: { children: { explicitList: ["child1", "child2"] } } } },
-    { id: "child1", component: { Text: { text: { literalString: "A" } } } },
-    { id: "child2", component: { Text: { text: { literalString: "B" } } } },
+    {id: 'root', component: {Column: {children: {explicitList: ['child1', 'child2']}}}},
+    {id: 'child1', component: {Text: {text: {literalString: 'A'}}}},
+    {id: 'child2', component: {Text: {text: {literalString: 'B'}}}},
   ];
   const tree = buildComponentTree(components);
-  assert.deepEqual(tree.roots, ["root"]);
+  assert.deepEqual(tree.roots, ['root']);
 });
 
-test("component tree handles Card with single child", () => {
+test('component tree handles Card with single child', () => {
   const components = [
-    { id: "card", component: { Card: { child: "content" } } },
-    { id: "content", component: { Text: { text: { literalString: "Hello" } } } },
+    {id: 'card', component: {Card: {child: 'content'}}},
+    {id: 'content', component: {Text: {text: {literalString: 'Hello'}}}},
   ];
   const tree = buildComponentTree(components);
-  assert.deepEqual(tree.roots, ["card"]);
+  assert.deepEqual(tree.roots, ['card']);
 });
 
 // =============================================================================
 // Surface State Management Tests
 // =============================================================================
 
-console.log("\n--- Surface State Management Tests ---\n");
+console.log('\n--- Surface State Management Tests ---\n');
 
 class MockSurfaceManager {
   constructor() {
@@ -252,32 +266,32 @@ class MockSurfaceManager {
 
   processMessage(message) {
     if (message.beginRendering) {
-      const { surfaceId, root } = message.beginRendering;
-      this.surfaces.set(surfaceId, { root, components: new Map(), rendered: false });
-      return { action: "begin", surfaceId };
+      const {surfaceId, root} = message.beginRendering;
+      this.surfaces.set(surfaceId, {root, components: new Map(), rendered: false});
+      return {action: 'begin', surfaceId};
     }
 
     if (message.surfaceUpdate) {
-      const { surfaceId, components } = message.surfaceUpdate;
+      const {surfaceId, components} = message.surfaceUpdate;
       const surface = this.surfaces.get(surfaceId);
       if (!surface) {
-        return { action: "error", error: `Unknown surface: ${surfaceId}` };
+        return {action: 'error', error: `Unknown surface: ${surfaceId}`};
       }
 
       for (const comp of components) {
         surface.components.set(comp.id, comp.component);
       }
       surface.rendered = true;
-      return { action: "update", surfaceId, componentCount: components.length };
+      return {action: 'update', surfaceId, componentCount: components.length};
     }
 
     if (message.deleteSurface) {
-      const { surfaceId } = message.deleteSurface;
+      const {surfaceId} = message.deleteSurface;
       this.surfaces.delete(surfaceId);
-      return { action: "delete", surfaceId };
+      return {action: 'delete', surfaceId};
     }
 
-    return { action: "unknown" };
+    return {action: 'unknown'};
   }
 
   getSurface(surfaceId) {
@@ -285,44 +299,44 @@ class MockSurfaceManager {
   }
 }
 
-test("surface manager processes beginRendering", () => {
+test('surface manager processes beginRendering', () => {
   const manager = new MockSurfaceManager();
-  const result = manager.processMessage({ beginRendering: { surfaceId: "test", root: "main" } });
-  assert.equal(result.action, "begin");
-  assert.ok(manager.getSurface("test"));
+  const result = manager.processMessage({beginRendering: {surfaceId: 'test', root: 'main'}});
+  assert.equal(result.action, 'begin');
+  assert.ok(manager.getSurface('test'));
 });
 
-test("surface manager processes surfaceUpdate", () => {
+test('surface manager processes surfaceUpdate', () => {
   const manager = new MockSurfaceManager();
-  manager.processMessage({ beginRendering: { surfaceId: "test", root: "main" } });
+  manager.processMessage({beginRendering: {surfaceId: 'test', root: 'main'}});
   const result = manager.processMessage({
     surfaceUpdate: {
-      surfaceId: "test",
-      components: [{ id: "main", component: { Text: { text: { literalString: "Hello" } } } }]
-    }
+      surfaceId: 'test',
+      components: [{id: 'main', component: {Text: {text: {literalString: 'Hello'}}}}],
+    },
   });
-  assert.equal(result.action, "update");
+  assert.equal(result.action, 'update');
   assert.equal(result.componentCount, 1);
-  assert.ok(manager.getSurface("test").rendered);
+  assert.ok(manager.getSurface('test').rendered);
 });
 
-test("surface manager processes deleteSurface", () => {
+test('surface manager processes deleteSurface', () => {
   const manager = new MockSurfaceManager();
-  manager.processMessage({ beginRendering: { surfaceId: "test", root: "main" } });
-  const result = manager.processMessage({ deleteSurface: { surfaceId: "test" } });
-  assert.equal(result.action, "delete");
-  assert.ok(!manager.getSurface("test"));
+  manager.processMessage({beginRendering: {surfaceId: 'test', root: 'main'}});
+  const result = manager.processMessage({deleteSurface: {surfaceId: 'test'}});
+  assert.equal(result.action, 'delete');
+  assert.ok(!manager.getSurface('test'));
 });
 
-test("surface manager handles full A2UI payload", () => {
+test('surface manager handles full A2UI payload', () => {
   const manager = new MockSurfaceManager();
-  const payload = getFallbackContent("flashcards").a2ui;
+  const payload = getFallbackContent('flashcards').a2ui;
 
   for (const msg of payload) {
     manager.processMessage(msg);
   }
 
-  const surface = manager.getSurface("learningContent");
+  const surface = manager.getSurface('learningContent');
   assert.ok(surface);
   assert.ok(surface.rendered);
   assert.ok(surface.components.size > 0);
@@ -332,19 +346,19 @@ test("surface manager handles full A2UI payload", () => {
 // Error Handling Integration Tests
 // =============================================================================
 
-console.log("\n--- Error Handling Integration Tests ---\n");
+console.log('\n--- Error Handling Integration Tests ---\n');
 
-test("graceful handling of unknown surface update", () => {
+test('graceful handling of unknown surface update', () => {
   const manager = new MockSurfaceManager();
   const result = manager.processMessage({
-    surfaceUpdate: { surfaceId: "nonexistent", components: [] }
+    surfaceUpdate: {surfaceId: 'nonexistent', components: []},
   });
-  assert.equal(result.action, "error");
-  assert.ok(result.error.includes("Unknown surface"));
+  assert.equal(result.action, 'error');
+  assert.ok(result.error.includes('Unknown surface'));
 });
 
-test("content fallback returns valid structure for all formats", () => {
-  const formats = ["flashcards", "audio", "video"];
+test('content fallback returns valid structure for all formats', () => {
+  const formats = ['flashcards', 'audio', 'video'];
   for (const format of formats) {
     const content = getFallbackContent(format);
     assert.equal(content.format, format, `Format mismatch for ${format}`);
@@ -357,19 +371,19 @@ test("content fallback returns valid structure for all formats", () => {
 // API Integration Tests (require external services)
 // =============================================================================
 
-console.log("\n--- API Integration Tests ---\n");
+console.log('\n--- API Integration Tests ---\n');
 
-skipTest("Gemini API generates valid flashcard JSON", "requires API credentials");
-skipTest("A2A agent returns valid A2UI response", "requires agent server");
-skipTest("Full chat flow with live Gemini API", "requires API credentials");
+skipTest('Gemini API generates valid flashcard JSON', 'requires API credentials');
+skipTest('A2A agent returns valid A2UI response', 'requires agent server');
+skipTest('Full chat flow with live Gemini API', 'requires API credentials');
 
 // =============================================================================
 // Summary
 // =============================================================================
 
-console.log("\n" + "=".repeat(60));
+console.log('\n' + '='.repeat(60));
 console.log(`Integration Tests Complete: ${passed} passed, ${failed} failed, ${skipped} skipped`);
-console.log("=".repeat(60));
+console.log('='.repeat(60));
 
 if (failed > 0) {
   process.exit(1);

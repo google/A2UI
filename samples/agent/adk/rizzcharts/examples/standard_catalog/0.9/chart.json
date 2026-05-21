@@ -3,7 +3,7 @@
     "version": "v0.9",
     "createSurface": {
       "surfaceId": "sales-dashboard",
-      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+      "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
       "theme": {
         "primaryColor": "#00BFFF",
         "font": "Arial"
@@ -18,10 +18,7 @@
         {
           "id": "root",
           "component": "Column",
-          "children": [
-            "chart-title",
-            "category-list"
-          ]
+          "children": ["chart-title", "category-list"]
         },
         {
           "id": "chart-title",
@@ -49,10 +46,7 @@
           "id": "item-row",
           "component": "Row",
           "justify": "spaceBetween",
-          "children": [
-            "item-label",
-            "item-value"
-          ]
+          "children": ["item-label", "item-value"]
         },
         {
           "id": "item-label",

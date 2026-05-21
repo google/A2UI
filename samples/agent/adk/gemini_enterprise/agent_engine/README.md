@@ -7,11 +7,11 @@ register on **Gemini Enterprise**.
 
 High level steps:
 
--   Config Authorization
--   Setup environment variables
--   Develop A2UI agent with ADK + A2A (sample code provided)
--   Deploy the agent to Agent Engine
--   Register the agent on Gemini Enterprise
+- Config Authorization
+- Setup environment variables
+- Develop A2UI agent with ADK + A2A (sample code provided)
+- Deploy the agent to Agent Engine
+- Register the agent on Gemini Enterprise
 
 ## Config Authorization
 
@@ -68,21 +68,21 @@ curl -X POST \
 
 Replace the following:
 
--   **YOUR_PROJECT_ID**: the ID of your project. There are 3 occasions
--   **ENDPOINT_LOCATION**: the multi-region for your API request. Specify one of
-    the following values:
-    -   *us* for the US multi-region
-    -   *eu* for the EU multi-region
-    -   *global* for the Global location
--   **LOCATION**: the multi-region of your data store: *global*, *us*, or *eu*.
-    There are 2 occasions
--   **AUTH_ID**: The ID of the authorization resource. This is an arbitrary
-    alphanumeric ID that you define. You need to reference this ID later when
-    registering an Agent that requires OAuth support. There are 2 occasions.
--   **OAUTH_CLIENT_ID**: copy `client_id` from the downloaded JSON.
--   **OAUTH_CLIENT_SECRET**: copy `client_secret` from the downloaded JSON.
--   **OAUTH_AUTH_URI**: the value of **authorizationUri**. See above.
--   **OAUTH_TOKEN_URI**: copy `token_uri` from the downloaded JSON.
+- **YOUR_PROJECT_ID**: the ID of your project. There are 3 occasions
+- **ENDPOINT_LOCATION**: the multi-region for your API request. Specify one of
+  the following values:
+  - _us_ for the US multi-region
+  - _eu_ for the EU multi-region
+  - _global_ for the Global location
+- **LOCATION**: the multi-region of your data store: _global_, _us_, or _eu_.
+  There are 2 occasions
+- **AUTH_ID**: The ID of the authorization resource. This is an arbitrary
+  alphanumeric ID that you define. You need to reference this ID later when
+  registering an Agent that requires OAuth support. There are 2 occasions.
+- **OAUTH_CLIENT_ID**: copy `client_id` from the downloaded JSON.
+- **OAUTH_CLIENT_SECRET**: copy `client_secret` from the downloaded JSON.
+- **OAUTH_AUTH_URI**: the value of **authorizationUri**. See above.
+- **OAUTH_TOKEN_URI**: copy `token_uri` from the downloaded JSON.
 
 NOTE: if `$(gcloud auth print-access-token)` does not work for you, replace it
 with `$(gcloud auth application-default print-access-token)` and try again.
@@ -102,20 +102,20 @@ NOTE: if you already have an agent that is deployed to Agent Engine, skip to
 
 1.  **Copy `.env.example`:** Duplicate the `.env.example` file and rename it to
     `.env`.
-    -   `cd /path/to/agent_engine`
-    -   `cp .env.example .env`
+    - `cd /path/to/agent_engine`
+    - `cp .env.example .env`
 2.  **Fill `.env`:** Update the `.env` file with your specific Google Cloud
     project details:
-    *   `PROJECT_ID`: Your Google Cloud Project ID.
-    *   `LOCATION`: The Google Cloud region you want to deploy the agent in
-        (e.g., `us-central1`). This location is **not** the same as the
-        *location* used in the command above.
-    *   `STORAGE_BUCKET`: A Google Cloud Storage bucket name for staging. It
-        starts with **"gs://"**.
-    *   `GEMINI_ENTERPRISE_APP_ID`: Your Gemini Enterprise Application ID. You
-        can create a new App or use an existing one on Google Cloud Gemini
-        Enterprise.
-    *   `AGENT_AUTHORIZATION`: the value **AGENT_AUTHORIZATION** obtained above.
+    - `PROJECT_ID`: Your Google Cloud Project ID.
+    - `LOCATION`: The Google Cloud region you want to deploy the agent in
+      (e.g., `us-central1`). This location is **not** the same as the
+      _location_ used in the command above.
+    - `STORAGE_BUCKET`: A Google Cloud Storage bucket name for staging. It
+      starts with **"gs://"**.
+    - `GEMINI_ENTERPRISE_APP_ID`: Your Gemini Enterprise Application ID. You
+      can create a new App or use an existing one on Google Cloud Gemini
+      Enterprise.
+    - `AGENT_AUTHORIZATION`: the value **AGENT_AUTHORIZATION** obtained above.
 
 ## Running the Script
 
@@ -131,15 +131,15 @@ The `main.py` script performs the following actions:
 To run the script using `uv`:
 
 1.  **Navigate to the script directory:**
-    -   `cd /path/to/agent_engine`
+    - `cd /path/to/agent_engine`
 2.  **Create and activate a virtual environment:**
-    -   `uv venv`
-    -   `source .venv/bin/activate`
+    - `uv venv`
+    - `source .venv/bin/activate`
 3.  **Install dependencies:**
-    -   `uv sync --locked`
+    - `uv sync --locked`
 4.  **Run the script:**
-    -   `uv run deploy.py`
-    -   It may take 5-10 minutes to finish.
+    - `uv run deploy.py`
+    - It may take 5-10 minutes to finish.
 
 ## Manually Register An Agent
 
@@ -149,7 +149,7 @@ register it on Gemini Enterprise without running "main.py" script.
 1.  Complete **Config Authorization** section above.
 2.  Open Google Cloud **Gemini Enterprise**.
 3.  Click on the **App** you want to register your agent.
-    -   If you don't see the app being listed, click **Edit** to switch location
+    - If you don't see the app being listed, click **Edit** to switch location
 4.  Select **Agents** from the left nav bar.
 5.  Click **Add agent** and select **Add** on **A2A** card.
 6.  Copy this following JSON to the "Agent Card JSON" input box.
@@ -175,7 +175,7 @@ register it on Gemini Enterprise without running "main.py" script.
       ],
       "version": "1.0.0",
       "capabilities": {
-        "streaming": true,
+        "streaming": false,
         "extensions": [
           {
             "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
@@ -197,18 +197,17 @@ register it on Gemini Enterprise without running "main.py" script.
         "text/plain"
       ],
       "supportsAuthenticatedExtendedCard": true,
-      "preferredTransport": "HTTP+JSON"
+      "preferredTransport": "JSONRPC"
     }
     ```
 
     Replace **LOCATION** and **RESOURCE_NAME**.
+    - LOCATION is where you deploy your agent. For example; us-central1.
+    - RESOURCE_NAME can be found on Google Cloud **Agent Engine**: click the
+      agent; click **Service Configuration**; select **Deployment details**;
+      copy **Resource name**.
 
-    -   LOCATION is where you deploy your agent. For example; us-central1.
-    -   RESOURCE_NAME can be found on Google Cloud **Agent Engine**: click the
-        agent; click **Service Configuration**; select **Deployment details**;
-        copy **Resource name**.
-
-    Update *name*, *description*, *skills*, *version* as needed. Leave other
+    Update _name_, _description_, _skills_, _version_ as needed. Leave other
     values unchanged.
 
 7.  Click **Preview Agent Details**
@@ -216,11 +215,10 @@ register it on Gemini Enterprise without running "main.py" script.
 8.  Click **Next**
 
 9.  Fill the **Agent authorization** form:
-
-    -   Copy `client_id`, `client_secret`, `token_uri` from the downloaded JSON.
-    -   Copy **authorizationUri** value from the above to **Authorization URL**.
-    -   Leave **Scopes** field empty.
-    -   Click **Finish**
+    - Copy `client_id`, `client_secret`, `token_uri` from the downloaded JSON.
+    - Copy **authorizationUri** value from the above to **Authorization URL**.
+    - Leave **Scopes** field empty.
+    - Click **Finish**
 
 ## Test Your Agent
 
@@ -228,13 +226,13 @@ register it on Gemini Enterprise without running "main.py" script.
     on it.
 2.  Open the project you used in the above setting.
 3.  Click on the **App** you used to register your agent.
-    -   If you don't see your app being listed, click **"Edit"** to switch
-        location
+    - If you don't see your app being listed, click **"Edit"** to switch
+      location
 4.  Select **"Agents"** from the left nav bar.
 5.  Click the three-dot button on the **"Actions"** column and select
     **"Previwe"** menu.
 6.  It will open Gemini Enterprise Agent page.
-7.  Try queries like *"Find contact card of Sarah"*.
-    -   If this is the first time you start a chat with the agent, it will ask
-        for manual authorization.
+7.  Try queries like _"Find contact card of Sarah"_.
+    - If this is the first time you start a chat with the agent, it will ask
+      for manual authorization.
 8.  You should see a Contact Card being rendered on Gemini Enterprise.

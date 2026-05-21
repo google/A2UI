@@ -6,8 +6,8 @@ Customize the look and feel of A2UI components to match your brand.
 
 A2UI follows a **renderer-controlled styling** approach by default, but allows for flexibility through catalogs:
 
-- **Agents describe *what* to show** (components and structure)
-- **Renderers decide *how* it looks** (colors, fonts, spacing)
+- **Agents describe _what_ to show** (components and structure)
+- **Renderers decide _how_ it looks** (colors, fonts, spacing)
 
 However, the protocol is flexible enough to allow agents to influence styling when needed.
 
@@ -29,7 +29,7 @@ flowchart TD
 
 ### Semantic hints
 
-Agents provide semantic hints (not visual styles) to guide rendering. In the *basic catalog*:
+Agents provide semantic hints (not visual styles) to guide rendering. In the _basic catalog_:
 
 ```json
 {
@@ -56,21 +56,21 @@ The A2UI protocol allows for an arbitrary `theme` property in the `createSurface
 defined as `z.any().optional()` in the Zod schema, meaning the agent can pass any JSON structure that the client
 renderer and catalog understand.
 
-* See the schema definition in [server-to-client.ts](../../renderers/web_core/src/v0_9/schema/server-to-client.ts).
-* See the `Catalog` class and `themeSchema` in [catalog/types.ts](../../renderers/web_core/src/v0_9/catalog/types.ts).
+- See the schema definition in [server-to-client.ts](../../renderers/web_core/src/v0_9/schema/server-to-client.ts).
+- See the `Catalog` class and `themeSchema` in [catalog/types.ts](../../renderers/web_core/src/v0_9/catalog/types.ts).
 
-**Note:** The *basic catalog* components are not wired to use the `theme` coming from the agent.
+**Note:** The _basic catalog_ components are not wired to use the `theme` coming from the agent.
 
 _Want to influence this design? Chime in here: [#1118](https://github.com/google/A2UI/issues/1118)._
 
 ## Catalog theming
 
 Theming is a responsibility of the catalog implementation. Each catalog can provide whatever theming solution it wants.
-As an example, this is how the default *basic catalog* does it:
+As an example, this is how the default _basic catalog_ does it:
 
 ### The Web Basic Catalog Theming
 
-On the web, the *basic catalog* provided by the default A2UI renderers is themed by overriding CSS variables.
+On the web, the _basic catalog_ provided by the default A2UI renderers is themed by overriding CSS variables.
 
 Basic catalog components inject a small stylesheet with default values for these variables. The stylesheet targets
 `:where(:root)` so their specificity is minimal, and the host app can override them easily.
@@ -93,7 +93,7 @@ See the default styles in [default.ts](../../renderers/web_core/src/v0_9/basic_c
 
 ### Per-component overrides
 
-Beyond global theming, each component of the *basic catalog* exposes custom variables to further refine its appearance.
+Beyond global theming, each component of the _basic catalog_ exposes custom variables to further refine its appearance.
 For example, the `Card` component exposes a `--a2ui-card-background` variable.
 
 Check the documentation of each component to see what variables it exposes.
@@ -109,7 +109,7 @@ To always force dark or light mode (or to programmatically control switching), u
 
 ### Custom Fonts
 
-Fonts can be loaded as in any other web application. The *basic catalog* components attempt to inherit the font family
+Fonts can be loaded as in any other web application. The _basic catalog_ components attempt to inherit the font family
 of their container, but offer two overridable values: `--a2ui-font-family-title` and `--a2ui-font-family-monospace` to
 set a different font for headings and monospace text blocks.
 
@@ -117,7 +117,7 @@ set a different font for headings and monospace text blocks.
 
 Flutter has built-in theming support. See:
 
-* [Use themes to share colors and font styles](https://docs.flutter.dev/cookbook/design/themes) from the Flutter docs.
+- [Use themes to share colors and font styles](https://docs.flutter.dev/cookbook/design/themes) from the Flutter docs.
 
 ## Best Practices
 

@@ -21,19 +21,19 @@
  * Determines when to generate A2UI content and manages async artifact generation.
  */
 
-import { A2UIRenderer } from "./a2ui-renderer";
-import { A2AClient } from "./a2a-client";
-import { getIdToken } from "./firebase-auth";
+import {A2UIRenderer} from './a2ui-renderer';
+import {A2AClient} from './a2a-client';
+import {getIdToken} from './firebase-auth';
 
 // Helper to get auth headers for API requests
 async function getAuthHeaders(): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
 
   const token = await getIdToken();
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   return headers;
@@ -41,20 +41,13 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 
 // Types for conversation history
 interface Message {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   a2ui?: unknown[];
 }
 
 // Intent types the orchestrator can detect
-type Intent =
-  | "flashcards"
-  | "podcast"
-  | "audio"
-  | "video"
-  | "quiz"
-  | "general"
-  | "greeting";
+type Intent = 'flashcards' | 'podcast' | 'audio' | 'video' | 'quiz' | 'general' | 'greeting';
 
 export class ChatOrchestrator {
   private conversationHistory: Message[] = [];
@@ -110,36 +103,33 @@ Keep ALL responses:
    * Process a user message and generate a response.
    * Uses combined intent+response endpoint to reduce latency.
    */
-  async processMessage(
-    userMessage: string,
-    messageElement: HTMLDivElement
-  ): Promise<void> {
+  async processMessage(userMessage: string, messageElement: HTMLDivElement): Promise<void> {
     // Add to history
-    this.conversationHistory.push({ role: "user", content: userMessage });
+    this.conversationHistory.push({role: 'user', content: userMessage});
 
     // Try combined endpoint first (single LLM call for intent + response + keywords)
     let intent: Intent;
     let responseText: string;
     let keywords: string | undefined;
 
-    console.log("========================================");
-    console.log("[Orchestrator] PROCESSING USER MESSAGE");
+    console.log('========================================');
+    console.log('[Orchestrator] PROCESSING USER MESSAGE');
     console.log(`[Orchestrator] User said: "${userMessage}"`);
-    console.log("========================================");
+    console.log('========================================');
 
     try {
       const combinedResult = await this.getCombinedIntentAndResponse(userMessage);
       intent = combinedResult.intent as Intent;
       responseText = combinedResult.text;
       keywords = combinedResult.keywords;
-      console.log("========================================");
-      console.log("[Orchestrator] GEMINI RESPONSE RECEIVED");
+      console.log('========================================');
+      console.log('[Orchestrator] GEMINI RESPONSE RECEIVED');
       console.log(`[Orchestrator] Detected intent: ${intent}`);
-      console.log(`[Orchestrator] Keywords: ${keywords || "(none)"}`);
+      console.log(`[Orchestrator] Keywords: ${keywords || '(none)'}`);
       console.log(`[Orchestrator] Response text: ${responseText.substring(0, 100)}...`);
-      console.log("========================================");
+      console.log('========================================');
     } catch (error) {
-      console.warn("[Orchestrator] Combined endpoint failed, falling back to separate calls");
+      console.warn('[Orchestrator] Combined endpoint failed, falling back to separate calls');
       // Fallback to separate calls if combined endpoint fails
       intent = await this.detectIntentWithLLM(userMessage);
       console.log(`[Orchestrator] Fallback detected intent: ${intent}`);
@@ -151,40 +141,36 @@ Keep ALL responses:
     this.setMessageText(messageElement, responseText);
 
     // If we need A2UI content, fetch and render it
-    if (intent !== "general" && intent !== "greeting") {
+    if (intent !== 'general' && intent !== 'greeting') {
       // Add processing placeholder
-      const placeholder = this.addProcessingPlaceholder(
-        messageElement,
-        intent
-      );
+      const placeholder = this.addProcessingPlaceholder(messageElement, intent);
 
       try {
         // Fetch A2UI content from the agent
         // Use LLM-generated keywords if available (handles typos, adds related terms)
         // Fall back to user message + response context if keywords not available
         const topicContext = keywords
-          ? keywords  // Keywords are already corrected and expanded by Gemini
+          ? keywords // Keywords are already corrected and expanded by Gemini
           : `User request: ${userMessage}\nAssistant context: ${responseText}`;
 
-        console.log("========================================");
-        console.log("[Orchestrator] CALLING AGENT ENGINE FOR A2UI CONTENT");
+        console.log('========================================');
+        console.log('[Orchestrator] CALLING AGENT ENGINE FOR A2UI CONTENT');
         console.log(`[Orchestrator] Intent (format): ${intent}`);
         console.log(`[Orchestrator] Topic context being sent:`);
         console.log(`[Orchestrator]   "${topicContext}"`);
-        console.log(`[Orchestrator] Keywords available: ${keywords ? "YES" : "NO (using fallback)"}`);
-        console.log("========================================");
-
-        const a2uiResult = await this.a2aClient.generateContent(
-          intent,
-          topicContext
+        console.log(
+          `[Orchestrator] Keywords available: ${keywords ? 'YES' : 'NO (using fallback)'}`,
         );
+        console.log('========================================');
 
-        console.log("========================================");
-        console.log("[Orchestrator] AGENT ENGINE RESPONSE RECEIVED");
+        const a2uiResult = await this.a2aClient.generateContent(intent, topicContext);
+
+        console.log('========================================');
+        console.log('[Orchestrator] AGENT ENGINE RESPONSE RECEIVED');
         console.log(`[Orchestrator] Format: ${a2uiResult?.format}`);
         console.log(`[Orchestrator] Source: ${JSON.stringify(a2uiResult?.source)}`);
         console.log(`[Orchestrator] A2UI messages: ${a2uiResult?.a2ui?.length || 0}`);
-        console.log("========================================");
+        console.log('========================================');
 
         // Remove placeholder
         placeholder.remove();
@@ -192,11 +178,10 @@ Keep ALL responses:
         // Render A2UI content with source attribution
         if (a2uiResult && a2uiResult.a2ui) {
           this.renderer.render(messageElement, a2uiResult.a2ui, a2uiResult.source);
-          this.conversationHistory[this.conversationHistory.length - 1].a2ui =
-            a2uiResult.a2ui;
+          this.conversationHistory[this.conversationHistory.length - 1].a2ui = a2uiResult.a2ui;
         }
       } catch (error) {
-        console.error("[Orchestrator] Error fetching A2UI content:", error);
+        console.error('[Orchestrator] Error fetching A2UI content:', error);
         placeholder.innerHTML = `
           <span class="material-symbols-outlined" style="color: #f87171;">error</span>
           <span class="text">Failed to load content. Please try again.</span>
@@ -205,7 +190,7 @@ Keep ALL responses:
     }
 
     // Add assistant response to history
-    this.conversationHistory.push({ role: "assistant", content: responseText });
+    this.conversationHistory.push({role: 'assistant', content: responseText});
   }
 
   /**
@@ -213,19 +198,22 @@ Keep ALL responses:
    * This reduces latency by eliminating one round-trip.
    * For content-generating intents, also returns keywords for better content retrieval.
    */
-  private async getCombinedIntentAndResponse(message: string): Promise<{ intent: string; text: string; keywords?: string }> {
-    const recentContext = this.conversationHistory.slice(-4).map(m =>
-      `${m.role}: ${m.content}`
-    ).join("\n");
+  private async getCombinedIntentAndResponse(
+    message: string,
+  ): Promise<{intent: string; text: string; keywords?: string}> {
+    const recentContext = this.conversationHistory
+      .slice(-4)
+      .map(m => `${m.role}: ${m.content}`)
+      .join('\n');
 
-    const response = await fetch("/api/chat-with-intent", {
-      method: "POST",
+    const response = await fetch('/api/chat-with-intent', {
+      method: 'POST',
       headers: await getAuthHeaders(),
       body: JSON.stringify({
         systemPrompt: this.systemPrompt,
-        messages: this.conversationHistory.slice(-10).map((m) => ({
+        messages: this.conversationHistory.slice(-10).map(m => ({
           role: m.role,
-          parts: [{ text: m.content }],
+          parts: [{text: m.content}],
         })),
         userMessage: message,
         recentContext: recentContext,
@@ -244,13 +232,14 @@ Keep ALL responses:
    * Returns the detected intent for routing to appropriate content generation.
    */
   private async detectIntentWithLLM(message: string): Promise<Intent> {
-    const recentContext = this.conversationHistory.slice(-4).map(m =>
-      `${m.role}: ${m.content}`
-    ).join("\n");
+    const recentContext = this.conversationHistory
+      .slice(-4)
+      .map(m => `${m.role}: ${m.content}`)
+      .join('\n');
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
+      const response = await fetch('/api/chat', {
+        method: 'POST',
         headers: await getAuthHeaders(),
         body: JSON.stringify({
           systemPrompt: `You are an intent classifier. Analyze the user's message and conversation context to determine their intent.
@@ -273,30 +262,30 @@ Examples:
 - "sure, show me" (after any content offer) → depends on what was offered
 - "explain ATP" → general
 - "hi there" → greeting`,
-          intentGuidance: "",
+          intentGuidance: '',
           messages: [],
           userMessage: `Recent conversation:\n${recentContext}\n\nCurrent message: "${message}"\n\nIntent:`,
         }),
       });
 
       if (!response.ok) {
-        console.warn("[Orchestrator] Intent API failed, falling back to keyword detection");
+        console.warn('[Orchestrator] Intent API failed, falling back to keyword detection');
         return this.detectIntentKeyword(message);
       }
 
       const data = await response.json();
-      const intentText = (data.text || "general").toLowerCase().trim();
+      const intentText = (data.text || 'general').toLowerCase().trim();
 
       // Map response to valid intent
-      if (intentText.includes("flashcard")) return "flashcards";
-      if (intentText.includes("podcast") || intentText.includes("audio")) return "podcast";
-      if (intentText.includes("video")) return "video";
-      if (intentText.includes("quiz")) return "quiz";
-      if (intentText.includes("greeting")) return "greeting";
+      if (intentText.includes('flashcard')) return 'flashcards';
+      if (intentText.includes('podcast') || intentText.includes('audio')) return 'podcast';
+      if (intentText.includes('video')) return 'video';
+      if (intentText.includes('quiz')) return 'quiz';
+      if (intentText.includes('greeting')) return 'greeting';
 
-      return "general";
+      return 'general';
     } catch (error) {
-      console.error("[Orchestrator] Intent detection error:", error);
+      console.error('[Orchestrator] Intent detection error:', error);
       return this.detectIntentKeyword(message);
     }
   }
@@ -308,68 +297,65 @@ Examples:
     const lower = message.toLowerCase();
 
     if (lower.match(/^(hi|hello|hey|good morning|good afternoon|good evening)/i)) {
-      return "greeting";
+      return 'greeting';
     }
     if (lower.match(/flash\s*card|study\s*card|review\s*card|f'?card/i)) {
-      return "flashcards";
+      return 'flashcards';
     }
     if (lower.match(/podcast|audio|listen/i)) {
-      return "podcast";
+      return 'podcast';
     }
     if (lower.match(/video|watch/i)) {
-      return "video";
+      return 'video';
     }
     if (lower.match(/quiz|test me/i)) {
-      return "quiz";
+      return 'quiz';
     }
-    return "general";
+    return 'general';
   }
 
   /**
    * Generate the main chat response using Gemini.
    */
-  private async generateResponse(
-    userMessage: string,
-    intent: Intent
-  ): Promise<{ text: string }> {
+  private async generateResponse(userMessage: string, intent: Intent): Promise<{text: string}> {
     // Build the conversation context
-    const messages = this.conversationHistory.slice(-10).map((m) => ({
+    const messages = this.conversationHistory.slice(-10).map(m => ({
       role: m.role,
-      parts: [{ text: m.content }],
+      parts: [{text: m.content}],
     }));
 
     // Add intent-specific guidance
-    let intentGuidance = "";
+    let intentGuidance = '';
     switch (intent) {
-      case "flashcards":
+      case 'flashcards':
         intentGuidance =
           "The user wants flashcards. Respond with a SHORT (1-2 sentences) conversational acknowledgment. DO NOT include the flashcard content in your response - the flashcards will be rendered separately as interactive cards below your message. Just say something brief like 'Here are some flashcards to help you review!' or 'I've created some personalized flashcards for you.'";
         break;
-      case "podcast":
-      case "audio":
+      case 'podcast':
+      case 'audio':
         intentGuidance =
           "The user wants to listen to the podcast. Respond with a SHORT (1-2 sentences) introduction. DO NOT write out the podcast transcript or script - the audio player will be rendered separately below your message. Just say something brief like 'Here's a personalized podcast about ATP!' or 'I've got a podcast that explains this with gym analogies you'll love.'";
         break;
-      case "video":
+      case 'video':
         intentGuidance =
           "The user wants to watch a video. Respond with a SHORT (1-2 sentences) introduction. DO NOT describe the video content in detail - the video player will be rendered separately below your message. Just say something brief like 'Here's a video that visualizes this concept!' or 'Check out this visual explanation.'";
         break;
-      case "quiz":
+      case 'quiz':
         intentGuidance =
           "The user wants a quiz. Respond with a SHORT (1-2 sentences) introduction. DO NOT include the quiz questions or answers in your response - the interactive quiz cards will be rendered separately below your message. Just say something brief like 'Let's test your knowledge!' or 'Here's a quick quiz to check your understanding.'";
         break;
-      case "greeting":
+      case 'greeting':
         intentGuidance =
-          "The user is greeting you. Respond warmly in 1-2 sentences and briefly mention you can help with flashcards, podcasts, videos, and quizzes for their MCAT prep.";
+          'The user is greeting you. Respond warmly in 1-2 sentences and briefly mention you can help with flashcards, podcasts, videos, and quizzes for their MCAT prep.';
         break;
       default:
         intentGuidance =
-          "Respond helpfully but concisely (2-3 sentences max). If the question is about ATP, bond energy, or thermodynamics, provide a clear explanation and offer to create flashcards or play the podcast for deeper learning.";
+          'Respond helpfully but concisely (2-3 sentences max). If the question is about ATP, bond energy, or thermodynamics, provide a clear explanation and offer to create flashcards or play the podcast for deeper learning.';
     }
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
+      const response = await fetch('/api/chat', {
+        method: 'POST',
         headers: await getAuthHeaders(),
         body: JSON.stringify({
           systemPrompt: this.systemPrompt,
@@ -384,9 +370,9 @@ Examples:
       }
 
       const data = await response.json();
-      return { text: data.text || data.response || "I apologize, I couldn't generate a response." };
+      return {text: data.text || data.response || "I apologize, I couldn't generate a response."};
     } catch (error) {
-      console.error("[Orchestrator] Error calling chat API:", error);
+      console.error('[Orchestrator] Error calling chat API:', error);
 
       // Fallback responses based on intent
       return this.getFallbackResponse(intent);
@@ -396,26 +382,26 @@ Examples:
   /**
    * Get a fallback response if the API fails.
    */
-  private getFallbackResponse(intent: Intent): { text: string } {
+  private getFallbackResponse(intent: Intent): {text: string} {
     switch (intent) {
-      case "flashcards":
+      case 'flashcards':
         return {
-          text: "Here are some personalized flashcards to help you master these concepts!",
+          text: 'Here are some personalized flashcards to help you master these concepts!',
         };
-      case "podcast":
-      case "audio":
+      case 'podcast':
+      case 'audio':
         return {
           text: "Here's the personalized podcast I mentioned! It's designed specifically for you, Maria, using gym and fitness analogies to explain why 'energy stored in bonds' is a misconception. Perfect for listening during your workout!",
         };
-      case "video":
+      case 'video':
         return {
           text: "Let me show you this visual explanation. It uses the compressed spring analogy to demonstrate how ATP releases energy through stability differences, not by 'releasing stored energy from bonds.'",
         };
-      case "quiz":
+      case 'quiz':
         return {
           text: "Let's test your understanding! Here's a quick quiz on ATP and bond energy concepts.",
         };
-      case "greeting":
+      case 'greeting':
         return {
           text: "Hey Maria! How's the MCAT studying going? What's on your mind today?",
         };
@@ -430,7 +416,7 @@ Examples:
    * Update the message element with text content.
    */
   private setMessageText(messageElement: HTMLDivElement, text: string): void {
-    const textEl = messageElement.querySelector(".message-text");
+    const textEl = messageElement.querySelector('.message-text');
     if (textEl) {
       textEl.innerHTML = this.parseMarkdown(text);
     }
@@ -484,15 +470,12 @@ Examples:
   /**
    * Add a processing placeholder for async content.
    */
-  private addProcessingPlaceholder(
-    messageElement: HTMLDivElement,
-    intent: Intent
-  ): HTMLDivElement {
-    const contentEl = messageElement.querySelector(".message-content");
-    if (!contentEl) throw new Error("Message content element not found");
+  private addProcessingPlaceholder(messageElement: HTMLDivElement, intent: Intent): HTMLDivElement {
+    const contentEl = messageElement.querySelector('.message-content');
+    if (!contentEl) throw new Error('Message content element not found');
 
-    const placeholder = document.createElement("div");
-    placeholder.className = "processing-card";
+    const placeholder = document.createElement('div');
+    placeholder.className = 'processing-card';
 
     const label = this.getProcessingLabel(intent);
     placeholder.innerHTML = `
@@ -509,22 +492,22 @@ Examples:
    */
   private getProcessingLabel(intent: Intent): string {
     switch (intent) {
-      case "flashcards":
-        return "Generating personalized flashcards...";
-      case "podcast":
-      case "audio":
-        return "Loading podcast...";
-      case "video":
-        return "Loading video...";
-      case "quiz":
-        return "Creating quiz questions...";
+      case 'flashcards':
+        return 'Generating personalized flashcards...';
+      case 'podcast':
+      case 'audio':
+        return 'Loading podcast...';
+      case 'video':
+        return 'Loading video...';
+      case 'quiz':
+        return 'Creating quiz questions...';
       default:
-        return "Processing...";
+        return 'Processing...';
     }
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }

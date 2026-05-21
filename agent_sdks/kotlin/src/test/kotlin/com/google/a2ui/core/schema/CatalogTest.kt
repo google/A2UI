@@ -16,100 +16,68 @@
 
 package com.google.a2ui.core.schema
 
-import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 
 class CatalogTest {
 
-  private fun createDummyCatalog(): A2uiCatalog {
-    val serverToClientSchema = Json.parseToJsonElement("""{"s2c": true}""") as JsonObject
-    val common = Json.parseToJsonElement("""{"common": true}""") as JsonObject
-    val catalogSchema =
-      Json.parseToJsonElement(
-        """
-            {
-              "catalogId": "dummy_catalog",
-              "components": {
-                "AllowedComp": {"type": "object"},
-                "PrunedComp": {"type": "object"}
-              },
-              "${"$"}defs": {
-                "anyComponent": {
-                  "oneOf": [
-                    {"${"$"}ref": "#/components/AllowedComp"},
-                    {"${"$"}ref": "#/components/PrunedComp"},
-                    {"${"$"}ref": "https://a2ui.org/other"}
-                  ]
-                }
-              }
-            }
-        """
-          .trimIndent()
-      ) as JsonObject
+  @Test
+  fun resolvesExamplesPathHandling() {
+    assertNull(resolveExamplesPath(null))
+    assertEquals("/absolute/examples", resolveExamplesPath("/absolute/examples"))
+    assertEquals("/absolute/examples", resolveExamplesPath("file:///absolute/examples"))
 
-    return A2uiCatalog(
-      version = A2uiVersion.VERSION_0_9,
-      name = "dummy",
-      serverToClientSchema = serverToClientSchema,
-      commonTypesSchema = common,
-      catalogSchema = catalogSchema,
+    val e =
+      assertFailsWith<IllegalArgumentException> { resolveExamplesPath("https://a2ui.org/examples") }
+    assertTrue(e.message?.contains("Unsupported examples URL scheme") == true)
+  }
+
+  @Test
+  fun stripsPrefixFromCatalogConfigFromPathSchemes() {
+    // Test local path
+    var config =
+      CatalogConfig.fromPath(name = "test_file", catalogPath = "relative_path/to/catalog.json")
+    assertEquals(
+      "relative_path/to/catalog.json",
+      (config.provider as FileSystemCatalogProvider).path,
     )
+
+    // Test file:// scheme
+    config =
+      CatalogConfig.fromPath(
+        name = "test_file",
+        catalogPath = "file:///absolute_path/to/catalog.json",
+      )
+    assertEquals(
+      "/absolute_path/to/catalog.json",
+      (config.provider as FileSystemCatalogProvider).path,
+    )
+
+    // Test HTTP raises NotImplementedError
+    val eHttp =
+      assertFailsWith<NotImplementedError> {
+        CatalogConfig.fromPath(name = "test_http", catalogPath = "http://a2ui.org/catalog.json")
+      }
+    assertTrue(eHttp.message?.contains("HTTP support is coming soon.") == true)
+
+    // Test unsupported scheme raises IllegalArgumentException
+    val eFtp =
+      assertFailsWith<IllegalArgumentException> {
+        CatalogConfig.fromPath(name = "test_ftp", catalogPath = "ftp://a2ui.org/catalog.json")
+      }
+    assertTrue(eFtp.message?.contains("Unsupported catalog URL scheme") == true)
   }
 
   @Test
-  fun catalog_rendersAsLlmInstructions() {
-    val catalog = createDummyCatalog()
-    val instructions = catalog.renderAsLlmInstructions()
-
-    assertTrue(instructions.startsWith(A2uiConstants.A2UI_SCHEMA_BLOCK_START))
-    assertTrue(instructions.endsWith(A2uiConstants.A2UI_SCHEMA_BLOCK_END))
-    assertTrue(instructions.contains("### Server To Client Schema:\n{\"s2c\":true}"))
-    assertTrue(instructions.contains("### Common Types Schema:\n{\"common\":true}"))
-    assertTrue(instructions.contains("### Catalog Schema:\n{"))
-  }
-
-  @Test
-  fun allowlistProvided_prunesComponentsCorrectly() {
-    val catalog = createDummyCatalog()
-    val allowed = listOf("AllowedComp")
-
-    val prunedCatalog = catalog.withPrunedComponents(allowed)
-
-    val prunedComponents = prunedCatalog.catalogSchema["components"] as JsonObject
-    assertTrue("AllowedComp" in prunedComponents)
-    assertTrue("PrunedComp" !in prunedComponents)
-
-    // Verify oneOf filtering in anyComponent
-    val anyComponentStr = prunedCatalog.catalogSchema.toString()
-    assertTrue("#/components/AllowedComp" in anyComponentStr)
-    assertTrue("#/components/PrunedComp" !in anyComponentStr)
-  }
-
-  @Test
-  fun validExamplePath_loadsAndValidatesExamples() {
-    val dir =
-      File(System.getProperty("java.io.tmpdir"), "a2ui_examples_${System.currentTimeMillis()}")
-    dir.mkdirs()
-    try {
-      val ex1 = File(dir, "ex1.json").apply { writeText("""{"example": 1}""") }
-      val ex2 = File(dir, "ex2.txt").apply { writeText("ignore me") }
-      val ex3 = File(dir, "ex3.json").apply { writeText("invalid_json_here") }
-
-      val catalog = createDummyCatalog()
-      // We pass false to validate because our dummy validator will fail everything
-      val examplesContent = catalog.loadExamples(dir.absolutePath, validate = false)
-
-      assertTrue(examplesContent.contains("---BEGIN ex1---"))
-      assertTrue(examplesContent.contains("{\"example\": 1}"))
-      // invalid json loads anyway if validation is false
-      assertTrue(examplesContent.contains("---BEGIN ex3---"))
-      // txt file ignored
-      assertTrue(!examplesContent.contains("ignore me"))
-    } finally {
-      dir.deleteRecursively()
-    }
+  fun resolvesExamplesPathInBasicCatalogGetConfig() {
+    val config =
+      com.google.a2ui.basic_catalog.BasicCatalog.getConfig(
+        version = A2uiVersion.VERSION_0_9,
+        examplesPath = "file:///absolute/examples",
+      )
+    assertEquals("/absolute/examples", config.examplesPath)
   }
 }

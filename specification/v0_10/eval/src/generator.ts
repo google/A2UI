@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { componentGeneratorFlow } from "./generation_flow";
-import { ModelConfiguration } from "./models";
-import { TestPrompt } from "./prompts";
-import { GeneratedResult } from "./types";
-import { extractJsonFromMarkdown } from "./utils";
-import { rateLimiter } from "./rateLimiter";
-import { logger } from "./logger";
-import * as fs from "fs";
-import * as path from "path";
+import {componentGeneratorFlow} from './generation_flow';
+import {ModelConfiguration} from './models';
+import {TestPrompt} from './prompts';
+import {GeneratedResult} from './types';
+import {extractJsonFromMarkdown} from './utils';
+import {rateLimiter} from './rateLimiter';
+import {logger} from './logger';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class Generator {
   constructor(
@@ -46,12 +46,9 @@ export class Generator {
 
     const progressInterval = setInterval(() => {
       const queuedCount = rateLimiter.waitingCount;
-      const inProgressCount =
-        totalJobs - completedCount - failedCount - queuedCount;
+      const inProgressCount = totalJobs - completedCount - failedCount - queuedCount;
       const pct =
-        totalJobs > 0
-          ? Math.round(((completedCount + failedCount) / totalJobs) * 100)
-          : 0;
+        totalJobs > 0 ? Math.round(((completedCount + failedCount) / totalJobs) * 100) : 0;
       process.stderr.write(
         `\r[Phase 1] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `,
       );
@@ -61,7 +58,7 @@ export class Generator {
       for (const prompt of prompts) {
         for (let i = 1; i <= runsPerPrompt; i++) {
           promises.push(
-            this.runJob(model, prompt, i).then((result) => {
+            this.runJob(model, prompt, i).then(result => {
               if (result.error) {
                 failedCount++;
               } else {
@@ -77,8 +74,8 @@ export class Generator {
 
     await Promise.all(promises);
     clearInterval(progressInterval);
-    process.stderr.write("\n");
-    logger.info("Phase 1: Generation Complete");
+    process.stderr.write('\n');
+    logger.info('Phase 1: Generation Complete');
 
     return results;
   }
@@ -116,7 +113,7 @@ export class Generator {
           }
         }
       } else {
-        error = new Error("No output text returned from model");
+        error = new Error('No output text returned from model');
       }
 
       return {
@@ -151,35 +148,29 @@ export class Generator {
     components: any[],
   ) {
     if (!this.outputDir) return;
-    const modelDir = path.join(
-      this.outputDir,
-      `output-${model.name.replace(/[\/:]/g, "_")}`,
-    );
-    const detailsDir = path.join(modelDir, "details");
-    fs.mkdirSync(detailsDir, { recursive: true });
+    const modelDir = path.join(this.outputDir, `output-${model.name.replace(/[\/:]/g, '_')}`);
+    const detailsDir = path.join(modelDir, 'details');
+    fs.mkdirSync(detailsDir, {recursive: true});
 
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.json`),
       JSON.stringify(components, null, 2),
     );
 
-    const samplePath = path.join(
-      detailsDir,
-      `${prompt.name}.${runIndex}.sample`,
-    );
+    const samplePath = path.join(detailsDir, `${prompt.name}.${runIndex}.sample`);
     const yamlHeader = `---
 description: ${prompt.description}
 name: ${prompt.name}
 prompt: |
 ${prompt.promptText
-  .split("\n")
-  .map((line) => "  " + line)
-  .join("\n")}
+  .split('\n')
+  .map(line => '  ' + line)
+  .join('\n')}
 ---
 `;
-    let jsonlBody = "";
+    let jsonlBody = '';
     for (const comp of components) {
-      jsonlBody += JSON.stringify(comp) + "\n";
+      jsonlBody += JSON.stringify(comp) + '\n';
     }
     fs.writeFileSync(samplePath, yamlHeader + jsonlBody);
   }
@@ -192,20 +183,17 @@ ${prompt.promptText
     error: any,
   ) {
     if (!this.outputDir) return;
-    const modelDir = path.join(
-      this.outputDir,
-      `output-${model.name.replace(/[\/:]/g, "_")}`,
-    );
-    const detailsDir = path.join(modelDir, "details");
-    fs.mkdirSync(detailsDir, { recursive: true });
+    const modelDir = path.join(this.outputDir, `output-${model.name.replace(/[\/:]/g, '_')}`);
+    const detailsDir = path.join(modelDir, 'details');
+    fs.mkdirSync(detailsDir, {recursive: true});
 
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.output.txt`),
-      text || "No output",
+      text || 'No output',
     );
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.error.json`),
-      JSON.stringify({ message: error.message, stack: error.stack }, null, 2),
+      JSON.stringify({message: error.message, stack: error.stack}, null, 2),
     );
   }
 }

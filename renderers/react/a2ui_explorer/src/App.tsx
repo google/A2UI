@@ -16,7 +16,12 @@
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
 import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
-import {basicCatalog, A2uiSurface, MarkdownContext, type ReactComponentImplementation} from '@a2ui/react/v0_9';
+import {
+  basicCatalog,
+  A2uiSurface,
+  MarkdownContext,
+  type ReactComponentImplementation,
+} from '@a2ui/react/v0_9';
 import {exampleFiles, getMessages} from './examples';
 import {renderMarkdown} from '@a2ui/markdown-it';
 import styles from './App.module.css';
@@ -27,7 +32,7 @@ const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
       const bound = surface.dataModel.subscribe('/', callback);
       return () => bound.unsubscribe();
     },
-    [surface]
+    [surface],
   );
 
   const getSnapshot = useCallback(() => {
@@ -46,23 +51,28 @@ const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
 
 export default function App() {
   const [selectedExampleKey, setSelectedExampleKey] = useState(exampleFiles[0].key);
-  const selectedExample = exampleFiles.find((e) => e.key === selectedExampleKey)?.data as any;
+  const selectedExample = exampleFiles.find(e => e.key === selectedExampleKey)?.data as any;
 
   const [logs, setLogs] = useState<any[]>([]);
-  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(null);
+  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(
+    null,
+  );
   const [surfaces, setSurfaces] = useState<string[]>([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(-1);
 
   // Initialize or reset processor
   const resetProcessor = useCallback(
     (advanceToEnd: boolean = false) => {
-      setProcessor((prevProcessor) => {
+      setProcessor(prevProcessor => {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor<ReactComponentImplementation>([basicCatalog], async (action: any) => {
-          setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
-        });
+        const newProcessor = new MessageProcessor<ReactComponentImplementation>(
+          [basicCatalog],
+          async (action: any) => {
+            setLogs(l => [...l, {time: new Date().toISOString(), action}]);
+          },
+        );
 
         const msgs = getMessages(selectedExample);
         if (advanceToEnd && msgs) {
@@ -81,7 +91,7 @@ export default function App() {
         setCurrentMessageIndex(-1);
       }
     },
-    [selectedExample]
+    [selectedExample],
   );
 
   // Effect to handle example selection change
@@ -89,7 +99,7 @@ export default function App() {
     resetProcessor(true);
     // Cleanup on unmount or when changing examples
     return () => {
-      setProcessor((prev) => {
+      setProcessor(prev => {
         if (prev) prev.model.dispose();
         return null;
       });
@@ -144,11 +154,10 @@ export default function App() {
           <p className={styles.subtitle}>Preview and interact with React components</p>
         </div>
         <div className={styles.stepperControls}>
-          <span>Message {currentMessageIndex + 1} of {messages.length}</span>
-          <button 
-            className={styles.button} 
-            onClick={handleReset}
-          >
+          <span>
+            Message {currentMessageIndex + 1} of {messages.length}
+          </span>
+          <button className={styles.button} onClick={handleReset}>
             Reset
           </button>
         </div>
@@ -157,7 +166,7 @@ export default function App() {
       <main className={styles.main}>
         {/* Left Column: Sample List */}
         <div className={styles.navPane}>
-          {exampleFiles.map((ex) => {
+          {exampleFiles.map(ex => {
             const isActive = selectedExampleKey === ex.key;
             return (
               <button
@@ -177,9 +186,11 @@ export default function App() {
           <div className={styles.previewContent}>
             <div className={styles.surfaceContainer}>
               {surfaces.length === 0 && (
-                <p style={{color: '#888', textAlign: 'center'}}>No surfaces loaded. Advance the stepper to create one.</p>
+                <p style={{color: '#888', textAlign: 'center'}}>
+                  No surfaces loaded. Advance the stepper to create one.
+                </p>
               )}
-              {surfaces.map((surfaceId) => {
+              {surfaces.map(surfaceId => {
                 const surface = processor?.model.getSurface(surfaceId);
                 if (!surface) return null;
                 return (
@@ -221,7 +232,11 @@ export default function App() {
                     }}
                   >
                     <div
-                      style={{display: 'flex', justifyContent: 'space-between', marginBottom: '8px'}}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '8px',
+                      }}
                     >
                       <strong>Message {i + 1}</strong>
                       {!isActive && (
@@ -261,7 +276,7 @@ export default function App() {
               {surfaces.length === 0 ? (
                 <p style={{color: '#888', fontSize: '12px'}}>Empty Data Model</p>
               ) : null}
-              {surfaces.map((surfaceId) => {
+              {surfaces.map(surfaceId => {
                 const surface = processor?.model.getSurface(surfaceId);
                 if (!surface) return null;
                 return <DataModelViewer key={surfaceId} surface={surface} />;
@@ -279,7 +294,13 @@ export default function App() {
                 {logs.map((log, i) => (
                   <div key={i} className={styles.logEntry}>
                     <strong style={{display: 'block', color: '#38bdf8'}}>{log.time}</strong>
-                    <pre style={{margin: '4px 0 0 0', whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>
+                    <pre
+                      style={{
+                        margin: '4px 0 0 0',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-all',
+                      }}
+                    >
                       {JSON.stringify(log.action, null, 2)}
                     </pre>
                   </div>

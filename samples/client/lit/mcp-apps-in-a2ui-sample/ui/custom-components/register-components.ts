@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { componentRegistry } from "@a2ui/lit/ui";
-import { McpApp } from "./mcp-apps-component.js";
+import {componentRegistry} from '@a2ui/lit/ui';
+import {McpApp} from './mcp-apps-component.js';
 
 export function registerMcpComponents() {
-  componentRegistry.register("McpApp", McpApp, "a2ui-mcp-apps-component", {
-    type: "object",
+  componentRegistry.register('McpApp', McpApp, 'a2ui-mcp-apps-component', {
+    type: 'object',
     properties: {
-      resourceUri: { type: "string" },
-      htmlContent: { type: "string" },
-      height: { type: "number" },
+      resourceUri: {type: 'string'},
+      htmlContent: {type: 'string'},
+      height: {type: 'number'},
       allowedTools: {
-        type: "array",
-        items: { type: "string" }
-      }
+        type: 'array',
+        items: {type: 'string'},
+      },
     },
   });
-  console.log("Registered MCP App Custom Components");
+  console.log('Registered MCP App Custom Components');
 }

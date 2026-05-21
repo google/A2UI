@@ -8,8 +8,8 @@ the Lit renderer (the reference implementation).
 These tests compare screenshots of the same A2UI components rendered by both
 implementations:
 
--   **Lit renderer** (Shadow DOM) - Reference implementation at `localhost:5002`
--   **React renderer** (Light DOM) - Test subject at `localhost:5001`
+- **Lit renderer** (Shadow DOM) - Reference implementation at `localhost:5002`
+- **React renderer** (Light DOM) - Test subject at `localhost:5001`
 
 Tests pass when the pixel difference is ≤1%.
 
@@ -45,7 +45,7 @@ Tests pass when the pixel difference is ≤1%.
 ### Prerequisites
 
 1.  Build the React renderer first: `bash cd renderers/react npm install npm run
-    build`
+build`
 
 2.  Install visual-parity dependencies: `bash cd visual-parity npm install`
 
@@ -124,21 +124,21 @@ visual-parity/
 Add to `fixtures/components/<component>.ts`:
 
 ```typescript
-import type { ComponentFixture } from '../types';
+import type {ComponentFixture} from '../types';
 
 export const myNewFixture: ComponentFixture = {
-  root: 'component-1',  // ID of root component
+  root: 'component-1', // ID of root component
   components: [
     {
       id: 'text-1',
       component: {
-        Text: { text: { literalString: 'Hello World' } },
+        Text: {text: {literalString: 'Hello World'}},
       },
     },
     {
       id: 'component-1',
       component: {
-        Button: { child: 'text-1', primary: true },
+        Button: {child: 'text-1', primary: true},
       },
     },
   ],
@@ -159,14 +159,14 @@ Add to `fixtures/components/index.ts`:
 
 ```typescript
 export * from './myComponent';
-import { myComponentFixtures } from './myComponent';
+import {myComponentFixtures} from './myComponent';
 // Add to allFixtures aggregation
 ```
 
 Add to `fixtures/index.ts`:
 
 ```typescript
-import { myComponentFixtures } from './components';
+import {myComponentFixtures} from './components';
 
 export const allFixtures = {
   ...existingFixtures,
@@ -184,12 +184,12 @@ npm test -- --grep "myNewFixture"
 
 ```typescript
 interface ComponentFixture {
-  root: string;                    // ID of the root component to render
+  root: string; // ID of the root component to render
   components: Array<{
-    id: string;                    // Unique component ID
-    component: Record<string, unknown>;  // A2UI component definition
+    id: string; // Unique component ID
+    component: Record<string, unknown>; // A2UI component definition
   }>;
-  data?: Record<string, unknown>;  // Initial data model values (JSON Pointer paths)
+  data?: Record<string, unknown>; // Initial data model values (JSON Pointer paths)
 }
 ```
 
@@ -197,11 +197,11 @@ interface ComponentFixture {
 
 Tests run across multiple themes to ensure theme switching works:
 
-Theme          | Description
--------------- | ---------------------------------
-`lit`          | Default litTheme from @a2ui/react
-`visualParity` | Alternate theme for testing
-`minimal`      | Stripped-down theme
+| Theme          | Description                       |
+| -------------- | --------------------------------- |
+| `lit`          | Default litTheme from @a2ui/react |
+| `visualParity` | Alternate theme for testing       |
+| `minimal`      | Stripped-down theme               |
 
 To test a specific theme: `bash npm test -- --grep "Theme: minimal"`
 
@@ -212,7 +212,8 @@ Some fixtures are skipped due to known implementation differences:
 | Fixture           | Reason                                                   |
 | ----------------- | -------------------------------------------------------- |
 | `multipleChoice*` | Implementation differs: React uses radio/checkboxes, Lit |
-:                   : uses `<select>`                                          :
+
+: : uses `<select>` :
 
 ## Troubleshooting
 
@@ -258,20 +259,20 @@ npm run test:ui ```
 
 ## Key Modules
 
-Module             | Purpose
------------------- | -------------------------------------
-`@playwright/test` | Browser automation and test framework
-`pixelmatch`       | Pixel-by-pixel image comparison
-`pngjs`            | PNG image parsing
-`vite`             | Dev server for React and Lit apps
+| Module             | Purpose                               |
+| ------------------ | ------------------------------------- |
+| `@playwright/test` | Browser automation and test framework |
+| `pixelmatch`       | Pixel-by-pixel image comparison       |
+| `pngjs`            | PNG image parsing                     |
+| `vite`             | Dev server for React and Lit apps     |
 
 ## Thresholds
 
-Parameter              | Value     | Purpose
----------------------- | --------- | -----------------------------------
-`PIXEL_DIFF_THRESHOLD` | 0.01 (1%) | Per-pixel color tolerance
-`MAX_DIFF_PERCENT`     | 1%        | Maximum % of pixels that can differ
+| Parameter              | Value     | Purpose                             |
+| ---------------------- | --------- | ----------------------------------- |
+| `PIXEL_DIFF_THRESHOLD` | 0.01 (1%) | Per-pixel color tolerance           |
+| `MAX_DIFF_PERCENT`     | 1%        | Maximum % of pixels that can differ |
 
 ## Related Documentation
 
--   [PARITY.md](./PARITY.md) - CSS transformation approach for React/Lit parity
+- [PARITY.md](./PARITY.md) - CSS transformation approach for React/Lit parity

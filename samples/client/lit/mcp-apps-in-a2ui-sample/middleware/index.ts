@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export * as A2AMiddleware from "./a2a.js";
+export * as A2AMiddleware from './a2a.js';

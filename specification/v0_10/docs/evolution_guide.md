@@ -13,6 +13,8 @@ Version 0.10 differs from 0.9 in the following ways:
 
 ### 2.1. Catalog Definition Schema
 
+- Added `posterUrl` property to the `Video` component in `catalogs/basic/catalog.json`, allowing a preview image to be displayed before the video plays.
+- Added `placeholder` prop to the `TextField` component schema.
 - <TBD>
 
 ### 2.2. Server-to-Client Message List Schema

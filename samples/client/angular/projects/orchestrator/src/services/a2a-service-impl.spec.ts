@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { A2aServiceImpl } from './a2a-service-impl';
+import {TestBed} from '@angular/core/testing';
+import {A2aServiceImpl} from './a2a-service-impl';
 
 describe('A2aServiceImpl', () => {
   let service: A2aServiceImpl;
@@ -32,7 +32,7 @@ describe('A2aServiceImpl', () => {
   });
 
   it('should send contextId in request after receiving it from server', async () => {
-  // Mock first response to return a contextId
+    // Mock first response to return a contextId
     const mockResponse1 = {
       contextId: 'test-session-123',
       parts: [],
@@ -42,12 +42,12 @@ describe('A2aServiceImpl', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse1),
-      } as Response)
+      } as Response),
     );
 
     // First call should NOT send contextId (it doesn't have it yet)
     await service.sendMessage([]);
-    
+
     let lastCall = fetchSpy.calls.mostRecent();
     let body = JSON.parse(lastCall.args[1]!.body as string);
     expect(body.contextId).toBeUndefined();
@@ -60,7 +60,7 @@ describe('A2aServiceImpl', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse2),
-      } as Response)
+      } as Response),
     );
 
     // Second call SHOULD send contextId
@@ -83,7 +83,7 @@ describe('A2aServiceImpl', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse),
-      } as Response)
+      } as Response),
     );
 
     await service.sendMessage([]);
@@ -93,7 +93,7 @@ describe('A2aServiceImpl', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({}),
-      } as Response)
+      } as Response),
     );
 
     await service.sendMessage([]);

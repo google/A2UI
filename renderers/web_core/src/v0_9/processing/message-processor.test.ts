@@ -61,31 +61,17 @@ describe('MessageProcessor', () => {
       const buttonSchema = inlineCat.components!.Button;
 
       assert.ok(buttonSchema.allOf);
-      assert.strictEqual(
-        buttonSchema.allOf[0].$ref,
-        'common_types.json#/$defs/ComponentCommon',
-      );
-      assert.strictEqual(
-        buttonSchema.allOf[1].properties.component.const,
-        'Button',
-      );
-      assert.strictEqual(
-        buttonSchema.allOf[1].properties.label.description,
-        'The button label',
-      );
-      assert.deepStrictEqual(buttonSchema.allOf[1].required, [
-        'component',
-        'label',
-      ]);
+      assert.strictEqual(buttonSchema.allOf[0].$ref, 'common_types.json#/$defs/ComponentCommon');
+      assert.strictEqual(buttonSchema.allOf[1].properties.component.const, 'Button');
+      assert.strictEqual(buttonSchema.allOf[1].properties.label.description, 'The button label');
+      assert.deepStrictEqual(buttonSchema.allOf[1].required, ['component', 'label']);
     });
 
     it('transforms REF: descriptions into valid $ref nodes', () => {
       const customApi: ComponentApi = {
         name: 'Custom',
         schema: z.object({
-          title: z
-            .string()
-            .describe('REF:common_types.json#/$defs/DynamicString|The title'),
+          title: z.string().describe('REF:common_types.json#/$defs/DynamicString|The title'),
         }),
       };
       const cat = new Catalog('cat-ref', [customApi]);
@@ -93,13 +79,9 @@ describe('MessageProcessor', () => {
 
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
       const titleSchema =
-        caps['v0.9'].inlineCatalogs![0].components!.Custom.allOf[1].properties
-          .title;
+        caps['v0.9'].inlineCatalogs![0].components!.Custom.allOf[1].properties.title;
 
-      assert.strictEqual(
-        titleSchema.$ref,
-        'common_types.json#/$defs/DynamicString',
-      );
+      assert.strictEqual(titleSchema.$ref, 'common_types.json#/$defs/DynamicString');
       assert.strictEqual(titleSchema.description, 'The title');
       // Ensure Zod's 'type: string' was removed
       assert.strictEqual(titleSchema.type, undefined);
@@ -123,9 +105,7 @@ describe('MessageProcessor', () => {
       };
 
       const themeSchema = z.object({
-        primaryColor: z
-          .string()
-          .describe('REF:common_types.json#/$defs/Color|The main color'),
+        primaryColor: z.string().describe('REF:common_types.json#/$defs/Color|The main color'),
       });
 
       const cat = new Catalog('cat-full', [buttonApi], [addFn], themeSchema);
@@ -142,22 +122,13 @@ describe('MessageProcessor', () => {
       const fn = inlineCat.functions[0];
       assert.strictEqual(fn.name, 'add');
       assert.strictEqual(fn.returnType, 'number');
-      assert.strictEqual(
-        fn.parameters.properties.a.description,
-        'First number',
-      );
+      assert.strictEqual(fn.parameters.properties.a.description, 'First number');
 
       // Verify Theme
       assert.ok(inlineCat.theme);
       assert.ok(inlineCat.theme.primaryColor);
-      assert.strictEqual(
-        inlineCat.theme.primaryColor.$ref,
-        'common_types.json#/$defs/Color',
-      );
-      assert.strictEqual(
-        inlineCat.theme.primaryColor.description,
-        'The main color',
-      );
+      assert.strictEqual(inlineCat.theme.primaryColor.$ref, 'common_types.json#/$defs/Color');
+      assert.strictEqual(inlineCat.theme.primaryColor.description, 'The main color');
     });
 
     it('omits functions and theme when catalog has none', () => {
@@ -180,9 +151,7 @@ describe('MessageProcessor', () => {
             z.object({
               action: z
                 .string()
-                .describe(
-                  'REF:common_types.json#/$defs/Action|The action to perform',
-                ),
+                .describe('REF:common_types.json#/$defs/Action|The action to perform'),
             }),
           ),
         }),
@@ -191,9 +160,7 @@ describe('MessageProcessor', () => {
       const proc = new MessageProcessor([cat]);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
 
-      const properties =
-        caps['v0.9'].inlineCatalogs![0].components!.DeepComp.allOf[1]
-          .properties;
+      const properties = caps['v0.9'].inlineCatalogs![0].components!.DeepComp.allOf[1].properties;
       const actionSchema = properties.items.items.properties.action;
 
       assert.strictEqual(actionSchema.$ref, 'common_types.json#/$defs/Action');
@@ -206,29 +173,19 @@ describe('MessageProcessor', () => {
         name: 'EdgeComp',
         schema: z.object({
           noPipe: z.string().describe('REF:common_types.json#/$defs/NoPipe'),
-          multiPipe: z
-            .string()
-            .describe('REF:common_types.json#/$defs/MultiPipe|First|Second'),
+          multiPipe: z.string().describe('REF:common_types.json#/$defs/MultiPipe|First|Second'),
         }),
       };
       const cat = new Catalog('cat-edge', [edgeApi]);
       const proc = new MessageProcessor([cat]);
       const caps = proc.getClientCapabilities({includeInlineCatalogs: true});
 
-      const properties =
-        caps['v0.9'].inlineCatalogs![0].components!.EdgeComp.allOf[1]
-          .properties;
+      const properties = caps['v0.9'].inlineCatalogs![0].components!.EdgeComp.allOf[1].properties;
 
-      assert.strictEqual(
-        properties.noPipe.$ref,
-        'common_types.json#/$defs/NoPipe',
-      );
+      assert.strictEqual(properties.noPipe.$ref, 'common_types.json#/$defs/NoPipe');
       assert.strictEqual(properties.noPipe.description, undefined);
 
-      assert.strictEqual(
-        properties.multiPipe.$ref,
-        'common_types.json#/$defs/MultiPipe',
-      );
+      assert.strictEqual(properties.multiPipe.$ref, 'common_types.json#/$defs/MultiPipe');
       assert.strictEqual(properties.multiPipe.description, 'First');
     });
 

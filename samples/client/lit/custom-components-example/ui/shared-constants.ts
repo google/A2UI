@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export const SANDBOX_BASE_PATH = "shared/mcp_apps_inner_iframe/";
+export const SANDBOX_BASE_PATH = 'shared/mcp_apps_inner_iframe/';
 export const SANDBOX_ENTRY_NAME = `${SANDBOX_BASE_PATH}sandbox`;
 export const SANDBOX_IFRAME_PATH = `/${SANDBOX_ENTRY_NAME}.html`;

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 main {
-    height: 100vh;
+  height: 100vh;
 }
 
 .empty-history {
@@ -44,12 +44,7 @@ main {
 }
 
 .agent-name {
-  background: linear-gradient(
-    90deg,
-    #217bfe 28.03%,
-    #078efb 49.56%,
-    #ac87eb 71.1%
-  );
+  background: linear-gradient(90deg, #217bfe 28.03%, #078efb 49.56%, #ac87eb 71.1%);
   background-clip: text;
   color: transparent;
 }
@@ -64,17 +59,17 @@ main {
 
 .chip {
   // Override Material button styles to look like a chip
-    border-radius: 100px !important; // Force pill shape
-    padding: 10px 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    height: auto !important;
-    line-height: 25px !important; // Match icon height
+  border-radius: 100px !important; // Force pill shape
+  padding: 10px 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: auto !important;
+  line-height: 25px !important; // Match icon height
   .material-icons-outlined {
     font-size: 20px;
     margin-right: 8px;
-      line-height: 1; // Prevent icon from affecting line height
-      position: relative;
-      top: 4px; // Move icon down slightly to match text
+    line-height: 1; // Prevent icon from affecting line height
+    position: relative;
+    top: 4px; // Move icon down slightly to match text
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "license": "Apache-2.0",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -75,18 +75,6 @@
     "vitest": "^4.0.15"
   },
   "sideEffects": false,
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
   "overrides": {
     "@preact/signals-core": "^1.13.0"
   }

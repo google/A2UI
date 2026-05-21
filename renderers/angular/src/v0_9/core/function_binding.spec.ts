@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { DataContext, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { DestroyRef } from '@angular/core';
-import { BasicCatalogBase } from '../catalog/basic/basic-catalog';
-import { toAngularSignal } from './utils';
+import {DataContext, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {DestroyRef} from '@angular/core';
+import {BasicCatalogBase} from '../catalog/basic/basic-catalog';
+import {toAngularSignal} from './utils';
 
 describe('Function Bindings', () => {
   let mockDestroyRef: jasmine.SpyObj<DestroyRef>;

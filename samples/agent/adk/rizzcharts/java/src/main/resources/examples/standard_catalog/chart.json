@@ -18,10 +18,7 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": [
-                  "chart-title",
-                  "category-list"
-                ]
+                "explicitList": ["chart-title", "category-list"]
               }
             }
           }
@@ -65,10 +62,7 @@
             "Row": {
               "distribution": "spaceBetween",
               "children": {
-                "explicitList": [
-                  "item-label",
-                  "item-value"
-                ]
+                "explicitList": ["item-label", "item-value"]
               }
             }
           }

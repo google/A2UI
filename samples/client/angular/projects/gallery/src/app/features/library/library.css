@@ -26,7 +26,7 @@ dialog {
   transition:
     opacity 0.2s ease-out,
     transform 0.2s ease-out;
-  display: flex; 
+  display: flex;
   flex-direction: column;
 }
 
@@ -48,8 +48,8 @@ dialog[open]::backdrop {
 }
 
 dialog article {
-  flex-grow: 1; 
-  display: flex; 
+  flex-grow: 1;
+  display: flex;
   flex-direction: column;
 }
 
@@ -87,8 +87,8 @@ dialog .dialog-content-grid {
   flex-grow: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem; 
-  height: 100%; 
+  gap: 1.5rem;
+  height: 100%;
   align-items: stretch;
 }
 
@@ -104,13 +104,13 @@ dialog .dialog-content-grid > .block-surface {
 }
 
 .json-pane pre {
-  background-color: #272822; 
-  color: #f8f8f2;            
-  padding: 1em;              
-  border-radius: 4px;        
+  background-color: #272822;
+  color: #f8f8f2;
+  padding: 1em;
+  border-radius: 4px;
   flex-grow: 1;
-  overflow: auto; 
+  overflow: auto;
   height: 100%;
   white-space: pre-wrap;
-  word-break: break-word; 
+  word-break: break-word;
 }

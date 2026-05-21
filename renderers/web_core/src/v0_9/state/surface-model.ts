@@ -18,10 +18,7 @@ import {DataModel} from './data-model.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {SurfaceComponentsModel} from './surface-components-model.js';
 import {EventEmitter, EventSource} from '../common/events.js';
-import {
-  A2uiClientAction,
-  A2uiClientActionSchema,
-} from '../schema/client-to-server.js';
+import {A2uiClientAction, A2uiClientActionSchema} from '../schema/client-to-server.js';
 
 /** A function that listens for actions emitted from a surface. */
 export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
@@ -34,7 +31,7 @@ export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
  *
  * @template T The concrete type of the ComponentApi from the catalog.
  */
-export class SurfaceModel<T extends ComponentApi> {
+export class SurfaceModel<T extends ComponentApi = ComponentApi> {
   /** The data model for this surface. */
   readonly dataModel: DataModel;
   /** The collection of component models for this surface. */
@@ -56,12 +53,14 @@ export class SurfaceModel<T extends ComponentApi> {
    * @param catalog The component catalog used by this surface.
    * @param theme The theme to apply to this surface.
    * @param sendDataModel If true, the client will send the full data model.
+   * @param locale The locale to use in locale-sensitive functions.
    */
   constructor(
     readonly id: string,
     readonly catalog: Catalog<T>,
     readonly theme: any = {},
     readonly sendDataModel: boolean = false,
+    readonly locale?: string,
   ) {
     this.dataModel = new DataModel({});
     this.componentsModel = new SurfaceComponentsModel();
@@ -74,12 +73,7 @@ export class SurfaceModel<T extends ComponentApi> {
    * @param sourceComponentId The ID of the component that triggered the action.
    */
   async dispatchAction(payload: any, sourceComponentId: string): Promise<void> {
-    if (
-      payload &&
-      typeof payload === 'object' &&
-      'event' in payload &&
-      payload.event
-    ) {
+    if (payload && typeof payload === 'object' && 'event' in payload && payload.event) {
       const actionToValidate = {
         name: payload.event.name,
         surfaceId: this.id,
@@ -88,15 +82,11 @@ export class SurfaceModel<T extends ComponentApi> {
         context: payload.event.context || {},
       };
 
-      const validationResult =
-        A2uiClientActionSchema.safeParse(actionToValidate);
+      const validationResult = A2uiClientActionSchema.safeParse(actionToValidate);
       if (validationResult.success) {
         await this._onAction.emit(validationResult.data);
       } else {
-        console.error(
-          'A2UI: Invalid action payload dispatched.',
-          validationResult.error.format(),
-        );
+        console.error('A2UI: Invalid action payload dispatched.', validationResult.error.format());
       }
     }
     // Note: local functionCall actions are currently handled by the renderer or binder
@@ -108,11 +98,7 @@ export class SurfaceModel<T extends ComponentApi> {
    *
    * @param error The error object to dispatch, conforming to client_to_server schema.
    */
-  async dispatchError(error: {
-    code: string;
-    message: string;
-    [key: string]: any;
-  }): Promise<void> {
+  async dispatchError(error: {code: string; message: string; [key: string]: any}): Promise<void> {
     await this._onError.emit({
       ...error,
       surfaceId: this.id,

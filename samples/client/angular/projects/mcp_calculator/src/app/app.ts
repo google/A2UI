@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-
+import {A2aChatCanvas} from '@a2a_chat_canvas/a2a-chat-canvas';
+import {ChatService} from '@a2a_chat_canvas/services/chat-service';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-root',
@@ -34,10 +28,8 @@ import { MatButtonModule } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App {
-
   protected readonly agentName = signal('MCP Calculator');
   private readonly chatService = inject(ChatService);
-
 
   sendMessage(text: string) {
     this.chatService.sendMessage(text);

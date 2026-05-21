@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {DynamicComponent} from '../rendering/dynamic-component';
+import type {StringValue, VideoNode} from '../types';
 
 @Component({
   selector: 'a2ui-video',
@@ -45,7 +45,7 @@ import { Types } from '../types';
     }
   `,
 })
-export class Video extends DynamicComponent<Types.VideoNode> {
-  readonly url = input.required<Types.StringValue | null>();
+export class Video extends DynamicComponent<VideoNode> {
+  readonly url = input.required<StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

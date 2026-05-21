@@ -98,9 +98,7 @@ uv run tools/build_catalog/assemble_catalog.py my_catalog.json --output-name ext
               "$ref": "common_types.json#/$defs/ComponentId"
             }
           },
-          "required": [
-            "text"
-          ]
+          "required": ["text"]
         }
       }
     ]
@@ -118,5 +116,4 @@ $ uv run tools/build_catalog/assemble_catalog.py sample_popup_catalog.json --out
 ```
 
 3. Your bundled catalog containing the fully synthesized `basic_catalog` and
-`common_types` requirements will be mapped out to `dist/sample_popup_catalog.json`.
-
+   `common_types` requirements will be mapped out to `dist/sample_popup_catalog.json`.

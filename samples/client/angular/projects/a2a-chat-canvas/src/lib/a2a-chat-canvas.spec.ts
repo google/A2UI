@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { A2aChatCanvas } from './a2a-chat-canvas';
+import {A2aChatCanvas} from './a2a-chat-canvas';
 
 describe('A2aChatCanvas', () => {
   let component: A2aChatCanvas;

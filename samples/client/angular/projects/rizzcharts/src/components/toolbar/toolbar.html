@@ -24,9 +24,13 @@
 
   <mat-form-field>
     <mat-label>A2UI Component Catalog</mat-label>
-    <mat-select [value]="selectedCatalogs" (valueChange)="selectedCatalogs = $event; updateCatalogService()" multiple>
+    <mat-select
+      [value]="selectedCatalogs"
+      (valueChange)="selectedCatalogs = $event; updateCatalogService()"
+      multiple
+    >
       @for (option of catalogs; track option) {
-      <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+        <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
       }
     </mat-select>
   </mat-form-field>

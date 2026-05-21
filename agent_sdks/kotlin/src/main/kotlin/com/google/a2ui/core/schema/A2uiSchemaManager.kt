@@ -176,13 +176,15 @@ constructor(
 
   /**
    * Resolves the desired catalog based on the client capabilities, returning it with pruned unused
-   * components.
+   * components and messages.
    */
   @JvmOverloads
   fun getSelectedCatalog(
     clientUiCapabilities: JsonObject? = null,
     allowedComponents: List<String> = emptyList(),
-  ): A2uiCatalog = selectCatalog(clientUiCapabilities).withPrunedComponents(allowedComponents)
+    allowedMessages: List<String> = emptyList(),
+  ): A2uiCatalog =
+    selectCatalog(clientUiCapabilities).withPruning(allowedComponents, allowedMessages)
 
   /** Renders LLM examples for a given catalog, loaded from its configured examples path. */
   @JvmOverloads
@@ -197,6 +199,7 @@ constructor(
     uiDescription: String,
     clientUiCapabilities: JsonObject?,
     allowedComponents: List<String>,
+    allowedMessages: List<String>,
     includeSchema: Boolean,
     includeExamples: Boolean,
     validateExamples: Boolean,
@@ -212,7 +215,8 @@ constructor(
       parts.add("## UI Description:\n$uiDescription")
     }
 
-    val selectedCatalog = getSelectedCatalog(clientUiCapabilities, allowedComponents)
+    val selectedCatalog =
+      getSelectedCatalog(clientUiCapabilities, allowedComponents, allowedMessages)
 
     if (includeSchema) {
       parts.add(selectedCatalog.renderAsLlmInstructions())

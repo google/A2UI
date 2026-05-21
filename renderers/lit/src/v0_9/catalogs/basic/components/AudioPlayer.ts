@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import { html, nothing, css } from "lit";
-import { customElement } from "lit/decorators.js";
-import { AudioPlayerApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { BasicCatalogA2uiLitElement } from "../basic-catalog-a2ui-lit-element.js";
-import { A2uiController } from "@a2ui/lit/v0_9";
+import {html, nothing, css} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {AudioPlayerApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {BasicCatalogA2uiLitElement} from '../basic-catalog-a2ui-lit-element.js';
+import {A2uiController} from '@a2ui/lit/v0_9';
 
-@customElement("a2ui-audioplayer")
-export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<
-  typeof AudioPlayerApi
-> {
+@customElement('a2ui-audioplayer')
+export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<typeof AudioPlayerApi> {
   static styles = css`
     :host {
       display: flex;
@@ -52,5 +50,5 @@ export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<
 
 export const A2uiAudioPlayer = {
   ...AudioPlayerApi,
-  tagName: "a2ui-audioplayer",
+  tagName: 'a2ui-audioplayer',
 };

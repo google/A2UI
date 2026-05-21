@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Pipe, PipeTransform, inject } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {Pipe, PipeTransform, inject} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import markdownit from 'markdown-it';
 
-@Pipe({ name: 'markdown' })
+@Pipe({name: 'markdown'})
 export class MarkdownPipe implements PipeTransform {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly md = markdownit({

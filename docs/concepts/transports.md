@@ -16,18 +16,18 @@ A2UI defines a sequence of JSON messages. The transport layer is responsible for
 
 ## Available Transports
 
-| Transport | Status | Use Case |
-|-----------|--------|----------|
-| **A2A Protocol** | ✅ Stable | Multi-agent systems, enterprise meshes |
-| **AG UI** | ✅ Stable | Full-stack React applications |
-| **REST API** | 📋 Planned | Simple HTTP endpoints |
-| **WebSockets** | 💡 Proposed | Real-time bidirectional |
-| **SSE (Server-Sent Events)** | 💡 Proposed | Web streaming |
+| Transport                    | Status      | Use Case                               |
+| ---------------------------- | ----------- | -------------------------------------- |
+| **A2A Protocol**             | ✅ Stable   | Multi-agent systems, enterprise meshes |
+| **AG UI**                    | ✅ Stable   | Full-stack React applications          |
+| **REST API**                 | 📋 Planned  | Simple HTTP endpoints                  |
+| **WebSockets**               | 💡 Proposed | Real-time bidirectional                |
+| **SSE (Server-Sent Events)** | 💡 Proposed | Web streaming                          |
 
 ## A2A Protocol
 
 The [Agent2Agent (A2A) protocol](https://a2a-protocol.org) provides secure,
-standardized agent communication.  An A2A extension provides easy integration with A2UI.
+standardized agent communication. An A2A extension provides easy integration with A2UI.
 
 **Benefits:**
 

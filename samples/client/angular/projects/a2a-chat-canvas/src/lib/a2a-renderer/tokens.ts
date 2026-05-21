@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import { InjectionToken, inject } from '@angular/core';
-import {
-  ArtifactResolver,
-  PartResolver,
-  RendererComponentClassLoader,
-  RendererEntry,
-} from './types';
+import {InjectionToken, inject} from '@angular/core';
+import {ArtifactResolver, PartResolver, RendererComponentClassLoader, RendererEntry} from './types';
 
 /** Injection token for the {@link PartResolver}s for parts. */
 export const PART_RESOLVERS = new InjectionToken<readonly PartResolver[]>('PART_RESOLVERS', {
@@ -47,7 +42,7 @@ export const RENDERERS_MAP = new InjectionToken<ReadonlyMap<string, RendererComp
 /** Injection token for the {@link ArtifactResolver}s for artifacts. */
 export const ARTIFACT_RESOLVERS = new InjectionToken<readonly ArtifactResolver[]>(
   'ARTIFACT_RESOLVERS',
-  { providedIn: 'root', factory: () => [] },
+  {providedIn: 'root', factory: () => []},
 );
 
 function renderersToMap(

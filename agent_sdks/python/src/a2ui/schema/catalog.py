@@ -280,7 +280,7 @@ class A2uiCatalog:
 
     root_common_types = []
     for ref in external_refs:
-      if ref.startswith("common_types.json#/$defs/"):
+      if "common_types.json#/$defs/" in ref:
         root_common_types.append(ref.split("#/$defs/")[-1])
 
     new_common_types_schema = copy.deepcopy(self.common_types_schema)
@@ -297,7 +297,7 @@ class A2uiCatalog:
     all_schemas.append(A2UI_SCHEMA_BLOCK_START)
 
     server_client_str = (
-        json.dumps(self.s2c_schema, indent=2) if self.s2c_schema else "{}"
+        json.dumps(self.s2c_schema, separators=(",", ":")) if self.s2c_schema else "{}"
     )
     all_schemas.append(f"### Server To Client Schema:\n{server_client_str}")
 
@@ -306,10 +306,10 @@ class A2uiCatalog:
         and "$defs" in self.common_types_schema
         and self.common_types_schema["$defs"]
     ):
-      common_str = json.dumps(self.common_types_schema, indent=2)
+      common_str = json.dumps(self.common_types_schema, separators=(",", ":"))
       all_schemas.append(f"### Common Types Schema:\n{common_str}")
 
-    catalog_str = json.dumps(self.catalog_schema, indent=2)
+    catalog_str = json.dumps(self.catalog_schema, separators=(",", ":"))
     all_schemas.append(f"### Catalog Schema:\n{catalog_str}")
 
     all_schemas.append(A2UI_SCHEMA_BLOCK_END)
