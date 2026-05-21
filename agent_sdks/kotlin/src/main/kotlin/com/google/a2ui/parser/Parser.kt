@@ -21,7 +21,7 @@ import com.google.a2ui.schema.A2uiValidator
 import java.util.logging.Logger
 import kotlinx.serialization.json.JsonElement
 
-private val logger = Logger.getLogger("com.google.a2ui.core.parser.Parser")
+private val logger = Logger.getLogger("com.google.a2ui.parser.Parser")
 
 internal val A2UI_BLOCK_REGEX =
   Regex(

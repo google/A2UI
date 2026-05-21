@@ -22,7 +22,6 @@ import com.google.a2ui.schema.A2uiValidator
 import com.google.a2ui.schema.A2uiVersion
 import com.google.a2ui.schema.TopologyAnalyzer
 import java.util.logging.Logger
-import kotlin.collections.iterator
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray

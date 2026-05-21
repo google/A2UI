@@ -18,7 +18,6 @@ package com.google.a2ui.parser
 
 import com.google.a2ui.schema.A2uiCatalog
 import com.google.a2ui.schema.A2uiVersion
-import kotlin.collections.iterator
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
