@@ -417,6 +417,69 @@
           ]
         }
       }
+    },
+    {
+      "description": "Slider with valid steps property",
+      "valid": true,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "sl_steps",
+              "component": "Slider",
+              "label": "Continuous rating",
+              "min": 0,
+              "max": 10,
+              "steps": 5,
+              "value": {"path": "/formData/rating"}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Slider with invalid steps property (string)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "sl_steps_invalid_str",
+              "component": "Slider",
+              "label": "Rating",
+              "min": 0,
+              "max": 10,
+              "steps": "five",
+              "value": {"path": "/formData/rating"}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Slider with invalid steps property (less than 1)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "sl_steps_invalid_num",
+              "component": "Slider",
+              "label": "Rating",
+              "min": 0,
+              "max": 10,
+              "steps": 0,
+              "value": {"path": "/formData/rating"}
+            }
+          ]
+        }
+      }
     }
   ]
 }
