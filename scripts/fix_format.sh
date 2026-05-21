@@ -72,14 +72,32 @@ JS_TS_DIRS=(
   "tools/inspector"
 )
 
+# Phase 1: Parallel Dependency Installation
+pids=()
+for dir in "${JS_TS_DIRS[@]}"; do
+  if [ -d "$REPO_ROOT/$dir" ]; then
+    if [ ! -d "$REPO_ROOT/$dir/node_modules" ]; then
+      echo "Auto-installing dependencies in parallel for $dir..."
+      (cd "$REPO_ROOT/$dir" && npm install > /dev/null 2>&1) &
+      pids+=($!)
+    fi
+  fi
+done
+
+# Wait for all parallel installations to finish
+if [ ${#pids[@]} -ne 0 ]; then
+  echo "Waiting for parallel npm installations to complete..."
+  for pid in "${pids[@]}"; do
+    wait "$pid"
+  done
+  echo "All installations completed!"
+fi
+
+# Phase 2: Sequential Linting
 for dir in "${JS_TS_DIRS[@]}"; do
   if [ -d "$REPO_ROOT/$dir" ]; then
     echo "Linting $dir..."
     cd "$REPO_ROOT/$dir"
-    if [ ! -d "node_modules" ]; then
-      echo "node_modules not found in $dir. Auto-installing dependencies..."
-      npm install
-    fi
     if [ "$CHECK_ONLY" = true ]; then
       npm run lint
     else
