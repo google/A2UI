@@ -44,7 +44,7 @@ export class Validator {
 
     // Populate basic functions from the catalog schema
     // schemas are keyed by filename in index.ts
-    const catalogSchema = schemas['basic_catalog.json'];
+    const catalogSchema = schemas['catalogs/basic/catalog.json'];
     if (
       catalogSchema &&
       typeof catalogSchema.functions === 'object' &&
@@ -57,7 +57,7 @@ export class Validator {
 
     if (this.basicFunctions.size === 0) {
       logger.warn(
-        "No basic functions loaded from schema 'basic_catalog.json'. Function validation will fail open.",
+        "No basic functions loaded from schema 'catalogs/basic/catalog.json'. Function validation will fail open.",
       );
     }
   }
@@ -134,7 +134,10 @@ export class Validator {
               let isValid = false;
 
               try {
-                isValid = this.ajv.validate(`basic_catalog.json#/components/${componentName}`, obj);
+                isValid = this.ajv.validate(
+                  `catalogs/basic/catalog.json#/components/${componentName}`,
+                  obj,
+                );
               } catch (e) {
                 // If the schema isn't found, it's a hallucinated component.
                 targetedErrors.push({
@@ -385,7 +388,7 @@ export class Validator {
       // Smart Component Validation
       if (this.ajv && c.component) {
         const componentType = c.component;
-        const schemaUri = 'https://a2ui.org/specification/v0_9/basic_catalog.json';
+        const schemaUri = 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json';
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 
