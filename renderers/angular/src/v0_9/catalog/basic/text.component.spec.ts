@@ -17,14 +17,15 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TextComponent} from './text.component';
 import {By} from '@angular/platform-browser';
-import {signal} from '@angular/core';
 import {MarkdownRenderer} from '../../core/markdown';
+import {setComponentProps, createBoundProperty, ComponentToProps} from '../../core/test-utils';
 import {A2uiRendererService, A2UI_RENDERER_CONFIG} from '../../core/a2ui-renderer.service';
 
 describe('TextComponent', () => {
   let component: TextComponent;
   let fixture: ComponentFixture<TextComponent>;
   let mockMarkdownRenderer: jasmine.SpyObj<MarkdownRenderer>;
+  let defaultProps: ComponentToProps<TextComponent>;
 
   beforeEach(async () => {
     mockMarkdownRenderer = jasmine.createSpyObj('MarkdownRenderer', ['render']);
@@ -42,20 +43,19 @@ describe('TextComponent', () => {
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
+
+    defaultProps = {
+      text: createBoundProperty('Hello World'),
+    };
+    setComponentProps(fixture, defaultProps);
   });
 
   it('should create', () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {}},
-    });
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('should render the markdown text', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {}},
-    });
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -66,9 +66,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant h1', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
-      variant: {value: signal('h1'), raw: 'h1', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h1' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -78,9 +78,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant caption', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Caption'), raw: 'Caption', onUpdate: () => {}},
-      variant: {value: signal('caption'), raw: 'caption', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Caption'),
+      variant: createBoundProperty('caption' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -90,9 +90,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant h2', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
-      variant: {value: signal('h2'), raw: 'h2', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h2' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -102,9 +102,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant h3', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
-      variant: {value: signal('h3'), raw: 'h3', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h3' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -114,9 +114,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant h4', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
-      variant: {value: signal('h4'), raw: 'h4', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h4' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -126,9 +126,9 @@ describe('TextComponent', () => {
   });
 
   it('should handle variant h5', async () => {
-    fixture.componentRef.setInput('props', {
-      text: {value: signal('Heading'), raw: 'Heading', onUpdate: () => {}},
-      variant: {value: signal('h5'), raw: 'h5', onUpdate: () => {}},
+    setComponentProps(fixture, {
+      text: createBoundProperty('Heading'),
+      variant: createBoundProperty('h5' as const),
     });
     fixture.detectChanges();
     await fixture.whenStable();
@@ -138,7 +138,7 @@ describe('TextComponent', () => {
   });
 
   it('should handle missing text property', async () => {
-    fixture.componentRef.setInput('props', {});
+    setComponentProps(fixture, {} as ComponentToProps<TextComponent>);
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();

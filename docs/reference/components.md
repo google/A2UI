@@ -10,7 +10,7 @@ This page showcases all A2UI components with examples and usage patterns.
 >
 > === "v0.9"
 >
->     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/catalogs/basic/catalog.json)
 
 ---
 
@@ -205,7 +205,7 @@ Display images from URLs.
 
 ### Icon
 
-Display icons from the standard set defined in the catalog.
+Display icons from the basic set defined in the catalog.
 
 === "v0.8"
 
@@ -644,7 +644,7 @@ npm start -- gallery
 >
 > === "v0.9"
 >
->     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/json/basic_catalog.json)
+>     [:material-code-json: Basic Catalog Definition (JSON Schema)](../../specification/v0_9/catalogs/basic/catalog.json)
 
 - **[Defining Your Own Catalog](../guides/defining-your-own-catalog.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

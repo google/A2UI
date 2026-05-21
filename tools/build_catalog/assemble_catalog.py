@@ -52,8 +52,8 @@ def is_remote_uri(uri: str) -> bool:
 
 BASIC_CATALOG_URLS = {
     "0.8": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_8/json/standard_catalog_definition.json",
-    "0.9": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_9/json/basic_catalog.json",
-    "0.10": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_10/json/basic_catalog.json"
+    "0.9": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_9/catalogs/basic/catalog.json",
+    "0.10": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_10/catalogs/basic/catalog.json"
 }
 
 COMMON_TYPES_URLS = {

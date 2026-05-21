@@ -31,12 +31,20 @@ else
   npx -y prettier --config .prettierrc --write .
 fi
 
-echo "Running Pyink for Python..."
+echo "Running Pyink for Python SDK..."
 cd "$REPO_ROOT/agent_sdks/python"
 if [ "$CHECK_ONLY" = true ]; then
-  uv run pyink --check src tests
+  uv run pyink --check .
 else
-  uv run pyink src tests
+  uv run pyink .
+fi
+
+echo "Running Pyink for Python Samples..."
+cd "$REPO_ROOT/samples/agent/adk"
+if [ "$CHECK_ONLY" = true ]; then
+  uv run pyink --check .
+else
+  uv run pyink .
 fi
 
 echo "Running Dart format..."

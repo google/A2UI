@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "A2UI Core Library",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -75,11 +75,17 @@
       "files": [
         "../../specification/v0_8/json/*.json",
         "../../specification/v0_9/json/*.json",
+        "../../specification/v0_9/catalogs/**/*.json",
+        "../../specification/v0_10/json/*.json",
+        "../../specification/v0_10/catalogs/**/*.json",
         "scripts/copy-spec.js"
       ],
       "output": [
         "src/v0_8/schemas/*.json",
-        "src/v0_9/schemas/*.json"
+        "src/v0_9/schemas/*.json",
+        "src/v0_9/schemas/catalogs/**/*.json",
+        "src/v0_10/schemas/*.json",
+        "src/v0_10/schemas/catalogs/**/*.json"
       ]
     },
     "build": {

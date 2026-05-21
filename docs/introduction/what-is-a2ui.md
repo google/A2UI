@@ -106,14 +106,14 @@ A2UI: JSON messages describing UI that:
     }
     ```
 
-=== "v0.9 (Draft)"
+=== "v0.9 (Current)"
 
     ```jsonl
     {
       "version": "v0.9",
       "createSurface": {
         "surfaceId": "booking",
-        "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+        "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
       }
     }
     {

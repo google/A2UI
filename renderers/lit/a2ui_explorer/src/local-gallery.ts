@@ -17,7 +17,7 @@
 import {LitElement, html, css, nothing} from 'lit';
 import {provide} from '@lit/context';
 import {customElement, state} from 'lit/decorators.js';
-import {MessageProcessor} from '@a2ui/web_core/v0_9';
+import {MessageProcessor, A2uiMessage} from '@a2ui/web_core/v0_9';
 import {basicCatalog, Context} from '@a2ui/lit/v0_9';
 import {renderMarkdown} from '@a2ui/markdown-it';
 import {getDemoItems, DemoItem} from './examples';
@@ -30,6 +30,7 @@ export class LocalGallery extends LitElement {
   @state() accessor activeItemIndex = 0;
   @state() accessor processedMessageCount = 0;
   @state() accessor currentDataModelText = '{}';
+  @state() accessor primaryColor = '#1177ee';
 
   @provide({context: Context.markdown})
   private accessor markdownRenderer = renderMarkdown;
@@ -67,8 +68,7 @@ export class LocalGallery extends LitElement {
 
   selectItem(index: number) {
     this.activeItemIndex = index;
-    this.resetSurface();
-    this.advanceMessages(true);
+    this.reloadExample();
   }
 
   resetSurface() {
@@ -88,7 +88,12 @@ export class LocalGallery extends LitElement {
     }
   }
 
-  advanceMessages(all = false) {
+  /**
+   * Advances the message processing.
+   *
+   * @param all Whether to process all remaining messages or just the next one.
+   */
+  advanceMessages(all: boolean = false) {
     const item = this.demoItems[this.activeItemIndex];
     if (!item) return;
 
@@ -98,7 +103,9 @@ export class LocalGallery extends LitElement {
 
     if (toProcess.length === 0) return;
 
-    this.processor.processMessages(toProcess);
+    const modifiedToProcess = this.applyPrimaryColorToMessages(toProcess);
+
+    this.processor.processMessages(modifiedToProcess);
     this.processedMessageCount += toProcess.length;
 
     // Subscribe to data model on first advance if not already subscribed
@@ -110,6 +117,58 @@ export class LocalGallery extends LitElement {
         });
       }
     }
+  }
+
+  /**
+   * Reloads the current example by resetting the surface and reprocessing all messages.
+   * This is used when switching examples or when theme properties change.
+   */
+  private reloadExample() {
+    this.resetSurface();
+    this.advanceMessages(true);
+  }
+
+  /**
+   * Applies the user-selected primary color to `createSurface` messages.
+   *
+   * This is necessary for the explorer application to allow users to live-preview
+   * theme changes by injecting the selected color into the message stream.
+   * In a standard A2UI renderer deployment, this is not needed as the renderer
+   * simply processes messages as received from the agent, which is responsible
+   * for providing the correct theme.
+   *
+   * @param messages The list of messages to process.
+   * @returns A new list of messages with the primary color applied to `createSurface` messages.
+   */
+  private applyPrimaryColorToMessages(messages: A2uiMessage[]): A2uiMessage[] {
+    return messages.map(msg => {
+      if ('createSurface' in msg && this.primaryColor) {
+        return {
+          ...msg,
+          createSurface: {
+            ...msg.createSurface,
+            theme: {
+              ...msg.createSurface.theme,
+              primaryColor: this.primaryColor,
+            },
+          },
+        };
+      }
+      return msg;
+    });
+  }
+
+  /** Handles color input events to update the primary color. */
+  private onColorInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.primaryColor = input.value;
+    this.reloadExample();
+  }
+
+  /** Clears the custom primary color and reloads the example. */
+  private clearColor() {
+    this.primaryColor = '';
+    this.reloadExample();
   }
 
   log(msg: string, detail?: any) {
@@ -148,22 +207,34 @@ export class LocalGallery extends LitElement {
         <section class="gallery-pane">
           <div class="preview-header">
             <div>
-              <h2 style="margin:0">${activeItem?.title || 'No selection'}</h2>
-              <p style="margin:4px 0 0 0; font-size:0.9rem; color:#94a3b8">
-                ${activeItem?.description}
-              </p>
+              <h2>${activeItem?.title || 'No selection'}</h2>
+              <p class="subtitle">${activeItem?.description}</p>
             </div>
-            <div class="stepper-controls">
-              <span style="font-size:0.9rem; margin-right:8px; color:#94a3b8">
-                Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
-              </span>
-              <button @click=${() => this.resetSurface()}>Reset</button>
-              <button @click=${() => this.advanceMessages(false)} ?disabled=${!canAdvance}>
-                +1 Message
-              </button>
-              <button @click=${() => this.advanceMessages(true)} ?disabled=${!canAdvance}>
-                All Messages
-              </button>
+            <div class="agent-controls">
+              <fieldset class="message-controls">
+                <legend>
+                  Messages: ${this.processedMessageCount} / ${activeItem?.messages.length || 0}
+                </legend>
+                <button @click=${() => this.resetSurface()}>Reset</button>
+                <button @click=${() => this.advanceMessages(false)} ?disabled=${!canAdvance}>
+                  +1 Message
+                </button>
+                <button @click=${() => this.advanceMessages(true)} ?disabled=${!canAdvance}>
+                  All Messages
+                </button>
+              </fieldset>
+              <fieldset class="theme-controls">
+                <legend>Primary color</legend>
+                <div class="color-input-group">
+                  <input
+                    type="color"
+                    .value=${this.primaryColor || '#1177ee'}
+                    @input=${this.onColorInput}
+                    class="color-input"
+                  />
+                  <button @click=${this.clearColor} class="clear-btn">Clear</button>
+                </div>
+              </fieldset>
             </div>
           </div>
 

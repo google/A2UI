@@ -167,7 +167,7 @@ Let's peek at what the agent is sending. Here's a simplified example of the JSON
     **Creating the surface:**
 
     ```json
-    {"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"}}
+    {"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"}}
     ```
 
     **Defining the UI:**

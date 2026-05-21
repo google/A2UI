@@ -17,9 +17,9 @@
 package com.google.a2ui.adk.a2a_extension
 
 import com.google.a2ui.a2a.A2uiA2a
-import com.google.a2ui.core.parser.hasA2uiParts
-import com.google.a2ui.core.parser.parseResponseToParts
-import com.google.a2ui.core.schema.A2uiCatalog
+import com.google.a2ui.parser.hasA2uiParts
+import com.google.a2ui.parser.parseResponseToParts
+import com.google.a2ui.schema.A2uiCatalog
 import com.google.adk.a2a.converters.EventConverter
 import com.google.adk.agents.InvocationContext
 import com.google.adk.events.Event
@@ -28,6 +28,7 @@ import com.google.genai.types.Part
 import io.a2a.spec.Event as A2aEvent
 import io.a2a.spec.Message
 import io.a2a.spec.Message.Role.ROLE_AGENT
+import io.a2a.spec.Part as A2aPart
 import io.a2a.spec.TaskState
 import io.a2a.spec.TaskStatus
 import io.a2a.spec.TaskStatusUpdateEvent
@@ -49,7 +50,7 @@ class A2uiPartConverter(
   // to returning DataParts for A2UI, and omitting standard conversions here.
   // Client applications should adapt this integration logic based on actual available converters.
 
-  fun convert(part: Part): List<io.a2a.spec.Part<*>> {
+  fun convert(part: Part): List<A2aPart<*>> {
     val functionResponse = part.functionResponse().orElse(null)
     val isSendA2uiJsonToClientResponse =
       functionResponse != null &&
@@ -129,7 +130,7 @@ class A2uiEventConverter(
     // 2. Process Content
     val content = event.content().orElse(null)
     if (content != null) {
-      val outputParts = mutableListOf<io.a2a.spec.Part<*>>()
+      val outputParts = mutableListOf<A2aPart<*>>()
 
       val genaiParts = content.parts().orElse(emptyList()) ?: emptyList()
       for (part in genaiParts) {

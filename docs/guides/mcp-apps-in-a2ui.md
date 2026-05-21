@@ -8,7 +8,7 @@ This guide explains how **Model Context Protocol (MCP) Applications** are integr
 
 The Model Context Protocol (MCP) allows MCP servers to deliver rich, interactive HTML-based user interfaces to hosts. A2UI provides a secure environment to run these third-party applications.
 
-<img src="../assets/mcp-apps-calculator-demo.gif" alt="MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent" width="640">
+![MCP Calculator demo — loading the app, opening the calculator, and chatting with the agent](../assets/mcp-apps-calculator-demo.gif)
 
 ## Double-Iframe Isolation Pattern
 
@@ -29,7 +29,7 @@ To prevent this, A2UI strictly excludes `allow-same-origin` for the inner iframe
     - Permissions: `sandbox="allow-scripts allow-forms allow-popups allow-modals"` (**MUST NOT** include `allow-same-origin`).
     - Isolation: Removes access to `localStorage`, `sessionStorage`, `IndexedDB`, and cookies due to unique origin.
 
-### Architecture Diagram
+### Physical Iframe Nesting
 
 ```mermaid
 flowchart TD
@@ -43,6 +43,52 @@ flowchart TD
         C -->|Dynamic Injection| D[inner iframe untrusted content]
     end
 ```
+
+### End-to-End Architecture & Lifecycle Flow
+
+The complete cycle—including layout tree hierarchy, completely separated backend actors (the Proxy Agent and the MCP Server), and how isolated third-party widgets interact reactively with their native siblings (e.g., the Pong game's scoreboard)—is detailed below:
+
+```mermaid
+graph TD
+    %% 1. Top Tier (Strict vertical hierarchy)
+    MCPServer["MCP App Server<br/>(Hosts widget resources & core tools)"]
+
+    %% 2. Middle-Top Tier
+    Agent["AI Agent<br/>(A2UI Backend Coordinator)"]
+
+    %% 3. Subgraph for Host layout tree (Bottom Tier)
+    subgraph HostApp ["Host Application"]
+        direction TB
+        Shell["A2UI Rendering Engine & State Manager<br/>(Orchestrates native layout & state bindings)"]
+
+        subgraph LayoutTree ["A2UI Component Tree"]
+            McpComponent["McpApp Component<br/>(Sandboxed HTML/JS Widget)"]
+            SiblingComponent["Other A2UI Components<br/>(e.g., PongScoreBoard)"]
+        end
+
+        Shell <-->|"1. Initialize postMessage Event Bridge"| McpComponent
+        Shell -.->|"5. Reactive State Update<br/>(e.g., Render updated score)"| SiblingComponent
+    end
+
+    %% Vertical Channel connecting Top to Middle-Top
+    MCPServer ==>|"MCP Protocol (SSE / Stdio)"| Agent
+
+    %% Unidirectional Data Cycle (Flowing vertically through the center)
+    McpComponent ==>|"2. Tool Action Request<br/>(e.g., score_update)"| Shell
+    Shell ==>|"3. Action Delegation (A2UI Protocol)"| Agent
+    Agent ==>|"4. State Mutation & Sync (dataModelUpdate)"| Shell
+
+    %% Style Sibling Relationship
+    McpComponent -.->|"No Direct Access (Strictly Isolated)"| SiblingComponent
+```
+
+#### How the Sibling Update Loop Works:
+
+1. **Initialize postMessage Event Bridge (1)**: The host shell instantiates the double-iframe sandbox and establishes a secure message relay bridge with the `McpApp` component.
+2. **Tool Action Request (2)**: When a user interacts with the sandboxed app (e.g., scores a point in the Pong game), the app triggers a tool action by posting a message over the postMessage bridge.
+3. **Action Delegation (3)**: The host layout engine intercepts the action and delegates its execution to the `AI Proxy Agent` over the A2UI/A2A protocol. The agent optionally coordinates with the `MCP App Server` using the standard MCP Protocol (SSE / Stdio) if external calculation or resources are required.
+4. **State Mutation & Sync (4)**: The agent processes the action, mutates the master session state, and pushes a `dataModelUpdate` back to the host state manager.
+5. **Reactive State Update (5)**: The host updates its local store, triggering a reactive update on sibling A2UI components (such as native scoreboards or displays) bound to that state path. Direct communication between the sandboxed component and native sibling elements is strictly blocked to maintain containerization security.
 
 ## Usage / Code Example
 
@@ -138,52 +184,11 @@ There are two primary samples demonstrating MCP Apps integration. Each sample re
 
 ---
 
-### 1. MCP App Standalone Sample (Lit & ADK Agent)
+### Sample 1: MCP App Standalone Sample (Lit Client & ADK Agent)
 
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
-- **A2A Agent Server**:
-  - Path: [`samples/agent/adk/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp-apps-in-a2ui-sample/)
-  - Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
-- **Lit Client App**:
-  - Path: [`samples/client/lit/mcp-apps-in-a2ui-sample/`](https://github.com/google/A2UI/tree/main/samples/client/lit/mcp-apps-in-a2ui-sample/)
-  - Command: `npm install && npm run dev` (requires building the Lit renderer first)
-  - URL: `http://localhost:5173/`
-
-**What to expect**: A simple interface loading the MCP App, with a button to trigger an action handled by the agent.
-
-### 2. MCP Apps (Calculator + Pong) (Angular)
-
-#### Step 3: Open in Browser
-
-Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
-
-**What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
-
----
-
-### Sample 2: MCP Apps (Calculator + Pong) (Angular Client + MCP Server + Proxy Agent)
-
-This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server. It requires **three** backend processes.
-
-#### Step 1: Start the MCP Server (Calculator)
-
-```bash
-cd samples/mcp/mcp-apps-calculator/
-uv run .
-```
-
-=======
-
-```bash
-cd samples/client/lit/mcp-apps-in-a2ui-sample
-npm install
-npm run dev
-```
-
-The client starts at `http://localhost:5173/`.
-
-#### Step 2: Start the Agent
+#### Step 1: Start the Agent
 
 In a separate terminal, navigate to the agent directory and start the agent:
 
@@ -194,9 +199,21 @@ uv run agent.py
 
 The agent will run on `http://localhost:8000`.
 
+#### Step 2: Start the Client
+
+In a new terminal, navigate to the client directory and start the dev server (requires building the Lit renderer first):
+
+```bash
+cd samples/client/lit/mcp-apps-in-a2ui-sample
+npm install
+npm run dev
+```
+
+The client starts at `http://localhost:5173/`.
+
 #### Step 3: Open in Browser
 
-Open your browser and navigate to `http://localhost:5173`. You should see the A2UI interface loading the MCP App.
+Open your browser and navigate to `http://localhost:5173/`. You should see the A2UI interface loading the MCP App.
 
 **What to expect**: A page loading the MCP App in a sandboxed iframe. Clicking the "Call Agent Tool" button inside the iframe will trigger an action that is handled by the agent.
 
@@ -212,8 +229,6 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 cd samples/mcp/mcp-apps-calculator/
 uv run .
 ```
-
-> > > > > > > e3c17f1f (docs: add npm install step to MCP guide)
 
 The MCP server starts on `http://localhost:8000` using SSE transport.
 

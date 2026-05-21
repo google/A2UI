@@ -32,7 +32,7 @@ from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.models.lite_llm import LiteLlm
+from google.adk.models import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -149,7 +149,12 @@ class RestaurantAgent:
       self, schema_manager: Optional[A2uiSchemaManager] = None
   ) -> LlmAgent:
     """Builds the LLM agent for the restaurant agent."""
-    LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+    model_env = (
+        os.getenv("MODEL_NAME")
+        or os.getenv("LITELLM_MODEL")
+        or "gemini-3-flash-preview"
+    )
+    model_name = model_env.split("/")[-1]
 
     instruction = (
         schema_manager.generate_system_prompt(
@@ -164,7 +169,7 @@ class RestaurantAgent:
     )
 
     return LlmAgent(
-        model=LiteLlm(model=LITELLM_MODEL),
+        model=Gemini(model=model_name),
         name="restaurant_agent",
         description="An agent that finds restaurants and helps book tables.",
         instruction=instruction,

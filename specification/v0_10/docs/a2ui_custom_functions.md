@@ -82,7 +82,7 @@ In your catalog, you simply need to define the `anyFunction` reference:
 }
 ```
 
-If you want to incorporate functions defined in the [`basic_catalog.json`],
+If you want to incorporate functions defined in the [`catalogs/basic/catalog.json`],
 those can be added too:
 
 ```json
@@ -92,7 +92,7 @@ those can be added too:
       "oneOf": [
         {"$ref": "#/functions/trim"},
         {"$ref": "#/functions/getScreenResolution"},
-        {"$ref": "basic_catalog.json#/$defs/anyFunction"}
+        {"$ref": "catalogs/basic/catalog.json#/$defs/anyFunction"}
       ]
     }
   }
