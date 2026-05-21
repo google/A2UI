@@ -16,9 +16,13 @@
 
 @file:JvmName("CatalogApi")
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 import java.io.File
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.logging.Logger
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -45,7 +49,7 @@ data class CatalogConfig(
     fun fromPath(name: String, catalogPath: String, examplesPath: String? = null): CatalogConfig {
       val uri =
         try {
-          java.net.URI(catalogPath)
+          URI(catalogPath)
         } catch (e: Exception) {
           null
         }
@@ -54,8 +58,7 @@ data class CatalogConfig(
       val provider =
         when {
           scheme == null || scheme == "file" -> {
-            val path =
-              if (scheme == "file") java.nio.file.Paths.get(uri).toString() else catalogPath
+            val path = if (scheme == "file") Paths.get(uri).toString() else catalogPath
             FileSystemCatalogProvider(path)
           }
           scheme == "http" || scheme == "https" ->
@@ -72,13 +75,13 @@ internal fun resolveExamplesPath(path: String?): String? {
   if (path != null) {
     val uri =
       try {
-        java.net.URI(path)
+        URI(path)
       } catch (e: Exception) {
         null
       }
     val scheme = uri?.scheme?.lowercase()
     if (scheme == null || scheme == "file") {
-      return if (scheme == "file") java.nio.file.Paths.get(uri).toString() else path
+      return if (scheme == "file") Paths.get(uri).toString() else path
     }
     throw IllegalArgumentException("Unsupported examples URL scheme: $path")
   }
@@ -339,7 +342,7 @@ data class A2uiCatalog(
 
     if (baseDirFile.exists() && baseDirFile.isDirectory) {
       try {
-        val matcher = java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$pattern")
+        val matcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
         // To support globstar matching where ** matches zero directories, create an alternate
         // matcher.
         val altPattern =
@@ -348,21 +351,21 @@ data class A2uiCatalog(
             .replace(regex = "^\\*\\*/".toRegex(), replacement = "")
         val altMatcher =
           if (altPattern != pattern) {
-            java.nio.file.FileSystems.getDefault().getPathMatcher("glob:$altPattern")
+            FileSystems.getDefault().getPathMatcher("glob:$altPattern")
           } else {
             null
           }
 
         val startPath =
           if (baseDirPath.isEmpty()) {
-            java.nio.file.Paths.get("")
+            Paths.get("")
           } else {
-            java.nio.file.Paths.get(baseDirPath)
+            Paths.get(baseDirPath)
           }
 
-        java.nio.file.Files.walk(startPath).use { stream ->
+        Files.walk(startPath).use { stream ->
           stream.forEach { p ->
-            if (java.nio.file.Files.isRegularFile(p)) {
+            if (Files.isRegularFile(p)) {
               if (matcher.matches(p) || altMatcher?.matches(p) == true) {
                 matchedFiles.add(p.toFile())
               }
