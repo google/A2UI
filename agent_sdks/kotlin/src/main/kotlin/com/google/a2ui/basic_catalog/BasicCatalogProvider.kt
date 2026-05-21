@@ -18,12 +18,12 @@
 
 package com.google.a2ui.basic_catalog
 
-import com.google.a2ui.core.schema.A2uiCatalogProvider
-import com.google.a2ui.core.schema.A2uiConstants
-import com.google.a2ui.core.schema.A2uiVersion
-import com.google.a2ui.core.schema.CatalogConfig
-import com.google.a2ui.core.schema.SchemaResourceLoader
-import com.google.a2ui.core.schema.resolveExamplesPath
+import com.google.a2ui.schema.A2uiCatalogProvider
+import com.google.a2ui.schema.A2uiConstants
+import com.google.a2ui.schema.A2uiVersion
+import com.google.a2ui.schema.CatalogConfig
+import com.google.a2ui.schema.SchemaResourceLoader
+import com.google.a2ui.schema.resolveExamplesPath
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 

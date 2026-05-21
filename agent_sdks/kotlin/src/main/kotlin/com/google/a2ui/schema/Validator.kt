@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.networknt.schema.JsonSchema
 import com.networknt.schema.JsonSchemaFactory
 import com.networknt.schema.SchemaValidatorsConfig
 import com.networknt.schema.SpecVersion
+import kotlin.collections.get
+import kotlin.collections.iterator
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement

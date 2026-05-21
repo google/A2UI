@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.parser
+package com.google.a2ui.parser
 
 import java.util.logging.Logger
 import kotlinx.serialization.json.Json

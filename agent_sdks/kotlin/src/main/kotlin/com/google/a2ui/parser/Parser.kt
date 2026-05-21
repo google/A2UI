@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.parser
+package com.google.a2ui.parser
 
-import com.google.a2ui.core.schema.A2uiConstants
-import com.google.a2ui.core.schema.A2uiValidator
+import com.google.a2ui.schema.A2uiConstants
+import com.google.a2ui.schema.A2uiValidator
 import java.util.logging.Logger
 import kotlinx.serialization.json.JsonElement
 

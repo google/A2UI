@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
+import kotlin.io.path.createTempFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -153,7 +154,7 @@ class ValidatorTest {
         )
         .jsonObject
 
-    val tempCatalogFile = kotlin.io.path.createTempFile("catalog", ".json").toFile()
+    val tempCatalogFile = createTempFile("catalog", ".json").toFile()
     tempCatalogFile.writeText(catalogSchema.toString())
     tempCatalogFile.deleteOnExit()
 
