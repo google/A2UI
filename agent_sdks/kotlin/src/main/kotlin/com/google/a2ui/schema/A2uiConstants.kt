@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 /** Central repository for A2UI protocol constants, aligned with the Python SDK. */
 object A2uiConstants {
