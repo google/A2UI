@@ -27,7 +27,7 @@ from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 
 
 def test_catalog_id_property():
-  catalog_id = "https://a2ui.org/basic_catalog.json"
+  catalog_id = "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json"
   catalog = A2uiCatalog(
       version=VERSION_0_8,
       name=BASIC_CATALOG_NAME,
