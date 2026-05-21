@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core
+package com.google.a2ui
+
+import kotlinx.serialization.json.JsonObject
 
 /**
  * Defines the contract for an A2UI inference strategy, responsible for constructing the LLM system
@@ -40,7 +42,7 @@ interface InferenceStrategy {
     roleDescription: String,
     workflowDescription: String = "",
     uiDescription: String = "",
-    clientUiCapabilities: kotlinx.serialization.json.JsonObject? = null,
+    clientUiCapabilities: JsonObject? = null,
     allowedComponents: List<String> = emptyList(),
     allowedMessages: List<String> = emptyList(),
     includeSchema: Boolean = false,

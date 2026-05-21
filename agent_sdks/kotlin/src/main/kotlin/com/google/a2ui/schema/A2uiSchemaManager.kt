@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
-import com.google.a2ui.core.InferenceStrategy
+import com.google.a2ui.InferenceStrategy
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject

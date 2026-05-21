@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.parser
+package com.google.a2ui.parser
 
-import com.google.a2ui.core.schema.A2uiCatalog
-import com.google.a2ui.core.schema.A2uiVersion
+import com.google.a2ui.schema.A2uiCatalog
+import com.google.a2ui.schema.A2uiVersion
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject

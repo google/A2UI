@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
+import com.google.a2ui.basic_catalog.BasicCatalog
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -74,7 +75,7 @@ class CatalogTest {
   @Test
   fun resolvesExamplesPathInBasicCatalogGetConfig() {
     val config =
-      com.google.a2ui.basic_catalog.BasicCatalog.getConfig(
+      BasicCatalog.getConfig(
         version = A2uiVersion.VERSION_0_9,
         examplesPath = "file:///absolute/examples",
       )

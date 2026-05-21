@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.networknt.schema.JsonSchema

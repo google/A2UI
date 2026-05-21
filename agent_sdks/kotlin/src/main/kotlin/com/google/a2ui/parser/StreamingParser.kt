@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.parser
+package com.google.a2ui.parser
 
-import com.google.a2ui.core.schema.A2uiCatalog
-import com.google.a2ui.core.schema.A2uiConstants
-import com.google.a2ui.core.schema.A2uiValidator
-import com.google.a2ui.core.schema.A2uiVersion
-import com.google.a2ui.core.schema.TopologyAnalyzer
+import com.google.a2ui.schema.A2uiCatalog
+import com.google.a2ui.schema.A2uiConstants
+import com.google.a2ui.schema.A2uiValidator
+import com.google.a2ui.schema.A2uiVersion
+import com.google.a2ui.schema.TopologyAnalyzer
 import java.util.logging.Logger
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -45,8 +46,8 @@ abstract class StreamingParser(
   protected val validator: A2uiValidator? = catalog?.let { A2uiValidator(it, schemaMappings) }
 
   protected var foundDelimiter = false
-  protected val buffer = java.lang.StringBuilder()
-  protected val jsonBuffer = java.lang.StringBuilder()
+  protected val buffer = StringBuilder()
+  protected val jsonBuffer = StringBuilder()
   protected val braceStack = mutableListOf<Pair<String, Int>>()
   protected var braceCount = 0
   protected var inTopLevelList = false
@@ -517,10 +518,7 @@ abstract class StreamingParser(
                     }
                   }
                 } catch (e: Exception) {
-                  if (
-                    e is IllegalArgumentException &&
-                      e !is kotlinx.serialization.SerializationException
-                  ) {
+                  if (e is IllegalArgumentException && e !is SerializationException) {
                     throw e
                   }
                   logger.severe { "Parsing error: ${e.message}" }
