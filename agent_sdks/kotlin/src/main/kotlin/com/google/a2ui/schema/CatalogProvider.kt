@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 import java.io.File
 import java.io.IOException

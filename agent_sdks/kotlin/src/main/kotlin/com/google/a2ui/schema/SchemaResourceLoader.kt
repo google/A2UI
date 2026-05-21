@@ -16,7 +16,7 @@
 
 @file:JvmName("A2uiUtils")
 
-package com.google.a2ui.core.schema
+package com.google.a2ui.schema
 
 import java.io.IOException
 import java.io.InputStream
