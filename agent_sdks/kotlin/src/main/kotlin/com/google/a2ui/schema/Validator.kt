@@ -16,7 +16,6 @@
 
 package com.google.a2ui.schema
 
-import com.networknt.schema.Error
 import com.networknt.schema.InputFormat
 import com.networknt.schema.Schema
 import com.networknt.schema.SchemaRegistry
@@ -45,7 +44,6 @@ constructor(
   private val catalog: A2uiCatalog,
   private val schemaMappings: Map<String, String> = emptyMap(),
 ) {
-  private val validator: Schema = buildValidator()
   private val shared0_9Registry: SchemaRegistry by lazy {
     SchemaRegistry.withDialect(Dialects.getDraft202012()) { builder ->
       builder.schemaIdResolvers { schemaIdResolvers ->
@@ -53,10 +51,9 @@ constructor(
       }
     }
   }
-  private val sharedConfig: SchemaRegistryConfig by lazy {
-    SchemaRegistryConfig.builder().build()
-  }
+  private val sharedConfig: SchemaRegistryConfig by lazy { SchemaRegistryConfig.builder().build() }
   private val subValidators = mutableMapOf<String, Schema>()
+  private val validator: Schema = buildValidator()
 
   private fun buildValidator(): Schema =
     if (catalog.version == A2uiVersion.VERSION_0_8) build0_8Validator() else build0_9Validator()
@@ -132,8 +129,6 @@ constructor(
     val baseDirUri = baseUri.substringBeforeLast("/")
     val commonTypesUri = "$baseDirUri/$FILE_COMMON_TYPES"
 
-    val config = SchemaRegistryConfig.builder().build()
-
     val jsonFmt = Json { prettyPrint = false }
 
     val registry =
@@ -142,7 +137,7 @@ constructor(
           schemaMappings.forEach { (prefix, target) -> schemaIdResolvers.mapPrefix(prefix, target) }
           schemaIdResolvers.mapPrefix(FILE_COMMON_TYPES, commonTypesUri)
         }
-        builder.schemaRegistryConfig(config)
+        builder.schemaRegistryConfig(sharedConfig)
       }
 
     val schemaString = jsonFmt.encodeToString(JsonElement.serializer(), JsonObject(fullSchema))
@@ -154,18 +149,9 @@ constructor(
       SchemaResourceLoader.wrapAsJsonArray(catalog.serverToClientSchema).toMutableMap()
     fullSchema[KEY_DOLLAR_SCHEMA] = JsonPrimitive(SCHEMA_DRAFT_2020_12)
 
-    val config = SchemaRegistryConfig.builder().build()
-    val registry =
-      SchemaRegistry.withDialect(Dialects.getDraft202012()) { builder ->
-        builder.schemaIdResolvers { schemaIdResolvers ->
-          schemaMappings.forEach { (prefix, target) -> schemaIdResolvers.mapPrefix(prefix, target) }
-        }
-        builder.schemaRegistryConfig(config)
-      }
-
     val jsonFmt = Json { prettyPrint = false }
     val schemaString = jsonFmt.encodeToString(JsonElement.serializer(), JsonObject(fullSchema))
-    return registry.getSchema(schemaString, InputFormat.JSON)
+    return shared0_9Registry.getSchema(schemaString, InputFormat.JSON)
   }
 
   /**
