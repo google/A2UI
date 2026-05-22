@@ -18,7 +18,6 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {Video} from './video';
 import type {VideoNode} from '../types';
 import {Theme} from '../rendering/theming';
-import {ChangeDetectionStrategy} from '@angular/core';
 import {MessageProcessor} from '../data/processor';
 import {Catalog} from '../rendering/catalog';
 
@@ -55,9 +54,6 @@ describe('Video Component', () => {
         {provide: Catalog, useValue: {}},
       ],
     })
-      .overrideComponent(Video, {
-        set: {changeDetection: ChangeDetectionStrategy.Eager},
-      })
       .compileComponents();
 
     fixture = TestBed.createComponent(Video);

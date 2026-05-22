@@ -20,7 +20,6 @@ import {MessageProcessor} from '../data/processor';
 import {Theme} from '../rendering/theming';
 import {Catalog} from '../rendering/catalog';
 import {By} from '@angular/platform-browser';
-import {ChangeDetectionStrategy} from '@angular/core';
 
 describe('Slider Component', () => {
   let component: Slider;
@@ -53,11 +52,6 @@ describe('Slider Component', () => {
         {provide: Catalog, useValue: {}},
       ],
     })
-      .overrideComponent(Slider, {
-        set: {
-          changeDetection: ChangeDetectionStrategy.Eager,
-        },
-      })
       .compileComponents();
 
     fixture = TestBed.createComponent(Slider);

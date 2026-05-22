@@ -18,7 +18,6 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {DateTimeInput} from './datetime-input';
 import type {A2UIClientEventMessage, DateTimeInputNode} from '../types';
 import {Theme} from '../rendering/theming';
-import {ChangeDetectionStrategy} from '@angular/core';
 import {MessageProcessor} from '../data/processor';
 import {Catalog} from '../rendering/catalog';
 
@@ -58,9 +57,6 @@ describe('DateTimeInput Component', () => {
         {provide: Catalog, useValue: {}},
       ],
     })
-      .overrideComponent(DateTimeInput, {
-        set: {changeDetection: ChangeDetectionStrategy.Eager},
-      })
       .compileComponents();
 
     fixture = TestBed.createComponent(DateTimeInput);

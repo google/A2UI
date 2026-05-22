@@ -20,7 +20,6 @@ import {MessageProcessor} from '../data/processor';
 import {Theme} from '../rendering/theming';
 import {Catalog} from '../rendering/catalog';
 import {By} from '@angular/platform-browser';
-import {ChangeDetectionStrategy} from '@angular/core';
 
 describe('TextField Component', () => {
   let component: TextField;
@@ -53,11 +52,6 @@ describe('TextField Component', () => {
         {provide: Catalog, useValue: {}},
       ],
     })
-      .overrideComponent(TextField, {
-        set: {
-          changeDetection: ChangeDetectionStrategy.Eager,
-        },
-      })
       .compileComponents();
 
     fixture = TestBed.createComponent(TextField);
