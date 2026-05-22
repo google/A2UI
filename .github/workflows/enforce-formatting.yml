@@ -39,6 +39,12 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Set up Flutter (for Dart SDK)
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          channel: stable
+          cache: true
+
       - name: Install `uv` globally
         run: |
           python -m pip install --upgrade pip
