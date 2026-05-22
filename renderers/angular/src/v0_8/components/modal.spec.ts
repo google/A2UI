@@ -72,7 +72,7 @@ describe('Modal Component', () => {
     })
       .overrideComponent(Modal, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

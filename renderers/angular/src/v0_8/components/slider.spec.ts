@@ -55,7 +55,7 @@ describe('Slider Component', () => {
     })
       .overrideComponent(Slider, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
         },
       })
       .compileComponents();

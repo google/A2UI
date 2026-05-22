@@ -56,7 +56,7 @@ describe('Video Component', () => {
       ],
     })
       .overrideComponent(Video, {
-        set: {changeDetection: ChangeDetectionStrategy.Default},
+        set: {changeDetection: ChangeDetectionStrategy.Eager},
       })
       .compileComponents();
 

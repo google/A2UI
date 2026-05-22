@@ -55,7 +55,7 @@ describe('TextField Component', () => {
     })
       .overrideComponent(TextField, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
         },
       })
       .compileComponents();

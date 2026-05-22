@@ -65,7 +65,7 @@ describe('List Component', () => {
     })
       .overrideComponent(List, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

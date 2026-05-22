@@ -59,7 +59,7 @@ describe('DateTimeInput Component', () => {
       ],
     })
       .overrideComponent(DateTimeInput, {
-        set: {changeDetection: ChangeDetectionStrategy.Default},
+        set: {changeDetection: ChangeDetectionStrategy.Eager},
       })
       .compileComponents();
 

@@ -61,7 +61,7 @@ describe('Surface Component', () => {
     })
       .overrideComponent(Surface, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

@@ -65,7 +65,7 @@ describe('Card Component', () => {
     })
       .overrideComponent(Card, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

@@ -77,7 +77,7 @@ describe('Tabs Component', () => {
     })
       .overrideComponent(Tabs, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

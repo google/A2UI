@@ -64,7 +64,7 @@ describe('Column Component', () => {
     })
       .overrideComponent(Column, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
           imports: [MockRenderer],
         },
       })

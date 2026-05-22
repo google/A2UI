@@ -60,7 +60,7 @@ describe('MultipleChoice Component', () => {
     })
       .overrideComponent(MultipleChoice, {
         set: {
-          changeDetection: ChangeDetectionStrategy.Default,
+          changeDetection: ChangeDetectionStrategy.Eager,
         },
       })
       .compileComponents();
