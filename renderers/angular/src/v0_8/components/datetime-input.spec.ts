@@ -56,8 +56,7 @@ describe('DateTimeInput Component', () => {
         {provide: Theme, useValue: mockTheme},
         {provide: Catalog, useValue: {}},
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DateTimeInput);
     component = fixture.componentInstance;

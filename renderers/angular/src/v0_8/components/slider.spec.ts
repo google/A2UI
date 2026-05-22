@@ -51,8 +51,7 @@ describe('Slider Component', () => {
         {provide: Theme, useValue: mockTheme},
         {provide: Catalog, useValue: {}},
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Slider);
     component = fixture.componentInstance;

@@ -56,8 +56,7 @@ describe('MultipleChoice Component', () => {
         {provide: Theme, useValue: mockTheme},
         {provide: Catalog, useValue: {}},
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MultipleChoice);
     component = fixture.componentInstance;

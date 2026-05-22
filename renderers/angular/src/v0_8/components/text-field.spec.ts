@@ -51,8 +51,7 @@ describe('TextField Component', () => {
         {provide: Theme, useValue: mockTheme},
         {provide: Catalog, useValue: {}},
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TextField);
     component = fixture.componentInstance;

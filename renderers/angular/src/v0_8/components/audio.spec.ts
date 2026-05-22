@@ -52,8 +52,7 @@ describe('AudioPlayer Component', () => {
         {provide: Theme, useValue: mockTheme},
         {provide: Catalog, useValue: {}},
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AudioPlayer);
     component = fixture.componentInstance;
