@@ -16,7 +16,7 @@
 
 import {describe, it} from 'node:test';
 import * as assert from 'node:assert';
-import {ImageApi} from './basic_components.js';
+import {ImageApi, SliderApi} from './basic_components.js';
 
 describe('Basic Components Schema', () => {
   describe('ImageApi', () => {
@@ -44,6 +44,18 @@ describe('Basic Components Schema', () => {
         url: 123, // Invalid type
       };
       assert.throws(() => ImageApi.schema.parse(invalidImage));
+    });
+  });
+
+  describe('SliderApi', () => {
+    it('should reject non-spec step property', () => {
+      const slider = {
+        max: 100,
+        step: 5,
+        value: {literalNumber: 50},
+      };
+
+      assert.throws(() => SliderApi.schema.parse(slider));
     });
   });
 });
