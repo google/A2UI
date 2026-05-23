@@ -49,13 +49,23 @@ describe('Basic Components Schema', () => {
 
   describe('SliderApi', () => {
     it('should reject non-spec step property', () => {
-      const slider = {
+      const validSlider = {
         max: 100,
-        step: 5,
-        value: {literalNumber: 50},
+        value: 50,
       };
+      SliderApi.schema.parse(validSlider);
 
-      assert.throws(() => SliderApi.schema.parse(slider));
+      const result = SliderApi.schema.safeParse({
+        ...validSlider,
+        step: 5,
+      });
+
+      assert.strictEqual(result.success, false);
+      assert.ok(
+        result.error.issues.some(
+          issue => issue.code === 'unrecognized_keys' && issue.keys.includes('step'),
+        ),
+      );
     });
   });
 });
