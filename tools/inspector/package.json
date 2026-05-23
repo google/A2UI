@@ -10,7 +10,7 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "npm run serve --watch",
+    "dev": "npm run serve",
     "test": "wireit",
     "serve": "wireit"
   },

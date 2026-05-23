@@ -71,6 +71,9 @@
       "env": {
         "FORCE_COLOR": "1"
       },
+      "dependencies": [
+        "../web_core:build:tsc"
+      ],
       "files": [
         "src/**/*.ts",
         "src/**/*.json",
