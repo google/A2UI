@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 MIME_TYPE_KEY = "mimeType"
 A2UI_MIME_TYPE = "application/a2ui+json"
+DEPRECATED_A2UI_MIME_TYPE = "application/json+a2ui"
 
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
@@ -60,7 +61,7 @@ def is_a2ui_part(part: Part) -> bool:
   return (
       isinstance(part.root, DataPart)
       and part.root.metadata
-      and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE
+      and part.root.metadata.get(MIME_TYPE_KEY) in (A2UI_MIME_TYPE, DEPRECATED_A2UI_MIME_TYPE)
   )
 
 

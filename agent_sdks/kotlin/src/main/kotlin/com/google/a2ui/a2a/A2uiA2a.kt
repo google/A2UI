@@ -27,6 +27,7 @@ object A2uiA2a {
   const val A2UI_EXTENSION_BASE_URI = "https://a2ui.org/a2a-extension/a2ui/v"
   const val MIME_TYPE_KEY = "mimeType"
   const val A2UI_MIME_TYPE = "application/a2ui+json"
+  const val DEPRECATED_A2UI_MIME_TYPE = "application/json+a2ui"
 
   /** Creates an A2A Part containing A2UI data. */
   fun createA2uiPart(a2uiData: JsonElement): Part<*> =
@@ -34,7 +35,7 @@ object A2uiA2a {
 
   /** Checks if an A2A Part contains A2UI data. */
   fun isA2uiPart(part: Part<*>): Boolean =
-    part is DataPart && part.metadata?.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE
+    part is DataPart && (part.metadata?.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE || part.metadata?.get(MIME_TYPE_KEY) == DEPRECATED_A2UI_MIME_TYPE)
 
   /** Extracts the A2UI data from an A2A Part if present. */
   fun getA2uiData(part: Part<*>): JsonElement? =
