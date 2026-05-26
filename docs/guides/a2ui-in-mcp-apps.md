@@ -199,7 +199,7 @@ const result = await callHostMethod('ui/fetch_counter_a2ui');
 
 // 2. Find and parse the A2UI resource
 const a2uiResource = result.find(
-  c => c.type === 'resource' && c.resource?.mimeType === 'application/a2ui+json',
+  c => c.type === 'resource' && (c.resource?.mimeType === 'application/a2ui+json' || c.resource?.mimeType === 'application/json+a2ui'),
 );
 
 if (a2uiResource?.resource?.text) {
@@ -298,7 +298,7 @@ To put this all together, here is an HTML mockup representing a compiled and inl
       // Helper to extract and process dynamic A2UI responses from tool results
       function processA2UIResponse(result) {
         const a2uiResource = result?.content?.find(
-          c => c.type === 'resource' && c.resource?.mimeType === 'application/a2ui+json',
+          c => c.type === 'resource' && (c.resource?.mimeType === 'application/a2ui+json' || c.resource?.mimeType === 'application/json+a2ui'),
         );
         if (a2uiResource?.resource?.text) {
           const payload = JSON.parse(a2uiResource.resource.text);
