@@ -78,7 +78,7 @@ class A2uiPartConverter:
         response_dict = function_response.response or {}
 
         if constants.A2UI_TOOL_ERROR_KEY in response_dict:
-          logger.warning(f"A2UI tool call failed: {response_dict[constantsA2UI_TOOL_ERROR_KEY]}")
+          logger.warning(f"A2UI tool call failed: {response_dict[constants.A2UI_TOOL_ERROR_KEY]}")
           return []
 
         if isinstance(response_dict, dict) and constants.A2UI_VALIDATED_JSON_KEY in response_dict:
