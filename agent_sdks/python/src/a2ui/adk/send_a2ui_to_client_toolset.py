@@ -94,6 +94,8 @@ from a2ui.parser.payload_fixer import parse_and_fix
 from a2ui.schema import catalog
 from a2ui.schema import constants
 from a2ui.schema.catalog import A2uiCatalog
+from a2ui.schema import catalog
+from a2ui.schema.catalog import A2uiCatalog
 from a2ui.schema.constants import (
     A2UI_SCHEMA_BLOCK_END,
     A2UI_SCHEMA_BLOCK_START,

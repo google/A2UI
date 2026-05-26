@@ -23,8 +23,7 @@ from a2ui.adk.a2a.part_converter import A2uiPartConverter
 from a2ui.schema.catalog import A2uiCatalog
 
 
-@pytest.mark.asyncio
-async def test_event_converter_injects_catalog():
+def test_event_converter_injects_catalog():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   event_mock = MagicMock()
   invocation_context_mock = MagicMock()
@@ -50,8 +49,7 @@ async def test_event_converter_injects_catalog():
     assert effective_part_converter.__self__._catalog == catalog_mock
 
 
-@pytest.mark.asyncio
-async def test_event_converter_falls_back_without_catalog():
+def test_event_converter_falls_back_without_catalog():
   event_mock = MagicMock()
   invocation_context_mock = MagicMock()
   invocation_context_mock.session.state = {}  # No catalog
