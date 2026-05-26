@@ -22,7 +22,10 @@ from dataclasses import dataclass, field
 from .utils import load_from_bundled_resource
 from ..inference_strategy import InferenceStrategy
 from .constants import *
+from .output_mode import A2UIOutputMode
 from .catalog import CatalogConfig, A2uiCatalog
+
+logger = logging.getLogger(__name__)
 
 
 class A2uiSchemaManager(InferenceStrategy):
@@ -209,11 +212,48 @@ class A2uiSchemaManager(InferenceStrategy):
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
+      output_mode: A2UIOutputMode = A2UIOutputMode.TEXT,
   ) -> str:
-    """Assembles the final system instruction for the LLM."""
+    """Assembles the final system instruction for the LLM.
+
+    Args:
+      role_description: A description of the agent's role.
+      workflow_description: Additional workflow rules appended to the base
+          rules.
+      ui_description: A description of the UI the agent should generate.
+      client_ui_capabilities: A dictionary of client UI capabilities, used
+          for catalog selection.
+      allowed_components: An optional list of component names to include in
+          the prompt. If None, all components are included.
+      allowed_messages: An optional list of message names to include in the
+          prompt. If None, all messages are included.
+      include_schema: Whether to include the JSON schema in the prompt.
+      include_examples: Whether to include examples in the prompt.
+      validate_examples: Whether to validate examples against the schema.
+      output_mode: Controls how A2UI instructions are delivered. TEXT (default)
+          injects the schema into the system prompt. TOOL skips schema and
+          example injection (handled by SendA2uiToClientToolset) and uses
+          tool-oriented workflow rules.
+
+    Returns:
+      The assembled system prompt string.
+    """
     parts = [role_description]
 
-    workflow = DEFAULT_WORKFLOW_RULES
+    if output_mode == A2UIOutputMode.TOOL:
+      if include_schema or include_examples:
+        logger.warning(
+            "output_mode=TOOL overrides include_schema and include_examples "
+            "to False. Schema and examples are injected by "
+            "SendA2uiToClientToolset.process_llm_request() instead."
+        )
+      include_schema = False
+      include_examples = False
+      base_rules = TOOL_WORKFLOW_RULES
+    else:
+      base_rules = DEFAULT_WORKFLOW_RULES
+
+    workflow = base_rules
     if workflow_description:
       workflow += f"\n{workflow_description}"
     parts.append(f"## Workflow Description:\n{workflow}")
