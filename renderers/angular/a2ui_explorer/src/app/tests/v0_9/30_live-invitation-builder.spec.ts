@@ -16,7 +16,7 @@
 
 import {ComponentFixture} from '@angular/core/testing';
 import {DemoComponent} from '../../demo.component';
-import {getCanvas, loadExample, wait, waitForCondition} from '../test_utils';
+import {getCanvas, loadExample, wait, waitForCondition} from '../utils';
 
 describe('Example: Live Invitation Builder', () => {
   let fixture: ComponentFixture<DemoComponent>;

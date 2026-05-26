@@ -16,7 +16,7 @@
 
 package com.google.a2ui.a2a
 
-import com.google.a2ui.core.schema.A2uiConstants
+import com.google.a2ui.schema.A2uiConstants
 import io.a2a.spec.AgentExtension
 import io.a2a.spec.DataPart
 import io.a2a.spec.Part
