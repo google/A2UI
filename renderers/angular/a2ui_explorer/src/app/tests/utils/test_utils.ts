@@ -92,16 +92,16 @@ export function getCanvas(): HTMLDivElement {
  * Compatible with Jasmine because it uses standard boolean checks instead of throwing expectations inside the loop.
  */
 export async function waitForCondition(
-  condition: () => boolean,
+  condition: () => boolean | Promise<boolean>,
   timeout = 1000,
   interval = 50,
 ): Promise<boolean> {
-  const start = Date.now();
+  const start = performance.now();
   while (true) {
-    if (condition()) {
+    if (await condition()) {
       return true;
     }
-    if (Date.now() - start > timeout) {
+    if (performance.now() - start > timeout) {
       return false;
     }
     await wait(interval);
