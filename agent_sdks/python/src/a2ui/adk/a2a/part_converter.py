@@ -55,9 +55,7 @@ class A2uiPartConverter:
   catalog to validate and fix JSON payloads.
   """
 
-  def __init__(
-      self, a2ui_catalog: A2uiCatalog, bypass_tool_check: bool = False
-  ):
+  def __init__(self, a2ui_catalog: A2uiCatalog, bypass_tool_check: bool = False):
     self._catalog = a2ui_catalog
     self._bypass_tool_check = bypass_tool_check
 
@@ -72,16 +70,23 @@ class A2uiPartConverter:
     """
     # 1. Handle Tool Responses (FunctionResponse)
     if function_response := part.function_response:
-      is_send_a2ui_json_to_client_response = function_response.name == constants.A2UI_TOOL_NAME
+      is_send_a2ui_json_to_client_response = (
+          function_response.name == constants.A2UI_TOOL_NAME
+      )
 
       if is_send_a2ui_json_to_client_response or self._bypass_tool_check:
         response_dict = function_response.response or {}
 
         if constants.A2UI_TOOL_ERROR_KEY in response_dict:
-          logger.warning(f"A2UI tool call failed: {response_dict[constants.A2UI_TOOL_ERROR_KEY]}")
+          logger.warning(
+              f"A2UI tool call failed: {response_dict[constants.A2UI_TOOL_ERROR_KEY]}"
+          )
           return []
 
-        if isinstance(response_dict, dict) and constants.A2UI_VALIDATED_JSON_KEY in response_dict:
+        if (
+            isinstance(response_dict, dict)
+            and constants.A2UI_VALIDATED_JSON_KEY in response_dict
+        ):
           json_data = response_dict.get(constants.A2UI_VALIDATED_JSON_KEY)
           if json_data:
             return [create_a2ui_part(message) for message in json_data]
@@ -91,7 +96,9 @@ class A2uiPartConverter:
           return []
 
     # 2. Handle Tool Calls (FunctionCall) - Skip sending to client
-    if (function_call := part.function_call) and function_call.name == constants.A2UI_TOOL_NAME:
+    if (
+        function_call := part.function_call
+    ) and function_call.name == constants.A2UI_TOOL_NAME:
       return []
 
     # 3. Handle Text-based A2UI (TextPart)
