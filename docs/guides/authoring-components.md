@@ -148,7 +148,11 @@ Keep these key points in mind when implementing components:
 
 ---
 
-## 3. Registering with the Renderer (Client)
+## 3. Registering with the Renderers (Client)
+
+Register the component with your renderer so that A2UI can instantiate it when the agent sends a payload referencing it. The steps differ by renderer.
+
+### Angular renderer
 
 Once the component is implemented, register it in your client catalog. This maps the component name (used by agents) to the implementation class.
 
@@ -179,9 +183,7 @@ Key points for registration:
 - **Lazy Loading**: Use `import()` to lazy-load the component code.
 - **Input Bindings**: Use `inputBinding` to map properties from the schema to Angular inputs.
 
-### Registering with the Lit Renderer
-
-#### v0.9 (recommended)
+### Lit v0.9 (recommended)
 
 With `@a2ui/lit/v0_9`, catalog registration is handled at the protocol level. Define a `Catalog` object with your components and pass it to the `MessageProcessor`. When the agent sends a `createSurface` message with a matching `catalogId`, the processor automatically resolves and binds your catalog — no client-side flags required.
 
@@ -225,7 +227,7 @@ The agent then selects your catalog by referencing its ID in the `createSurface`
 
 The `A2uiSurface` element in v0.9 receives a fully-resolved `SurfaceModel` (with catalog already bound), so custom components render automatically alongside standard ones.
 
-#### v0.8 (legacy)
+### Lit v0.8 (legacy)
 
 When using the `@a2ui/lit` renderer with the v0.8 protocol, register your custom components via the `componentRegistry`, then opt in on the `<a2ui-surface>` element by setting `enableCustomElements = true`.
 
