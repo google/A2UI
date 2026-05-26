@@ -26,7 +26,7 @@ from a2a.types import (
 logger = logging.getLogger(__name__)
 
 MIME_TYPE_KEY = "mimeType"
-A2UI_MIME_TYPE = "application/json+a2ui"
+A2UI_MIME_TYPE = "application/a2ui+json"
 
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:

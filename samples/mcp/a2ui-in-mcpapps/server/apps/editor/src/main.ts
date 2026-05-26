@@ -41,7 +41,7 @@ import EditorJS from '@editorjs/editorjs';
 // @ts-ignore
 import Paragraph from '@editorjs/paragraph';
 
-const A2UI_MIME_TYPE = 'application/json+a2ui';
+const A2UI_MIME_TYPE = 'application/a2ui+json';
 
 @Component({
   selector: 'editor-mcp-app',

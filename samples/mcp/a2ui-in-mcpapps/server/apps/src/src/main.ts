@@ -36,7 +36,7 @@ import {
 import {renderMarkdown} from '@a2ui/markdown-it';
 import {theme} from './theme';
 
-const A2UI_MIME_TYPE = 'application/json+a2ui';
+const A2UI_MIME_TYPE = 'application/a2ui+json';
 
 @Component({
   selector: 'basic-mcp-app',

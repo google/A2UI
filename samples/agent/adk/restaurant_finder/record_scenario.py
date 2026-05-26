@@ -120,7 +120,7 @@ async def record_query(agent, query, session_id, ui_version):
   async for event in agent.stream(query, session_id, ui_version):
     parts = event.get("parts", [])
     for p in parts:
-      if p.root.metadata and p.root.metadata.get("mimeType") == "application/json+a2ui":
+      if p.root.metadata and p.root.metadata.get("mimeType") == "application/a2ui+json":
         if isinstance(p.root.data, list):
           messages.extend(p.root.data)
         else:
