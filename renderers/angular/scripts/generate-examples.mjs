@@ -49,10 +49,6 @@ Options:
 `;
 
 /**
- * Overrides the catalog ID for minimal catalog to use basic catalog instead,
- * preserving the version in the path.
- */
-/**
  * Reads examples for a given version and catalogs.
  */
 function readExamples(specPath, catalogs, version) {
