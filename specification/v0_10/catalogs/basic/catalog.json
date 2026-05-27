@@ -586,6 +586,11 @@
             "value": {
               "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicNumber",
               "description": "The current value of the slider."
+            },
+            "steps": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "The number of discrete divisions in the slider range. If specified, the slider will snap to discrete values."
             }
           },
           "required": ["component", "value", "max"]
