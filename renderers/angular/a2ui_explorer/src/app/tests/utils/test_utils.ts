@@ -90,15 +90,16 @@ export function getCanvas(): HTMLDivElement {
  * Helper function to wait for a condition to become true.
  * Returns a promise that resolves to true if the condition is met within the timeout, or false otherwise.
  * Compatible with Jasmine because it uses standard boolean checks instead of throwing expectations inside the loop.
+ * Supports only synchronous condition checks.
  */
 export async function waitForCondition(
-  condition: () => boolean | Promise<boolean>,
+  condition: () => boolean,
   timeout = 1000,
   interval = 50,
 ): Promise<boolean> {
   const start = performance.now();
   while (true) {
-    if (await condition()) {
+    if (condition()) {
       return true;
     }
     if (performance.now() - start > timeout) {
