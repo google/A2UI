@@ -173,3 +173,27 @@ def test_converter_class_convert_other_part():
     assert len(a2a_parts) == 1
     assert a2a_parts[0] is mock_a2a_part
     mock_convert.assert_called_once_with(part)
+
+
+def test_converter_class_convert_tool_response_with_result_containing_a2ui():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  valid_a2ui = [{"type": "Text", "text": "Result UI"}]
+  catalog_mock.validator.validate.return_value = None
+
+  result_text = f"Here is the result:\n{A2UI_OPEN_TAG}\n{json.dumps(valid_a2ui)}\n{A2UI_CLOSE_TAG}"
+  function_response = genai_types.FunctionResponse(
+      name="some_generic_tool",
+      response={"result": result_text},
+  )
+  part = genai_types.Part(function_response=function_response)
+
+  a2a_parts = converter.convert(part)
+
+  # Expect 2 parts: TextPart and A2UI DataPart
+  assert len(a2a_parts) == 2
+  assert a2a_parts[0].root.text == "Here is the result:"
+  assert a2a_parts[1] == create_a2ui_part(valid_a2ui[0])
+  catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
+

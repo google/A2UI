@@ -95,6 +95,18 @@ class A2uiPartConverter:
           logger.info("No result in A2UI tool response")
           return []
 
+      # Handle generic/other tool responses that returned a string containing A2UI tags.
+      if function_response.response and function_response.response.get(
+          "result"
+      ):
+        result = function_response.response.get("result")
+        if has_a2ui_parts(result):
+          return parse_response_to_parts(
+              result,
+              validator=self._catalog.validator,
+              fallback_text="Failed to parse A2UI response.",
+          )
+
     # 2. Handle Tool Calls (FunctionCall) - Skip sending to client
     if (
         function_call := part.function_call
