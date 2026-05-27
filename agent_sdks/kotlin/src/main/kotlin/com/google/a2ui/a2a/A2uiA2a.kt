@@ -30,8 +30,11 @@ object A2uiA2a {
   const val DEPRECATED_A2UI_MIME_TYPE = "application/json+a2ui"
 
   /** Creates an A2A Part containing A2UI data. */
-  fun createA2uiPart(a2uiData: JsonElement): Part<*> =
-    DataPart(a2uiData, mapOf(MIME_TYPE_KEY to A2UI_MIME_TYPE))
+  @JvmOverloads
+  fun createA2uiPart(a2uiData: JsonElement, version: String? = null): Part<*> {
+    val mimeType = if (version == "0.8" || version == "0.9") DEPRECATED_A2UI_MIME_TYPE else A2UI_MIME_TYPE
+    return DataPart(a2uiData, mapOf(MIME_TYPE_KEY to mimeType))
+  }
 
   /** Checks if an A2A Part contains A2UI data. */
   fun isA2uiPart(part: Part<*>): Boolean =

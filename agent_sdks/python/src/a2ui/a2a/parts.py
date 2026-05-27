@@ -30,20 +30,25 @@ A2UI_MIME_TYPE = "application/a2ui+json"
 DEPRECATED_A2UI_MIME_TYPE = "application/json+a2ui"
 
 
-def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
+def create_a2ui_part(a2ui_data: dict[str, Any], version: Optional[str] = None) -> Part:
   """Creates an A2A Part containing A2UI data.
 
   Args:
       a2ui_data: The A2UI data dictionary.
+      version: Optional version string.
 
   Returns:
       An A2A Part with a DataPart containing the A2UI data.
   """
+  mime_type = A2UI_MIME_TYPE
+  if version in ("0.8", "0.9", "v0.8", "v0.9"):
+    mime_type = DEPRECATED_A2UI_MIME_TYPE
+
   return Part(
       root=DataPart(
           data=a2ui_data,
           metadata={
-              MIME_TYPE_KEY: A2UI_MIME_TYPE,
+              MIME_TYPE_KEY: mime_type,
           },
       )
   )
@@ -83,6 +88,7 @@ def parse_response_to_parts(
     content: str,
     validator: Optional[Any] = None,
     fallback_text: Optional[str] = None,
+    version: Optional[str] = None,
 ) -> List[Part]:
   """Helper to parse LLM response content into A2A Parts, with optional validation.
 
@@ -90,6 +96,7 @@ def parse_response_to_parts(
       content: The LLM response content, potentially containing A2UI delimiters.
       validator: Optional validator to run against extracted JSON payloads.
       fallback_text: Optional text to return if no parts are successfully created.
+      version: Optional version string.
 
   Returns:
       A list of A2A Part objects (TextPart and/or DataPart).
@@ -111,9 +118,9 @@ def parse_response_to_parts(
 
         if isinstance(json_data, list):
           for message in json_data:
-            parts.append(create_a2ui_part(message))
+            parts.append(create_a2ui_part(message, version=version))
         else:
-          parts.append(create_a2ui_part(json_data))
+          parts.append(create_a2ui_part(json_data, version=version))
 
   except Exception as e:
     logger.warning(f"Failed to parse or validate A2UI response: {e}")
@@ -127,12 +134,14 @@ def parse_response_to_parts(
 async def stream_response_to_parts(
     parser: "A2uiStreamParser",
     token_stream: AsyncIterable[str],
+    version: Optional[str] = None,
 ) -> AsyncIterable[Part]:
   """Helper to parse a stream of LLM tokens into A2A Parts incrementally.
 
   Args:
       parser: A2uiStreamParser instance to process the stream.
       token_stream: An async iterable of strings (tokens).
+      version: Optional version string.
 
   Yields:
       A2A Part objects as they are discovered in the stream.
@@ -155,6 +164,6 @@ async def stream_response_to_parts(
 
         if isinstance(json_data, list):
           for message in json_data:
-            yield create_a2ui_part(message)
+            yield create_a2ui_part(message, version=version)
         else:
-          yield create_a2ui_part(json_data)
+          yield create_a2ui_part(json_data, version=version)
