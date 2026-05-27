@@ -182,7 +182,10 @@ def test_converter_class_convert_tool_response_with_result_containing_a2ui():
   valid_a2ui = [{"type": "Text", "text": "Result UI"}]
   catalog_mock.validator.validate.return_value = None
 
-  result_text = f"Here is the result:\n{A2UI_OPEN_TAG}\n{json.dumps(valid_a2ui)}\n{A2UI_CLOSE_TAG}"
+  result_text = (
+      "Here is the"
+      f" result:\n{A2UI_OPEN_TAG}\n{json.dumps(valid_a2ui)}\n{A2UI_CLOSE_TAG}"
+  )
   function_response = genai_types.FunctionResponse(
       name="some_generic_tool",
       response={"result": result_text},
@@ -226,7 +229,6 @@ def test_converter_class_convert_tool_response_with_result_containing_invalid_a2
   assert len(a2a_parts) == 0
 
 
-
 def test_converter_class_convert_tool_response_with_result_containing_invalid_a2ui_and_custom_fallback():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   custom_fallback = "Could not load the custom tool UI."
@@ -242,5 +244,3 @@ def test_converter_class_convert_tool_response_with_result_containing_invalid_a2
   a2a_parts = converter.convert(part)
   assert len(a2a_parts) == 1
   assert a2a_parts[0].root.text == custom_fallback
-
-

@@ -93,4 +93,3 @@ def test_event_converter_propagates_fallback_text():
 
     assert isinstance(effective_part_converter.__self__, A2uiPartConverter)
     assert effective_part_converter.__self__._fallback_text == custom_fallback
-
