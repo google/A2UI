@@ -197,3 +197,50 @@ def test_converter_class_convert_tool_response_with_result_containing_a2ui():
   assert a2a_parts[1] == create_a2ui_part(valid_a2ui[0])
   catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
 
+
+def test_converter_class_convert_text_with_invalid_a2ui_and_custom_fallback():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  custom_fallback = "Could not build interface."
+  converter = A2uiPartConverter(catalog_mock, fallback_text=custom_fallback)
+
+  text = f"Here is the UI:\n{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
+  part = genai_types.Part(text=text)
+
+  a2a_parts = converter.convert(part)
+  assert len(a2a_parts) == 1
+  assert a2a_parts[0].root.text == custom_fallback
+
+
+def test_converter_class_convert_tool_response_with_result_containing_invalid_a2ui_and_default_fallback():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  result_text = f"Here is the result:\n{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
+  function_response = genai_types.FunctionResponse(
+      name="some_generic_tool",
+      response={"result": result_text},
+  )
+  part = genai_types.Part(function_response=function_response)
+
+  a2a_parts = converter.convert(part)
+  assert len(a2a_parts) == 0
+
+
+
+def test_converter_class_convert_tool_response_with_result_containing_invalid_a2ui_and_custom_fallback():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  custom_fallback = "Could not load the custom tool UI."
+  converter = A2uiPartConverter(catalog_mock, fallback_text=custom_fallback)
+
+  result_text = f"Here is the result:\n{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
+  function_response = genai_types.FunctionResponse(
+      name="some_generic_tool",
+      response={"result": result_text},
+  )
+  part = genai_types.Part(function_response=function_response)
+
+  a2a_parts = converter.convert(part)
+  assert len(a2a_parts) == 1
+  assert a2a_parts[0].root.text == custom_fallback
+
+

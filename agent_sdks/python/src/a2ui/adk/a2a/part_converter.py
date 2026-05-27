@@ -33,6 +33,8 @@ Usage Example:
 """
 
 import logging
+from typing import Optional
+
 
 from a2a import types as a2a_types
 from a2ui.a2a.parts import create_a2ui_part, parse_response_to_parts
@@ -55,9 +57,15 @@ class A2uiPartConverter:
   catalog to validate and fix JSON payloads.
   """
 
-  def __init__(self, a2ui_catalog: A2uiCatalog, bypass_tool_check: bool = False):
+  def __init__(
+      self,
+      a2ui_catalog: A2uiCatalog,
+      bypass_tool_check: bool = False,
+      fallback_text: Optional[str] = None,
+  ):
     self._catalog = a2ui_catalog
     self._bypass_tool_check = bypass_tool_check
+    self._fallback_text = fallback_text
 
   def convert(self, part: genai_types.Part) -> list[a2a_types.Part]:
     """Converts a GenAI part to A2A parts, with A2UI validation.
@@ -104,7 +112,7 @@ class A2uiPartConverter:
           return parse_response_to_parts(
               result,
               validator=self._catalog.validator,
-              fallback_text="Failed to parse A2UI response.",
+              fallback_text=self._fallback_text,
           )
 
     # 2. Handle Tool Calls (FunctionCall) - Skip sending to client
@@ -116,7 +124,11 @@ class A2uiPartConverter:
     # 3. Handle Text-based A2UI (TextPart)
     if text := part.text:
       if has_a2ui_parts(text):
-        return parse_response_to_parts(text, validator=self._catalog.validator)
+        return parse_response_to_parts(
+            text,
+            validator=self._catalog.validator,
+            fallback_text=self._fallback_text,
+        )
 
     # 4. Default conversion for other parts
     converted_part = part_converter.convert_genai_part_to_a2a_part(part)

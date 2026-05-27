@@ -55,10 +55,14 @@ class A2uiEventConverter:
   """
 
   def __init__(
-      self, catalog_key: str = "system:a2ui_catalog", bypass_tool_check: bool = False
+      self,
+      catalog_key: str = "system:a2ui_catalog",
+      bypass_tool_check: bool = False,
+      fallback_text: Optional[str] = None,
   ):
     self._catalog_key = catalog_key
     self._bypass_tool_check = bypass_tool_check
+    self._fallback_text = fallback_text
 
   def __call__(
       self,
@@ -77,7 +81,9 @@ class A2uiEventConverter:
     if catalog:
       # Use the catalog-aware part converter
       effective_converter = A2uiPartConverter(
-          catalog, bypass_tool_check=self._bypass_tool_check
+          catalog,
+          bypass_tool_check=self._bypass_tool_check,
+          fallback_text=self._fallback_text,
       ).convert
     else:
       effective_converter = part_converter_func
