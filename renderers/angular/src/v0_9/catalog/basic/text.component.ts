@@ -40,16 +40,14 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
   standalone: true,
   template: `
     @if (isKnownVariant()) {
-      <span [class]="'a2ui-text ' + variant()">
-        @switch (variant()) {
-          @case ('h1') { <h1>{{ text() }}</h1> }
-          @case ('h2') { <h2>{{ text() }}</h2> }
-          @case ('h3') { <h3>{{ text() }}</h3> }
-          @case ('h4') { <h4>{{ text() }}</h4> }
-          @case ('h5') { <h5>{{ text() }}</h5> }
-          @case ('caption') { <em>{{ text() }}</em> }
-        }
-      </span>
+      @switch (variant()) {
+        @case ('h1') { <h1 class="a2ui-text h1">{{ text() }}</h1> }
+        @case ('h2') { <h2 class="a2ui-text h2">{{ text() }}</h2> }
+        @case ('h3') { <h3 class="a2ui-text h3">{{ text() }}</h3> }
+        @case ('h4') { <h4 class="a2ui-text h4">{{ text() }}</h4> }
+        @case ('h5') { <h5 class="a2ui-text h5">{{ text() }}</h5> }
+        @case ('caption') { <em class="a2ui-text caption">{{ text() }}</em> }
+      }
     } @else {
       <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()"></span>
     }
@@ -60,11 +58,11 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
   styles: [
     `
       :host ::ng-deep .a2ui-text p,
-      :host ::ng-deep .a2ui-text h1,
-      :host ::ng-deep .a2ui-text h2,
-      :host ::ng-deep .a2ui-text h3,
-      :host ::ng-deep .a2ui-text h4,
-      :host ::ng-deep .a2ui-text h5,
+      :host ::ng-deep .a2ui-text h1, :host ::ng-deep h1.a2ui-text,
+      :host ::ng-deep .a2ui-text h2, :host ::ng-deep h2.a2ui-text,
+      :host ::ng-deep .a2ui-text h3, :host ::ng-deep h3.a2ui-text,
+      :host ::ng-deep .a2ui-text h4, :host ::ng-deep h4.a2ui-text,
+      :host ::ng-deep .a2ui-text h5, :host ::ng-deep h5.a2ui-text,
       :host ::ng-deep .a2ui-text h6,
       :host ::ng-deep .a2ui-text ol,
       :host ::ng-deep .a2ui-text ul,
@@ -79,29 +77,29 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
           var(--a2ui-text-color-text, var(--a2ui-color-on-background))
         );
       }
-      :host ::ng-deep .a2ui-text h1,
-      :host ::ng-deep .a2ui-text h2,
-      :host ::ng-deep .a2ui-text h3,
-      :host ::ng-deep .a2ui-text h4,
-      :host ::ng-deep .a2ui-text h5,
+      :host ::ng-deep .a2ui-text h1, :host ::ng-deep h1.a2ui-text,
+      :host ::ng-deep .a2ui-text h2, :host ::ng-deep h2.a2ui-text,
+      :host ::ng-deep .a2ui-text h3, :host ::ng-deep h3.a2ui-text,
+      :host ::ng-deep .a2ui-text h4, :host ::ng-deep h4.a2ui-text,
+      :host ::ng-deep .a2ui-text h5, :host ::ng-deep h5.a2ui-text,
       :host ::ng-deep .a2ui-text h6 {
         font-family: var(--a2ui-font-family-title, inherit);
         line-height: var(--a2ui-line-height-headings, 1.2);
       }
-      :host ::ng-deep .a2ui-text h1 {
+      :host ::ng-deep .a2ui-text h1, :host ::ng-deep h1.a2ui-text {
         font-size: var(--a2ui-font-size-2xl);
       }
-      :host ::ng-deep .a2ui-text h2 {
+      :host ::ng-deep .a2ui-text h2, :host ::ng-deep h2.a2ui-text {
         font-size: var(--a2ui-font-size-xl);
       }
-      :host ::ng-deep .a2ui-text h3 {
+      :host ::ng-deep .a2ui-text h3, :host ::ng-deep h3.a2ui-text {
         font-size: var(--a2ui-font-size-l);
       }
       :host ::ng-deep .a2ui-text p,
-      :host ::ng-deep .a2ui-text h4 {
+      :host ::ng-deep .a2ui-text h4, :host ::ng-deep h4.a2ui-text {
         font-size: var(--a2ui-font-size-m);
       }
-      :host ::ng-deep .a2ui-text h5 {
+      :host ::ng-deep .a2ui-text h5, :host ::ng-deep h5.a2ui-text {
         font-size: var(--a2ui-font-size-s);
       }
       :host ::ng-deep .a2ui-text p {
