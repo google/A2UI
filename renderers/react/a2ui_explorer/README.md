@@ -26,17 +26,14 @@ _Note: Ensure `@a2ui/web_core` is also built if you have made changes to the cor
 
 ## Setup and Development
 
-Once the dependencies are built, you can start the gallery app:
+Once the dependencies are built, you can start the gallery app directly without installing dependencies:
 
 ```bash
 # Navigate to this directory
 cd renderers/react/a2ui_explorer
 
-# Install dependencies
-npm install
-
 # Start the development server
-npm run dev
+npx vite
 ```
 
 ## Building for Production
@@ -44,7 +41,7 @@ npm run dev
 To create a production build of the gallery app:
 
 ```bash
-npm run build
+npx vite build
 ```
 
 ## Running Tests
@@ -52,7 +49,7 @@ npm run build
 To run the integration tests:
 
 ```bash
-npm test
+npx vitest
 ```
 
 ## Gallery Features
