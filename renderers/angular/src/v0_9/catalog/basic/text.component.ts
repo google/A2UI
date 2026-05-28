@@ -120,12 +120,20 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   private markdownRenderer = inject(MarkdownRenderer);
 
+  private static readonly KNOWN_VARIANTS = new Set<string>([
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'caption',
+  ]);
+
   readonly variant = computed(() => this.props()['variant']?.value() || 'body');
   readonly text = computed(() => this.props()['text']?.value() || '');
 
   readonly isKnownVariant = computed(() => {
-    const v = this.variant();
-    return ['h1', 'h2', 'h3', 'h4', 'h5', 'caption'].includes(v);
+    return TextComponent.KNOWN_VARIANTS.has(this.variant());
   });
 
   resolvedText = signal<string>('');
