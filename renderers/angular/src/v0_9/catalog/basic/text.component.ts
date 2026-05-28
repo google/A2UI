@@ -42,12 +42,24 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
     @if (isKnownVariant()) {
       <span [class]="'a2ui-text ' + variant()">
         @switch (variant()) {
-          @case ('h1') { <h1>{{ text() }}</h1> }
-          @case ('h2') { <h2>{{ text() }}</h2> }
-          @case ('h3') { <h3>{{ text() }}</h3> }
-          @case ('h4') { <h4>{{ text() }}</h4> }
-          @case ('h5') { <h5>{{ text() }}</h5> }
-          @case ('caption') { <em>{{ text() }}</em> }
+          @case ('h1') {
+            <h1>{{ text() }}</h1>
+          }
+          @case ('h2') {
+            <h2>{{ text() }}</h2>
+          }
+          @case ('h3') {
+            <h3>{{ text() }}</h3>
+          }
+          @case ('h4') {
+            <h4>{{ text() }}</h4>
+          }
+          @case ('h5') {
+            <h5>{{ text() }}</h5>
+          }
+          @case ('caption') {
+            <em>{{ text() }}</em>
+          }
         }
       </span>
     } @else {
