@@ -38,7 +38,22 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 @Component({
   selector: 'a2ui-v09-text',
   standalone: true,
-  template: ` <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()"> </span> `,
+  template: `
+    @if (isKnownVariant()) {
+      <span [class]="'a2ui-text ' + variant()">
+        @switch (variant()) {
+          @case ('h1') { <h1>{{ text() }}</h1> }
+          @case ('h2') { <h2>{{ text() }}</h2> }
+          @case ('h3') { <h3>{{ text() }}</h3> }
+          @case ('h4') { <h4>{{ text() }}</h4> }
+          @case ('h5') { <h5>{{ text() }}</h5> }
+          @case ('caption') { <em>{{ text() }}</em> }
+        }
+      </span>
+    } @else {
+      <span [class]="'a2ui-text ' + variant()" [innerHTML]="resolvedText()"></span>
+    }
+  `,
   // We use :host ::ng-deep because the template content is injected via innerHTML (Markdown).
   // Angular's default view encapsulation cannot target elements injected via innerHTML because they lack the scoping attributes generated at compile time.
   // ::ng-deep allows styles to reach into the injected HTML, while :host keeps them scoped to this component.
@@ -110,39 +125,23 @@ export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   readonly variant = computed(() => this.props()['variant']?.value() || 'body');
   readonly text = computed(() => this.props()['text']?.value() || '');
 
+  readonly isKnownVariant = computed(() => {
+    const v = this.variant();
+    return ['h1', 'h2', 'h3', 'h4', 'h5', 'caption'].includes(v);
+  });
+
   resolvedText = signal<string>('');
   private renderRequestId = 0;
 
   constructor() {
     super();
     effect(() => {
-      const text = this.text();
-      const variant = this.variant();
-      let value = text;
-
-      switch (variant) {
-        case 'h1':
-          value = `# ${text}`;
-          break;
-        case 'h2':
-          value = `## ${text}`;
-          break;
-        case 'h3':
-          value = `### ${text}`;
-          break;
-        case 'h4':
-          value = `#### ${text}`;
-          break;
-        case 'h5':
-          value = `##### ${text}`;
-          break;
-        case 'caption':
-          value = `*${text}*`;
-          break;
+      if (this.isKnownVariant()) {
+        return;
       }
-
+      const text = this.text();
       const requestId = ++this.renderRequestId;
-      this.markdownRenderer.render(value).then(rendered => {
+      this.markdownRenderer.render(text).then(rendered => {
         if (requestId === this.renderRequestId) {
           this.resolvedText.set(rendered);
         }

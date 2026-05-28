@@ -74,7 +74,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('# Heading');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.h1'));
+    expect(span).toBeTruthy();
+    const h1 = span.query(By.css('h1'));
+    expect(h1).toBeTruthy();
+    expect(h1.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant caption', async () => {
@@ -86,7 +91,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('*Caption*');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.caption'));
+    expect(span).toBeTruthy();
+    const em = span.query(By.css('em'));
+    expect(em).toBeTruthy();
+    expect(em.nativeElement.textContent.trim()).toBe('Caption');
   });
 
   it('should handle variant h2', async () => {
@@ -98,7 +108,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('## Heading');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.h2'));
+    expect(span).toBeTruthy();
+    const h2 = span.query(By.css('h2'));
+    expect(h2).toBeTruthy();
+    expect(h2.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h3', async () => {
@@ -110,7 +125,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('### Heading');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.h3'));
+    expect(span).toBeTruthy();
+    const h3 = span.query(By.css('h3'));
+    expect(h3).toBeTruthy();
+    expect(h3.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h4', async () => {
@@ -122,7 +142,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('#### Heading');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.h4'));
+    expect(span).toBeTruthy();
+    const h4 = span.query(By.css('h4'));
+    expect(h4).toBeTruthy();
+    expect(h4.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h5', async () => {
@@ -134,7 +159,12 @@ describe('TextComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('##### Heading');
+    expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
+    const span = fixture.debugElement.query(By.css('span.a2ui-text.h5'));
+    expect(span).toBeTruthy();
+    const h5 = span.query(By.css('h5'));
+    expect(h5).toBeTruthy();
+    expect(h5.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle missing text property', async () => {
