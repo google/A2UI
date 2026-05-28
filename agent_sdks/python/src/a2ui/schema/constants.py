@@ -64,3 +64,9 @@ The generated response MUST follow these rules:
     - Parent components MUST appear before their child components.
     This specific ordering allows the streaming parser to yield and render the UI incrementally as it arrives.
 """
+
+
+# A2UI Tool constants
+A2UI_TOOL_NAME = "send_a2ui_json_to_client"
+A2UI_VALIDATED_JSON_KEY = "validated_a2ui_json"
+A2UI_TOOL_ERROR_KEY = "error"
