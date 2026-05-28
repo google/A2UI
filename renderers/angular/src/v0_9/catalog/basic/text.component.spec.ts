@@ -61,7 +61,10 @@ describe('TextComponent', () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(By.css('.a2ui-text'));
-    expect(element.nativeElement.innerHTML.trim()).toBe('<p>Hello World</p>');
+    expect(element).toBeTruthy();
+    const p = element.query(By.css('p'));
+    expect(p).toBeTruthy();
+    expect(p.nativeElement.textContent.trim()).toBe('Hello World');
     expect(mockMarkdownRenderer.render).toHaveBeenCalledWith('Hello World');
   });
 

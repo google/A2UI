@@ -39,8 +39,9 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
   selector: 'a2ui-v09-text',
   standalone: true,
   template: `
-    @if (isKnownVariant()) {
+    @if (isNonMarkdownVariant()) {
       <span [class]="'a2ui-text ' + variant()">
+        <!-- Nesting block elements like h1 inside a span is not correct HTML5. We should refactor this-->
         @switch (variant()) {
           @case ('h1') {
             <h1>{{ text() }}</h1>
@@ -134,7 +135,7 @@ import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   private markdownRenderer = inject(MarkdownRenderer);
 
-  private static readonly KNOWN_VARIANTS = new Set<string>([
+  private static readonly NON_MARKDOWN_VARIANTS = new Set<string>([
     'h1',
     'h2',
     'h3',
@@ -146,8 +147,8 @@ export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   readonly variant = computed(() => this.props()['variant']?.value() || 'body');
   readonly text = computed(() => this.props()['text']?.value() || '');
 
-  readonly isKnownVariant = computed(() => {
-    return TextComponent.KNOWN_VARIANTS.has(this.variant());
+  readonly isNonMarkdownVariant = computed(() => {
+    return TextComponent.NON_MARKDOWN_VARIANTS.has(this.variant());
   });
 
   resolvedText = signal<string>('');
@@ -156,7 +157,7 @@ export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   constructor() {
     super();
     effect(() => {
-      if (this.isKnownVariant()) {
+      if (this.isNonMarkdownVariant()) {
         return;
       }
       const text = this.text();
