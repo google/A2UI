@@ -66,7 +66,8 @@ def is_a2ui_part(part: Part) -> bool:
   return (
       isinstance(part.root, DataPart)
       and part.root.metadata
-      and part.root.metadata.get(MIME_TYPE_KEY) in (A2UI_MIME_TYPE, DEPRECATED_A2UI_MIME_TYPE)
+      and part.root.metadata.get(MIME_TYPE_KEY)
+      in (A2UI_MIME_TYPE, DEPRECATED_A2UI_MIME_TYPE)
   )
 
 

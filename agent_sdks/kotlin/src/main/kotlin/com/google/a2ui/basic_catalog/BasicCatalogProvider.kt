@@ -84,7 +84,9 @@ object BasicCatalog {
       A2uiVersion.VERSION_0_9 to
         mapOf(A2uiConstants.CATALOG_SCHEMA_KEY to "specification/v0_9/catalogs/basic/catalog.json"),
       A2uiVersion.VERSION_0_9_1 to
-        mapOf(A2uiConstants.CATALOG_SCHEMA_KEY to "specification/v0_9_1/catalogs/basic/catalog.json"),
+        mapOf(
+          A2uiConstants.CATALOG_SCHEMA_KEY to "specification/v0_9_1/catalogs/basic/catalog.json"
+        ),
     )
 
   /**

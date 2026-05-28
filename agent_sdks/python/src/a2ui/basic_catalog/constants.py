@@ -22,5 +22,7 @@ BASIC_CATALOG_PATHS = {
         CATALOG_SCHEMA_KEY: "specification/v0_8/json/standard_catalog_definition.json"
     },
     VERSION_0_9: {CATALOG_SCHEMA_KEY: "specification/v0_9/catalogs/basic/catalog.json"},
-    VERSION_0_9_1: {CATALOG_SCHEMA_KEY: "specification/v0_9_1/catalogs/basic/catalog.json"},
+    VERSION_0_9_1: {
+        CATALOG_SCHEMA_KEY: "specification/v0_9_1/catalogs/basic/catalog.json"
+    },
 }

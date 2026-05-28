@@ -32,13 +32,16 @@ object A2uiA2a {
   /** Creates an A2A Part containing A2UI data. */
   @JvmOverloads
   fun createA2uiPart(a2uiData: JsonElement, version: String? = null): Part<*> {
-    val mimeType = if (version == "0.8" || version == "0.9") DEPRECATED_A2UI_MIME_TYPE else A2UI_MIME_TYPE
+    val mimeType =
+      if (version == "0.8" || version == "0.9") DEPRECATED_A2UI_MIME_TYPE else A2UI_MIME_TYPE
     return DataPart(a2uiData, mapOf(MIME_TYPE_KEY to mimeType))
   }
 
   /** Checks if an A2A Part contains A2UI data. */
   fun isA2uiPart(part: Part<*>): Boolean =
-    part is DataPart && (part.metadata?.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE || part.metadata?.get(MIME_TYPE_KEY) == DEPRECATED_A2UI_MIME_TYPE)
+    part is DataPart &&
+      (part.metadata?.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE ||
+        part.metadata?.get(MIME_TYPE_KEY) == DEPRECATED_A2UI_MIME_TYPE)
 
   /** Extracts the A2UI data from an A2A Part if present. */
   fun getA2uiData(part: Part<*>): JsonElement? =
