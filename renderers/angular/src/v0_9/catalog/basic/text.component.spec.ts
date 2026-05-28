@@ -77,8 +77,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.h1'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('h1');
-    expect(element.nativeElement.textContent.trim()).toBe('Heading');
+    const h1 = element.query(By.css('h1'));
+    expect(h1).toBeTruthy();
+    expect(h1.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant caption', async () => {
@@ -93,8 +94,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.caption'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('em');
-    expect(element.nativeElement.textContent.trim()).toBe('Caption');
+    const em = element.query(By.css('em'));
+    expect(em).toBeTruthy();
+    expect(em.nativeElement.textContent.trim()).toBe('Caption');
   });
 
   it('should handle variant h2', async () => {
@@ -109,8 +111,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.h2'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('h2');
-    expect(element.nativeElement.textContent.trim()).toBe('Heading');
+    const h2 = element.query(By.css('h2'));
+    expect(h2).toBeTruthy();
+    expect(h2.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h3', async () => {
@@ -125,8 +128,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.h3'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('h3');
-    expect(element.nativeElement.textContent.trim()).toBe('Heading');
+    const h3 = element.query(By.css('h3'));
+    expect(h3).toBeTruthy();
+    expect(h3.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h4', async () => {
@@ -141,8 +145,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.h4'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('h4');
-    expect(element.nativeElement.textContent.trim()).toBe('Heading');
+    const h4 = element.query(By.css('h4'));
+    expect(h4).toBeTruthy();
+    expect(h4.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle variant h5', async () => {
@@ -157,8 +162,9 @@ describe('TextComponent', () => {
     expect(mockMarkdownRenderer.render).not.toHaveBeenCalled();
     const element = fixture.debugElement.query(By.css('.a2ui-text.h5'));
     expect(element).toBeTruthy();
-    expect(element.nativeElement.tagName.toLowerCase()).toBe('h5');
-    expect(element.nativeElement.textContent.trim()).toBe('Heading');
+    const h5 = element.query(By.css('h5'));
+    expect(h5).toBeTruthy();
+    expect(h5.nativeElement.textContent.trim()).toBe('Heading');
   });
 
   it('should handle missing text property', async () => {
