@@ -108,10 +108,7 @@ export class TextComponent extends BasicCatalogComponent<typeof TextApi> {
   private markdownRenderer = inject(MarkdownRenderer);
 
   readonly variant = computed(() => this.props()['variant']?.value() || 'body');
-  readonly text = computed(() => {
-    const val = this.props()['text']?.value();
-    return val == null ? '' : String(val);
-  });
+  readonly text = computed(() => this.props()['text']?.value() || '');
 
   resolvedText = signal<string>('');
   private renderRequestId = 0;
