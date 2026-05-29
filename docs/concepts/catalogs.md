@@ -147,9 +147,9 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 
 A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management.
 
-While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. 
+While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development.
 
-To automate bundling and registering these external file references, this catalog registration process is called **"Linking"** and is consolidated under a single, multi-platform Node.js script (**`register-catalogs.js`**). 
+To automate bundling and registering these external file references, this catalog registration process is called **"Linking"** and is consolidated under a single, multi-platform Node.js script (**`register-catalogs.js`**).
 
 This linking script is natively wrapped inside **Xcode Build Phases** (for iOS/macOS client builds) and **Gradle tasks** (for Android client builds) to compile, aggregate, and link static and dynamic schemas seamlessly during your application's build phase.
 
