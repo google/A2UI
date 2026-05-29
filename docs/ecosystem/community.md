@@ -27,6 +27,13 @@ A2UI is developed in collaboration with Google Opal, Flutter (GenUI SDK), Gemini
 
 If you have made significant contributions to A2UI, please submit your name to this list.
 
+## Translations
+
+Community-provided translations of the A2UI documentation.
+
+- 🇰🇷 [Korean (한국어) Documentation](https://a2ui-labs.github.io/docs-ko/)
+
+
 ## Code of Conduct
 
 A2UI is committed to providing a welcoming and inclusive environment for everyone. All participants are expected to:
