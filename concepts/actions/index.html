@@ -2995,14 +2995,14 @@
 <h3 id="a2a-encoding">A2A Encoding<a class="headerlink" href="#a2a-encoding" title="Permanent link">&para;</a></h3>
 <p>In the standard A2A binding, A2UI messages are encoded as an A2A <strong>DataPart</strong>. To identify it as an A2UI payload, the part must be wrapped with specific metadata:</p>
 <ul>
-<li><strong>mimeType</strong>: <code>application/json+a2ui</code></li>
+<li><strong>mimeType</strong>: <code>application/a2ui+json</code></li>
 </ul>
 <p>The <code>data</code> field of the <code>DataPart</code> contains a <strong>list</strong> of A2UI messages. This allows multiple updates (e.g., <code>createSurface</code> followed by <code>updateComponents</code>) to be sent in a single network packet.</p>
 <p>NOTE: <strong>A2A Versioning</strong>: The use of a <strong>list</strong> in the <code>data</code> field was introduced in <strong>A2A v1.0</strong>. Earlier versions of the A2A protocol expect the <code>data</code> field to contain a single JSON object.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;mimeType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json+a2ui&quot;</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;mimeType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/a2ui+json&quot;</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="p">},</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="p">{</span>
