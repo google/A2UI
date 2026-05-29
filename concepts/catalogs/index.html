@@ -2856,8 +2856,8 @@
 </span></code></pre></div>
 <h3 id="catalog-linking">Catalog Linking<a class="headerlink" href="#catalog-linking" title="Permanent link">&para;</a></h3>
 <p>A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management.</p>
-<p>While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema <code>$ref</code> pointing to external documents during local development. </p>
-<p>To automate bundling and registering these external file references, this catalog registration process is called <strong>"Linking"</strong> and is consolidated under a single, multi-platform Node.js script (<strong><code>register-catalogs.js</code></strong>). </p>
+<p>While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema <code>$ref</code> pointing to external documents during local development.</p>
+<p>To automate bundling and registering these external file references, this catalog registration process is called <strong>"Linking"</strong> and is consolidated under a single, multi-platform Node.js script (<strong><code>register-catalogs.js</code></strong>).</p>
 <p>This linking script is natively wrapped inside <strong>Xcode Build Phases</strong> (for iOS/macOS client builds) and <strong>Gradle tasks</strong> (for Android client builds) to compile, aggregate, and link static and dynamic schemas seamlessly during your application's build phase.</p>
 <h3 id="composition-imports">Composition &amp; Imports<a class="headerlink" href="#composition-imports" title="Permanent link">&para;</a></h3>
 <p>You do not have to define everything from scratch. You can define a catalog which uses existing components from the basic or other catalogs, and one that reusing the existing rendering logic.</p>
