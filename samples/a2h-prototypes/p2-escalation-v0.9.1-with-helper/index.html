@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 2 — Escalation Card v0.9.1 (with Helper Comparison)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; text-align: center; margin-bottom: 1rem; }
+
+    /* Tab bar */
+    .tabs {
+      display: flex; justify-content: center; gap: 0; margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.5rem 1.5rem; border: 1px solid #dadce0; background: #fff;
+      font-family: inherit; font-size: 0.875rem; cursor: pointer; color: #5f6368;
+      transition: all 0.15s;
+    }
+    .tab-btn:first-child { border-radius: 20px 0 0 20px; }
+    .tab-btn:last-child { border-radius: 0 20px 20px 0; }
+    .tab-btn.active { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+
+    /* Layout */
+    .panels { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+    .panel { flex: 0 1 460px; display: flex; flex-direction: column; gap: 1rem; }
+    .panel.hidden { display: none; }
+    .panel-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+
+    .surface { max-width: 420px; width: 100%; margin: 0 auto; }
+
+    /* Component renderers */
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #f8f9fa; box-shadow: none; border: 1px solid #e0e0e0;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Row[data-justify="center"] { justify-content: center; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.25rem 0; }
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #5f6368; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="caption"] { font-size: 0.85rem; font-weight: 500; color: #d93025; }
+    .c-Text[data-variant="label"] { font-size: 0.85rem; font-weight: 500; color: #5f6368; }
+
+    /* v0.9.1: KeyValue */
+    .c-KeyValue {
+      display: flex; flex-direction: row; gap: 0.75rem; align-items: baseline;
+    }
+    .c-KeyValue-label {
+      font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 80px;
+    }
+    .c-KeyValue-value {
+      font-size: 0.9rem; color: #202124;
+    }
+
+    /* v0.9.1: ProgressIndicator */
+    .c-ProgressIndicator {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2.5px solid #dadce0; border-top-color: #1a73e8;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px;
+      padding: 0.5rem 1.25rem; font-family: inherit;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    /* JSON viewer */
+    .json-view {
+      max-width: 460px; width: 100%; margin: 1.5rem auto 0;
+      background: #263238; color: #aed581; border-radius: 8px;
+      padding: 1rem; font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 400px; overflow: auto; white-space: pre-wrap;
+    }
+
+    /* Event log */
+    #event-log {
+      max-width: 460px; width: 100%; margin: 1rem auto 0;
+      background: #263238; color: #aed581; border-radius: 8px;
+      padding: 1rem; font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Click a connection option to see events...';
+      color: #607d8b;
+    }
+
+    .stats {
+      text-align: center; margin: 1rem 0; font-size: 0.85rem; color: #5f6368;
+    }
+    .stats strong { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — P2: Escalation Card v0.9.1 (with Helper Comparison)</h1>
+
+  <div class="stats">
+    v0.9.0: <strong>36 components</strong>, ~140 lines &nbsp;|&nbsp;
+    v0.9.1: <strong>28 components</strong>, ~110 lines &nbsp;|&nbsp;
+    Helper: <strong>~45 lines</strong> of JS
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="side-by-side">Side by Side</button>
+    <button class="tab-btn" data-tab="raw-json">v0.9.1 JSON</button>
+    <button class="tab-btn" data-tab="helper-json">Helper Output</button>
+  </div>
+
+  <div id="view-side-by-side" class="panels">
+    <div class="panel">
+      <div class="panel-label">v0.9.1 — Raw JSON (28 components)</div>
+      <div class="surface" id="surface-raw"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Helper Library (~45 lines of JS)</div>
+      <div class="surface" id="surface-helper"></div>
+    </div>
+  </div>
+
+  <div id="view-raw-json" class="panels hidden">
+    <div class="panel">
+      <div class="panel-label">escalation-handoff.json (v0.9.1)</div>
+      <div class="json-view" id="json-raw"></div>
+    </div>
+  </div>
+
+  <div id="view-helper-json" class="panels hidden">
+    <div class="panel">
+      <div class="panel-label">Helper-generated output</div>
+      <div class="json-view" id="json-helper"></div>
+    </div>
+  </div>
+
+  <h1 style="margin-top:1.5rem">Event Log</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    // --- Tab switching ---
+    const tabs = document.querySelectorAll('.tab-btn');
+    const views = { 'side-by-side': 'view-side-by-side', 'raw-json': 'view-raw-json', 'helper-json': 'view-helper-json' };
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.values(views).forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(views[btn.dataset.tab]).classList.remove('hidden');
+    }));
+
+    // --- Load raw JSON ---
+    const response = await fetch('./escalation-handoff.json');
+    const rawMessages = await response.json();
+
+    // --- Generate helper-equivalent messages ---
+    const helperMessages = generateHelperOutput();
+
+    function generateHelperOutput() {
+      // Simulates what createEscalateSurface() produces (v0.9.0-style output)
+      const surfaceId = 'a2h-escalate-001';
+      return [
+        {
+          version: 'v0.9',
+          createSurface: { surfaceId, catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json', sendDataModel: true }
+        },
+        {
+          version: 'v0.9',
+          updateDataModel: {
+            surfaceId,
+            value: {
+              statusMessage: 'Estimated wait: ~2 minutes for chat, ~15 minutes for callback',
+              escalation: {
+                reason: "I wasn't able to resolve your billing dispute. The charge of $89.99 on Feb 28 requires manual review by our billing team. I'm connecting you with a specialist who can help.",
+                attemptedActions: 'Checked transaction history, verified charge details, attempted automated refund (declined — requires manual review)',
+                issueCategory: 'Billing Dispute — Unauthorized Charge',
+                conversationDuration: '8 minutes (12 messages)',
+                priority: 'high',
+                priorityLabel: '⚡ High Priority — Billing dispute, potential unauthorized charge',
+                statusMessage: 'Estimated wait: ~2 minutes for chat, ~15 minutes for callback',
+                conversationContext: [
+                  { role: 'user', summary: "Reported unexpected $89.99 charge from 'DGTL-SVC' on Feb 28" },
+                  { role: 'agent', summary: 'Identified charge, attempted automated dispute — system requires human review' },
+                  { role: 'user', summary: 'Confirmed they did not authorize the charge' }
+                ]
+              },
+              meta: {
+                interactionId: 'esc-2026-0304-042',
+                agentId: 'customer-support-v3',
+                agentName: 'Support Assistant (AI)',
+                intent: 'ESCALATE',
+                timestamp: '2026-03-04T06:48:00Z',
+                department: 'billing',
+                queuePosition: 3
+              }
+            }
+          }
+        },
+        {
+          version: 'v0.9',
+          updateComponents: {
+            surfaceId,
+            components: [
+              { id: 'esc-root', component: 'Card', child: 'esc-col' },
+              { id: 'esc-col', component: 'Column', children: ['esc-header-row','esc-div-1','esc-body','esc-div-2','esc-actions'] },
+              { id: 'esc-header-row', component: 'Row', children: ['esc-header-icon','esc-header-text'], align: 'center' },
+              { id: 'esc-header-icon', component: 'Text', text: '🆘', variant: 'h3' },
+              { id: 'esc-header-text', component: 'Text', text: 'Connecting to Support', variant: 'h3' },
+              { id: 'esc-div-1', component: 'Divider' },
+              { id: 'esc-body', component: 'Column', children: ['esc-reason-1','esc-ctx-card-2','esc-status-5'] },
+              { id: 'esc-reason-1', component: 'Text', text: "I wasn't able to resolve your billing dispute. The charge of $89.99 on Feb 28 requires manual review by our billing team. I'm connecting you with a specialist who can help.", variant: 'body' },
+              { id: 'esc-ctx-card-2', component: 'Card', child: 'esc-ctx-col-3' },
+              { id: 'esc-ctx-col-3', component: 'Column', children: ['esc-ctx-label-4','esc-ctx-text-5'] },
+              { id: 'esc-ctx-label-4', component: 'Text', text: 'Context', variant: 'label' },
+              { id: 'esc-ctx-text-5', component: 'Text', text: 'Checked transaction history, verified charge details, attempted automated refund (declined — requires manual review)', variant: 'body' },
+              { id: 'esc-status-5', component: 'Text', text: { path: '/statusMessage' }, variant: 'caption' },
+              { id: 'esc-div-2', component: 'Divider' },
+              { id: 'esc-actions', component: 'Row', children: ['chat-btn','callback-btn','schedule-btn'], justify: 'end' },
+              { id: 'chat-btn-text', component: 'Text', text: '💬 Connect via Chat' },
+              { id: 'chat-btn', component: 'Button', variant: 'default', child: 'chat-btn-text', action: { event: { name: 'a2h.escalate.connect', context: { method: '💬 Connect via Chat' } } } },
+              { id: 'callback-btn-text', component: 'Text', text: '📞 Request Callback' },
+              { id: 'callback-btn', component: 'Button', variant: 'default', child: 'callback-btn-text', action: { event: { name: 'a2h.escalate.connect', context: { method: '📞 Request Callback' } } } },
+              { id: 'schedule-btn-text', component: 'Text', text: '📅 Schedule Appointment' },
+              { id: 'schedule-btn', component: 'Button', variant: 'default', child: 'schedule-btn-text', action: { event: { name: 'a2h.escalate.connect', context: { method: '📅 Schedule Appointment' } } } },
+            ]
+          }
+        }
+      ];
+    }
+
+    // --- Show JSON ---
+    document.getElementById('json-raw').textContent = JSON.stringify(rawMessages, null, 2);
+    document.getElementById('json-helper').textContent = JSON.stringify(helperMessages, null, 2);
+
+    // --- A2UI v0.9.1 Renderer ---
+
+    function createRenderer(targetId, messages) {
+      let surfaceConfig = null;
+      const components = {};
+      let dataModel = {};
+
+      for (const msg of messages) {
+        if (msg.createSurface) surfaceConfig = msg.createSurface;
+        if (msg.updateComponents) {
+          for (const c of msg.updateComponents.components) components[c.id] = c;
+        }
+        if (msg.updateDataModel) dataModel = msg.updateDataModel.value;
+      }
+
+      function resolve(val) {
+        if (val && typeof val === 'object' && val.path) {
+          const parts = val.path.split('/').filter(Boolean);
+          let cur = dataModel;
+          for (const p of parts) cur = cur?.[p];
+          return cur ?? val.path;
+        }
+        return val;
+      }
+
+      // v0.9.1: evaluate visible binding
+      function isVisible(comp) {
+        if (!comp.visible) return true;
+        const vis = comp.visible;
+        if (vis.fn === 'equals' && Array.isArray(vis.args)) {
+          return resolve(vis.args[0]) === vis.args[1];
+        }
+        if (vis.path) return !!resolve(vis);
+        return true;
+      }
+
+      function render(id) {
+        const comp = components[id];
+        if (!comp) return document.createTextNode(`[missing: ${id}]`);
+        if (!isVisible(comp)) {
+          const placeholder = document.createElement('span');
+          placeholder.style.display = 'none';
+          placeholder.dataset.hiddenId = id;
+          return placeholder;
+        }
+
+        switch (comp.component) {
+          case 'Card': {
+            const el = document.createElement('div');
+            el.className = 'c-Card';
+            if (comp.child) el.appendChild(render(comp.child));
+            return el;
+          }
+          case 'Column': {
+            const el = document.createElement('div');
+            el.className = 'c-Column';
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Row': {
+            const el = document.createElement('div');
+            el.className = 'c-Row';
+            if (comp.justify) el.dataset.justify = comp.justify;
+            if (comp.align) el.style.alignItems = comp.align;
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Divider': {
+            const el = document.createElement('hr');
+            el.className = 'c-Divider';
+            return el;
+          }
+          case 'Icon': {
+            const el = document.createElement('span');
+            el.className = 'c-Icon';
+            el.textContent = resolve(comp.name);
+            return el;
+          }
+          case 'Text': {
+            const el = document.createElement('span');
+            el.className = 'c-Text';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            el.textContent = resolve(comp.text);
+            return el;
+          }
+          // v0.9.1: KeyValue component
+          case 'KeyValue': {
+            const el = document.createElement('div');
+            el.className = 'c-KeyValue';
+            const label = document.createElement('span');
+            label.className = 'c-KeyValue-label';
+            label.textContent = resolve(comp.label) + ':';
+            const value = document.createElement('span');
+            value.className = 'c-KeyValue-value';
+            value.textContent = resolve(comp.value);
+            el.append(label, value);
+            return el;
+          }
+          // v0.9.1: ProgressIndicator
+          case 'ProgressIndicator': {
+            const el = document.createElement('div');
+            el.className = 'c-ProgressIndicator';
+            return el;
+          }
+          case 'Button': {
+            const el = document.createElement('button');
+            el.className = 'c-Button';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            // v0.9.1: label prop (no child needed)
+            if (comp.label) {
+              el.textContent = resolve(comp.label);
+            } else if (comp.child) {
+              const childComp = components[comp.child];
+              el.textContent = childComp ? resolve(childComp.text) : comp.child;
+            }
+            if (comp.action?.event) {
+              el.addEventListener('click', () => {
+                const evt = comp.action.event;
+                const ctx = {};
+                for (const [k, v] of Object.entries(evt.context || {})) ctx[k] = resolve(v);
+                const payload = {
+                  eventName: evt.name, context: ctx,
+                  ...(surfaceConfig?.sendDataModel ? { dataModel } : {}),
+                  timestamp: new Date().toISOString()
+                };
+                logEvent(payload);
+
+                // Demo: transition to connecting state
+                if (evt.name === 'a2h.escalate.connect') {
+                  dataModel.state = 'connecting';
+                  rerender(targetId);
+                }
+              });
+            }
+            return el;
+          }
+          default:
+            return document.createTextNode(`[unknown: ${comp.component}]`);
+        }
+      }
+
+      function rerender(targetId) {
+        const container = document.getElementById(targetId);
+        container.innerHTML = '';
+        const rootId = Object.keys(components).find(k =>
+          components[k].component === 'Card' &&
+          !Object.values(components).some(c => (c.children || []).includes(k) || c.child === k)
+        );
+        container.appendChild(render(rootId || 'root'));
+      }
+
+      // Initial render
+      rerender(targetId);
+    }
+
+    function logEvent(payload) {
+      const log = document.getElementById('event-log');
+      log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Mount both renderers
+    createRenderer('surface-raw', rawMessages);
+    createRenderer('surface-helper', helperMessages);
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 1 — Approval Card (AUTHORIZE)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; }
+    .surface { max-width: 420px; width: 100%; }
+
+    /* Component renderers */
+    .c-Card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #f8f9fa;
+      box-shadow: none;
+      border: 1px solid #e0e0e0;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Row[data-justify="center"] { justify-content: center; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.25rem 0; }
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #5f6368; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="caption"] { font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 70px; }
+    #ttl-text { color: #d93025; min-width: auto; }
+    .c-Button {
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      padding: 0.5rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fff;
+      color: #202124;
+      transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    /* Event log */
+    #event-log {
+      max-width: 420px; width: 100%;
+      background: #263238; color: #aed581;
+      border-radius: 8px; padding: 1rem;
+      font-family: monospace; font-size: 0.8rem;
+      max-height: 300px; overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Click Approve or Reject to see events here...';
+      color: #607d8b;
+    }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — Prototype 1: Approval Card (AUTHORIZE)</h1>
+  <div class="surface" id="surface"></div>
+  <h1>Event Log</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    // --- Minimal A2UI v0.9 renderer (standalone, no build step) ---
+
+    const response = await fetch('./authorize-transfer.json');
+    const messages = await response.json();
+
+    // Process messages
+    let surfaceConfig = null;
+    let components = {};
+    let dataModel = {};
+
+    for (const msg of messages) {
+      if (msg.createSurface) {
+        surfaceConfig = msg.createSurface;
+      } else if (msg.updateComponents) {
+        for (const c of msg.updateComponents.components) {
+          components[c.id] = c;
+        }
+      } else if (msg.updateDataModel) {
+        dataModel = msg.updateDataModel.value;
+      }
+    }
+
+    // Resolve data binding: {"path": "/transfer/amount"} → value
+    function resolve(val) {
+      if (val && typeof val === 'object' && val.path) {
+        const parts = val.path.split('/').filter(Boolean);
+        let current = dataModel;
+        for (const p of parts) {
+          current = current?.[p];
+        }
+        return current ?? val.path;
+      }
+      return val;
+    }
+
+    // Render component tree
+    function render(id) {
+      const comp = components[id];
+      if (!comp) return document.createTextNode(`[missing: ${id}]`);
+
+      switch (comp.component) {
+        case 'Card': {
+          const el = document.createElement('div');
+          el.className = 'c-Card';
+          if (comp.child) el.appendChild(render(comp.child));
+          return el;
+        }
+        case 'Column': {
+          const el = document.createElement('div');
+          el.className = 'c-Column';
+          if (comp.align) el.style.alignItems = comp.align;
+          for (const childId of (comp.children || [])) {
+            el.appendChild(render(childId));
+          }
+          return el;
+        }
+        case 'Row': {
+          const el = document.createElement('div');
+          el.className = 'c-Row';
+          if (comp.justify) el.dataset.justify = comp.justify;
+          if (comp.align) el.style.alignItems = comp.align;
+          for (const childId of (comp.children || [])) {
+            el.appendChild(render(childId));
+          }
+          return el;
+        }
+        case 'Divider': {
+          const el = document.createElement('hr');
+          el.className = 'c-Divider';
+          return el;
+        }
+        case 'Icon': {
+          const el = document.createElement('span');
+          el.className = 'c-Icon';
+          el.textContent = resolve(comp.name);
+          return el;
+        }
+        case 'Text': {
+          const el = document.createElement('span');
+          el.className = 'c-Text';
+          el.id = id;
+          if (comp.variant) el.dataset.variant = comp.variant;
+          el.textContent = resolve(comp.text);
+          return el;
+        }
+        case 'Button': {
+          const el = document.createElement('button');
+          el.className = 'c-Button';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          // Render child text
+          if (comp.child) {
+            const childComp = components[comp.child];
+            el.textContent = childComp ? resolve(childComp.text) : comp.child;
+          }
+          // Handle action
+          if (comp.action?.event) {
+            el.addEventListener('click', () => {
+              const event = comp.action.event;
+              // Resolve any data bindings in context
+              const resolvedContext = {};
+              for (const [k, v] of Object.entries(event.context || {})) {
+                resolvedContext[k] = resolve(v);
+              }
+              const payload = {
+                eventName: event.name,
+                context: resolvedContext,
+                ...(surfaceConfig?.sendDataModel ? { dataModel } : {}),
+                timestamp: new Date().toISOString()
+              };
+              logEvent(payload);
+            });
+          }
+          return el;
+        }
+        default:
+          return document.createTextNode(`[unknown: ${comp.component}]`);
+      }
+    }
+
+    function logEvent(payload) {
+      const log = document.getElementById('event-log');
+      const entry = `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+      log.textContent += entry;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Mount
+    document.getElementById('surface').appendChild(render('root'));
+  </script>
+</body>
+</html>

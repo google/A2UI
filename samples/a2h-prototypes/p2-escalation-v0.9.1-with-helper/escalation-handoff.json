@@ -1,0 +1,253 @@
+[
+  {
+    "version": "v0.9.1",
+    "createSurface": {
+      "surfaceId": "a2h-escalate-001",
+      "catalogId": "https://a2ui.org/specification/v0_9_1/basic_catalog.json",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateComponents": {
+      "surfaceId": "a2h-escalate-001",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "main-col"
+        },
+        {
+          "id": "main-col",
+          "component": "Column",
+          "children": [
+            "header-row",
+            "divider-1",
+            "reason-text",
+            "context-card",
+            "priority-row",
+            "status-text",
+            "divider-2",
+            "actions-col",
+            "confirmation"
+          ]
+        },
+        {
+          "id": "header-row",
+          "component": "Row",
+          "children": ["header-icon", "header-text"],
+          "align": "center"
+        },
+        {
+          "id": "header-icon",
+          "component": "Icon",
+          "name": "person"
+        },
+        {
+          "id": "header-text",
+          "component": "Text",
+          "text": "Escalation to Human Agent",
+          "variant": "h3"
+        },
+        {
+          "id": "divider-1",
+          "component": "Divider"
+        },
+        {
+          "id": "reason-text",
+          "component": "Text",
+          "text": { "path": "/escalation/reason" },
+          "variant": "body"
+        },
+        {
+          "id": "context-card",
+          "component": "Card",
+          "child": "context-col"
+        },
+        {
+          "id": "context-col",
+          "component": "Column",
+          "children": [
+            "context-header",
+            "context-tried",
+            "context-issue",
+            "context-duration",
+            "context-agent"
+          ]
+        },
+        {
+          "id": "context-header",
+          "component": "Text",
+          "text": "Conversation Summary",
+          "variant": "caption"
+        },
+        {
+          "id": "context-tried",
+          "component": "KeyValue",
+          "label": "Attempted",
+          "value": { "path": "/escalation/attemptedActions" }
+        },
+        {
+          "id": "context-issue",
+          "component": "KeyValue",
+          "label": "Issue",
+          "value": { "path": "/escalation/issueCategory" }
+        },
+        {
+          "id": "context-duration",
+          "component": "KeyValue",
+          "label": "Duration",
+          "value": { "path": "/escalation/conversationDuration" }
+        },
+        {
+          "id": "context-agent",
+          "component": "KeyValue",
+          "label": "AI Agent",
+          "value": { "path": "/meta/agentName" }
+        },
+        {
+          "id": "priority-row",
+          "component": "Row",
+          "children": ["priority-icon", "priority-text"],
+          "align": "center"
+        },
+        {
+          "id": "priority-icon",
+          "component": "Icon",
+          "name": "warning"
+        },
+        {
+          "id": "priority-text",
+          "component": "Text",
+          "text": { "path": "/escalation/priorityLabel" },
+          "variant": "caption"
+        },
+        {
+          "id": "status-text",
+          "component": "Text",
+          "text": { "path": "/escalation/statusMessage" },
+          "variant": "body"
+        },
+        {
+          "id": "divider-2",
+          "component": "Divider",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "pending"] }
+        },
+        {
+          "id": "actions-col",
+          "component": "Column",
+          "children": ["actions-label", "actions-row"],
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "pending"] }
+        },
+        {
+          "id": "actions-label",
+          "component": "Text",
+          "text": "How would you like to connect?",
+          "variant": "body"
+        },
+        {
+          "id": "actions-row",
+          "component": "Row",
+          "children": ["chat-btn", "callback-btn", "schedule-btn"],
+          "justify": "center"
+        },
+        {
+          "id": "chat-btn",
+          "component": "Button",
+          "label": "Connect via Chat",
+          "variant": "primary",
+          "action": {
+            "event": {
+              "name": "a2h.escalate.connect",
+              "context": {
+                "interactionId": { "path": "/meta/interactionId" },
+                "method": "chat",
+                "intent": "ESCALATE"
+              }
+            }
+          }
+        },
+        {
+          "id": "callback-btn",
+          "component": "Button",
+          "label": "Request Callback",
+          "action": {
+            "event": {
+              "name": "a2h.escalate.connect",
+              "context": {
+                "interactionId": { "path": "/meta/interactionId" },
+                "method": "callback",
+                "intent": "ESCALATE"
+              }
+            }
+          }
+        },
+        {
+          "id": "schedule-btn",
+          "component": "Button",
+          "label": "Schedule Appointment",
+          "action": {
+            "event": {
+              "name": "a2h.escalate.connect",
+              "context": {
+                "interactionId": { "path": "/meta/interactionId" },
+                "method": "appointment",
+                "intent": "ESCALATE"
+              }
+            }
+          }
+        },
+        {
+          "id": "confirmation",
+          "component": "Row",
+          "children": ["confirm-indicator", "confirm-text"],
+          "align": "center",
+          "visible": { "fn": "equals", "args": [{ "path": "/state" }, "connecting"] }
+        },
+        {
+          "id": "confirm-indicator",
+          "component": "ProgressIndicator",
+          "mode": "indeterminate"
+        },
+        {
+          "id": "confirm-text",
+          "component": "Text",
+          "text": "Connecting you to an agent...",
+          "variant": "body"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9.1",
+    "updateDataModel": {
+      "surfaceId": "a2h-escalate-001",
+      "value": {
+        "state": "pending",
+        "escalation": {
+          "reason": "I wasn't able to resolve your billing dispute. The charge of $89.99 on Feb 28 requires manual review by our billing team. I'm connecting you with a specialist who can help.",
+          "attemptedActions": "Checked transaction history, verified charge details, attempted automated refund (declined — requires manual review)",
+          "issueCategory": "Billing Dispute — Unauthorized Charge",
+          "conversationDuration": "8 minutes (12 messages)",
+          "priority": "high",
+          "priorityLabel": "⚡ High Priority — Billing dispute, potential unauthorized charge",
+          "statusMessage": "Estimated wait: ~2 minutes for chat, ~15 minutes for callback",
+          "conversationContext": [
+            { "role": "user", "summary": "Reported unexpected $89.99 charge from 'DGTL-SVC' on Feb 28" },
+            { "role": "agent", "summary": "Identified charge, attempted automated dispute — system requires human review" },
+            { "role": "user", "summary": "Confirmed they did not authorize the charge" }
+          ]
+        },
+        "meta": {
+          "interactionId": "esc-2026-0304-042",
+          "agentId": "customer-support-v3",
+          "agentName": "Support Assistant (AI)",
+          "intent": "ESCALATE",
+          "timestamp": "2026-03-04T06:48:00Z",
+          "department": "billing",
+          "queuePosition": 3
+        }
+      }
+    }
+  }
+]

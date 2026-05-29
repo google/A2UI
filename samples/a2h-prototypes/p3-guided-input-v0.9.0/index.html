@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 3 — Guided Form (COLLECT)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; }
+    .surface { max-width: 480px; width: 100%; }
+
+    .c-Card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Row[data-justify="center"] { justify-content: center; }
+    .c-Row > .c-TextField { flex: 1; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.25rem 0; }
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #1a73e8; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.875rem; color: #5f6368; }
+    .c-Text[data-variant="label"] { font-size: 0.85rem; font-weight: 500; color: #202124; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #5f6368; }
+
+    .c-TextField {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .c-TextField label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #5f6368;
+    }
+    .c-TextField input {
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .c-TextField input:focus { border-color: #1a73e8; }
+
+    .c-ChoicePicker {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .c-ChoicePicker .choice-chip {
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      padding: 0.45rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #fff;
+      color: #202124;
+      transition: all 0.15s;
+    }
+    .c-ChoicePicker .choice-chip:hover { background: #f1f3f4; }
+    .c-ChoicePicker .choice-chip.selected {
+      background: #e8f0fe;
+      border-color: #1a73e8;
+      color: #1a73e8;
+      font-weight: 500;
+    }
+
+    .c-Button {
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      padding: 0.5rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fff;
+      color: #202124;
+      transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    #event-log {
+      max-width: 480px; width: 100%;
+      background: #263238; color: #aed581;
+      border-radius: 8px; padding: 1rem;
+      font-family: monospace; font-size: 0.8rem;
+      max-height: 400px; overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Fill out the form and click Submit to see the collected data model...';
+      color: #607d8b;
+    }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — Prototype 3: Guided Form (COLLECT)</h1>
+  <div class="surface" id="surface"></div>
+  <h1>Event Log (sendDataModel payload)</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    const response = await fetch('./collect-shipping.json');
+    const messages = await response.json();
+
+    let surfaceConfig = null;
+    let components = {};
+    let dataModel = {};
+
+    for (const msg of messages) {
+      if (msg.createSurface) {
+        surfaceConfig = msg.createSurface;
+      } else if (msg.updateComponents) {
+        for (const c of msg.updateComponents.components) {
+          components[c.id] = c;
+        }
+      } else if (msg.updateDataModel) {
+        dataModel = msg.updateDataModel.value;
+      }
+    }
+
+    // Deep get/set by path
+    function getPath(obj, path) {
+      const parts = path.split('/').filter(Boolean);
+      let cur = obj;
+      for (const p of parts) cur = cur?.[p];
+      return cur ?? '';
+    }
+
+    function setPath(obj, path, value) {
+      const parts = path.split('/').filter(Boolean);
+      let cur = obj;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!(parts[i] in cur)) cur[parts[i]] = {};
+        cur = cur[parts[i]];
+      }
+      cur[parts[parts.length - 1]] = value;
+    }
+
+    function resolve(val) {
+      if (val && typeof val === 'object' && val.path) return getPath(dataModel, val.path);
+      return val;
+    }
+
+    function render(id) {
+      const comp = components[id];
+      if (!comp) return document.createTextNode(`[missing: ${id}]`);
+
+      switch (comp.component) {
+        case 'Card': {
+          const el = document.createElement('div');
+          el.className = 'c-Card';
+          if (comp.child) el.appendChild(render(comp.child));
+          return el;
+        }
+        case 'Column': {
+          const el = document.createElement('div');
+          el.className = 'c-Column';
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Row': {
+          const el = document.createElement('div');
+          el.className = 'c-Row';
+          if (comp.justify) el.dataset.justify = comp.justify;
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Divider': return document.createElement('hr');
+        case 'Icon': {
+          const iconMap = {
+            shoppingCart: 'shopping_cart', locationOn: 'location_on',
+            accountCircle: 'account_circle', arrowBack: 'arrow_back',
+            arrowForward: 'arrow_forward', attachFile: 'attach_file',
+            calendarToday: 'calendar_today', fastForward: 'fast_forward',
+            favoriteOff: 'favorite_border', lockOpen: 'lock_open',
+            moreVert: 'more_vert', moreHoriz: 'more_horiz',
+            notificationsOff: 'notifications_off', skipNext: 'skip_next',
+            skipPrevious: 'skip_previous', starHalf: 'star_half',
+            starOff: 'star_border', volumeDown: 'volume_down',
+            volumeMute: 'volume_mute', volumeOff: 'volume_off',
+            volumeUp: 'volume_up', visibilityOff: 'visibility_off',
+          };
+          const el = document.createElement('span');
+          el.className = 'c-Icon';
+          const name = resolve(comp.name);
+          el.textContent = iconMap[name] || name;
+          return el;
+        }
+        case 'Text': {
+          const el = document.createElement('span');
+          el.className = 'c-Text';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          el.textContent = resolve(comp.text);
+          return el;
+        }
+        case 'TextField': {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'c-TextField';
+          const label = document.createElement('label');
+          label.textContent = comp.label || '';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = resolve(comp.value) || '';
+          if (comp.value?.path) {
+            input.addEventListener('input', () => setPath(dataModel, comp.value.path, input.value));
+          }
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          return wrapper;
+        }
+        case 'ChoicePicker': {
+          const wrap = document.createElement('div');
+          wrap.className = 'c-ChoicePicker';
+          const currentVal = resolve(comp.value) || [];
+          const isMulti = comp.variant === 'multipleSelection';
+          for (const opt of (comp.options || [])) {
+            const chip = document.createElement('button');
+            chip.className = 'choice-chip' + (currentVal.includes(opt.value) ? ' selected' : '');
+            chip.textContent = opt.label;
+            chip.addEventListener('click', () => {
+              if (comp.value?.path) {
+                let arr = getPath(dataModel, comp.value.path) || [];
+                if (isMulti) {
+                  arr = arr.includes(opt.value) ? arr.filter(v => v !== opt.value) : [...arr, opt.value];
+                } else {
+                  arr = [opt.value];
+                  wrap.querySelectorAll('.choice-chip').forEach(c => c.classList.remove('selected'));
+                }
+                setPath(dataModel, comp.value.path, arr);
+                chip.classList.toggle('selected', arr.includes(opt.value));
+              }
+            });
+            wrap.appendChild(chip);
+          }
+          return wrap;
+        }
+        case 'Button': {
+          const el = document.createElement('button');
+          el.className = 'c-Button';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          if (comp.child) {
+            const childComp = components[comp.child];
+            el.textContent = childComp ? resolve(childComp.text) : comp.child;
+          }
+          if (comp.action?.event) {
+            el.addEventListener('click', () => {
+              const payload = {
+                eventName: comp.action.event.name,
+                context: comp.action.event.context || {},
+                ...(surfaceConfig?.sendDataModel ? { dataModel: structuredClone(dataModel) } : {}),
+                timestamp: new Date().toISOString()
+              };
+              logEvent(payload);
+            });
+          }
+          return el;
+        }
+        default:
+          return document.createTextNode(`[unknown: ${comp.component}]`);
+      }
+    }
+
+    function logEvent(payload) {
+      const log = document.getElementById('event-log');
+      const entry = `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+      log.textContent += entry;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    document.getElementById('surface').appendChild(render('root'));
+  </script>
+</body>
+</html>

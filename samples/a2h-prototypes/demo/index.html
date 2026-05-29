@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H × A2UI Demo — All 5 Intents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.5rem; color: #202124; text-align: center; margin-bottom: 0.5rem; }
+    h2 { font-size: 1rem; color: #5f6368; text-align: center; margin-bottom: 2rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .intent-block { }
+    .intent-label {
+      font-size: 0.85rem; font-weight: 500; color: #1a73e8;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .surface { width: 100%; }
+
+    /* A2UI component styles */
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #f8f9fa; box-shadow: none; border: 1px solid #e0e0e0;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.25rem 0; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="label"] { font-size: 0.85rem; font-weight: 500; color: #202124; min-width: 70px; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #d93025; font-weight: 500; }
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px; padding: 0.5rem 1.25rem;
+      font-family: inherit; font-size: 0.875rem; font-weight: 500;
+      cursor: pointer; background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+    .c-TextField {
+      border: 1px solid #dadce0; border-radius: 4px; padding: 0.5rem;
+      font-family: inherit; font-size: 0.875rem; width: 100%;
+    }
+    .c-ChoicePicker {
+      border: 1px solid #dadce0; border-radius: 4px; padding: 0.5rem;
+      font-family: inherit; font-size: 0.875rem; width: 100%; background: #fff;
+    }
+
+    #event-log {
+      max-width: 1200px; margin: 2rem auto 0;
+      background: #263238; color: #aed581; border-radius: 8px; padding: 1rem;
+      font-family: monospace; font-size: 0.8rem; max-height: 200px;
+      overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Click any button to see events here...';
+      color: #607d8b;
+    }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — All Five Intents</h1>
+  <h2>Generated via the a2h-a2ui helper library</h2>
+  <div class="grid" id="grid"></div>
+  <div id="event-log"></div>
+
+  <script type="module">
+    import {
+      createAuthorizeSurface,
+      createCollectSurface,
+      createInformSurface,
+      createEscalateSurface,
+      createResultSurface,
+      resetIds,
+    } from '../lib/a2h-a2ui.js';
+
+    // ─── Generate all 5 surfaces ───
+
+    const surfaces = [
+      {
+        label: 'AUTHORIZE — Transfer Approval',
+        messages: createAuthorizeSurface({
+          surfaceId: 'a2h:authorize:demo-001',
+          title: 'Authorization Required',
+          description: 'TravelBot wants to book a flight on your behalf.',
+          details: [
+            { label: 'Route', path: '/route' },
+            { label: 'Amount', path: '/amount' },
+            { label: 'Agent', path: '/agentId' },
+          ],
+          dataModel: {
+            route: 'SFO → JFK, Mar 15',
+            amount: '$450.00',
+            agentId: 'did:web:travel-agent.example.com',
+            interactionId: 'demo-001',
+          },
+        }),
+      },
+      {
+        label: 'COLLECT — Shipping Address',
+        messages: createCollectSurface({
+          surfaceId: 'a2h:collect:demo-002',
+          title: 'Shipping Details',
+          fields: [
+            { id: 'name', label: 'Full Name', type: 'text', path: '/fields/name', value: 'Jane Doe' },
+            { id: 'street', label: 'Street Address', type: 'text', path: '/fields/street' },
+            { id: 'city', label: 'City', type: 'text', path: '/fields/city' },
+            { id: 'state', label: 'State', type: 'select', path: '/fields/state', options: ['CA', 'NY', 'TX', 'WA'] },
+            { id: 'zip', label: 'ZIP Code', type: 'text', path: '/fields/zip' },
+          ],
+          submitLabel: 'Ship It',
+          dataModel: { fields: { name: 'Jane Doe', street: '', city: '', state: 'CA', zip: '' } },
+        }),
+      },
+      {
+        label: 'INFORM — Order Status',
+        messages: createInformSurface({
+          surfaceId: 'a2h:inform:demo-003',
+          title: 'Order Shipped',
+          items: [
+            { label: 'Order #', value: 'ORD-2026-4821', icon: '📦' },
+            { label: 'Carrier', value: 'FedEx Ground' },
+            { label: 'Tracking', value: '7891-2345-6789' },
+            { label: 'ETA', value: 'March 7, 2026' },
+          ],
+          dataModel: {},
+        }),
+      },
+      {
+        label: 'ESCALATE — Support Handoff',
+        messages: createEscalateSurface({
+          surfaceId: 'a2h:escalate:demo-004',
+          reason: 'Your request requires human review due to account verification.',
+          context: 'Customer asked about disputing a charge of $89.99 on Feb 28. Bot could not verify identity automatically.',
+          options: [
+            { id: 'btn-chat', label: '💬 Live Chat' },
+            { id: 'btn-phone', label: '📞 Phone' },
+            { id: 'btn-video', label: '📹 Video' },
+          ],
+          dataModel: { statusMessage: 'Searching for available agents…', priority: 'high' },
+        }),
+      },
+      {
+        label: 'RESULT — Task Complete',
+        messages: createResultSurface({
+          surfaceId: 'a2h:result:demo-005',
+          title: 'Flight Booked',
+          status: 'success',
+          details: [
+            { label: 'Confirmation', value: 'ABC123' },
+            { label: 'Route', value: 'SFO → JFK' },
+            { label: 'Date', value: 'March 15, 2026' },
+            { label: 'Total', value: '$450.00' },
+          ],
+          dataModel: {},
+        }),
+      },
+    ];
+
+    // ─── Minimal A2UI v0.9 Renderer ───
+
+    function renderSurface(messages, container) {
+      let surfaceConfig = null;
+      let components = {};
+      let dataModel = {};
+
+      for (const msg of messages) {
+        if (msg.createSurface) surfaceConfig = msg.createSurface;
+        if (msg.updateComponents) {
+          for (const c of msg.updateComponents.components) components[c.id] = c;
+        }
+        if (msg.updateDataModel) dataModel = msg.updateDataModel.value;
+      }
+
+      function resolve(val) {
+        if (val && typeof val === 'object' && val.path) {
+          const parts = val.path.split('/').filter(Boolean);
+          let cur = dataModel;
+          for (const p of parts) cur = cur?.[p];
+          return cur ?? val.path;
+        }
+        return val;
+      }
+
+      function render(id) {
+        const comp = components[id];
+        if (!comp) return document.createTextNode(`[missing: ${id}]`);
+
+        switch (comp.component) {
+          case 'Card': {
+            const el = document.createElement('div');
+            el.className = 'c-Card';
+            if (comp.child) el.appendChild(render(comp.child));
+            return el;
+          }
+          case 'Column': {
+            const el = document.createElement('div');
+            el.className = 'c-Column';
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Row': {
+            const el = document.createElement('div');
+            el.className = 'c-Row';
+            if (comp.justify) el.dataset.justify = comp.justify;
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Divider':
+            return document.createElement('hr');
+          case 'Text': {
+            const el = document.createElement('span');
+            el.className = 'c-Text';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            el.textContent = resolve(comp.text);
+            return el;
+          }
+          case 'TextField': {
+            const el = document.createElement('input');
+            el.className = 'c-TextField';
+            el.placeholder = comp.placeholder || '';
+            const v = resolve(comp.value);
+            if (v) el.value = v;
+            return el;
+          }
+          case 'ChoicePicker': {
+            const el = document.createElement('select');
+            el.className = 'c-ChoicePicker';
+            const selected = resolve(comp.value);
+            for (const opt of (comp.options || [])) {
+              const o = document.createElement('option');
+              o.value = opt.value; o.textContent = opt.label;
+              if (opt.value === selected) o.selected = true;
+              el.appendChild(o);
+            }
+            return el;
+          }
+          case 'Button': {
+            const el = document.createElement('button');
+            el.className = 'c-Button';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            const childComp = components[comp.child];
+            el.textContent = childComp ? resolve(childComp.text) : comp.child;
+            if (comp.action?.event) {
+              el.addEventListener('click', () => {
+                const ctx = {};
+                for (const [k, v] of Object.entries(comp.action.event.context || {}))
+                  ctx[k] = resolve(v);
+                const payload = {
+                  eventName: comp.action.event.name,
+                  context: ctx,
+                  ...(surfaceConfig?.sendDataModel ? { dataModel } : {}),
+                };
+                const log = document.getElementById('event-log');
+                log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+                log.scrollTop = log.scrollHeight;
+              });
+            }
+            return el;
+          }
+          default:
+            return document.createTextNode(`[${comp.component}]`);
+        }
+      }
+
+      container.appendChild(render(Object.keys(components).find(id => {
+        // Find root: component not referenced as child by any other
+        const refs = new Set();
+        for (const c of Object.values(components)) {
+          if (c.child) refs.add(c.child);
+          for (const cid of (c.children || [])) refs.add(cid);
+        }
+        return !refs.has(id);
+      }) || 'root'));
+    }
+
+    // ─── Mount ───
+
+    const grid = document.getElementById('grid');
+    for (const s of surfaces) {
+      const block = document.createElement('div');
+      block.className = 'intent-block';
+      const label = document.createElement('div');
+      label.className = 'intent-label';
+      label.textContent = s.label;
+      block.appendChild(label);
+      const surface = document.createElement('div');
+      surface.className = 'surface';
+      renderSurface(s.messages, surface);
+      block.appendChild(surface);
+      grid.appendChild(block);
+    }
+  </script>
+</body>
+</html>
