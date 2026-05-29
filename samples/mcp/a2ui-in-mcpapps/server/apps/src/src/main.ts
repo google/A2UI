@@ -171,7 +171,10 @@ export class McpAppRoot implements OnInit, AfterViewInit {
 
   private getA2UIMessages(content: any[]): any[] | null {
     const a2uiResource = content.find(
-      (c: any) => c.type === 'resource' && (c.resource?.mimeType === A2UI_MIME_TYPE || c.resource?.mimeType === 'application/json+a2ui'),
+      (c: any) =>
+        c.type === 'resource' &&
+        (c.resource?.mimeType === A2UI_MIME_TYPE ||
+          c.resource?.mimeType === 'application/json+a2ui'),
     );
     if (!a2uiResource || !a2uiResource.resource?.text) {
       return null;

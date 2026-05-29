@@ -369,7 +369,8 @@ export class A2uiRecipeApp extends LitElement {
       });
 
       const a2uiContent = result.contents.find(
-        (c: any) => c.mimeType === 'application/a2ui+json' || c.mimeType === 'application/json+a2ui',
+        (c: any) =>
+          c.mimeType === 'application/a2ui+json' || c.mimeType === 'application/json+a2ui',
       );
 
       if (!a2uiContent || !('text' in a2uiContent)) {
