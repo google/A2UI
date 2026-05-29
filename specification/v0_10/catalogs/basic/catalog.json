@@ -1110,6 +1110,30 @@
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
+    },
+    "capitalize": {
+      "type": "object",
+      "description": "Converts an input string to a capitalized version.",
+      "properties": {
+        "call": {
+          "const": "capitalize"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_10/common_types.json#/$defs/DynamicString"
+            }
+          },
+          "required": ["value"],
+          "unevaluatedProperties": false
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     }
   },
   "$defs": {
@@ -1182,7 +1206,8 @@
         {"$ref": "#/functions/openUrl"},
         {"$ref": "#/functions/and"},
         {"$ref": "#/functions/or"},
-        {"$ref": "#/functions/not"}
+        {"$ref": "#/functions/not"},
+        {"$ref": "#/functions/capitalize"}
       ]
     }
   }

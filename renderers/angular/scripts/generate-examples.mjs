@@ -26,7 +26,7 @@ const DEFAULT_OUT_FILE = 'a2ui_explorer/src/app/generated/examples-bundle.ts';
 /**
  * The default catalogs to generate examples for if none are specified.
  */
-const DEFAULT_CATALOGS = ['minimal', 'basic'];
+const DEFAULT_CATALOGS = ['basic'];
 
 /**
  * The options that this script accepts.
@@ -35,7 +35,6 @@ const options = {
   help: {type: 'boolean', short: 'h'},
   'out-file': {type: 'string', short: 'o', default: DEFAULT_OUT_FILE},
   catalog: {type: 'string', short: 'c', multiple: true, default: DEFAULT_CATALOGS},
-  'override-minimal-catalog-id': {type: 'boolean', default: true},
 };
 
 /**
@@ -46,35 +45,13 @@ const HELP_MESSAGE = `Usage: node generate-examples.mjs [options]
 Options:
   -o, --out-file <path>   Output file path (default: ${DEFAULT_OUT_FILE})
   -c, --catalog <name>   Catalog names to include (can be specified multiple times) (default: ${DEFAULT_CATALOGS.join(', ')})
-  --no-override-minimal-catalog-id  Do not override catalog ID for minimal catalog
   -h, --help             Show this help message
 `;
 
 /**
- * Overrides the catalog ID for minimal catalog to use basic catalog instead,
- * preserving the version in the path.
- */
-function overrideMessagesCatalogId(messages) {
-  const overrideCatalogId = catalogId => {
-    return catalogId.replace('catalogs/minimal/catalog.json', 'catalogs/basic/catalog.json');
-  };
-  for (const msg of messages) {
-    if (msg.createSurface && msg.createSurface.catalogId) {
-      // For v0.9 (and up?)
-      msg.createSurface.catalogId = overrideCatalogId(msg.createSurface.catalogId);
-    }
-    // The minimal catalog examples in 0.8 contain a catalogId (but not the basic
-    // catalog ones). That's probably copy-pasta from when catalogIds were
-    // introduced later, as the v0.8 renderers didn't use catalogIds. We don't
-    // need to handle the overrides of the catalogId for the beginRendering
-    // messages from the v0.8 spec.
-  }
-}
-
-/**
  * Reads examples for a given version and catalogs.
  */
-function readExamples(specPath, catalogs, overrideCatalogId, version) {
+function readExamples(specPath, catalogs, version) {
   const examples = [];
 
   for (const catalog of catalogs) {
@@ -100,7 +77,7 @@ function readExamples(specPath, catalogs, overrideCatalogId, version) {
           if (Array.isArray(data)) {
             example = {
               version: version,
-              name: version === '0.8' ? `${nameFromFile} (${catalog})` : nameFromFile,
+              name: nameFromFile,
               description: `Example from ${catalog} catalog`,
               messages: data,
             };
@@ -108,17 +85,10 @@ function readExamples(specPath, catalogs, overrideCatalogId, version) {
             example = {
               ...data,
               version: version,
-              name:
-                version === '0.8'
-                  ? `${data.name || nameFromFile} (${catalog})`
-                  : data.name || nameFromFile,
+              name: data.name || nameFromFile,
               description: data.description || `Example from ${catalog} catalog`,
               messages: data.messages || [],
             };
-          }
-
-          if (catalog === 'minimal' && overrideCatalogId) {
-            overrideMessagesCatalogId(example.messages);
           }
 
           examples.push(example);
@@ -145,7 +115,6 @@ async function main() {
 
   const outPath = values['out-file'];
   const outDir = path.dirname(outPath);
-  const overrideCatalogId = values['override-minimal-catalog-id'];
 
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, {recursive: true});
@@ -153,18 +122,8 @@ async function main() {
 
   const catalogs = values.catalog;
 
-  const examplesV08 = readExamples(
-    '../../specification/v0_8/json/catalogs',
-    catalogs,
-    overrideCatalogId,
-    '0.8',
-  );
-  const examplesV09 = readExamples(
-    '../../specification/v0_9/catalogs',
-    catalogs,
-    overrideCatalogId,
-    '0.9',
-  );
+  const examplesV08 = readExamples('../../specification/v0_8/json/catalogs', catalogs, '0.8');
+  const examplesV09 = readExamples('../../specification/v0_9/catalogs', catalogs, '0.9');
 
   // Generate the file now!
   const tsContent = `/**
