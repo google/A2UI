@@ -1,0 +1,419 @@
+<!--
+  Copyright 2026 Google LLC
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2UI Compile-Time Catalog Composition Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0a0a0c;
+      --surface-color: rgba(18, 18, 24, 0.7);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --primary-color: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.15);
+      --success-color: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error-color: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.15);
+      --warning-color: #f59e0b;
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-family: 'Inter', sans-serif;
+      --title-font: 'Outfit', sans-serif;
+
+      /* A2UI Theme variables mappings */
+      --a2ui-color-on-background: var(--text-color);
+      --a2ui-text-color-text: var(--text-color);
+      --a2ui-font-family-body: var(--font-family);
+      --a2ui-font-family-title: var(--title-font);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 40px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    }
+
+    header {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: var(--title-font);
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 2fr;
+      gap: 32px;
+      flex-grow: 1;
+    }
+
+    .panel {
+      background: var(--surface-color);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    h2 {
+      font-family: var(--title-font);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--surface-border);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-color);
+      transform: translateY(-2px);
+    }
+
+    .switch-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--surface-border);
+      padding: 16px 20px;
+      border-radius: 16px;
+    }
+
+    .switch-label-desc {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .switch-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .switch-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid var(--surface-border);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px; width: 20px;
+      left: 3px; bottom: 3px;
+      background-color: var(--text-muted);
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--success-color);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: white;
+    }
+
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--surface-border);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .status-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(4px);
+    }
+    .status-item.active {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+    }
+    .badge {
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-loaded {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+
+    .render-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface-color);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 0; /* SEAMLESS BORDER-TO-BORDER BODY */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card-title {
+      font-family: var(--title-font);
+      font-size: 16px;
+      font-weight: 700;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.01);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-body {
+      padding: 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .console {
+      background: #050507;
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 16px 24px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      height: 160px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+      flex-grow: 1;
+    }
+    .log-line {
+      line-height: 1.5;
+    }
+    .log-info { color: var(--text-muted); }
+    .log-success { color: var(--success-color); }
+    .log-error { color: var(--error-color); }
+    .log-warn { color: var(--warning-color); }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeOut {
+      to {
+        transform: translateY(-15px) scale(0.95);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>A2UI Compile-Time Catalog Composition</h1>
+    <p>Compile and register custom component catalogs statically during the pre-build phase. Ensures 100% type safety, maximum sandbox security, and zero runtime bundle overhead.</p>
+  </header>
+
+  <div class="container">
+    <!-- Left Column: Ingestion Selector & Registry -->
+    <div class="panel">
+      <div>
+        <h2>Catalog Ingestion</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Select a catalog config to load into the client library.</p>
+      </div>
+
+      <!-- Catalog Ingestion Selector -->
+      <div class="control-section">
+        <div class="control-label">Active Ingested Catalog</div>
+        <div id="catalog-selector-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Rendered Dynamically by app.ts -->
+        </div>
+      </div>
+
+      <!-- Dynamic Component Registry Status -->
+      <div class="control-section">
+        <div class="control-label">Ingested Catalog Components</div>
+        <div class="status-list" id="availability-list">
+          <!-- Reactively populated component badges -->
+        </div>
+      </div>
+
+      <!-- Catalog JSON Schema Viewer -->
+      <div class="control-section">
+        <div class="control-label">Catalog JSON Schema Definition</div>
+        <pre id="catalog-json-viewer" style="background: #050507; border: 1px solid var(--surface-border); border-radius: 12px; padding: 14px 18px; font-family: 'Fira Code', monospace; font-size: 11px; color: #8ec07c; height: 220px; overflow-y: auto; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5); white-space: pre-wrap; word-break: break-all; margin-top: 4px;"></pre>
+      </div>
+
+      <!-- Debug Console Log -->
+      <div class="control-section" style="flex-grow:1; display:flex; flex-direction:column; gap:12px;">
+        <div class="control-label">System Real-Time Console</div>
+        <div id="console" class="console">
+          <div class="log-line log-info">[System] Compile-time composition catalog initialized.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Dynamic Surface Showcase -->
+    <div class="render-grid" id="dynamic-surface-container">
+      <!-- This will reactively render the exact surface corresponding to the active catalog -->
+    </div>
+  </div>
+
+  <div id="toast-container" style="position: fixed; top: 30px; right: 30px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; pointer-events: none;"></div>
+
+  <script type="module" src="./app.ts"></script>
+</body>
+</html>

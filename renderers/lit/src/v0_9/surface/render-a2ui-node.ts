@@ -28,11 +28,7 @@ import {LitComponentApi} from '@a2ui/lit/v0_9';
  *
  * @param context The component context defining the data model and type to render.
  * @param catalog The catalog of component implementations.
- * @returns A Lit TemplateResult representing the resolved component, or `nothing` if the component is invalid or unresolvable.
- *
- * This method should be used directly very rarely. Instead, programmers should use
- * the `renderNode` method on the base `A2uiLitElement` class, which handles context
- * creation automatically.
+ * @returns A Lit TemplateResult representing the resolved component, or nothing if unresolvable.
  */
 export function renderA2uiNode(context: ComponentContext, catalog: Catalog<LitComponentApi>) {
   const type = context.componentModel.type;
